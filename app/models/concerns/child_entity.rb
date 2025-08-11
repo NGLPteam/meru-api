@@ -23,6 +23,12 @@ module ChildEntity
     scope :unharvested, -> { where.not(id: HarvestEntity.existing_entity_ids) }
   end
 
+  # @param [HierarchicalEntity] parent
+  # @return [void]
+  def asynchronously_reparent!(parent)
+    Entities::ReparentJob.perform_later parent, self
+  end
+
   def to_entity_properties
     super.tap do |props|
       props["doi"] = doi
