@@ -134,6 +134,10 @@ module Harvesting
 
         yield upsert_entity!
 
+        yield attach_contributions!
+
+        yield upsert_links!
+
         yield maybe_enqueue_children!
 
         yield maybe_enqueue_assets!
@@ -151,10 +155,6 @@ module Harvesting
         maybe_apply_data!
 
         finalize_connection!
-
-        yield attach_contributions!
-
-        yield upsert_links!
 
         super
       end
