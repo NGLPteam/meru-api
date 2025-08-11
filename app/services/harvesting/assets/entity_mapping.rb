@@ -4,7 +4,7 @@ module Harvesting
   module Assets
     # @api private
     class EntityMapping
-      include Shared::EnhancedStoreModel
+      include Support::EnhancedStoreModel
 
       IMAGES = %i[hero_image logo thumbnail].freeze
 
@@ -17,6 +17,10 @@ module Harvesting
       attribute :hero_image, Harvesting::Assets::ExtractedSource.to_type, default: proc { { identifier: "hero_image" } }
       attribute :logo, Harvesting::Assets::ExtractedSource.to_type, default: proc { { identifier: "logo" } }
       attribute :thumbnail, Harvesting::Assets::ExtractedSource.to_type, default: proc { { identifier: "thumbnail" } }
+
+      def blank?
+        super || images.blank?
+      end
 
       # @return [<Harvesting::Assets::ExtractedSource>]
       def images

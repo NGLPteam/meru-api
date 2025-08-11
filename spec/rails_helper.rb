@@ -68,8 +68,6 @@ Rails.application.eager_load!
 
 ActiveJob::Base.queue_adapter = :test
 
-# ActiveJob::Uniqueness.test_mode!
-
 Shrine.logger = Logger.new(File::NULL)
 
 Dry::Effects.load_extensions :rspec
@@ -182,6 +180,9 @@ RSpec.configure do |config|
 
   # Filter lines from Rails gems in backtraces.
   config.filter_rails_from_backtrace!
+
+  # Include AJ Test helpers in all specs.
+  config.include ActiveJob::TestHelper
 
   # arbitrary gems may also be filtered via:
   # config.filter_gems_from_backtrace("gem name")

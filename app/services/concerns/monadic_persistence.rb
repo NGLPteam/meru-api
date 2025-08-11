@@ -23,7 +23,9 @@ module MonadicPersistence
   def monadic_upsert(klass, attributes, unique_by:, skip_find: false)
     klass.upsert(attributes, unique_by:)
 
+    # :nocov:
     return Dry::Monads.Success() if skip_find
+    # :nocov:
 
     tuple = Array(unique_by).index_with { |k| attributes.fetch(k) }.symbolize_keys
 

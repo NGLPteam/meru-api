@@ -21,6 +21,8 @@ class HarvestEntity < ApplicationRecord
 
   belongs_to :schema_version, inverse_of: :harvest_entities
 
+  has_many :harvest_attempt_entity_links, inverse_of: :harvest_entity, dependent: :delete_all
+
   has_one :harvest_configuration, through: :harvest_record
 
   has_many :harvest_contributions, inverse_of: :harvest_entity, dependent: :destroy
@@ -80,8 +82,8 @@ class HarvestEntity < ApplicationRecord
 
   # @see Harvesting::Entities::Upsert
   # @return [void]
-  monadic_operation! def upsert
-    call_operation("harvesting.entities.upsert", self)
+  monadic_operation! def upsert(...)
+    call_operation("harvesting.entities.upsert", self, ...)
   end
 
   # @see Harvesting::Entities::UpsertAssets

@@ -8,25 +8,28 @@ Rails.application.configure do
     "maintenance:1",
     "rendering:1",
     "+purging,hierarchies,entities,orderings,invalidations,layouts:2",
-    "+harvest_pruning,extraction,harvesting,asset_fetching:2",
-    "permissions,processing,default,mailers,ahoy:2",
+    "+harvest_pruning,extraction,harvesting,asset_fetching:4",
+    "permissions,processing,default,mailers,ahoy:4",
   ].join(?;)
 
   config.good_job.cleanup_preserved_jobs_before_seconds_ago = 43_200 # half-day
   config.good_job.preserve_job_records = true
   config.good_job.retry_on_unhandled_error = false
   # config.good_job.on_thread_error = ->(exception) { Rollbar.error(exception) }
-  config.good_job.execution_mode = :external
+  # :nocov:
+  config.good_job.execution_mode = Rails.env.test? ? :inline : :external
+  # :nocov:
   config.good_job.queues = queues
   config.good_job.max_threads = 10
   config.good_job.poll_interval = 10 # seconds
   config.good_job.shutdown_timeout = 25 # seconds
   config.good_job.advisory_lock_heartbeat = true
-  config.good_job.enable_cron = true
+  config.good_job.enable_cron = !Rails.env.test?
   config.good_job.enable_listen_notify = true
   config.good_job.enable_pauses = true
   config.good_job.queue_select_limit = 1000
   config.good_job.dashboard_live_poll_enabled = false
+  config.good_job.inline_execution_respects_schedule = true
   config.good_job.cron = {
     "access.enforce_assignments": {
       cron: "*/5 * * * *",

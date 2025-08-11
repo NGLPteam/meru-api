@@ -24,6 +24,12 @@ class HarvestAttempt < ApplicationRecord
 
   has_many :harvest_attempt_record_links, inverse_of: :harvest_attempt, dependent: :delete_all
 
+  has_one_readonly :harvest_attempt_record_status, inverse_of: :harvest_attempt
+
+  has_many :harvest_attempt_entity_links, inverse_of: :harvest_attempt, dependent: :delete_all
+
+  has_one_readonly :harvest_attempt_entity_status, inverse_of: :harvest_attempt
+
   has_many :harvest_messages, inverse_of: :harvest_attempt, dependent: :nullify
 
   has_many :harvest_records, through: :harvest_attempt_record_links
@@ -47,6 +53,18 @@ class HarvestAttempt < ApplicationRecord
   delegate :max_record_count, to: :metadata
 
   before_validation :inherit_metadata_format!
+
+  def cancelled?
+    in_state?(:cancelled)
+  end
+
+  monadic_operation! def connect_entity(...)
+    call_operation("harvesting.attempts.entity_links.connect", self, ...)
+  end
+
+  monadic_operation! def connect_record(...)
+    call_operation("harvesting.attempts.record_links.connect", self, ...)
+  end
 
   # @see Harvesting::Attempts::ExtractRecords
   monadic_operation! def extract_records(...)

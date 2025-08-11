@@ -4,6 +4,9 @@
 class ApplicationJob < ActiveJob::Base
   extend Dry::Core::ClassAttributes
 
+  # The extension must be included before other extensions
+  include GoodJob::ActiveJobExtensions::InterruptErrors
+
   include GoodJob::ActiveJobExtensions::Concurrency
 
   JobTimeoutError = Class.new(StandardError)
@@ -16,6 +19,8 @@ class ApplicationJob < ActiveJob::Base
 
   retry_on JobTimeoutError, wait: :polynomially_longer, attempts: 10
 
+  retry_on GoodJob::InterruptError, wait: :polynomially_longer, attempts: Float::INFINITY
+
   # Automatically retry jobs that encountered a deadlock
   retry_on ActiveRecord::Deadlocked
 
@@ -23,7 +28,9 @@ class ApplicationJob < ActiveJob::Base
   discard_on ActiveJob::DeserializationError
 
   # This error is unlikely to resolve itself on subsequent executions.
-  discard_on NameError
+  # :nocov:
+  discard_on NameError unless Rails.env.test?
+  # :nocov:
 
   around_perform do |job, block|
     # Timeout jobs after 10 minutes

@@ -5197,6 +5197,110 @@ CREATE TABLE public.good_jobs (
 
 
 --
+-- Name: harvest_attempt_entity_link_transitions; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.harvest_attempt_entity_link_transitions (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    harvest_attempt_entity_link_id uuid NOT NULL,
+    most_recent boolean NOT NULL,
+    sort_key integer NOT NULL,
+    to_state character varying NOT NULL,
+    metadata jsonb,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+
+--
+-- Name: harvest_attempt_entity_links; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.harvest_attempt_entity_links (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    harvest_attempt_id uuid NOT NULL,
+    harvest_entity_id uuid NOT NULL,
+    harvest_record_id uuid NOT NULL,
+    assets boolean DEFAULT false NOT NULL,
+    upsert_duration numeric DEFAULT 0.0 NOT NULL,
+    assets_duration numeric DEFAULT 0.0 NOT NULL,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+
+--
+-- Name: harvest_attempt_entity_statuses; Type: VIEW; Schema: public; Owner: -
+--
+
+CREATE VIEW public.harvest_attempt_entity_statuses AS
+ WITH stats AS (
+         SELECT harvest_attempt_entity_links.harvest_attempt_id,
+            count(DISTINCT harvest_attempt_entity_links.harvest_entity_id) AS total_entities,
+            count(DISTINCT harvest_attempt_entity_links.harvest_entity_id) FILTER (WHERE harvest_attempt_entity_links.assets) AS total_entities_with_assets,
+            count(DISTINCT harvest_attempt_entity_links.harvest_entity_id) FILTER (WHERE ((deets.current_state)::text <> ALL ((ARRAY['success'::character varying, 'upserted'::character varying])::text[]))) AS total_entities_waiting_for_upsert,
+            count(DISTINCT harvest_attempt_entity_links.harvest_entity_id) FILTER (WHERE (harvest_attempt_entity_links.assets AND ((deets.current_state)::text <> ALL ((ARRAY['success'::character varying, 'assets_fetched'::character varying])::text[])))) AS total_entities_waiting_for_assets,
+            count(DISTINCT harvest_attempt_entity_links.harvest_entity_id) FILTER (WHERE ((deets.current_state)::text = 'success'::text)) AS total_entities_success,
+            jsonb_build_object('min', min(harvest_attempt_entity_links.upsert_duration) FILTER (WHERE (harvest_attempt_entity_links.upsert_duration <> 0.0)), 'max', max(harvest_attempt_entity_links.upsert_duration) FILTER (WHERE (harvest_attempt_entity_links.upsert_duration <> 0.0)), 'avg', avg(harvest_attempt_entity_links.upsert_duration) FILTER (WHERE (harvest_attempt_entity_links.upsert_duration <> 0.0)), 'stddev', stddev_samp(harvest_attempt_entity_links.upsert_duration) FILTER (WHERE (harvest_attempt_entity_links.upsert_duration <> 0.0)), 'sum', sum(harvest_attempt_entity_links.upsert_duration) FILTER (WHERE (harvest_attempt_entity_links.upsert_duration <> 0.0))) AS upsert_stats,
+            jsonb_build_object('min', min(harvest_attempt_entity_links.assets_duration) FILTER (WHERE (harvest_attempt_entity_links.assets AND (harvest_attempt_entity_links.assets_duration <> 0.0))), 'max', max(harvest_attempt_entity_links.assets_duration) FILTER (WHERE (harvest_attempt_entity_links.assets AND (harvest_attempt_entity_links.assets_duration <> 0.0))), 'avg', avg(harvest_attempt_entity_links.assets_duration) FILTER (WHERE (harvest_attempt_entity_links.assets AND (harvest_attempt_entity_links.assets_duration <> 0.0))), 'stddev', stddev_samp(harvest_attempt_entity_links.assets_duration) FILTER (WHERE (harvest_attempt_entity_links.assets AND (harvest_attempt_entity_links.assets_duration <> 0.0))), 'sum', sum(harvest_attempt_entity_links.assets_duration) FILTER (WHERE (harvest_attempt_entity_links.assets AND (harvest_attempt_entity_links.assets_duration <> 0.0)))) AS assets_stats,
+            stddev_samp(harvest_attempt_entity_links.upsert_duration) FILTER (WHERE (harvest_attempt_entity_links.upsert_duration <> 0.0)) AS upsert_duration_stddev,
+            stddev_samp(harvest_attempt_entity_links.assets_duration) FILTER (WHERE (harvest_attempt_entity_links.assets AND (harvest_attempt_entity_links.assets_duration <> 0.0))) AS assets_duration_stddev,
+            avg(harvest_attempt_entity_links.upsert_duration) FILTER (WHERE (harvest_attempt_entity_links.upsert_duration <> 0.0)) AS upsert_duration_average,
+            avg(harvest_attempt_entity_links.assets_duration) FILTER (WHERE (harvest_attempt_entity_links.assets AND (harvest_attempt_entity_links.assets_duration <> 0.0))) AS assets_duration_average
+           FROM ((public.harvest_attempt_entity_links
+             LEFT JOIN public.harvest_attempt_entity_link_transitions mrt ON (((harvest_attempt_entity_links.id = mrt.harvest_attempt_entity_link_id) AND (mrt.most_recent = true))))
+             LEFT JOIN LATERAL ( SELECT COALESCE(mrt.to_state, 'pending'::character varying) AS current_state) deets ON (true))
+          GROUP BY harvest_attempt_entity_links.harvest_attempt_id
+        )
+ SELECT stats.harvest_attempt_id,
+    stats.total_entities,
+    stats.total_entities_with_assets,
+    stats.total_entities_waiting_for_upsert,
+    stats.total_entities_waiting_for_assets,
+    stats.total_entities_success,
+    stats.upsert_stats,
+    stats.assets_stats,
+    stats.upsert_duration_average,
+    stats.upsert_duration_stddev,
+    stats.assets_duration_average,
+    stats.assets_duration_stddev,
+    eta.upsert_estimate,
+    eta.assets_estimate,
+        CASE
+            WHEN (stats.total_entities_waiting_for_upsert > 0) THEN (CURRENT_TIMESTAMP + eta.upsert_estimate)
+            ELSE NULL::timestamp with time zone
+        END AS upsert_eta,
+        CASE
+            WHEN (stats.total_entities_waiting_for_assets > 0) THEN ((CURRENT_TIMESTAMP + eta.upsert_estimate) + eta.assets_estimate)
+            ELSE NULL::timestamp with time zone
+        END AS assets_eta,
+    LEAST(
+        CASE
+            WHEN (stats.total_entities > 0) THEN ((stats.total_entities_success)::numeric / (stats.total_entities)::numeric)
+            ELSE 0.0
+        END, 1.0) AS completion
+   FROM (stats
+     LEFT JOIN LATERAL ( SELECT COALESCE(make_interval(secs => (((stats.total_entities_waiting_for_upsert)::numeric * stats.upsert_duration_average))::double precision), '00:00:00'::interval) AS upsert_estimate,
+            COALESCE(make_interval(secs => (((stats.total_entities_waiting_for_assets)::numeric * stats.assets_duration_average))::double precision), '00:00:00'::interval) AS assets_estimate) eta ON (true));
+
+
+--
+-- Name: harvest_attempt_record_link_transitions; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.harvest_attempt_record_link_transitions (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    harvest_attempt_record_link_id uuid NOT NULL,
+    most_recent boolean NOT NULL,
+    sort_key integer NOT NULL,
+    to_state character varying NOT NULL,
+    metadata jsonb,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+
+--
 -- Name: harvest_attempt_record_links; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -5205,8 +5309,44 @@ CREATE TABLE public.harvest_attempt_record_links (
     harvest_attempt_id uuid NOT NULL,
     harvest_record_id uuid NOT NULL,
     created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    extraction_duration numeric DEFAULT 0.0 NOT NULL
 );
+
+
+--
+-- Name: harvest_attempt_record_statuses; Type: VIEW; Schema: public; Owner: -
+--
+
+CREATE VIEW public.harvest_attempt_record_statuses AS
+ WITH stats AS (
+         SELECT harvest_attempt_record_links.harvest_attempt_id,
+            count(DISTINCT harvest_attempt_record_links.harvest_record_id) AS total_records,
+            count(DISTINCT harvest_attempt_record_links.harvest_record_id) FILTER (WHERE ((deets.current_state)::text <> ALL ((ARRAY['success'::character varying, 'upserted'::character varying, 'extracted'::character varying])::text[]))) AS total_records_waiting_for_extraction,
+            count(DISTINCT harvest_attempt_record_links.harvest_record_id) FILTER (WHERE ((deets.current_state)::text <> ALL ((ARRAY['success'::character varying, 'upserted'::character varying])::text[]))) AS total_records_waiting_for_upsert,
+            count(DISTINCT harvest_attempt_record_links.harvest_record_id) FILTER (WHERE ((deets.current_state)::text = 'success'::text)) AS total_records_success,
+            jsonb_build_object('min', min(harvest_attempt_record_links.extraction_duration) FILTER (WHERE (harvest_attempt_record_links.extraction_duration <> 0.0)), 'max', max(harvest_attempt_record_links.extraction_duration) FILTER (WHERE (harvest_attempt_record_links.extraction_duration <> 0.0)), 'avg', avg(harvest_attempt_record_links.extraction_duration) FILTER (WHERE (harvest_attempt_record_links.extraction_duration <> 0.0)), 'stddev', stddev_samp(harvest_attempt_record_links.extraction_duration) FILTER (WHERE (harvest_attempt_record_links.extraction_duration <> 0.0)), 'sum', sum(harvest_attempt_record_links.extraction_duration) FILTER (WHERE (harvest_attempt_record_links.extraction_duration <> 0.0))) AS extraction_stats,
+            stddev_samp(harvest_attempt_record_links.extraction_duration) FILTER (WHERE (harvest_attempt_record_links.extraction_duration <> 0.0)) AS extraction_duration_stddev,
+            avg(harvest_attempt_record_links.extraction_duration) FILTER (WHERE (harvest_attempt_record_links.extraction_duration <> 0.0)) AS extraction_duration_average
+           FROM ((public.harvest_attempt_record_links
+             LEFT JOIN public.harvest_attempt_record_link_transitions mrt ON (((harvest_attempt_record_links.id = mrt.harvest_attempt_record_link_id) AND (mrt.most_recent = true))))
+             LEFT JOIN LATERAL ( SELECT COALESCE(mrt.to_state, 'pending'::character varying) AS current_state) deets ON (true))
+          GROUP BY harvest_attempt_record_links.harvest_attempt_id
+        )
+ SELECT stats.harvest_attempt_id,
+    stats.total_records,
+    stats.total_records_waiting_for_extraction,
+    stats.total_records_waiting_for_upsert,
+    stats.total_records_success,
+    stats.extraction_stats,
+    stats.extraction_duration_average,
+    stats.extraction_duration_stddev,
+    LEAST(
+        CASE
+            WHEN (stats.total_records > 0) THEN ((stats.total_records_success)::numeric / (stats.total_records)::numeric)
+            ELSE 0.0
+        END, 1.0) AS completion
+   FROM stats;
 
 
 --
@@ -7941,6 +8081,30 @@ ALTER TABLE ONLY public.good_jobs
 
 ALTER TABLE ONLY public.granted_permissions
     ADD CONSTRAINT granted_permissions_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: harvest_attempt_entity_link_transitions harvest_attempt_entity_link_transitions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.harvest_attempt_entity_link_transitions
+    ADD CONSTRAINT harvest_attempt_entity_link_transitions_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: harvest_attempt_entity_links harvest_attempt_entity_links_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.harvest_attempt_entity_links
+    ADD CONSTRAINT harvest_attempt_entity_links_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: harvest_attempt_record_link_transitions harvest_attempt_record_link_transitions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.harvest_attempt_record_link_transitions
+    ADD CONSTRAINT harvest_attempt_record_link_transitions_pkey PRIMARY KEY (id);
 
 
 --
@@ -10681,6 +10845,55 @@ CREATE UNIQUE INDEX index_granted_permissions_uniqueness ON public.granted_permi
 
 
 --
+-- Name: index_harl_transitions_parent_most_recent; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_harl_transitions_parent_most_recent ON public.harvest_attempt_record_link_transitions USING btree (harvest_attempt_record_link_id, most_recent) WHERE most_recent;
+
+
+--
+-- Name: index_harvest_attempt_entity_link_transitions_parent_sort; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_harvest_attempt_entity_link_transitions_parent_sort ON public.harvest_attempt_entity_link_transitions USING btree (harvest_attempt_entity_link_id, sort_key);
+
+
+--
+-- Name: index_harvest_attempt_entity_links_on_harvest_attempt_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_harvest_attempt_entity_links_on_harvest_attempt_id ON public.harvest_attempt_entity_links USING btree (harvest_attempt_id);
+
+
+--
+-- Name: index_harvest_attempt_entity_links_on_harvest_entity_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_harvest_attempt_entity_links_on_harvest_entity_id ON public.harvest_attempt_entity_links USING btree (harvest_entity_id);
+
+
+--
+-- Name: index_harvest_attempt_entity_links_on_harvest_record_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_harvest_attempt_entity_links_on_harvest_record_id ON public.harvest_attempt_entity_links USING btree (harvest_record_id);
+
+
+--
+-- Name: index_harvest_attempt_entity_links_uniqueness; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_harvest_attempt_entity_links_uniqueness ON public.harvest_attempt_entity_links USING btree (harvest_attempt_id, harvest_entity_id);
+
+
+--
+-- Name: index_harvest_attempt_record_link_transitions_parent_sort; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_harvest_attempt_record_link_transitions_parent_sort ON public.harvest_attempt_record_link_transitions USING btree (harvest_attempt_record_link_id, sort_key);
+
+
+--
 -- Name: index_harvest_attempt_record_links_on_harvest_attempt_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -11014,6 +11227,13 @@ CREATE UNIQUE INDEX index_harvest_sources_on_identifier ON public.harvest_source
 --
 
 CREATE UNIQUE INDEX index_hcar_uniqueness ON public.harvest_cached_asset_references USING btree (harvest_cached_asset_id, cacheable_id);
+
+
+--
+-- Name: index_herl_transitions_parent_most_recent; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_herl_transitions_parent_most_recent ON public.harvest_attempt_entity_link_transitions USING btree (harvest_attempt_entity_link_id, most_recent) WHERE most_recent;
 
 
 --
@@ -12958,6 +13178,14 @@ ALTER TABLE ONLY public.assets
 
 
 --
+-- Name: harvest_attempt_record_link_transitions fk_rails_0b568723ae; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.harvest_attempt_record_link_transitions
+    ADD CONSTRAINT fk_rails_0b568723ae FOREIGN KEY (harvest_attempt_record_link_id) REFERENCES public.harvest_attempt_record_links(id) ON DELETE CASCADE;
+
+
+--
 -- Name: harvest_attempts fk_rails_0b61d27d1a; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -13102,6 +13330,14 @@ ALTER TABLE ONLY public.templates_descendant_list_definitions
 
 
 --
+-- Name: harvest_attempt_entity_link_transitions fk_rails_248d27a3f5; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.harvest_attempt_entity_link_transitions
+    ADD CONSTRAINT fk_rails_248d27a3f5 FOREIGN KEY (harvest_attempt_entity_link_id) REFERENCES public.harvest_attempt_entity_links(id) ON DELETE CASCADE;
+
+
+--
 -- Name: layouts_hero_instances fk_rails_269b9f8e18; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -13171,6 +13407,14 @@ ALTER TABLE ONLY public.access_grants
 
 ALTER TABLE ONLY public.community_memberships
     ADD CONSTRAINT fk_rails_2acbed9229 FOREIGN KEY (user_id) REFERENCES public.users(id) ON DELETE CASCADE;
+
+
+--
+-- Name: harvest_attempt_entity_links fk_rails_2bc66ea3bd; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.harvest_attempt_entity_links
+    ADD CONSTRAINT fk_rails_2bc66ea3bd FOREIGN KEY (harvest_entity_id) REFERENCES public.harvest_entities(id) ON DELETE CASCADE;
 
 
 --
@@ -13755,6 +13999,14 @@ ALTER TABLE ONLY public.entity_derived_layout_definitions
 
 ALTER TABLE ONLY public.communities
     ADD CONSTRAINT fk_rails_840d8c73d5 FOREIGN KEY (schema_definition_id) REFERENCES public.schema_definitions(id) ON DELETE RESTRICT;
+
+
+--
+-- Name: harvest_attempt_entity_links fk_rails_8a7bd3f12f; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.harvest_attempt_entity_links
+    ADD CONSTRAINT fk_rails_8a7bd3f12f FOREIGN KEY (harvest_record_id) REFERENCES public.harvest_records(id) ON DELETE CASCADE;
 
 
 --
@@ -14390,6 +14642,14 @@ ALTER TABLE ONLY public.templates_page_list_instances
 
 
 --
+-- Name: harvest_attempt_entity_links fk_rails_fab3db3c84; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.harvest_attempt_entity_links
+    ADD CONSTRAINT fk_rails_fab3db3c84 FOREIGN KEY (harvest_attempt_id) REFERENCES public.harvest_attempts(id) ON DELETE CASCADE;
+
+
+--
 -- Name: initial_ordering_selections fk_rails_fb3fc2b564; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -14436,6 +14696,11 @@ ALTER TABLE ONLY public.templates_ordering_instances
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20250808225252'),
+('20250808225236'),
+('20250808170318'),
+('20250808170302'),
+('20250808162608'),
 ('20250807202326'),
 ('20250806224428'),
 ('20250730184809'),

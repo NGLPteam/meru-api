@@ -161,9 +161,7 @@ module Harvesting
         # :nocov:
         return if harvest_attempt.blank?
 
-        tuple = { harvest_attempt_id: harvest_attempt.id, harvest_record_id: record.id }
-
-        HarvestAttemptRecordLink.upsert(tuple, unique_by: %i[harvest_attempt_id harvest_record_id])
+        harvest_attempt.connect_record!(record)
         # :nocov:
       end
 

@@ -22,7 +22,7 @@ module Harvesting
         )
       end
 
-      # @see Harvesting::Records::ExtractRecordsJob
+      # @see Harvesting::ExtractRecordsJob
       # @param [HarvestAttempt] harvest_attempt
       # @return [void]
       def each_iteration(harvest_attempt)
