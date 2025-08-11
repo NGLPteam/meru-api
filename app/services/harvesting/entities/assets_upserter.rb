@@ -10,12 +10,12 @@ module Harvesting
     # and so asset failures do not preclude entities being visible.
     # @see Harvesting::Entities::UpsertAssets
     class AssetsUpserter < Support::HookBased::Actor
+      include Harvesting::Attempts::EntityLinks::Loading
+      include Harvesting::Middleware::ProvidesHarvestData
+      include Harvesting::WithLogger
       include Dry::Initializer[undefined: false].define -> do
         param :harvest_entity, Harvesting::Types::Entity
       end
-
-      include Harvesting::Middleware::ProvidesHarvestData
-      include Harvesting::WithLogger
 
       # Harvest error codes that are cleared by this operation.
       CLEARABLE_CODES = %i[
@@ -30,7 +30,7 @@ module Harvesting
 
       delegate :harvest_record, :has_assets?, :has_entity?, to: :harvest_entity
 
-      delegate :harvest_configuration, to: :harvest_record
+      delegate :harvest_configuration, :harvest_source, to: :harvest_record
 
       delegate :harvest_attempt, to: :harvest_configuration, allow_nil: true
 
@@ -42,11 +42,16 @@ module Harvesting
 
       around_execute :provide_harvest_attempt!
 
+      around_execute :provide_harvest_source!
+
       # @return [HierarchicalEntity]
       attr_reader :entity
 
       # @return [Harvesting::Assets::Mapping]
       attr_reader :extracted_assets
+
+      # @return [HarvestAttemptEntityLink]
+      attr_reader :link
 
       # @return [{ String => Asset, <Asset> }]
       attr_reader :asset_properties
@@ -56,10 +61,10 @@ module Harvesting
         run_callbacks :execute do
           yield prepare!
 
-          yield upsert_all_assets!
-
-          yield write_asset_properties!
+          yield perform_upsert!
         end
+
+        link.try(:transition_to, "assets_fetched")
 
         Success()
       end
@@ -70,6 +75,8 @@ module Harvesting
         @asset_properties = {}
 
         @entity = harvest_entity.entity
+
+        @link = load_harvest_attempt_entity_link
 
         @extracted_assets = harvest_entity.extracted_assets
 
@@ -82,17 +89,27 @@ module Harvesting
         super
       end
 
+      wrapped_hook! def perform_upsert
+        yield upsert_all_assets!
+
+        yield write_asset_properties!
+
+        super
+      end
+
+      around_perform_upsert :track_assets_duration!
+
       wrapped_hook! def upsert_all_assets
+        # :nocov:
         return super unless has_entity? && has_assets?
+        # :nocov:
 
         upsert_and_attach!.or do |reason|
           harvest_entity.log_harvest_error!(*harvest_entity.to_failed_upsert(reason, code: :failed_asset_upsert))
         end
       rescue Harvesting::Error => e
         # :nocov:
-        logger.error e.message
-
-        harvest_entity.log_harvest_error! :could_not_upsert_assets, e.message, exception_klass: e.class.name, backtrace: e.backtrace
+        logger.fatal "Could not upsert assets: #{e.message}", tags: %i[could_not_upsert_assets], exception_klass: e.class.name, backtrace: e.backtrace
 
         super
         # :nocov:
@@ -113,6 +130,19 @@ module Harvesting
       end
 
       private
+
+      # @return [void]
+      def track_assets_duration!
+        assets_duration = AbsoluteTime.realtime do
+          yield
+        end
+
+        # :nocov:
+        return unless link.present?
+        # :nocov:
+
+        link.update_columns(assets_duration:)
+      end
 
       # @return [Dry::Monads::Success(void)]
       def upsert_and_attach!

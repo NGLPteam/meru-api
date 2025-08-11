@@ -72,6 +72,18 @@ module Types
       TEXT
     end
 
+    field :entity_status, ::Types::HarvestAttemptEntityStatusType, null: true do
+      description <<~TEXT
+      A progress report for entity data during a harvest attempt.
+      TEXT
+    end
+
+    field :record_status, ::Types::HarvestAttemptRecordStatusType, null: true do
+      description <<~TEXT
+      A progress report for record data during a harvest attempt.
+      TEXT
+    end
+
     field :mode, ::Types::HarvestScheduleModeType, null: false do
       description <<~TEXT
       Whether this attempt is `MANUAL` or `SCHEDULED`. This field is not set
@@ -93,6 +105,8 @@ module Types
     load_association! :harvest_set
     load_association! :harvest_source
     load_association! :target_entity
+    load_association! :harvest_attempt_entity_status, as: :entity_status
+    load_association! :harvest_attempt_record_status, as: :record_status
 
     load_current_state!
   end

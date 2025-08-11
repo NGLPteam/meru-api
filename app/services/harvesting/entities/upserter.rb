@@ -3,14 +3,17 @@
 module Harvesting
   module Entities
     # @see Harvesting::Entities::Upsert
+    # @see Harvesting::Entities::UpsertJob
     class Upserter < Support::HookBased::Actor
-      include Dry::Initializer[undefined: false].define -> do
-        param :harvest_entity, Harvesting::Types::Entity
-      end
-
-      include Dry::Matcher.for(:patch_properties, with: Dry::Matcher::ResultMatcher)
+      include Harvesting::Attempts::EntityLinks::Loading
       include Harvesting::Middleware::ProvidesHarvestData
       include Harvesting::WithLogger
+      include Dry::Initializer[undefined: false].define -> do
+        param :harvest_entity, Harvesting::Types::Entity
+
+        option :inline, Harvesting::Types::Bool, default: proc { false }
+      end
+
       include MeruAPI::Deps[
         attach_contribution: "harvesting.contributions.attach",
         connect_link: "links.connect",
@@ -19,31 +22,40 @@ module Harvesting
 
       delegate :has_existing_parent?, :existing_parent, to: :harvest_entity
 
+      # @return [ChildEntity]
+      attr_reader :actual_entity
+
       # @return [String]
       attr_reader :advisory_key
 
-      # @return [ChildEntity]
-      attr_reader :current_entity
+      # @return [Boolean]
+      attr_reader :cancelled
 
-      # @return [HarvestEntity]
-      attr_reader :current_harvest_entity
+      alias cancelled? cancelled
+
+      # @return [Boolean]
+      attr_reader :has_children
+
+      alias has_children? has_children
+
+      # @return [HarvestAttemptEntityLink]
+      attr_reader :link
+
+      # @return [Boolean]
+      attr_reader :modified
+
+      alias modified? modified
 
       # @return [HarvestTarget, nil]
-      attr_reader :default_target_entity
+      attr_reader :parent
 
-      # @return [HarvestConfiguration, nil]
-      attr_reader :harvest_configuration
+      delegate :harvest_record, :has_assets?, :root?, to: :harvest_entity
 
-      # @return [HarvestRecord]
-      attr_reader :harvest_record
-
-      # @return [HarvestTarget, nil]
-      attr_reader :root_parent
-
-      # @return [<HarvestEntity>]
-      attr_reader :with_assets
+      delegate :harvest_configuration, :harvest_source, to: :harvest_record
 
       delegate :harvest_attempt, to: :harvest_configuration, allow_nil: true
+
+      delegate :cancelled?, to: :harvest_attempt, prefix: true, allow_nil: true
 
       standard_execution!
 
@@ -57,15 +69,19 @@ module Harvesting
 
       around_execute :provide_harvest_attempt!
 
-      # @return [Dry::Monads::Result]
+      around_execute :provide_harvest_source!
+
+      # @return [Dry::Monads::Success(void)]
       def call
         run_callbacks :execute do
           yield prepare!
 
-          yield upsert_root!
+          yield check!
 
-          yield enqueue_assets_jobs!
+          yield perform_upsert!
         end
+
+        link.try(:transition_to, "upserted")
 
         Success()
       end
@@ -73,140 +89,170 @@ module Harvesting
       wrapped_hook! def prepare
         harvest_entity.clear_harvest_errors!
 
-        @harvest_record = harvest_entity.harvest_record
+        @actual_entity = nil
 
-        @harvest_configuration = harvest_record.harvest_configuration
+        @cancelled = false
 
-        # Harvest configurations can be nil during the migration period
-        @default_target_entity = harvest_configuration.try(:target_entity)
+        @parent = find_parent
 
-        @root_parent = has_existing_parent? ? existing_parent : default_target_entity
+        @has_children = harvest_entity.children.exists?
 
-        @with_assets = []
+        @link = load_harvest_attempt_entity_link
 
-        @current_entity = nil
-
-        @current_harvest_entity = harvest_entity
+        @modified = false
 
         @advisory_key = harvest_entity.identifier
 
         super
       end
 
-      wrapped_hook! def upsert_root
+      wrapped_hook! def check
         # :nocov:
-        if @root_parent.nil?
+        if @parent.nil?
           logger.fatal "Could not derive root parent (missing harvest configuration?)."
 
-          return super
-        end
-
-        unless harvest_entity.root?
-          logger.fatal "Must be a root harvest entity"
-
-          return super
+          @cancelled = true
         end
         # :nocov:
 
-        attach! harvest_entity, parent: root_parent
-      rescue Harvesting::Error => e
-        logger.error e.message
+        if harvest_attempt_cancelled?
+          logger.debug "Harvest attempt has been cancelled, skipping."
 
-        harvest_entity.log_harvest_error! :entity_upsert_failure, e.message, exception_klass: e.class.name, backtrace: e.backtrace
+          @cancelled = true
+        end
+
+        super
+      end
+
+      # A wrapper step
+      wrapped_hook! def perform_upsert
+        # :nocov:
+        return super if cancelled?
+        # :nocov:
+
+        @advisory_key = [parent.identifier, harvest_entity.identifier].join(?:)
+
+        yield upsert_entity!
+
+        yield maybe_enqueue_children!
+
+        yield maybe_enqueue_assets!
+      rescue Harvesting::Error => e
+        logger.fatal e.message, tags: %i[entity_upsert_failure], exception_klass: e.class.name, backtrace: e.backtrace
 
         Success nil
       else
         Success nil
       end
 
-      wrapped_hook! def enqueue_assets_jobs
-        with_assets.each do |asset_entity|
-          Harvesting::Entities::UpsertAssetsJob.set(wait: 10.seconds).perform_later asset_entity
+      wrapped_hook! def upsert_entity
+        @actual_entity = find_actual_entity!
+
+        maybe_apply_data!
+
+        finalize_connection!
+
+        yield attach_contributions!
+
+        yield upsert_links!
+
+        super
+      end
+
+      around_upsert_entity :acquire_entity_lock!
+      around_upsert_entity :track_upsert_duration!
+
+      wrapped_hook! def attach_contributions
+        harvest_entity.harvest_contributions.find_each do |harvest_contribution|
+          yield attach_contribution.call(harvest_contribution, actual_entity)
         end
+
+        super
+      end
+
+      wrapped_hook! def upsert_links
+        harvest_entity.extracted_links.incoming_collections.each do |source|
+          collection = existing_collection_from! source.identifier
+
+          yield connect_link.call(collection, actual_entity, source.operator)
+        end
+
+        super
+      end
+
+      wrapped_hook! def maybe_enqueue_children
+        # :nocov:
+        return super unless has_children?
+        # :nocov:
+
+        harvest_entity.children.find_each do |child|
+          if inline
+            yield child.upsert(inline:)
+          else
+            Harvesting::Entities::UpsertJob.perform_later child
+          end
+        end
+
+        super
+      end
+
+      wrapped_hook! def maybe_enqueue_assets
+        # :nocov:
+        return super unless has_assets?
+        # :nocov:
+
+        Harvesting::Entities::UpsertAssetsJob.set(wait: 10.seconds).perform_later harvest_entity
 
         super
       end
 
       private
 
-      # @param [HarvestEntity] harvest_entity
-      # @param [HierarchicalEntity] parent
-      # @return [Dry::Monads::Success(void)]
-      do_for! def attach!(harvest_entity, parent:)
-        @current_harvest_entity = harvest_entity
-
-        # @note Temporarily disabled while troubleshooting job lockup issues
-        @advisory_key = [parent.identifier, harvest_entity.identifier].join(?:)
-
-        with_harvest_entity current_harvest_entity do
-          # ApplicationRecord.with_advisory_lock advisory_key do
-          entity = yield find_current_entity_for!(harvest_entity, parent:)
-
-          maybe_apply_data!
-          # end
-
-          finalize_connection!
-
-          yield attach_contributions!(harvest_entity, entity:)
-
-          yield attach_children!(harvest_entity, parent: entity)
-
-          yield upsert_links! harvest_entity, harvest_entity.entity
+      # @return [void]
+      def acquire_entity_lock!
+        harvest_entity.with_lock do
+          ApplicationRecord.with_advisory_lock!(advisory_key, disable_query_cache: true, transaction: true, timeout_seconds: 60) do
+            yield
+          end
         end
-
-        Success nil
       end
 
-      # Descend 1 level and attach the current `harvest_entity`'s children
-      # as children of the recently-created `entity`.
-      #
-      # @param [HarvestEntity] harvest_entity
-      # @param [HierarchicalEntity] parent
-      # @return [Dry::Monads::Success(void)]
-      do_for! def attach_children!(harvest_entity, parent:)
-        harvest_entity.children.find_each do |child|
-          logger.trace "attaching child (#{child.identifier}) to #{parent.identifier}"
-
-          yield attach!(child, parent:)
-        ensure
-          # Re-assign the current entity back after each attached child
-          @current_entity = parent
-        end
-
-        Success()
-      end
-
-      # @param [HarvestEntity] harvest_entity
-      # @param [HierarchicalEntity] entity
-      # @return [Dry::Monads::Success(void)]
-      do_for! def attach_contributions!(harvest_entity, entity:)
-        harvest_entity.harvest_contributions.find_each do |harvest_contribution|
-          yield attach_contribution.call(harvest_contribution, entity)
-        end
-
-        Success()
+      # @param [String, nil] identifier
+      # @return [Collection, nil]
+      def existing_collection_from!(identifier)
+        find_existing_collection.(identifier)
+      rescue ActiveRecord::RecordNotFound
+        raise Harvesting::Metadata::Error, "Unknown existing collection: #{identifier}"
+      rescue LimitToOne::TooManyMatches
+        raise Harvesting::Metadata::Error, "Tried to link non-global identifier: #{identifier}"
       end
 
       # @return [void]
       def finalize_connection!
         # :nocov:
-        return unless current_entity.try(:persisted?)
+        return unless actual_entity.try(:persisted?)
         # :nocov:
 
-        current_harvest_entity.entity = current_entity
+        harvest_entity.entity = actual_entity
 
-        current_harvest_entity.save!(validate: false)
+        harvest_entity.save!(validate: false)
       end
 
       # @param [HarvestEntity] harvest_entity
-      # @param [HierarchicalEntity] parent
-      # @return [Dry::Monads::Success(HierarchicalEntity)]
-      def find_current_entity_for!(harvest_entity, parent:)
-        entity = parent.find_or_initialize_harvested_child_for(harvest_entity)
+      # @return [ChildEntity]
+      def find_actual_entity!
+        parent.find_or_initialize_harvested_child_for(harvest_entity)
+      end
 
-        @current_entity = entity
+      # @return [HarvestTarget]
+      def find_parent
+        if root?
+          default_target_entity = harvest_configuration.try(:target_entity)
 
-        Success entity
+          has_existing_parent? ? existing_parent : default_target_entity
+        else
+          harvest_entity.parent.entity
+        end
       end
 
       # @param [HasHarvestModificationStatus] entity
@@ -216,23 +262,23 @@ module Harvesting
 
       # @return [void]
       def maybe_apply_data!
-        return unless modifiable?(current_entity)
+        return unless modifiable?(actual_entity)
 
-        current_entity.harvest_modification_status = "pristine"
+        @modified = true
 
-        current_entity.schema_version = current_harvest_entity.schema_version
+        actual_entity.harvest_modification_status = "pristine"
 
-        current_entity.assign_attributes current_harvest_entity.attributes_to_assign
+        actual_entity.schema_version = harvest_entity.schema_version
+
+        actual_entity.assign_attributes harvest_entity.attributes_to_assign
 
         # Saving the entity should work at this point, and we need it to be persisted now.
-        current_entity.save!
+        actual_entity.save!
 
-        patch_properties do |m|
+        actual_entity.patch_properties(harvest_entity.extracted_properties) do |m|
           m.success do
             # Re-save to reload after applying all properties.
-            current_entity.save!
-
-            with_assets << current_harvest_entity if current_harvest_entity.has_assets?
+            actual_entity.save!
           end
 
           m.failure(:invalid_values) do |_, result|
@@ -265,20 +311,6 @@ module Harvesting
         logger.error "failed to write `entity#{human_path}`: #{error.text}", tags: ["invalid_property", human_path], path: error.path
       end
 
-      def patch_properties
-        current_entity.patch_properties(current_harvest_entity.extracted_properties)
-      end
-
-      # @param [String, nil] identifier
-      # @return [Collection, nil]
-      def existing_collection_from!(identifier)
-        find_existing_collection.(identifier)
-      rescue ActiveRecord::RecordNotFound
-        raise Harvesting::Metadata::Error, "Unknown existing collection: #{identifier}"
-      rescue LimitToOne::TooManyMatches
-        raise Harvesting::Metadata::Error, "Tried to link non-global identifier: #{identifier}"
-      end
-
       # @return [void]
       def refresh_orderings_asynchronously!
         Schemas::Orderings.with_asynchronous_refresh do
@@ -286,17 +318,17 @@ module Harvesting
         end
       end
 
-      # @param [HarvestEntity] harvest_entity
-      # @param [ChildEntity] entity
-      # @return [Dry::Monads::Success(void)]
-      do_for! def upsert_links!(harvest_entity, entity)
-        harvest_entity.extracted_links.incoming_collections.each do |source|
-          collection = existing_collection_from! source.identifier
-
-          yield connect_link.call(collection, entity, source.operator)
+      # @return [void]
+      def track_upsert_duration!
+        upsert_duration = AbsoluteTime.realtime do
+          yield
         end
 
-        Success()
+        # :nocov:
+        return unless link.present? && modified?
+        # :nocov:
+
+        link.update_columns(upsert_duration:)
       end
     end
   end

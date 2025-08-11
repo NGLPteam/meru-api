@@ -3,7 +3,7 @@
 module Harvesting
   module Assets
     class ExtractedSource
-      include Shared::EnhancedStoreModel
+      include Support::EnhancedStoreModel
 
       attribute :identifier, :string
       attribute :url, :string

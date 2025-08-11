@@ -4,6 +4,7 @@ module Harvesting
   module Records
     # @see Harvesting::Records::ExtractEntities
     class EntitiesExtractor < Support::HookBased::Actor
+      include Harvesting::Attempts::RecordLinks::Loading
       include Harvesting::Middleware::ProvidesHarvestData
       include Harvesting::WithLogger
       include Dry::Effects::Handler.Interrupt(:skip_record, as: :catch_record_skip)
@@ -19,8 +20,9 @@ module Harvesting
         upsert_contribution_proxies: "harvesting.metadata.upsert_contribution_proxies",
       ]
 
-      delegate :harvest_mapping, :harvest_attempt, to: :harvest_configuration
-      delegate :harvest_source, to: :harvest_record
+      delegate :harvest_configuration, :harvest_source, to: :harvest_record
+
+      delegate :harvest_mapping, :harvest_attempt, to: :harvest_configuration, allow_nil: true
 
       standard_execution!
 
@@ -39,8 +41,8 @@ module Harvesting
       # @return [Harvesting::Extraction::Context]
       attr_reader :extraction_context
 
-      # @param [HarvestConfiguration] harvest_configuration
-      attr_reader :harvest_configuration
+      # @return [HarvestAttemptRecordLink]
+      attr_reader :link
 
       # @return [Harvesting::Metadata::Context]
       attr_reader :metadata_context
@@ -79,6 +81,8 @@ module Harvesting
           yield update_entity_count!
         end
 
+        link.try(:transition_to, "extracted")
+
         harvest_record.reload
 
         Success harvest_record
@@ -86,6 +90,8 @@ module Harvesting
 
       wrapped_hook! def prepare
         @metadata_context = harvest_record.build_metadata_context
+
+        @link = load_harvest_attempt_record_link
 
         @render_context = harvest_record.build_render_context(metadata_context:, extraction_context:)
 
@@ -112,7 +118,7 @@ module Harvesting
           yield upsert_struct root_struct
         end
       rescue Harvesting::Error => e
-        harvest_record.log_harvest_error! :entity_extraction_failure, e.message, exception_klass: e.class.name, backtrace: e.backtrace
+        logger.fatal e.message, tag: %i[entity_extraction_failure], exception_klass: e.class.name, backtrace: e.backtrace
 
         skip!(e.message, code: :extraction_exception)
       else
@@ -143,11 +149,22 @@ module Harvesting
         super
       end
 
-      around_extract :watch_extraction!
+      around_execute :watch_extraction!
       around_extract :watch_contributions!
       around_extract :watch_contributors!
+      around_extract :track_extraction_duration!
 
       private
+
+      # @param [HarvestEntity] harvest_entity
+      # @return [void]
+      def connect_attempt!(harvest_entity)
+        # :nocov:
+        return if harvest_attempt.blank?
+        # :nocov:
+
+        harvest_attempt.connect_entity! harvest_entity
+      end
 
       # @param [Harvesting::Entities::Struct] entity_struct
       # @param [HarvestEntity] parent
@@ -170,6 +187,8 @@ module Harvesting
         entity_struct.assign_to! entity
 
         entity.save!
+
+        connect_attempt! entity
 
         extracted_entity_ids << entity.id
 
@@ -260,9 +279,9 @@ module Harvesting
 
       # @return [Dry::Monads::Success(void)]
       def set_up!
+        # :nocov:
         return Failure[:missing_harvest_configuration] if harvest_record.harvest_configuration.blank?
-
-        @harvest_configuration = harvest_record.harvest_configuration
+        # :nocov:
 
         @extraction_context = harvest_configuration.build_extraction_context
 
@@ -295,6 +314,19 @@ module Harvesting
         skipped = Harvesting::Records::Skipped.because reason, **options
 
         skip_record skipped
+      end
+
+      # @return [void]
+      def track_extraction_duration!
+        extraction_duration = AbsoluteTime.realtime do
+          yield
+        end
+
+        # :nocov:
+        return unless link.present?
+        # :nocov:
+
+        link.update_columns(extraction_duration:)
       end
 
       # @param [Harvesting::Records::Skipped] skipped

@@ -48,8 +48,10 @@ module WritesNamedVariableDates
 
     base = named_variable_dates.scope_for_create
 
-    attributes = named_variable_date_cache.each_pair.map do |name, actual|
+    attributes = named_variable_date_cache.each_pair.map do |name, raw|
       path = named_variable_date_global_path_for name
+
+      actual = ::VariablePrecisionDate.parse(raw).to_sql
 
       base.merge(path:, actual:)
     end

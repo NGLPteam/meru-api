@@ -7304,6 +7304,458 @@
   default_function:
   has_default: false
   virtual: false
+- id: HarvestAttemptEntityLink#id
+  model_name: HarvestAttemptEntityLink
+  table_name: harvest_attempt_entity_links
+  name: id
+  type: uuid
+  'null': false
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default:
+  default_function: gen_random_uuid()
+  has_default: true
+  virtual: false
+- id: HarvestAttemptEntityLink#harvest_attempt_id
+  model_name: HarvestAttemptEntityLink
+  table_name: harvest_attempt_entity_links
+  name: harvest_attempt_id
+  type: uuid
+  'null': false
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: HarvestAttemptEntityLink#harvest_entity_id
+  model_name: HarvestAttemptEntityLink
+  table_name: harvest_attempt_entity_links
+  name: harvest_entity_id
+  type: uuid
+  'null': false
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: HarvestAttemptEntityLink#harvest_record_id
+  model_name: HarvestAttemptEntityLink
+  table_name: harvest_attempt_entity_links
+  name: harvest_record_id
+  type: uuid
+  'null': false
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: HarvestAttemptEntityLink#assets
+  model_name: HarvestAttemptEntityLink
+  table_name: harvest_attempt_entity_links
+  name: assets
+  type: boolean
+  'null': false
+  sql_type_metadata:
+    sql_type: boolean
+    type: boolean
+  default: 'false'
+  default_function:
+  has_default: true
+  virtual: false
+- id: HarvestAttemptEntityLink#upsert_duration
+  model_name: HarvestAttemptEntityLink
+  table_name: harvest_attempt_entity_links
+  name: upsert_duration
+  type: decimal
+  'null': false
+  sql_type_metadata:
+    sql_type: numeric
+    type: decimal
+  default: '0.0'
+  default_function:
+  has_default: true
+  virtual: false
+- id: HarvestAttemptEntityLink#assets_duration
+  model_name: HarvestAttemptEntityLink
+  table_name: harvest_attempt_entity_links
+  name: assets_duration
+  type: decimal
+  'null': false
+  sql_type_metadata:
+    sql_type: numeric
+    type: decimal
+  default: '0.0'
+  default_function:
+  has_default: true
+  virtual: false
+- id: HarvestAttemptEntityLink#created_at
+  model_name: HarvestAttemptEntityLink
+  table_name: harvest_attempt_entity_links
+  name: created_at
+  type: datetime
+  'null': false
+  sql_type_metadata:
+    sql_type: timestamp(6) without time zone
+    type: datetime
+    precision: 6
+  default:
+  default_function: CURRENT_TIMESTAMP
+  has_default: true
+  virtual: false
+- id: HarvestAttemptEntityLink#updated_at
+  model_name: HarvestAttemptEntityLink
+  table_name: harvest_attempt_entity_links
+  name: updated_at
+  type: datetime
+  'null': false
+  sql_type_metadata:
+    sql_type: timestamp(6) without time zone
+    type: datetime
+    precision: 6
+  default:
+  default_function: CURRENT_TIMESTAMP
+  has_default: true
+  virtual: false
+- id: HarvestAttemptEntityLinkTransition#id
+  model_name: HarvestAttemptEntityLinkTransition
+  table_name: harvest_attempt_entity_link_transitions
+  name: id
+  type: uuid
+  'null': false
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default:
+  default_function: gen_random_uuid()
+  has_default: true
+  virtual: false
+- id: HarvestAttemptEntityLinkTransition#harvest_attempt_entity_link_id
+  model_name: HarvestAttemptEntityLinkTransition
+  table_name: harvest_attempt_entity_link_transitions
+  name: harvest_attempt_entity_link_id
+  type: uuid
+  'null': false
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: HarvestAttemptEntityLinkTransition#most_recent
+  model_name: HarvestAttemptEntityLinkTransition
+  table_name: harvest_attempt_entity_link_transitions
+  name: most_recent
+  type: boolean
+  'null': false
+  sql_type_metadata:
+    sql_type: boolean
+    type: boolean
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: HarvestAttemptEntityLinkTransition#sort_key
+  model_name: HarvestAttemptEntityLinkTransition
+  table_name: harvest_attempt_entity_link_transitions
+  name: sort_key
+  type: integer
+  'null': false
+  sql_type_metadata:
+    sql_type: integer
+    type: integer
+    limit: 4
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: HarvestAttemptEntityLinkTransition#to_state
+  model_name: HarvestAttemptEntityLinkTransition
+  table_name: harvest_attempt_entity_link_transitions
+  name: to_state
+  type: string
+  'null': false
+  sql_type_metadata:
+    sql_type: character varying
+    type: string
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: HarvestAttemptEntityLinkTransition#metadata
+  model_name: HarvestAttemptEntityLinkTransition
+  table_name: harvest_attempt_entity_link_transitions
+  name: metadata
+  type: jsonb
+  'null': true
+  sql_type_metadata:
+    sql_type: jsonb
+    type: jsonb
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: HarvestAttemptEntityLinkTransition#created_at
+  model_name: HarvestAttemptEntityLinkTransition
+  table_name: harvest_attempt_entity_link_transitions
+  name: created_at
+  type: datetime
+  'null': false
+  sql_type_metadata:
+    sql_type: timestamp(6) without time zone
+    type: datetime
+    precision: 6
+  default:
+  default_function: CURRENT_TIMESTAMP
+  has_default: true
+  virtual: false
+- id: HarvestAttemptEntityLinkTransition#updated_at
+  model_name: HarvestAttemptEntityLinkTransition
+  table_name: harvest_attempt_entity_link_transitions
+  name: updated_at
+  type: datetime
+  'null': false
+  sql_type_metadata:
+    sql_type: timestamp(6) without time zone
+    type: datetime
+    precision: 6
+  default:
+  default_function: CURRENT_TIMESTAMP
+  has_default: true
+  virtual: false
+- id: HarvestAttemptEntityStatus#harvest_attempt_id
+  model_name: HarvestAttemptEntityStatus
+  table_name: harvest_attempt_entity_statuses
+  name: harvest_attempt_id
+  type: uuid
+  'null': true
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: HarvestAttemptEntityStatus#total_entities
+  model_name: HarvestAttemptEntityStatus
+  table_name: harvest_attempt_entity_statuses
+  name: total_entities
+  type: integer
+  'null': true
+  sql_type_metadata:
+    sql_type: bigint
+    type: integer
+    limit: 8
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: HarvestAttemptEntityStatus#total_entities_with_assets
+  model_name: HarvestAttemptEntityStatus
+  table_name: harvest_attempt_entity_statuses
+  name: total_entities_with_assets
+  type: integer
+  'null': true
+  sql_type_metadata:
+    sql_type: bigint
+    type: integer
+    limit: 8
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: HarvestAttemptEntityStatus#total_entities_waiting_for_upsert
+  model_name: HarvestAttemptEntityStatus
+  table_name: harvest_attempt_entity_statuses
+  name: total_entities_waiting_for_upsert
+  type: integer
+  'null': true
+  sql_type_metadata:
+    sql_type: bigint
+    type: integer
+    limit: 8
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: HarvestAttemptEntityStatus#total_entities_waiting_for_assets
+  model_name: HarvestAttemptEntityStatus
+  table_name: harvest_attempt_entity_statuses
+  name: total_entities_waiting_for_assets
+  type: integer
+  'null': true
+  sql_type_metadata:
+    sql_type: bigint
+    type: integer
+    limit: 8
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: HarvestAttemptEntityStatus#total_entities_success
+  model_name: HarvestAttemptEntityStatus
+  table_name: harvest_attempt_entity_statuses
+  name: total_entities_success
+  type: integer
+  'null': true
+  sql_type_metadata:
+    sql_type: bigint
+    type: integer
+    limit: 8
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: HarvestAttemptEntityStatus#upsert_stats
+  model_name: HarvestAttemptEntityStatus
+  table_name: harvest_attempt_entity_statuses
+  name: upsert_stats
+  type: jsonb
+  'null': true
+  sql_type_metadata:
+    sql_type: jsonb
+    type: jsonb
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: HarvestAttemptEntityStatus#assets_stats
+  model_name: HarvestAttemptEntityStatus
+  table_name: harvest_attempt_entity_statuses
+  name: assets_stats
+  type: jsonb
+  'null': true
+  sql_type_metadata:
+    sql_type: jsonb
+    type: jsonb
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: HarvestAttemptEntityStatus#upsert_duration_average
+  model_name: HarvestAttemptEntityStatus
+  table_name: harvest_attempt_entity_statuses
+  name: upsert_duration_average
+  type: decimal
+  'null': true
+  sql_type_metadata:
+    sql_type: numeric
+    type: decimal
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: HarvestAttemptEntityStatus#upsert_duration_stddev
+  model_name: HarvestAttemptEntityStatus
+  table_name: harvest_attempt_entity_statuses
+  name: upsert_duration_stddev
+  type: decimal
+  'null': true
+  sql_type_metadata:
+    sql_type: numeric
+    type: decimal
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: HarvestAttemptEntityStatus#assets_duration_average
+  model_name: HarvestAttemptEntityStatus
+  table_name: harvest_attempt_entity_statuses
+  name: assets_duration_average
+  type: decimal
+  'null': true
+  sql_type_metadata:
+    sql_type: numeric
+    type: decimal
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: HarvestAttemptEntityStatus#assets_duration_stddev
+  model_name: HarvestAttemptEntityStatus
+  table_name: harvest_attempt_entity_statuses
+  name: assets_duration_stddev
+  type: decimal
+  'null': true
+  sql_type_metadata:
+    sql_type: numeric
+    type: decimal
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: HarvestAttemptEntityStatus#upsert_estimate
+  model_name: HarvestAttemptEntityStatus
+  table_name: harvest_attempt_entity_statuses
+  name: upsert_estimate
+  type: interval
+  'null': true
+  sql_type_metadata:
+    sql_type: interval
+    type: interval
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: HarvestAttemptEntityStatus#assets_estimate
+  model_name: HarvestAttemptEntityStatus
+  table_name: harvest_attempt_entity_statuses
+  name: assets_estimate
+  type: interval
+  'null': true
+  sql_type_metadata:
+    sql_type: interval
+    type: interval
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: HarvestAttemptEntityStatus#upsert_eta
+  model_name: HarvestAttemptEntityStatus
+  table_name: harvest_attempt_entity_statuses
+  name: upsert_eta
+  type: timestamptz
+  'null': true
+  sql_type_metadata:
+    sql_type: timestamp with time zone
+    type: timestamptz
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: HarvestAttemptEntityStatus#assets_eta
+  model_name: HarvestAttemptEntityStatus
+  table_name: harvest_attempt_entity_statuses
+  name: assets_eta
+  type: timestamptz
+  'null': true
+  sql_type_metadata:
+    sql_type: timestamp with time zone
+    type: timestamptz
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: HarvestAttemptEntityStatus#completion
+  model_name: HarvestAttemptEntityStatus
+  table_name: harvest_attempt_entity_statuses
+  name: completion
+  type: decimal
+  'null': true
+  sql_type_metadata:
+    sql_type: numeric
+    type: decimal
+  default:
+  default_function:
+  has_default: false
+  virtual: false
 - id: HarvestAttemptRecordLink#id
   model_name: HarvestAttemptRecordLink
   table_name: harvest_attempt_record_links
@@ -7370,6 +7822,247 @@
   default:
   default_function: CURRENT_TIMESTAMP
   has_default: true
+  virtual: false
+- id: HarvestAttemptRecordLink#extraction_duration
+  model_name: HarvestAttemptRecordLink
+  table_name: harvest_attempt_record_links
+  name: extraction_duration
+  type: decimal
+  'null': false
+  sql_type_metadata:
+    sql_type: numeric
+    type: decimal
+  default: '0.0'
+  default_function:
+  has_default: true
+  virtual: false
+- id: HarvestAttemptRecordLinkTransition#id
+  model_name: HarvestAttemptRecordLinkTransition
+  table_name: harvest_attempt_record_link_transitions
+  name: id
+  type: uuid
+  'null': false
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default:
+  default_function: gen_random_uuid()
+  has_default: true
+  virtual: false
+- id: HarvestAttemptRecordLinkTransition#harvest_attempt_record_link_id
+  model_name: HarvestAttemptRecordLinkTransition
+  table_name: harvest_attempt_record_link_transitions
+  name: harvest_attempt_record_link_id
+  type: uuid
+  'null': false
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: HarvestAttemptRecordLinkTransition#most_recent
+  model_name: HarvestAttemptRecordLinkTransition
+  table_name: harvest_attempt_record_link_transitions
+  name: most_recent
+  type: boolean
+  'null': false
+  sql_type_metadata:
+    sql_type: boolean
+    type: boolean
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: HarvestAttemptRecordLinkTransition#sort_key
+  model_name: HarvestAttemptRecordLinkTransition
+  table_name: harvest_attempt_record_link_transitions
+  name: sort_key
+  type: integer
+  'null': false
+  sql_type_metadata:
+    sql_type: integer
+    type: integer
+    limit: 4
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: HarvestAttemptRecordLinkTransition#to_state
+  model_name: HarvestAttemptRecordLinkTransition
+  table_name: harvest_attempt_record_link_transitions
+  name: to_state
+  type: string
+  'null': false
+  sql_type_metadata:
+    sql_type: character varying
+    type: string
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: HarvestAttemptRecordLinkTransition#metadata
+  model_name: HarvestAttemptRecordLinkTransition
+  table_name: harvest_attempt_record_link_transitions
+  name: metadata
+  type: jsonb
+  'null': true
+  sql_type_metadata:
+    sql_type: jsonb
+    type: jsonb
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: HarvestAttemptRecordLinkTransition#created_at
+  model_name: HarvestAttemptRecordLinkTransition
+  table_name: harvest_attempt_record_link_transitions
+  name: created_at
+  type: datetime
+  'null': false
+  sql_type_metadata:
+    sql_type: timestamp(6) without time zone
+    type: datetime
+    precision: 6
+  default:
+  default_function: CURRENT_TIMESTAMP
+  has_default: true
+  virtual: false
+- id: HarvestAttemptRecordLinkTransition#updated_at
+  model_name: HarvestAttemptRecordLinkTransition
+  table_name: harvest_attempt_record_link_transitions
+  name: updated_at
+  type: datetime
+  'null': false
+  sql_type_metadata:
+    sql_type: timestamp(6) without time zone
+    type: datetime
+    precision: 6
+  default:
+  default_function: CURRENT_TIMESTAMP
+  has_default: true
+  virtual: false
+- id: HarvestAttemptRecordStatus#harvest_attempt_id
+  model_name: HarvestAttemptRecordStatus
+  table_name: harvest_attempt_record_statuses
+  name: harvest_attempt_id
+  type: uuid
+  'null': true
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: HarvestAttemptRecordStatus#total_records
+  model_name: HarvestAttemptRecordStatus
+  table_name: harvest_attempt_record_statuses
+  name: total_records
+  type: integer
+  'null': true
+  sql_type_metadata:
+    sql_type: bigint
+    type: integer
+    limit: 8
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: HarvestAttemptRecordStatus#total_records_waiting_for_extraction
+  model_name: HarvestAttemptRecordStatus
+  table_name: harvest_attempt_record_statuses
+  name: total_records_waiting_for_extraction
+  type: integer
+  'null': true
+  sql_type_metadata:
+    sql_type: bigint
+    type: integer
+    limit: 8
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: HarvestAttemptRecordStatus#total_records_waiting_for_upsert
+  model_name: HarvestAttemptRecordStatus
+  table_name: harvest_attempt_record_statuses
+  name: total_records_waiting_for_upsert
+  type: integer
+  'null': true
+  sql_type_metadata:
+    sql_type: bigint
+    type: integer
+    limit: 8
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: HarvestAttemptRecordStatus#total_records_success
+  model_name: HarvestAttemptRecordStatus
+  table_name: harvest_attempt_record_statuses
+  name: total_records_success
+  type: integer
+  'null': true
+  sql_type_metadata:
+    sql_type: bigint
+    type: integer
+    limit: 8
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: HarvestAttemptRecordStatus#extraction_stats
+  model_name: HarvestAttemptRecordStatus
+  table_name: harvest_attempt_record_statuses
+  name: extraction_stats
+  type: jsonb
+  'null': true
+  sql_type_metadata:
+    sql_type: jsonb
+    type: jsonb
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: HarvestAttemptRecordStatus#extraction_duration_average
+  model_name: HarvestAttemptRecordStatus
+  table_name: harvest_attempt_record_statuses
+  name: extraction_duration_average
+  type: decimal
+  'null': true
+  sql_type_metadata:
+    sql_type: numeric
+    type: decimal
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: HarvestAttemptRecordStatus#extraction_duration_stddev
+  model_name: HarvestAttemptRecordStatus
+  table_name: harvest_attempt_record_statuses
+  name: extraction_duration_stddev
+  type: decimal
+  'null': true
+  sql_type_metadata:
+    sql_type: numeric
+    type: decimal
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: HarvestAttemptRecordStatus#completion
+  model_name: HarvestAttemptRecordStatus
+  table_name: harvest_attempt_record_statuses
+  name: completion
+  type: decimal
+  'null': true
+  sql_type_metadata:
+    sql_type: numeric
+    type: decimal
+  default:
+  default_function:
+  has_default: false
   virtual: false
 - id: HarvestAttemptTransition#id
   model_name: HarvestAttemptTransition
