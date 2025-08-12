@@ -6,30 +6,45 @@
       <show-announcements>false</show-announcements>
       <show-body>false</show-body>
       <show-hero-image>true</show-hero-image>
-      <variant>full</variant>
-      <slots>
-        <header/>
-        <subheader/>
-        <summary/>
-        <body>
-          {% if props.pdf_version.exists %}
-            {% pdfviewer props.pdf_version %}
-          {% else %}
-            {{props.body}}
-          {% endif %}
-        </body>
-      </slots>
-    </detail>
-    <contributor-list>
-      <background>light</background>
-      <filter>authors</filter>
-      <limit>4</limit>
+      <variant>columns</variant>
       <slots>
         <header>
-          Contributors
+          {{ props.label | capitalize }} Metadata
         </header>
+        <items-a>
+          {% if authors.exists %}
+            {% mditem %}
+              {% mdvalue label: "Author" %}
+                {{authors}}
+              {% endmdvalue %}
+            {% endmditem %}
+          {% endif %}
+          {% mditem %}
+            {% mdvalue label: "Keywords" %}
+              {{props.keywords}}
+            {% endmdvalue %}
+          {% endmditem %}
+        </items-a>
+        <items-b>
+          {% if props.pdf_version.exists %}
+            {% mditem %}
+              {% mdvalue label: "PDF Version" %}
+                {% asset props.pdf_version %}
+                  Download
+                {% endasset %}
+              {% endmdvalue %}
+            {% endmditem %}
+          {% endif %}
+          {% if props.online_version.exists %}
+            {% mditem %}
+              {% mdvalue label: "Online Version" %}
+                {{props.online_version}}
+              {% endmdvalue %}
+            {% endmditem %}
+          {% endif %}
+        </items-b>
       </slots>
-    </contributor-list>
+    </detail>
     <blurb>
       <background>light</background>
       <width>full</width>
