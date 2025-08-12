@@ -51,6 +51,11 @@ Rails.application.configure do
       class: "Contributors::AuditContributionCountsJob",
       description: "Ensure contribution counts are up to date",
     },
+    "contributors.refresh_attributions": {
+      cron: "*/10 * * * *",
+      class: "Contributors::RefreshAttributionsJob",
+      description: "Ensure contributor attributions are up to date",
+    },
     "controlled_vocabularies.populate_sources": {
       cron: "*/15 * * * *",
       class: "ControlledVocabularies::PopulateSourcesJob",
