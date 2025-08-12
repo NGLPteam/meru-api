@@ -15,7 +15,9 @@ class ApplicationJob < ActiveJob::Base
 
   max_runtime 10.minutes
 
-  retry_on ActiveRecord::QueryCanceled
+  retry_on ActiveRecord::QueryCanceled, wait: :polynomially_longer, attempts: 10
+
+  retry_on ActiveRecord::StatementInvalid, wait: :polynomially_longer, attempts: 10
 
   retry_on JobTimeoutError, wait: :polynomially_longer, attempts: 10
 

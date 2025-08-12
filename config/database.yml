@@ -23,7 +23,7 @@ default: &default
 
   # For details on connection pooling, see Rails configuration guide
   # https://guides.rubyonrails.org/configuring.html#database-pooling
-  pool: 20
+  pool: 15
   variables:
     idle_in_transaction_session_timeout: '1min'
     statement_timeout: 600000
