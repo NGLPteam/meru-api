@@ -18,7 +18,7 @@ module Resolvers
         object.contributor_attributions
       else
         # :nocov:
-        ContributorAttributions.none
+        ContributorAttribution.none
         # :nocov:
       end
     end
