@@ -8,8 +8,6 @@ module Processing
 
     discard_on Shrine::AttachmentChanged
 
-    retry_on ActiveRecord::StatementInvalid, wait: :polynomially_longer, attempts: 10
-
     around_perform do |job, block|
       Schemas::Orderings.with_disabled_refresh do
         block.call

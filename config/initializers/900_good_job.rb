@@ -9,7 +9,7 @@ Rails.application.configure do
     "rendering:1",
     "+purging,hierarchies,entities,orderings,invalidations,layouts:2",
     "+harvest_pruning,extraction,harvesting,asset_fetching:4",
-    "permissions,processing,default,mailers,ahoy:4",
+    "permissions,processing,default,mailers,ahoy:2",
   ].join(?;)
 
   config.good_job.cleanup_preserved_jobs_before_seconds_ago = 43_200 # half-day
