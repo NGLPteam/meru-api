@@ -252,8 +252,8 @@
           }
         },
         {
-          "path": "book",
-          "type": "entity",
+          "path": "books",
+          "type": "entities",
           "label": "Books",
           "scope": {
             "origin": "self",
