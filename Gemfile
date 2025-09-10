@@ -17,7 +17,7 @@ gem "activesupport", "~> 7.2"
 gem "activerecord", "~> 7.2"
 
 # Rails / database
-gem "rails", "7.2.2.1"
+gem "rails", "7.2.2.2"
 gem "pg", "~> 1.6.1"
 gem "activerecord-cte", "~> 0.4.0"
 gem "active_record_distinct_on", "1.9.0"
