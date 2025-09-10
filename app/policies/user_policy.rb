@@ -21,6 +21,10 @@ class UserPolicy < ApplicationPolicy
     has_admin_or_allowed_action?("users.update")
   end
 
+  def revalidate_instance?
+    user.has_global_admin_access?
+  end
+
   def destroy?
     false
   end

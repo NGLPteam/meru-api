@@ -6764,6 +6764,125 @@
   default_function: calculate_visibility_range(visibility, visible_after_at, visible_until_at)
   has_default: false
   virtual: true
+- id: FrontendRevalidation#id
+  model_name: FrontendRevalidation
+  table_name: frontend_revalidations
+  name: id
+  type: uuid
+  'null': false
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default:
+  default_function: gen_random_uuid()
+  has_default: true
+  virtual: false
+- id: FrontendRevalidation#kind
+  model_name: FrontendRevalidation
+  table_name: frontend_revalidations
+  name: kind
+  type: enum
+  'null': false
+  sql_type_metadata:
+    sql_type: frontend_revalidation_kind
+    type: enum
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: FrontendRevalidation#manual
+  model_name: FrontendRevalidation
+  table_name: frontend_revalidations
+  name: manual
+  type: boolean
+  'null': false
+  sql_type_metadata:
+    sql_type: boolean
+    type: boolean
+  default: 'false'
+  default_function:
+  has_default: true
+  virtual: false
+- id: FrontendRevalidation#revalidated_at
+  model_name: FrontendRevalidation
+  table_name: frontend_revalidations
+  name: revalidated_at
+  type: datetime
+  'null': true
+  sql_type_metadata:
+    sql_type: timestamp without time zone
+    type: datetime
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: FrontendRevalidation#entity_type
+  model_name: FrontendRevalidation
+  table_name: frontend_revalidations
+  name: entity_type
+  type: string
+  'null': true
+  sql_type_metadata:
+    sql_type: character varying
+    type: string
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: FrontendRevalidation#entity_id
+  model_name: FrontendRevalidation
+  table_name: frontend_revalidations
+  name: entity_id
+  type: uuid
+  'null': true
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: FrontendRevalidation#params
+  model_name: FrontendRevalidation
+  table_name: frontend_revalidations
+  name: params
+  type: jsonb
+  'null': true
+  sql_type_metadata:
+    sql_type: jsonb
+    type: jsonb
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: FrontendRevalidation#created_at
+  model_name: FrontendRevalidation
+  table_name: frontend_revalidations
+  name: created_at
+  type: datetime
+  'null': false
+  sql_type_metadata:
+    sql_type: timestamp(6) without time zone
+    type: datetime
+    precision: 6
+  default:
+  default_function: CURRENT_TIMESTAMP
+  has_default: true
+  virtual: false
+- id: FrontendRevalidation#updated_at
+  model_name: FrontendRevalidation
+  table_name: frontend_revalidations
+  name: updated_at
+  type: datetime
+  'null': false
+  sql_type_metadata:
+    sql_type: timestamp(6) without time zone
+    type: datetime
+    precision: 6
+  default:
+  default_function: CURRENT_TIMESTAMP
+  has_default: true
+  virtual: false
 - id: GlobalConfiguration#id
   model_name: GlobalConfiguration
   table_name: global_configurations

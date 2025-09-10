@@ -9,7 +9,7 @@ Rails.application.configure do
     "rendering:1",
     "+purging,hierarchies,entities,orderings,invalidations,layouts:2",
     "+harvest_pruning,extraction,harvesting,asset_fetching:4",
-    "permissions,processing,default,mailers,ahoy:2",
+    "permissions,processing,default,revalidations,mailers,ahoy:2",
   ].join(?;)
 
   config.good_job.cleanup_preserved_jobs_before_seconds_ago = 43_200 # half-day
@@ -105,6 +105,11 @@ Rails.application.configure do
       cron: "9,19,29,39,49,59 * * * *",
       class: "Entities::ReindexAllSearchDocumentsJob",
       description: "Re-index all entity search documents",
+    },
+    "frontend_cache.prune_invalidations": {
+      cron: "30 22 * * *",
+      class: "FrontendCache::PruneInvalidationsJob",
+      description: "Prune old frontend cache invalidations",
     },
     "harvesting.attempts.enqueue_scheduled": {
       cron: "50 * * * *",

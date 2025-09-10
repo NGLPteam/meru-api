@@ -31,10 +31,10 @@ module MutationOperations
     end
 
     # @return [MutationOperations::UserError]
-    def global(message)
+    def global(message, code: nil)
       MutationOperations::UserError.new(
         message:,
-        code: nil,
+        code:,
         path: GLOBAL_PATH,
         attribute_path: "$global",
         global: true

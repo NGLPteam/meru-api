@@ -22,6 +22,8 @@ module Entities
         yield prune_invalidations!
       end
 
+      entity.asynchronously_revalidate_frontend_cache!
+
       Success entity
     end
 

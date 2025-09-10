@@ -94,6 +94,7 @@ RSpec.describe Mutations::UpdateCollection, type: :request, graphql: :mutation d
       expect_request! do |req|
         req.effect! change { existing_collection.reload.title }.from(old_title).to(new_title)
         req.effect! change(Layouts::MainInstance, :count).by(1)
+        req.effect! have_enqueued_job(Entities::RevalidateFrontendCacheJob).at_least(:once)
         req.effect! have_enqueued_job(Entities::InvalidateAncestorLayoutsJob).once
         req.effect! have_enqueued_job(Entities::InvalidateDescendantLayoutsJob).once
 

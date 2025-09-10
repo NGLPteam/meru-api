@@ -34,6 +34,10 @@ class HierarchicalEntityPolicy < ApplicationPolicy
     has_admin_or_permission? :update
   end
 
+  def revalidate?
+    update?
+  end
+
   def destroy?
     has_admin_or_permission? :delete
   end

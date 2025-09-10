@@ -33,6 +33,7 @@ module MutationOperations
     included do
       extend ActiveModel::Callbacks
 
+      include AfterCommitEverywhere
       include Dry::Effects.CurrentTime
       include Dry::Effects::Handler.State(:args)
       include Dry::Effects::Handler.State(:execution_args)
@@ -154,6 +155,19 @@ module MutationOperations
     # @return [void]
     def add_global_error!(message, type: "$global")
       error = error_compiler.global message
+
+      graphql_response[:errors] << error
+
+      graphql_response[:global_errors] << error.to_global_error
+    end
+
+    # @param [Symbol] code
+    # @param [String] scope
+    # @return [void]
+    def add_global_validation_error!(code, scope: "dry_validation.errors.rules")
+      message = I18n.t(code, scope:, raise: true)
+
+      error = error_compiler.global(message, code:)
 
       graphql_response[:errors] << error
 
@@ -440,7 +454,7 @@ module MutationOperations
       # This can be called multiple times if a mutation requires multiple auth checks.
       #
       # @example Require update permissions for an account
-      #   authorizes! :account, with:: update?
+      #   authorizes! :account, with: :update?
       # @param [Symbol] arg_key
       # @param [Symbol] with the verb to authorize with
       # @return [void]
@@ -450,6 +464,15 @@ module MutationOperations
         predicate = MutationOperations::Types::AuthPredicate[with]
 
         verb = predicate.to_s.chomp(??)
+
+        if arg_key == :current_user
+          class_eval <<~RUBY, __FILE__, __LINE__ + 1
+            before_authorization def authorize_current_user_to_#{verb}!
+              authorize current_user, #{predicate.inspect}
+            end
+          RUBY
+          return
+        end
 
         class_eval <<~RUBY, __FILE__, __LINE__ + 1
         before_authorization def authorize_#{arg_key}_to_#{verb}!

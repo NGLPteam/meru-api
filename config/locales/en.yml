@@ -86,6 +86,10 @@ en:
       update_and_clear_attachment: "cannot receive a new attachment while also clearing it"
       rules:
         not_yet_implemented: "This mutation is not yet implemented."
+        revalidation_connection_failed: "The revalidation request failed to connect."
+        revalidation_request_failed: "The revalidation request failed."
+        revalidation_secret_invalid: "The revalidation request failed to authenticate."
+        revalidation_timeout: "The revalidation request timed out."
   frozen:
     static_property:
       title:
