@@ -20,6 +20,10 @@ module Mutations
         entity.modified_by_admin = true
 
         persist_entity! entity, **attributes
+
+        after_commit do
+          entity.asynchronously_revalidate_frontend_cache!
+        end
       end
     end
   end

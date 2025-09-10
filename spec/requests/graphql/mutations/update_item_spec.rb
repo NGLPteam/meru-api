@@ -58,9 +58,10 @@ RSpec.describe Mutations::UpdateItem, type: :request, graphql: :mutation do
       end
     end
 
-    it "updates a item" do
+    it "updates an item" do
       expect_request! do |req|
         req.effect! change { item.reload.title }.from(old_title).to(new_title)
+        req.effect! have_enqueued_job(Entities::RevalidateFrontendCacheJob).at_least(:once)
 
         req.data! expected_shape
       end

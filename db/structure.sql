@@ -326,6 +326,16 @@ CREATE TYPE public.entity_visibility AS ENUM (
 
 
 --
+-- Name: frontend_revalidation_kind; Type: TYPE; Schema: public; Owner: -
+--
+
+CREATE TYPE public.frontend_revalidation_kind AS ENUM (
+    'entity',
+    'instance'
+);
+
+
+--
 -- Name: full_text_weight; Type: DOMAIN; Schema: public; Owner: -
 --
 
@@ -5076,6 +5086,23 @@ CREATE TABLE public.fake_visitors (
 
 
 --
+-- Name: frontend_revalidations; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.frontend_revalidations (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    kind public.frontend_revalidation_kind NOT NULL,
+    manual boolean DEFAULT false NOT NULL,
+    revalidated_at timestamp without time zone,
+    entity_type character varying,
+    entity_id uuid,
+    params jsonb,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+
+--
 -- Name: global_configurations; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -8028,6 +8055,14 @@ ALTER TABLE ONLY public.fake_visitors
 
 
 --
+-- Name: frontend_revalidations frontend_revalidations_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.frontend_revalidations
+    ADD CONSTRAINT frontend_revalidations_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: global_configurations global_configurations_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -10646,6 +10681,13 @@ CREATE INDEX index_fake_visitors_on_sequence ON public.fake_visitors USING btree
 --
 
 CREATE INDEX index_fake_visitors_on_user_id ON public.fake_visitors USING btree (user_id);
+
+
+--
+-- Name: index_frontend_revalidations_on_entity; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_frontend_revalidations_on_entity ON public.frontend_revalidations USING btree (entity_type, entity_id);
 
 
 --
@@ -14696,6 +14738,7 @@ ALTER TABLE ONLY public.templates_ordering_instances
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20250910180725'),
 ('20250808225252'),
 ('20250808225236'),
 ('20250808170318'),

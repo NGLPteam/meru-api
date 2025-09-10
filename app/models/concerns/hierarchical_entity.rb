@@ -61,6 +61,8 @@ module HierarchicalEntity
     has_many :entity_descendant_ancestries, as: :descendant, dependent: :delete_all, class_name: "EntityHierarchy"
     has_many :entity_ancestries, as: :hierarchical, dependent: :delete_all, class_name: "EntityHierarchy"
 
+    has_many :frontend_revalidations, as: :entity, dependent: :delete_all
+
     has_many :orderings, dependent: :destroy, as: :entity
 
     has_many :ordering_entries, dependent: :delete_all, as: :entity
@@ -183,6 +185,33 @@ module HierarchicalEntity
     entity_descendants.exists?(descendant: entity)
   end
 
+  # @return [<HierarchicalEntity>]
+  def hierarchical_ancestors
+    # :nocov:
+    hierarchical_ancestor_enumerator.to_a
+    # :nocov:
+  end
+
+  # @api private
+  # @return [Enumerator<HierarchicalEntity>]
+  def hierarchical_ancestor_enumerator
+    Enumerator.new do |yielder|
+      current = contextual_parent
+
+      while current.present?
+        yielder << current
+
+        current = current.contextual_parent
+      end
+    end
+  end
+
+  def each_hierarchical_ancestor(&)
+    return enum_for(__method__) unless block_given?
+
+    hierarchical_ancestor_enumerator.each(&)
+  end
+
   # @abstract
   # @return [ActiveRecord::Relation<HierarchicalEntity>]
   def hierarchical_children
@@ -292,6 +321,18 @@ module HierarchicalEntity
   # @return [Dry::Monads::Result]
   monadic_operation! def refresh_orderings
     call_operation("schemas.instances.refresh_orderings", self)
+  end
+
+  # @see Entities::RevalidateFrontendCache
+  # @return [Dry::Monads::Result]
+  monadic_operation! def revalidate_frontend_cache
+    call_operation("entities.revalidate_frontend_cache", self)
+  end
+
+  # @see Entities::RevalidateFrontendCacheJob
+  # @return [void]
+  def asynchronously_revalidate_frontend_cache!
+    Entities::RevalidateFrontendCacheJob.perform_later(self)
   end
 
   # @see Schemas::Instances::ExtractComposedText

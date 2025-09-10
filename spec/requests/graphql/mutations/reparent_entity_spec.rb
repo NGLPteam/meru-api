@@ -25,6 +25,8 @@ RSpec.describe Mutations::ReparentEntity, type: :request, graphql: :mutation, di
   }
   GRAPHQL
 
+  stub_operation! "frontend.cache.revalidate_entity", as: :revalidate_entity_operation, auto_succeed: true
+
   let!(:new_parent) { nil }
   let!(:child) { nil }
 

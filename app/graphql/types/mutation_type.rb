@@ -56,6 +56,12 @@ module Types
 
     field :destroy_page, mutation: Mutations::DestroyPage
 
+    field :entity_purge, mutation: Mutations::EntityPurge
+
+    field :frontend_cache_revalidate_entity, mutation: Mutations::FrontendCacheRevalidateEntity
+
+    field :frontend_cache_revalidate_instance, mutation: Mutations::FrontendCacheRevalidateInstance
+
     field :grant_access, mutation: Mutations::GrantAccess
 
     field :harvest_attempt_from_source, mutation: Mutations::HarvestAttemptFromSource
@@ -127,7 +133,5 @@ module Types
     field :upsert_contribution, mutation: Mutations::UpsertContribution
 
     field :user_reset_password, mutation: Mutations::UserResetPassword
-
-    field :entity_purge, mutation: Mutations::EntityPurge
   end
 end

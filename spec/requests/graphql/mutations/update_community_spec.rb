@@ -41,6 +41,7 @@ RSpec.describe Mutations::UpdateCommunity, type: :request, graphql: :mutation do
     it "updates a community" do
       expect_request! do |req|
         req.effect! change { community.reload.title }.from(old_title).to(new_title)
+        req.effect! have_enqueued_job(Entities::RevalidateFrontendCacheJob).at_least(:once)
 
         req.data! expected_shape
       end
