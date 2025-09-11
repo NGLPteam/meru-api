@@ -11,7 +11,7 @@ module Frontend
 
       attribute? :revalidated, Types::Params::Bool.default(false)
 
-      attribute? :now, Types::Params::Time.optional
+      attribute? :now, Types::SafeResponseTime.optional
 
       attribute? :message, Types::String.optional
 

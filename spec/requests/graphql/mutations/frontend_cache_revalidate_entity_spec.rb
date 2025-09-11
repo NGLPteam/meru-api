@@ -36,7 +36,9 @@ RSpec.describe Mutations::FrontendCacheRevalidateEntity, type: :request, graphql
       let(:expected_shape) { valid_mutation_shape }
 
       before do
-        body = { revalidated: true, now: Time.current.iso8601 }.to_json
+        now = Time.current.to_i * 1000
+
+        body = { revalidated: true, now:, }.to_json
 
         headers = { "Content-Type" => "application/json" }
 
