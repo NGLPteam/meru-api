@@ -15340,6 +15340,125 @@
   default_function:
   has_default: false
   virtual: false
+- id: Permalink#id
+  model_name: Permalink
+  table_name: permalinks
+  name: id
+  type: uuid
+  'null': false
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default:
+  default_function: gen_random_uuid()
+  has_default: true
+  virtual: false
+- id: Permalink#permalinkable_type
+  model_name: Permalink
+  table_name: permalinks
+  name: permalinkable_type
+  type: string
+  'null': false
+  sql_type_metadata:
+    sql_type: character varying
+    type: string
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: Permalink#permalinkable_id
+  model_name: Permalink
+  table_name: permalinks
+  name: permalinkable_id
+  type: uuid
+  'null': false
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: Permalink#canonical
+  model_name: Permalink
+  table_name: permalinks
+  name: canonical
+  type: boolean
+  'null': false
+  sql_type_metadata:
+    sql_type: boolean
+    type: boolean
+  default: 'false'
+  default_function:
+  has_default: true
+  virtual: false
+- id: Permalink#kind
+  model_name: Permalink
+  table_name: permalinks
+  name: kind
+  type: enum
+  'null': false
+  sql_type_metadata:
+    sql_type: permalinkable_kind
+    type: enum
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: Permalink#uri
+  model_name: Permalink
+  table_name: permalinks
+  name: uri
+  type: citext
+  'null': false
+  sql_type_metadata:
+    sql_type: citext
+    type: citext
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: Permalink#permalinkable_slug
+  model_name: Permalink
+  table_name: permalinks
+  name: permalinkable_slug
+  type: citext
+  'null': false
+  sql_type_metadata:
+    sql_type: citext
+    type: citext
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: Permalink#created_at
+  model_name: Permalink
+  table_name: permalinks
+  name: created_at
+  type: datetime
+  'null': false
+  sql_type_metadata:
+    sql_type: timestamp(6) without time zone
+    type: datetime
+    precision: 6
+  default:
+  default_function: CURRENT_TIMESTAMP
+  has_default: true
+  virtual: false
+- id: Permalink#updated_at
+  model_name: Permalink
+  table_name: permalinks
+  name: updated_at
+  type: datetime
+  'null': false
+  sql_type_metadata:
+    sql_type: timestamp(6) without time zone
+    type: datetime
+    precision: 6
+  default:
+  default_function: CURRENT_TIMESTAMP
+  has_default: true
+  virtual: false
 - id: Permission#id
   model_name: Permission
   table_name: permissions

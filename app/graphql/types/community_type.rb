@@ -8,6 +8,7 @@ module Types
     implements Types::HarvestTargetType
     implements Types::HasEntityAnalytics
     implements Types::HasSchemaPropertiesType
+    implements Types::PermalinkableType
     implements Types::AttachableType
     implements Types::SchemaInstanceType
     implements Types::SearchableType

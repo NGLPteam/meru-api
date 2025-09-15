@@ -12,6 +12,7 @@ class Collection < ApplicationRecord
   include HasSystemSlug
   include HierarchicalEntity
   include ChildEntity
+  include Permalinkable
   include ScopesForIdentifier
 
   drop_klass Templates::Drops::CollectionDrop

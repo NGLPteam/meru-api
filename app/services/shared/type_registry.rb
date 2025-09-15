@@ -6,6 +6,7 @@ module Shared
     tc.add! :any_entity, Entities::Types::Entity
     tc.add! :contributable, Contributions::Types::Contributable
     tc.add! :harvest_target, ::Harvesting::Types::Target
+    tc.add! :permalinkable, ::Permalinks::Types::Permalinkable
 
     tc.add! :keycloak_client_id, ::Meru::Types::KeycloakClientID
 
@@ -26,6 +27,7 @@ module Shared
     tc.add_model! "HarvestSet"
     tc.add_model! "HarvestSource"
     tc.add_model! "Item"
+    tc.add_model! "Permalink"
     tc.add_model! "SchemaDefinition"
     tc.add_model! "SchemaVersion"
 

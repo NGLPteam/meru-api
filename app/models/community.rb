@@ -11,6 +11,7 @@ class Community < ApplicationRecord
   include HarvestTarget
   include HierarchicalEntity
   include ImageUploader::Attachment.new(:logo)
+  include Permalinkable
   include ScopesForIdentifier
 
   drop_klass Templates::Drops::CommunityDrop

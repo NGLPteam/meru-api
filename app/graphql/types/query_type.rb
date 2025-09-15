@@ -21,6 +21,7 @@ module Types
     implements Types::QueriesHarvestRecord
     implements Types::QueriesHarvestSet
     implements Types::QueriesHarvestSource
+    implements Types::QueriesPermalink
     implements Types::QueriesSchemas
     implements Types::QueriesSystem
     implements Types::QueriesUser
