@@ -11,6 +11,7 @@ module Types
     implements Types::HasDOIType
     implements Types::HasHarvestModificationStatusType
     implements Types::HasSchemaPropertiesType
+    implements Types::PermalinkableType
     implements Types::AttachableType
     implements Types::SchemaInstanceType
     implements Types::SearchableType

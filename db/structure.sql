@@ -678,6 +678,17 @@ CREATE TYPE public.parsed_semver AS (
 
 
 --
+-- Name: permalinkable_kind; Type: TYPE; Schema: public; Owner: -
+--
+
+CREATE TYPE public.permalinkable_kind AS ENUM (
+    'community',
+    'collection',
+    'item'
+);
+
+
+--
 -- Name: permission_kind; Type: TYPE; Schema: public; Owner: -
 --
 
@@ -6426,6 +6437,23 @@ CREATE VIEW public.pending_role_assignments AS
 
 
 --
+-- Name: permalinks; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.permalinks (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    permalinkable_type character varying NOT NULL,
+    permalinkable_id uuid NOT NULL,
+    canonical boolean DEFAULT false NOT NULL,
+    kind public.permalinkable_kind NOT NULL,
+    uri public.citext NOT NULL,
+    permalinkable_slug public.citext NOT NULL,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+
+--
 -- Name: pghero_query_stats; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -8516,6 +8544,14 @@ ALTER TABLE ONLY public.orderings
 
 ALTER TABLE ONLY public.pages
     ADD CONSTRAINT pages_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: permalinks permalinks_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.permalinks
+    ADD CONSTRAINT permalinks_pkey PRIMARY KEY (id);
 
 
 --
@@ -12000,6 +12036,34 @@ CREATE UNIQUE INDEX index_pages_uniqueness ON public.pages USING btree (entity_t
 
 
 --
+-- Name: index_permalinks_on_canonical_permalinkable; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_permalinks_on_canonical_permalinkable ON public.permalinks USING btree (permalinkable_type, permalinkable_id) WHERE canonical;
+
+
+--
+-- Name: index_permalinks_on_permalinkable; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_permalinks_on_permalinkable ON public.permalinks USING btree (permalinkable_type, permalinkable_id);
+
+
+--
+-- Name: index_permalinks_on_uri; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_permalinks_on_uri ON public.permalinks USING btree (uri);
+
+
+--
+-- Name: index_permalinks_ordering; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_permalinks_ordering ON public.permalinks USING btree (canonical DESC, uri);
+
+
+--
 -- Name: index_permissions_contextual_derivations; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -14738,6 +14802,7 @@ ALTER TABLE ONLY public.templates_ordering_instances
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20250911164517'),
 ('20250910180725'),
 ('20250808225252'),
 ('20250808225236'),

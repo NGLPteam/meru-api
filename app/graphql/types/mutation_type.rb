@@ -133,5 +133,11 @@ module Types
     field :upsert_contribution, mutation: Mutations::UpsertContribution
 
     field :user_reset_password, mutation: Mutations::UserResetPassword
+
+    field :permalink_create, mutation: Mutations::PermalinkCreate
+
+    field :permalink_destroy, mutation: Mutations::PermalinkDestroy
+
+    field :permalink_update, mutation: Mutations::PermalinkUpdate
   end
 end
