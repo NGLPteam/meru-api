@@ -49,27 +49,10 @@ plugin :tmp_restart
 fork_worker 1000
 wait_for_less_busy_worker 0.001
 
-before_fork do
-  concurrency = (ENV.fetch("WEB_CONCURRENCY") { 2 }).to_i
-
-  if concurrency > 0
-    require "puma_worker_killer"
-
-    PumaWorkerKiller.config do |config|
-      config.ram = 2048
-    end
-
-    PumaWorkerKiller.enable_rolling_restart # Default is every 6 hours
-  end
-end
-
 on_worker_fork do
   ActiveSupport.on_load(:active_record) do
     ActiveRecord::Base.connection.disconnect!
   end
-
-  # Ensure we disconnect from Rails cache on forking.
-  Rails.cache.redis.disconnect!
 end
 
 on_worker_boot do
