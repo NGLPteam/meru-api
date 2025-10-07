@@ -97,37 +97,6 @@
       "function": "presentation"
     },
     {
-      "type": "select",
-      "path": "cc_license",
-      "label": "CC License",
-      "options": [
-        {
-          "label": "CC BY",
-          "value": "CC BY"
-        },
-        {
-          "label": "CC BY-SA",
-          "value": "CC BY-SA"
-        },
-        {
-          "label": "CC BY-NC",
-          "value": "CC BY-NC"
-        },
-        {
-          "label": "CC BY-NC-SA",
-          "value": "CC BY-NC-SA"
-        },
-        {
-          "label": "CC BY-ND",
-          "value": "CC BY-ND"
-        },
-        {
-          "label": "CC BY-NC-ND",
-          "value": "CC BY-NC-ND"
-        }
-      ]
-    },
-    {
       "path": "ebook_isbn",
       "label": "eBook ISBN",
       "type": "string",
@@ -179,6 +148,14 @@
       "path": "language",
       "label": "Language",
       "type": "string",
+      "function": "metadata"
+    },
+    {
+      "path": "license",
+      "label": "License",
+      "description": "License under which this section is published",
+      "type": "controlled_vocabulary",
+      "wants": "licenses",
       "function": "metadata"
     }
   ]

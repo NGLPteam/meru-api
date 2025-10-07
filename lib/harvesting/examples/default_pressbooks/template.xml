@@ -5,6 +5,56 @@
     <assign name="book_hero_url">{{pressbooks.book.metadata.image_url}}</assign>
     <assign name="book_thumb_url">{{pressbooks.book.metadata.thumbnail_url}}</assign>
   </assigns>
+  <templates>
+    <template name="contributions">
+      {% for group in source.metadata.grouped_contributions %}
+      {% for c in group.contributors %}
+      {% if c.schema_org_type == "Person" %}
+      {% contribution role: group.role %}
+      {% person %}
+      {% identifier c.slug %}
+      {% given_name c.given_name %}
+      {% family_name c.family_name %}
+      {% endperson %}
+      {% endcontribution %}
+      {% elsif c.schema_org_type == "Organization" %}
+      {% contribution role: group.role %}
+      {% organization %}
+      {% identifier c.slug %}
+      {% legal_name c.legal_name %}
+      {% endorganization %}
+      {% endcontribution %}
+      {% endif %}
+      {% endfor %}
+      {% endfor %}
+    </template>
+    <template name="license_term_from_url">
+      {% if source.metadata.license %}
+      {% case source.metadata.license.url %}
+      {% when 'https://creativecommons.org/licenses/by/4.0/' %}
+      cc-by-4-0
+      {% when 'https://creativecommons.org/licenses/by-sa/4.0/' %}
+      cc-by-sa-4-0
+      {% when 'https://creativecommons.org/licenses/by-nc/4.0/' %}
+      cc-by-nc-4-0
+      {% when 'https://creativecommons.org/licenses/by-nc-sa/4.0/' %}
+      cc-by-nc-sa-4-0
+      {% when 'https://creativecommons.org/licenses/by-nc-nd/4.0/' %}
+      cc-by-nc-nd-4-0
+      {% when 'https://creativecommons.org/licenses/by-nd/4.0/' %}
+      cc-by-nd-4-0
+      {% when 'https://creativecommons.org/publicdomain/zero/1.0/' %}
+      cc0-1-0
+      {% when 'https://creativecommons.org/publicdomain/mark/1.0/' %}
+      public-domain-mark-1-0
+      {% else %}
+      all-rights-reserved
+      {% endcase %}
+      {% else %}
+      all-rights-reserved
+      {% endif %}
+    </template>
+  </templates>
   <entities>
     <collection schema="nglp:book">
       <requires>
@@ -12,32 +62,20 @@
       </requires>
       <identifier>{{record.identifier}}</identifier>
       <title>{{pressbooks.book.metadata.name}}</title>
+      <summary>{{pressbooks.book.metadata.disambiguating_description}}</summary>
       <hero-image-url>{{pressbooks.book.metadata.image_url}}</hero-image-url>
       <published>{{pressbooks.book.metadata.date_published | default: pressbooks.book.metadata.copyright_year}}</published>
       <thumbnail-url>{{pressbooks.book.metadata.thumbnail_url}}</thumbnail-url>
       <contributions>
-        {% for group in pressbooks.book.metadata.grouped_contributions %}
-        {% for c in group.contributors %}
-        {% if c.schema_org_type == "Person" %}
-        {% contribution role: group.role %}
-        {% person %}
-        {% identifier c.slug %}
-        {% given_name c.given_name %}
-        {% family_name c.family_name %}
-        {% endperson %}
-        {% endcontribution %}
-        {% elsif c.schema_org_type == "Organization" %}
-        {% contribution role: group.role %}
-        {% organization %}
-        {% identifier c.slug %}
-        {% legal_name c.legal_name %}
-        {% endorganization %}
-        {% endcontribution %}
-        {% endif %}
-        {% endfor %}
-        {% endfor %}
+        {% render 'contributions', source: pressbooks.book %}
       </contributions>
       <properties>
+        <controlled-vocabulary path="license">
+          <namespace>meru.host</namespace>
+          <identifier>common_licenses</identifier>
+          <term>{% render 'license_term_from_url', source: pressbooks.book %}</term>
+          <fallback>all-rights-reserved</fallback>
+        </controlled-vocabulary>
         <string path="ebook_isbn">{{pressbooks.book.metadata.isbn}}</string>
         <string path="language">{{pressbooks.book.metadata.in_language}}</string>
         <string path="publisher">{{pressbooks.book.metadata.network.name}}</string>
@@ -50,33 +88,21 @@
         <item schema="nglp:book_section">
           <identifier>front-matter-{{fm.id}}</identifier>
           <title>{{fm.title}}</title>
+          <summary>{{fm.metadata.disambiguating_description}}</summary>
           <hero-image-url>{{fm.metadata.image_url | default: book_hero_url}}</hero-image-url>
           <published>{{fm.metadata.date_published | default: fm.metadata.copyright_year | default: book_published}}</published>
           <thumbnail-url>{{fm.metadata.thumbnail_url | default: book_thumb_url}}</thumbnail-url>
           <contributions>
-            {% for group in fm.metadata.grouped_contributions %}
-            {% for c in group.contributors %}
-            {% if c.schema_org_type == "Person" %}
-            {% contribution role: group.role %}
-            {% person %}
-            {% identifier c.slug %}
-            {% given_name c.given_name %}
-            {% family_name c.family_name %}
-            {% endperson %}
-            {% endcontribution %}
-            {% elsif c.schema_org_type == "Organization" %}
-            {% contribution role: group.role %}
-            {% organization %}
-            {% identifier c.slug %}
-            {% legal_name c.legal_name %}
-            {% endorganization %}
-            {% endcontribution %}
-            {% endif %}
-            {% endfor %}
-            {% endfor %}
+            {% render 'contributions', source: fm %}
           </contributions>
           <properties>
-            <integer path="sort_position">{{fm.menu_order}}</integer>
+            <controlled-vocabulary path="license">
+              <namespace>meru.host</namespace>
+              <identifier>common_licenses</identifier>
+              <term>{% render 'license_term_from_url', source: fm %}</term>
+              <fallback>all-rights-reserved</fallback>
+            </controlled-vocabulary>
+            <integer path="sort_position">{{fm_pos}}</integer>
             <string path="label">front-matter</string>
             <string path="language">{{fm.metadata.in_language}}</string>
             <url path="online_version">
@@ -95,7 +121,7 @@
           <thumbnail-url>{{book_thumb_url}}</thumbnail-url>
           <properties>
             <integer path="sort_position">
-              {{part.menu_order | plus: pressbooks.toc.front_matters.size}}
+              {{part_pos | plus: pressbooks.toc.front_matters.size}}
             </integer>
             <string path="label">part</string>
             <url path="online_version">
@@ -107,33 +133,21 @@
             <item schema="nglp:book_section">
               <identifier>part-{{part.id}}-chapter-{{chapter.id}}</identifier>
               <title>{{chapter.title}}</title>
+              <summary>{{chapter.metadata.disambiguating_description}}</summary>
               <hero-image-url>{{chapter.metadata.image_url | default: book_hero_url}}</hero-image-url>
               <published>{{chapter.metadata.date_published | default: chapter.metadata.copyright_year | default: book_published}}</published>
               <thumbnail-url>{{chapter.metadata.thumbnail_url | default: book_thumb_url}}</thumbnail-url>
               <contributions>
-                {% for group in chapter.metadata.grouped_contributions %}
-                {% for c in group.contributors %}
-                {% if c.schema_org_type == "Person" %}
-                {% contribution role: group.role %}
-                {% person %}
-                {% identifier c.slug %}
-                {% given_name c.given_name %}
-                {% family_name c.family_name %}
-                {% endperson %}
-                {% endcontribution %}
-                {% elsif c.schema_org_type == "Organization" %}
-                {% contribution role: group.role %}
-                {% organization %}
-                {% identifier c.slug %}
-                {% legal_name c.legal_name %}
-                {% endorganization %}
-                {% endcontribution %}
-                {% endif %}
-                {% endfor %}
-                {% endfor %}
+                {% render 'contributions', source: chapter %}
               </contributions>
               <properties>
-                <integer path="sort_position">{{chapter.menu_order}}</integer>
+                <controlled-vocabulary path="license">
+                  <namespace>meru.host</namespace>
+                  <identifier>common_licenses</identifier>
+                  <term>{% render 'license_term_from_url', source: chapter %}</term>
+                  <fallback>all-rights-reserved</fallback>
+                </controlled-vocabulary>
+                <integer path="sort_position">{{chapter_pos}}</integer>
                 <string path="label">chapter</string>
                 <string path="language">{{chapter.metadata.in_language}}</string>
                 <url path="online_version">
@@ -143,6 +157,36 @@
               </properties>
             </item>
           </for>
+        </item>
+      </for>
+      <for each="bm" of="pressbooks.toc.back_matters">
+        <item schema="nglp:book_section">
+          <identifier>back-matter-{{bm.id}}</identifier>
+          <title>{{bm.title}}</title>
+          <summary>{{bm.metadata.disambiguating_description}}</summary>
+          <hero-image-url>{{bm.metadata.image_url | default: book_hero_url}}</hero-image-url>
+          <published>{{bm.metadata.date_published | default: bm.metadata.copyright_year | default: book_published}}</published>
+          <thumbnail-url>{{bm.metadata.thumbnail_url | default: book_thumb_url}}</thumbnail-url>
+          <contributions>
+            {% render 'contributions', source: bm %}
+          </contributions>
+          <properties>
+            <controlled-vocabulary path="license">
+              <namespace>meru.host</namespace>
+              <identifier>common_licenses</identifier>
+              <term>{% render 'license_term_from_url', source: bm %}</term>
+              <fallback>all-rights-reserved</fallback>
+            </controlled-vocabulary>
+            <integer path="sort_position">
+              {{bm_pos | plus: pressbooks.toc.front_matters.size | plus: pressbooks.toc.parts.size }}
+            </integer>
+            <string path="label">back-matter</string>
+            <string path="language">{{bm.metadata.in_language}}</string>
+            <url path="online_version">
+              <href>{{bm.link}}</href>
+              <label>{{bm.title}} — Online Version</label>
+            </url>
+          </properties>
         </item>
       </for>
     </collection>

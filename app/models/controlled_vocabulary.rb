@@ -30,6 +30,10 @@ class ControlledVocabulary < ApplicationRecord
     tagged_with(...).first
   end
 
+  def for_url(url)
+    controlled_vocabulary_items.find_by(url:)
+  end
+
   def has_default_namespace?
     namespace == DEFAULT_NAMESPACE
   end
@@ -37,7 +41,7 @@ class ControlledVocabulary < ApplicationRecord
   # @param [String] identifier
   # @return [ControlledVocabulary, nil]
   def item_for(identifier)
-    controlled_vocabulary_items.where(identifier:).first
+    controlled_vocabulary_items.find_by(identifier:)
   end
 
   alias fetch_item item_for

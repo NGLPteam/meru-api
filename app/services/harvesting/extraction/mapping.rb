@@ -6,6 +6,7 @@ module Harvesting
       attribute :assigns, Harvesting::Extraction::Mappings::Assigns
       attribute :contribution_mapping, Harvesting::Extraction::Mappings::ContributionMapping
       attribute :entity_mapping, Harvesting::Extraction::Mappings::EntityMapping
+      attribute :template_mapping, ::Harvesting::Extraction::Mappings::Templates
 
       xml do
         root "mapping"
@@ -13,9 +14,17 @@ module Harvesting
         map_element "assigns", to: :assigns
         map_element "contributions", to: :contribution_mapping
         map_element "entities", to: :entity_mapping
+        map_element "templates", to: :template_mapping
       end
 
       delegate :each_shared_assignment, to: :assigns, allow_nil: true
+      delegate :lookup_template, to: :template_mapping, allow_nil: true, prefix: :actually
+
+      # @param [String] name
+      # @return [String, nil]
+      def lookup_template(name)
+        actually_lookup_template(name)
+      end
 
       # @see Harvesting::Extraction::Mappings::EntityMapping
       # @return [<String>]
