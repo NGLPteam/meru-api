@@ -1,0 +1,73 @@
+{
+  "namespace": "meru.host",
+  "identifier": "common_licenses",
+  "provides": "licenses",
+  "version": "1.0.0",
+  "name": "Common Licenses",
+  "description": "A controlled vocabulary of common licenses.",
+  "items": [
+    {
+      "label": "CC BY 4.0",
+      "identifier": "cc-by-4-0",
+      "description": "This license allows reusers to distribute, remix, adapt, and build upon the material in any medium or format, so long as attribution is given to the creator.",
+      "tags": ["cc-by", "by"],
+      "url": "https://creativecommons.org/licenses/by/4.0/"
+    },
+    {
+      "label": "CC BY-SA 4.0",
+      "identifier": "cc-by-sa-4-0",
+      "description": "This license allows reusers to distribute, remix, adapt, and build upon the material in any medium or format, so long as attribution is given to the creator. The license requires that adaptations be shared under the same terms.",
+      "tags": ["cc-by-sa", "by-sa"],
+      "url": "https://creativecommons.org/licenses/by-sa/4.0/"
+    },
+    {
+      "label": "CC BY-NC 4.0",
+      "identifier": "cc-by-nc-4-0",
+      "description": "This license allows reusers to distribute, remix, adapt, and build upon the material in any medium or format for noncommercial purposes only, and only so long as attribution is given to the creator.",
+      "tags": ["cc-by-nc", "by-nc"],
+      "url": "https://creativecommons.org/licenses/by-nc/4.0/"
+    },
+    {
+      "label": "CC BY-NC-SA 4.0",
+      "identifier": "cc-by-nc-sa-4-0",
+      "description": "This license allows reusers to distribute, remix, adapt, and build upon the material in any medium or format for noncommercial purposes only, and only so long as attribution is given to the creator. The license requires that adaptations be shared under the same terms.",
+      "tags": ["cc-by-nc-sa", "by-nc-sa"],
+      "url": "https://creativecommons.org/licenses/by-nc-sa/4.0/"
+    },
+    {
+      "label": "CC BY-ND 4.0",
+      "identifier": "cc-by-nd-4-0",
+      "description": "This license allows reusers to copy and distribute the material in any medium or format in unadapted form only, and only so long as attribution is given to the creator.",
+      "tags": ["cc-by-nd", "by-nd"],
+      "url": "https://creativecommons.org/licenses/by-nd/4.0/"
+    },
+    {
+      "label": "CC BY-NC-ND 4.0",
+      "identifier": "cc-by-nc-nd-4-0",
+      "description": "This license allows reusers to copy and distribute the material in any medium or format in unadapted form only, for noncommercial purposes only, and only so long as attribution is given to the creator.",
+      "tags": ["cc-by-nc-nd", "by-nc-nd"],
+      "url": "https://creativecommons.org/licenses/by-nc-nd/4.0/"
+    },
+    {
+      "label": "CC0 1.0",
+      "identifier": "cc0-1-0",
+      "description": "CC0 enables scientists, educators, artists and other creators and owners of copyright- or database-protected content to waive those interests in their works and thereby place them as completely as possible in the public domain.",
+      "tags": ["cc0", "0"],
+      "url": "https://creativecommons.org/publicdomain/zero/1.0/"
+    },
+    {
+      "label": "Public Domain Mark 1.0",
+      "identifier": "public-domain-mark-1-0",
+      "description": "The Public Domain Mark is a tool that allows works already in the public domain to be marked as such in a standard and simple way.",
+      "tags": ["public-domain"],
+      "url": "https://creativecommons.org/publicdomain/mark/1.0/"
+    },
+    {
+      "label": "All Rights Reserved",
+      "identifier": "all-rights-reserved",
+      "description": "This license indicates that the creator reserves all rights provided by copyright law, such as the right to reproduce, distribute, and display the work.",
+      "tags": ["no-license", "default"],
+      "url": "https://choosealicense.com/no-license/"
+    }
+  ]
+}

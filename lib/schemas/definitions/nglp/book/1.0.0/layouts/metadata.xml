@@ -56,7 +56,7 @@
           {% endmditem %}
           {% mditem %}
             {% mdvalue label: "License" %}
-              {{props.cc_license}}
+              {{props.license}}
             {% endmdvalue %}
           {% endmditem %}
         </items-b>

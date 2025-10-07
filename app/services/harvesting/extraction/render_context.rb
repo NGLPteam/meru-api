@@ -64,13 +64,34 @@ module Harvesting
         end
       end
 
+      # @param [{ String => Object }] pairs
+      # @return [void]
+      def with_additional_assigns!(pairs = {})
+        new_assigns = additional_assigns.merge(pairs.stringify_keys).freeze
+
+        with_additional_assigns new_assigns do
+          yield
+        end
+      end
+
       # @param [String] element
       # @param [String] expression
       def with_enumerated_assignment(element:, expression:)
         arr = Array(lookup(expression))
 
-        arr.each do |value|
-          with_additional_assign element, value do
+        arr.each_with_index do |value, index|
+          element_idx = "#{element}_idx"
+          element_pos = "#{element}_pos"
+
+          position = index + 1
+
+          enumerated_assigns = {
+            element => value,
+            element_idx => index,
+            element_pos => position,
+          }
+
+          with_additional_assigns! enumerated_assigns do
             yield
           end
         end

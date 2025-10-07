@@ -112,6 +112,14 @@
       "description": "E.g. 'chapter', 'section', 'unit'. Used for presentation.",
       "type": "string",
       "function": "presentation"
+    },
+    {
+      "path": "license",
+      "label": "License",
+      "description": "License under which this section is published",
+      "type": "controlled_vocabulary",
+      "wants": "licenses",
+      "function": "metadata"
     }
   ]
 }

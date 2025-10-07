@@ -18,6 +18,8 @@ module ControlledVocabularies
 
         validations = yield List::Validated[*results].traverse.to_result
 
+        yield set_default_provisions!
+
         Success validations
       end
 
@@ -31,6 +33,26 @@ module ControlledVocabularies
         Invalid("#{path.relative_path_from(STATIC_ROOT)}: invalid JSON: #{e.message}")
       else
         upsert.(definition).to_validated
+      end
+
+      def set_default_provisions!
+        yield set_default_provision!(identifier: "common_licenses", namespace: "meru.host")
+
+        Success()
+      end
+
+      def set_default_provision!(identifier:, namespace: "meru.host")
+        vocabulary = ControlledVocabulary.find_by(namespace:, identifier:)
+
+        # :nocov:
+        return Success() unless vocabulary.present?
+
+        return Success() if ControlledVocabularySource.providing(vocabulary.provides).present?
+        # :nocov:
+
+        vocabulary.select_provider!
+
+        Success()
       end
     end
   end

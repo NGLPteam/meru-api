@@ -43,8 +43,8 @@
           {% if props.ebook_isbn.exists %}
             {% sbitem icon: "isbn" %} EBook ISBN: {{ props.ebook_isbn }} {% endsbitem %}
           {% endif %}
-          {% if props.cc_license.exists %}
-            {% sbitem icon: "cc" %} {{ props.cc_license }} License {% endsbitem %}
+          {% if props.license.exists %}
+            {% sbitem icon: "cc" %} {{ props.license }} License {% endsbitem %}
           {% endif %}
         </header-sidebar>
         <metadata/>

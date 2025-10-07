@@ -8,8 +8,8 @@ module ControlledVocabularies
     extend Support::EnhancedTypes
 
     NAMESPACE_PATTERN = /\A(?:[a-z]\w+[a-z0-9])(?:\.(?:[a-z]\w+[a-z0-9]))+\z/
-    IDENTIFIER_PATTERN = /\A(?:[a-z]\w+[a-z0-9])\z/
-    PROVIDES_PATTERN = /\A(?:[a-z]\w+[a-z0-9])\z/
+    IDENTIFIER_PATTERN = /\A(?:[a-z](?:[_-]?[a-z0-9])+)\z/
+    PROVIDES_PATTERN = /\A(?:[a-z](?:[_-]?[a-z0-9])+)\z/
 
     Input = Coercible::Hash
 

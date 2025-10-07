@@ -38,6 +38,8 @@ module Harvesting
         Liquid::Environment.build(error_mode: :strict) do |env|
           env.register_filter Harvesting::Extraction::CommonFilters
 
+          env.file_system = Harvesting::Extraction::FileSystem.new
+
           configure_common_tags!(env)
 
           if captures_contributions

@@ -6,6 +6,7 @@ module Harvesting
       class SchemaProperties < Harvesting::Extraction::Mappings::Props::AbstractSet
         accept_props! Harvesting::Extraction::Mappings::Props::Asset
         accept_props! Harvesting::Extraction::Mappings::Props::Boolean
+        accept_props! Harvesting::Extraction::Mappings::Props::ControlledVocabulary
         accept_props! Harvesting::Extraction::Mappings::Props::Date
         accept_props! Harvesting::Extraction::Mappings::Props::Email
         accept_props! Harvesting::Extraction::Mappings::Props::Float
