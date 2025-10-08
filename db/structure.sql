@@ -7836,6 +7836,31 @@ CREATE TABLE public.templates_manual_lists (
 
 
 --
+-- Name: tuner_metrics; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.tuner_metrics (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    name public.citext,
+    value bigint,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+
+--
+-- Name: tuner_suggestions; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.tuner_suggestions (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    report text,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+
+--
 -- Name: user_access_infos; Type: VIEW; Schema: public; Owner: -
 --
 
@@ -8993,6 +9018,22 @@ ALTER TABLE ONLY public.templates_supplementary_definitions
 
 ALTER TABLE ONLY public.templates_supplementary_instances
     ADD CONSTRAINT templates_supplementary_instances_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: tuner_metrics tuner_metrics_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.tuner_metrics
+    ADD CONSTRAINT tuner_metrics_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: tuner_suggestions tuner_suggestions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.tuner_suggestions
+    ADD CONSTRAINT tuner_suggestions_pkey PRIMARY KEY (id);
 
 
 --
@@ -13003,6 +13044,13 @@ CREATE INDEX index_templates_supplementary_instances_on_position ON public.templ
 
 
 --
+-- Name: index_tuner_suggestions_on_report; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_tuner_suggestions_on_report ON public.tuner_suggestions USING btree (report);
+
+
+--
 -- Name: index_user_group_memberships_on_user_group_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -14874,6 +14922,8 @@ ALTER TABLE ONLY public.templates_ordering_instances
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20251008224630'),
+('20251008224043'),
 ('20251008180200'),
 ('20250911164517'),
 ('20250910180725'),

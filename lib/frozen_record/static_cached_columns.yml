@@ -24707,6 +24707,128 @@
   default_function:
   has_default: true
   virtual: false
+- id: TunerMetric#id
+  model_name: TunerMetric
+  table_name: tuner_metrics
+  name: id
+  type: uuid
+  'null': false
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default:
+  default_function: gen_random_uuid()
+  has_default: true
+  virtual: false
+- id: TunerMetric#name
+  model_name: TunerMetric
+  table_name: tuner_metrics
+  name: name
+  type: citext
+  'null': true
+  sql_type_metadata:
+    sql_type: citext
+    type: citext
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: TunerMetric#value
+  model_name: TunerMetric
+  table_name: tuner_metrics
+  name: value
+  type: integer
+  'null': true
+  sql_type_metadata:
+    sql_type: bigint
+    type: integer
+    limit: 8
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: TunerMetric#created_at
+  model_name: TunerMetric
+  table_name: tuner_metrics
+  name: created_at
+  type: datetime
+  'null': false
+  sql_type_metadata:
+    sql_type: timestamp(6) without time zone
+    type: datetime
+    precision: 6
+  default:
+  default_function: CURRENT_TIMESTAMP
+  has_default: true
+  virtual: false
+- id: TunerMetric#updated_at
+  model_name: TunerMetric
+  table_name: tuner_metrics
+  name: updated_at
+  type: datetime
+  'null': false
+  sql_type_metadata:
+    sql_type: timestamp(6) without time zone
+    type: datetime
+    precision: 6
+  default:
+  default_function: CURRENT_TIMESTAMP
+  has_default: true
+  virtual: false
+- id: TunerSuggestion#id
+  model_name: TunerSuggestion
+  table_name: tuner_suggestions
+  name: id
+  type: uuid
+  'null': false
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default:
+  default_function: gen_random_uuid()
+  has_default: true
+  virtual: false
+- id: TunerSuggestion#report
+  model_name: TunerSuggestion
+  table_name: tuner_suggestions
+  name: report
+  type: text
+  'null': true
+  sql_type_metadata:
+    sql_type: text
+    type: text
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: TunerSuggestion#created_at
+  model_name: TunerSuggestion
+  table_name: tuner_suggestions
+  name: created_at
+  type: datetime
+  'null': false
+  sql_type_metadata:
+    sql_type: timestamp(6) without time zone
+    type: datetime
+    precision: 6
+  default:
+  default_function: CURRENT_TIMESTAMP
+  has_default: true
+  virtual: false
+- id: TunerSuggestion#updated_at
+  model_name: TunerSuggestion
+  table_name: tuner_suggestions
+  name: updated_at
+  type: datetime
+  'null': false
+  sql_type_metadata:
+    sql_type: timestamp(6) without time zone
+    type: datetime
+    precision: 6
+  default:
+  default_function: CURRENT_TIMESTAMP
+  has_default: true
+  virtual: false
 - id: User#id
   model_name: User
   table_name: users
