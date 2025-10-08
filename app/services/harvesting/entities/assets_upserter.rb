@@ -34,6 +34,10 @@ module Harvesting
 
       delegate :harvest_attempt, to: :harvest_configuration, allow_nil: true
 
+      around_execute :disable_layout_invalidations!
+
+      around_execute :disable_ordering_refresh!
+
       around_execute :provide_harvest_entity!
 
       around_execute :provide_harvest_record!
@@ -126,10 +130,27 @@ module Harvesting
           end
         end
 
+        # :nocov:
+        entity.invalidate_layouts! if asset_properties.any?
+        # :nocov:
+
         super
       end
 
       private
+
+      def disable_layout_invalidations!
+        Layouts::Disabler.disable! do
+          yield
+        end
+      end
+
+      # @return [void]
+      def disable_ordering_refresh!
+        Schemas::Orderings.with_disabled_refresh do
+          yield
+        end
+      end
 
       def flatten_reason(reason)
         case reason
