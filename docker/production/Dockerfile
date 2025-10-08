@@ -10,7 +10,7 @@ RUN --mount=type=secret,id=maxmind_account_id \
   GEOIPUPDATE_LICENSE_KEY_FILE=/run/secrets/maxmind_license_key \
   /usr/bin/geoipupdate
 
-FROM ruby:3.4.4-bullseye
+FROM ruby:3.4.4-bookworm
 
 RUN apt-get update -qq && apt-get install -y -qq --no-install-recommends \
     build-essential \
@@ -48,8 +48,9 @@ ENV BUNDLE_PATH=/bundle \
     PORT=8080
 ENV PATH="${BUNDLE_BIN}:${PATH}"
 ENV LD_PRELOAD=libjemalloc.so.2
+ENV REMEMBERED_WB_UNPROTECTED_OBJECTS_LIMIT_RATIO=0.01
 
-RUN gem update --system && gem install bundler:2.7.1
+RUN gem update --system && gem install bundler:2.7.2
 
 COPY Gemfile Gemfile.lock ./
 
