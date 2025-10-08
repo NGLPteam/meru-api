@@ -49,6 +49,12 @@ plugin :tmp_restart
 fork_worker 1000
 wait_for_less_busy_worker 0.001
 
+before_fork do
+  3.times { GC.start }
+
+  GC.compact
+end
+
 on_worker_fork do
   ActiveSupport.on_load(:active_record) do
     ActiveRecord::Base.connection.disconnect!
