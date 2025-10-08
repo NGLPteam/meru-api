@@ -8,12 +8,12 @@ Rails.application.configure do
     "maintenance:1",
     "rendering:1",
     "+purging,hierarchies,entities,orderings,invalidations,layouts:2",
-    "+harvest_pruning,extraction,harvesting,asset_fetching:4",
-    "permissions,processing,default,revalidations,mailers,ahoy:2",
+    "+harvest_pruning,extraction,harvesting,asset_fetching:2",
+    "permissions,processing,default,mailers,ahoy:2",
+    "revalidations:1",
   ].join(?;)
 
-  config.good_job.cleanup_preserved_jobs_before_seconds_ago = 43_200 # half-day
-  config.good_job.preserve_job_records = true
+  config.good_job.preserve_job_records = :on_unhandled_error
   config.good_job.retry_on_unhandled_error = false
   # config.good_job.on_thread_error = ->(exception) { Rollbar.error(exception) }
   # :nocov:
