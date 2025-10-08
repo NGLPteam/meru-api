@@ -6,6 +6,9 @@ module EntityTemplatingSupport
   extend ActiveSupport::Concern
   extend DefinesMonadicOperation
 
+  include Dry::Effects.Reader(:layout_invalidation_disabled, default: false)
+  include ModelMutationSupport
+
   included do
     has_many :entity_derived_layout_definitions, as: :entity, inverse_of: :entity, dependent: :delete_all
 
@@ -21,7 +24,13 @@ module EntityTemplatingSupport
     scope :sans_derived_layout_definitions, -> { where.missing(:entity_derived_layout_definitions) }
 
     scope :stale, -> { where(arel_build_staleness_condition) }
+
+    after_save :invalidate_layouts!, unless: :layout_invalidation_disabled?
+    after_save :invalidate_related_layouts!, unless: :layout_invalidation_disabled?
   end
+
+  # @return [Boolean]
+  attr_accessor :force_disable_layout_invalidation
 
   # @return [Dry::Monads::Success(Entities::LayoutsProxy)]
   # @return [Dry::Monads::Failure(:entity_deleted)]
@@ -52,9 +61,50 @@ module EntityTemplatingSupport
     !entity_derived_layout_definitions.exists?
   end
 
+  # @see #invalidate_layouts
+  # @see #invalidate_related_layouts
+  # @return [Dry::Monads::Success(void)]
+  monadic_operation! def invalidate_all_layouts
+    invalidate_layouts.bind do
+      invalidate_related_layouts
+    end
+  end
+
+  # @see Entities::InvalidateLayouts
+  # @return [Dry::Monads::Success(void)]
+  monadic_operation! def invalidate_layouts
+    call_operation("entities.invalidate_layouts", self)
+  end
+
+  # @see Entities::InvalidateRelatedLayouts
+  # @return [Dry::Monads::Success(void)]
+  monadic_operation! def invalidate_related_layouts
+    call_operation("entities.invalidate_related_layouts", self)
+  end
+
+  # @see ModelMutationSupport#in_graphql_mutation?
+  def layout_invalidation_disabled?
+    in_graphql_mutation? || layout_invalidation_disabled || force_disable_layout_invalidation
+  end
+
   # @return [String]
   def render_lock_key
     "render_lock/#{id}"
+  end
+
+  # @see Entities::RenderLayout
+  # @see Entities::LayoutRenderer
+  # @param [Layouts::Types::Kind] layout_kind
+  # @return [Dry::Monads::Success(HierarchicalEntity)]
+  monadic_matcher! def render_layout(layout_kind, generation: nil)
+    call_operation("entities.render_layout", self, generation:, layout_kind:)
+  end
+
+  # @see Entities::RenderLayouts
+  # @see Entities::LayoutsRenderer
+  # @return [Dry::Monads::Success(HierarchicalEntity)]
+  monadic_matcher! def render_layouts
+    call_operation("entities.render_layouts", self)
   end
 
   def stale?

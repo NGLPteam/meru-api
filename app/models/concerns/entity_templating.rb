@@ -90,44 +90,5 @@ module EntityTemplating
       as: :entity,
       inverse_of: :entity,
       dependent: :destroy
-
-    after_save :invalidate_layouts!, unless: :in_graphql_mutation?
-    after_save :invalidate_related_layouts!, unless: :in_graphql_mutation?
-  end
-
-  # @see #invalidate_layouts
-  # @see #invalidate_related_layouts
-  # @return [Dry::Monads::Success(void)]
-  monadic_operation! def invalidate_all_layouts
-    invalidate_layouts.bind do
-      invalidate_related_layouts
-    end
-  end
-
-  # @see Entities::InvalidateLayouts
-  # @return [Dry::Monads::Success(void)]
-  monadic_operation! def invalidate_layouts
-    call_operation("entities.invalidate_layouts", self)
-  end
-
-  # @see Entities::InvalidateRelatedLayouts
-  # @return [Dry::Monads::Success(void)]
-  monadic_operation! def invalidate_related_layouts
-    call_operation("entities.invalidate_related_layouts", self)
-  end
-
-  # @see Entities::RenderLayout
-  # @see Entities::LayoutRenderer
-  # @param [Layouts::Types::Kind] layout_kind
-  # @return [Dry::Monads::Success(HierarchicalEntity)]
-  monadic_matcher! def render_layout(layout_kind, generation: nil)
-    call_operation("entities.render_layout", self, generation:, layout_kind:)
-  end
-
-  # @see Entities::RenderLayouts
-  # @see Entities::LayoutsRenderer
-  # @return [Dry::Monads::Success(HierarchicalEntity)]
-  monadic_matcher! def render_layouts
-    call_operation("entities.render_layouts", self)
   end
 end
