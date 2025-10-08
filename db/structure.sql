@@ -699,6 +699,18 @@ CREATE TYPE public.permission_kind AS ENUM (
 
 
 --
+-- Name: request_query_kind; Type: TYPE; Schema: public; Owner: -
+--
+
+CREATE TYPE public.request_query_kind AS ENUM (
+    'query',
+    'mutation',
+    'subscription',
+    'other'
+);
+
+
+--
 -- Name: role_identifier; Type: TYPE; Schema: public; Owner: -
 --
 
@@ -6585,6 +6597,35 @@ CREATE TABLE public.rendering_template_logs (
 
 
 --
+-- Name: request_queries; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.request_queries (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    kind public.request_query_kind DEFAULT 'query'::public.request_query_kind NOT NULL,
+    query text NOT NULL,
+    digest text NOT NULL,
+    operation_name text,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+
+--
+-- Name: request_timings; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.request_timings (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    request_query_id uuid NOT NULL,
+    duration numeric NOT NULL,
+    variables jsonb,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+
+--
 -- Name: role_permissions; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -8600,6 +8641,22 @@ ALTER TABLE ONLY public.rendering_layout_logs
 
 ALTER TABLE ONLY public.rendering_template_logs
     ADD CONSTRAINT rendering_template_logs_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: request_queries request_queries_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.request_queries
+    ADD CONSTRAINT request_queries_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: request_timings request_timings_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.request_timings
+    ADD CONSTRAINT request_timings_pkey PRIMARY KEY (id);
 
 
 --
@@ -12197,6 +12254,13 @@ CREATE INDEX index_rendering_template_logs_on_template_definition ON public.rend
 
 
 --
+-- Name: index_request_timings_on_request_query_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_request_timings_on_request_query_id ON public.request_timings USING btree (request_query_id);
+
+
+--
 -- Name: index_role_permissions_on_permission_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -13596,6 +13660,14 @@ ALTER TABLE ONLY public.orderings
 
 
 --
+-- Name: request_timings fk_rails_3b0ac5b239; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.request_timings
+    ADD CONSTRAINT fk_rails_3b0ac5b239 FOREIGN KEY (request_query_id) REFERENCES public.request_queries(id) ON DELETE CASCADE;
+
+
+--
 -- Name: ordering_entries fk_rails_3bfbf3b5c9; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -14802,6 +14874,7 @@ ALTER TABLE ONLY public.templates_ordering_instances
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20251008180200'),
 ('20250911164517'),
 ('20250910180725'),
 ('20250808225252'),

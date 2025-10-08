@@ -16182,6 +16182,179 @@
   default_function: CURRENT_TIMESTAMP
   has_default: true
   virtual: false
+- id: RequestQuery#id
+  model_name: RequestQuery
+  table_name: request_queries
+  name: id
+  type: uuid
+  'null': false
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default:
+  default_function: gen_random_uuid()
+  has_default: true
+  virtual: false
+- id: RequestQuery#kind
+  model_name: RequestQuery
+  table_name: request_queries
+  name: kind
+  type: enum
+  'null': false
+  sql_type_metadata:
+    sql_type: request_query_kind
+    type: enum
+  default: query
+  default_function:
+  has_default: true
+  virtual: false
+- id: RequestQuery#query
+  model_name: RequestQuery
+  table_name: request_queries
+  name: query
+  type: text
+  'null': false
+  sql_type_metadata:
+    sql_type: text
+    type: text
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: RequestQuery#digest
+  model_name: RequestQuery
+  table_name: request_queries
+  name: digest
+  type: text
+  'null': false
+  sql_type_metadata:
+    sql_type: text
+    type: text
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: RequestQuery#operation_name
+  model_name: RequestQuery
+  table_name: request_queries
+  name: operation_name
+  type: text
+  'null': true
+  sql_type_metadata:
+    sql_type: text
+    type: text
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: RequestQuery#created_at
+  model_name: RequestQuery
+  table_name: request_queries
+  name: created_at
+  type: datetime
+  'null': false
+  sql_type_metadata:
+    sql_type: timestamp(6) without time zone
+    type: datetime
+    precision: 6
+  default:
+  default_function: CURRENT_TIMESTAMP
+  has_default: true
+  virtual: false
+- id: RequestQuery#updated_at
+  model_name: RequestQuery
+  table_name: request_queries
+  name: updated_at
+  type: datetime
+  'null': false
+  sql_type_metadata:
+    sql_type: timestamp(6) without time zone
+    type: datetime
+    precision: 6
+  default:
+  default_function: CURRENT_TIMESTAMP
+  has_default: true
+  virtual: false
+- id: RequestTiming#id
+  model_name: RequestTiming
+  table_name: request_timings
+  name: id
+  type: uuid
+  'null': false
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default:
+  default_function: gen_random_uuid()
+  has_default: true
+  virtual: false
+- id: RequestTiming#request_query_id
+  model_name: RequestTiming
+  table_name: request_timings
+  name: request_query_id
+  type: uuid
+  'null': false
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: RequestTiming#duration
+  model_name: RequestTiming
+  table_name: request_timings
+  name: duration
+  type: decimal
+  'null': false
+  sql_type_metadata:
+    sql_type: numeric
+    type: decimal
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: RequestTiming#variables
+  model_name: RequestTiming
+  table_name: request_timings
+  name: variables
+  type: jsonb
+  'null': true
+  sql_type_metadata:
+    sql_type: jsonb
+    type: jsonb
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: RequestTiming#created_at
+  model_name: RequestTiming
+  table_name: request_timings
+  name: created_at
+  type: datetime
+  'null': false
+  sql_type_metadata:
+    sql_type: timestamp(6) without time zone
+    type: datetime
+    precision: 6
+  default:
+  default_function: CURRENT_TIMESTAMP
+  has_default: true
+  virtual: false
+- id: RequestTiming#updated_at
+  model_name: RequestTiming
+  table_name: request_timings
+  name: updated_at
+  type: datetime
+  'null': false
+  sql_type_metadata:
+    sql_type: timestamp(6) without time zone
+    type: datetime
+    precision: 6
+  default:
+  default_function: CURRENT_TIMESTAMP
+  has_default: true
+  virtual: false
 - id: Role#id
   model_name: Role
   table_name: roles

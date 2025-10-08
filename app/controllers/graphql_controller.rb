@@ -24,7 +24,9 @@ class GraphQLController < ApplicationController
     }
 
     result = request_state.wrap do
-      APISchema.execute(query, variables:, context:, operation_name:)
+      Utility::RequestTimer.measure!(query:, operation_name:, variables:) do
+        APISchema.execute(query, variables:, context:, operation_name:)
+      end
     end
 
     render json: result
