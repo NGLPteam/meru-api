@@ -33,7 +33,7 @@ RUN /usr/share/postgresql-common/pgdg/apt.postgresql.org.sh -y
 
 RUN apt-get update -qq && apt-get install -y -qq --no-install-recommends postgresql-client-15
 
-RUN gem update --system && gem install bundler:2.7.1
+RUN gem update --system && gem install bundler:2.7.2
 
 ENV BUNDLE_PATH=/bundle \
     BUNDLE_BIN=/bundle/bin \
@@ -50,12 +50,13 @@ ENV GEOIPUPDATE_DB_DIR="/usr/share/GeoIP"
 ENV GEOIPUPDATE_EDITION_IDS="GeoLite2-ASN GeoLite2-City GeoLite2-Country"
 ENV GEOIPUPDATE_PRESERVE_FILE_TIMES=1
 ENV GEOIPUPDATE_VERBOSE=1
+ENV REMEMBERED_WB_UNPROTECTED_OBJECTS_LIMIT_RATIO=0.01
 
 WORKDIR /srv/app
 COPY Gemfile /srv/app/Gemfile
 COPY Gemfile.lock /srv/app/Gemfile.lock
 
-RUN bundle install
+RUN bundle install -j 2
 
 COPY . /srv/app
 

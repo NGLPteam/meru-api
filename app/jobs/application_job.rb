@@ -23,6 +23,8 @@ class ApplicationJob < ActiveJob::Base
 
   retry_on GoodJob::InterruptError, wait: :polynomially_longer, attempts: Float::INFINITY
 
+  retry_on GoodJob::ActiveJobExtensions::Concurrency::ThrottleExceededError, wait: :polynomially_longer, attempts: 10
+
   # Automatically retry jobs that encountered a deadlock
   retry_on ActiveRecord::Deadlocked
 

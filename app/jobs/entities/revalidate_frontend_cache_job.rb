@@ -7,7 +7,6 @@ module Entities
 
     good_job_control_concurrency_with(
       total_limit: 1,
-      perform_throttle: [1, 60.seconds],
       # :nocov:
       key: -> { "#{self.class.name}-#{arguments.first.id}" }
       # :nocov:
