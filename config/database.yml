@@ -24,9 +24,6 @@ default: &default
   # For details on connection pooling, see Rails configuration guide
   # https://guides.rubyonrails.org/configuring.html#database-pooling
   pool: 15
-  variables:
-    idle_in_transaction_session_timeout: '1min'
-    statement_timeout: 600000
 
 development:
   <<: *default
@@ -65,9 +62,6 @@ development:
 test:
   <<: *default
   database: wdp_api_test
-  variables:
-    idle_in_transaction_session_timeout: '60min'
-    statement_timeout: 600000
 
 # As with config/credentials.yml, you never want to store sensitive information,
 # like your database password, in your source code. If your source code is
@@ -93,7 +87,3 @@ production:
   <<: *default
   database: wdp_api_production
   username: wdp_api
-  # 10 minutes for very long-running job txn
-  variables:
-    idle_in_transaction_session_timeout: '1min'
-    statement_timeout: 600000
