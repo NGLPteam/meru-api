@@ -4,6 +4,7 @@ services:
     command: postgres -c shared_preload_libraries=pg_stat_statements -c pg_stat_statements.track=all
     shm_size: 2g
     environment:
+      PGUSER: postgres
       POSTGRES_PASSWORD: password
     logging:
       driver: json-file
@@ -14,7 +15,7 @@ services:
     volumes:
       - postgres-data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready"]
+      test: ["CMD-SHELL", "pg_isready", "-U", "postgres"]
       interval: 10s
       timeout: 5s
       retries: 5
