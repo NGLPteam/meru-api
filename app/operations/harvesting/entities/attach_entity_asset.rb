@@ -5,8 +5,8 @@ module Harvesting
     # Attach an entity asset like a thumbnail, hero image, etc.
     class AttachEntityAsset
       include MonadicPersistence
-      include Dry::Effects.Resolve(:harvest_entity)
       include Dry::Monads[:result, :do]
+      include Harvesting::WithLogger
       include MeruAPI::Deps[
         fetch_cached_asset: "harvesting.cached_assets.fetch",
         add_reference: "harvesting.cached_assets.reference",
@@ -56,9 +56,9 @@ module Harvesting
             monadic_save(entity).or do |(_code, _model, errors)|
               attacher.assign nil
 
-              harvest_entity.log_harvest_error!(
-                :invalid_entity_asset,
+              logger.error(
                 "Invalid entity asset: #{errors.to_sentence}",
+                code: :invalid_entity_asset,
                 errors:,
                 content_type: cached.content_type,
                 identifier: source.identifier,
@@ -70,7 +70,7 @@ module Harvesting
           end
         else
           if attacher.file.blank?
-            harvest_entity.log_harvest_error! :asset_not_found, "Cannot retrieve #{cached.url}", url: cached.url
+            logger.error("Cannot retrieve #{cached.url}", url: cached.url, code: :asset_not_found)
           end
 
           Success false

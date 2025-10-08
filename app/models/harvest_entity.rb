@@ -91,19 +91,6 @@ class HarvestEntity < ApplicationRecord
     call_operation("harvesting.entities.upsert_assets", self)
   end
 
-  # @param [#as_json] reason
-  # @return [(Symbol, String, Hash)]
-  def to_failed_upsert(reason = nil, code: :failed_entity_upsert)
-    metadata = {
-      harvest_entity_id: id,
-      reason: flatten_reason(reason),
-    }
-
-    message = "Could not upsert HarvestEntity(#{id})"
-
-    [code, message, metadata]
-  end
-
   private
 
   def flatten_reason(reason)

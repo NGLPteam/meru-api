@@ -105,7 +105,7 @@ module Harvesting
         # :nocov:
 
         upsert_and_attach!.or do |reason|
-          harvest_entity.log_harvest_error!(*harvest_entity.to_failed_upsert(reason, code: :failed_asset_upsert))
+          logger.error("Failed to upsert assets", code: :failed_asset_upsert, reason: flatten_reason(reason))
         end
       rescue Harvesting::Error => e
         # :nocov:
@@ -130,6 +130,20 @@ module Harvesting
       end
 
       private
+
+      def flatten_reason(reason)
+        case reason
+        in Failure[:invalid, ApplicationRecord => model]
+          {
+            code: :invalid,
+            model: model.model_name,
+            id: model.id,
+            errors: model.errors.as_json,
+          }
+        else
+          reason.as_json
+        end
+      end
 
       # @return [void]
       def track_assets_duration!
