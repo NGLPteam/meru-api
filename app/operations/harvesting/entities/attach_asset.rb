@@ -9,6 +9,7 @@ module Harvesting
       include MonadicPersistence
       include Dry::Effects.Reader(:harvest_entity)
       include Dry::Monads[:result, :do]
+      include Harvesting::WithLogger
       include MeruAPI::Deps[
         fetch_cached_asset: "harvesting.cached_assets.fetch",
         add_reference: "harvesting.cached_assets.reference",
@@ -59,7 +60,7 @@ module Harvesting
           end
         else
           unless asset.has_attachment?
-            harvest_entity.log_harvest_error! :asset_not_found, "Cannot retrieve #{cached.url}", url: cached.url
+            logger.error("Cannot retrieve #{cached.url}", url: cached.url, code: :asset_not_found)
 
             asset.mark_for_destruction
           end

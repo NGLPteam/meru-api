@@ -14,7 +14,7 @@ module Harvesting
         Schemas::Orderings.with_asynchronous_refresh do
           harvest_record.harvest_entities.roots.find_each do |root_entity|
             root_entity.upsert(inline: true).or do |reason|
-              harvest_record.log_harvest_error!(*root_entity.to_failed_upsert(reason))
+              logger.error("Failed to upsert entities for record", tags: %i[failed_entity_upsert], reason:)
             end
           end
         end
