@@ -18,8 +18,12 @@ module Schemas
           end
         end
 
-        # Not an operation that should/can fail.
-        MeruAPI::Container["layouts.invalidate_batch"].(layout_definitions).value!
+        # :nocov:
+        if LayoutsConfig.invalidate_on_deploy?
+          # Not an operation that should/can fail.
+          MeruAPI::Container["layouts.invalidate_batch"].(layout_definitions).value!
+        end
+        # :nocov:
 
         return result
       end

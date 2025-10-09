@@ -1,0 +1,15 @@
+default: &default
+  invalidate_on_deploy: true
+
+development:
+  <<: *default
+  invalidate_on_deploy: false
+  track_slot_compilation_time: true
+
+test:
+  <<: *default
+  invalidate_on_deploy: true
+
+production:
+  <<: *default
+  invalidate_on_deploy: false
