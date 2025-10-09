@@ -1493,6 +1493,193 @@
   default_function: CURRENT_TIMESTAMP
   has_default: true
   virtual: false
+- id: CacheWarmer#id
+  model_name: CacheWarmer
+  table_name: cache_warmers
+  name: id
+  type: uuid
+  'null': false
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default:
+  default_function: gen_random_uuid()
+  has_default: true
+  virtual: false
+- id: CacheWarmer#warmable_type
+  model_name: CacheWarmer
+  table_name: cache_warmers
+  name: warmable_type
+  type: string
+  'null': false
+  sql_type_metadata:
+    sql_type: character varying
+    type: string
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: CacheWarmer#warmable_id
+  model_name: CacheWarmer
+  table_name: cache_warmers
+  name: warmable_id
+  type: uuid
+  'null': false
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: CacheWarmer#created_at
+  model_name: CacheWarmer
+  table_name: cache_warmers
+  name: created_at
+  type: datetime
+  'null': false
+  sql_type_metadata:
+    sql_type: timestamp(6) without time zone
+    type: datetime
+    precision: 6
+  default:
+  default_function: CURRENT_TIMESTAMP
+  has_default: true
+  virtual: false
+- id: CacheWarmer#updated_at
+  model_name: CacheWarmer
+  table_name: cache_warmers
+  name: updated_at
+  type: datetime
+  'null': false
+  sql_type_metadata:
+    sql_type: timestamp(6) without time zone
+    type: datetime
+    precision: 6
+  default:
+  default_function: CURRENT_TIMESTAMP
+  has_default: true
+  virtual: false
+- id: CacheWarming#id
+  model_name: CacheWarming
+  table_name: cache_warmings
+  name: id
+  type: uuid
+  'null': false
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default:
+  default_function: gen_random_uuid()
+  has_default: true
+  virtual: false
+- id: CacheWarming#cache_warmer_id
+  model_name: CacheWarming
+  table_name: cache_warmings
+  name: cache_warmer_id
+  type: uuid
+  'null': false
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: CacheWarming#status
+  model_name: CacheWarming
+  table_name: cache_warmings
+  name: status
+  type: integer
+  'null': true
+  sql_type_metadata:
+    sql_type: integer
+    type: integer
+    limit: 4
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: CacheWarming#duration
+  model_name: CacheWarming
+  table_name: cache_warmings
+  name: duration
+  type: decimal
+  'null': true
+  sql_type_metadata:
+    sql_type: numeric
+    type: decimal
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: CacheWarming#url
+  model_name: CacheWarming
+  table_name: cache_warmings
+  name: url
+  type: text
+  'null': false
+  sql_type_metadata:
+    sql_type: text
+    type: text
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: CacheWarming#error_klass
+  model_name: CacheWarming
+  table_name: cache_warmings
+  name: error_klass
+  type: text
+  'null': true
+  sql_type_metadata:
+    sql_type: text
+    type: text
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: CacheWarming#error_message
+  model_name: CacheWarming
+  table_name: cache_warmings
+  name: error_message
+  type: text
+  'null': true
+  sql_type_metadata:
+    sql_type: text
+    type: text
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: CacheWarming#created_at
+  model_name: CacheWarming
+  table_name: cache_warmings
+  name: created_at
+  type: datetime
+  'null': false
+  sql_type_metadata:
+    sql_type: timestamp(6) without time zone
+    type: datetime
+    precision: 6
+  default:
+  default_function: CURRENT_TIMESTAMP
+  has_default: true
+  virtual: false
+- id: CacheWarming#updated_at
+  model_name: CacheWarming
+  table_name: cache_warmings
+  name: updated_at
+  type: datetime
+  'null': false
+  sql_type_metadata:
+    sql_type: timestamp(6) without time zone
+    type: datetime
+    precision: 6
+  default:
+  default_function: CURRENT_TIMESTAMP
+  has_default: true
+  virtual: false
 - id: Collection#id
   model_name: Collection
   table_name: collections
@@ -1846,6 +2033,45 @@
   default:
   default_function:
   has_default: false
+  virtual: false
+- id: Collection#cache_warming_default_enabled
+  model_name: Collection
+  table_name: collections
+  name: cache_warming_default_enabled
+  type: boolean
+  'null': false
+  sql_type_metadata:
+    sql_type: boolean
+    type: boolean
+  default: 'false'
+  default_function:
+  has_default: true
+  virtual: false
+- id: Collection#cache_warming_enabled
+  model_name: Collection
+  table_name: collections
+  name: cache_warming_enabled
+  type: boolean
+  'null': false
+  sql_type_metadata:
+    sql_type: boolean
+    type: boolean
+  default: 'false'
+  default_function:
+  has_default: true
+  virtual: false
+- id: Collection#cache_warming_status
+  model_name: Collection
+  table_name: collections
+  name: cache_warming_status
+  type: enum
+  'null': false
+  sql_type_metadata:
+    sql_type: cache_warming_status
+    type: enum
+  default: default
+  default_function:
+  has_default: true
   virtual: false
 - id: CollectionAttribution#id
   model_name: CollectionAttribution
@@ -2456,6 +2682,45 @@
   default:
   default_function:
   has_default: false
+  virtual: false
+- id: Community#cache_warming_default_enabled
+  model_name: Community
+  table_name: communities
+  name: cache_warming_default_enabled
+  type: boolean
+  'null': false
+  sql_type_metadata:
+    sql_type: boolean
+    type: boolean
+  default: 'true'
+  default_function:
+  has_default: true
+  virtual: false
+- id: Community#cache_warming_enabled
+  model_name: Community
+  table_name: communities
+  name: cache_warming_enabled
+  type: boolean
+  'null': false
+  sql_type_metadata:
+    sql_type: boolean
+    type: boolean
+  default: 'false'
+  default_function:
+  has_default: true
+  virtual: false
+- id: Community#cache_warming_status
+  model_name: Community
+  table_name: communities
+  name: cache_warming_status
+  type: enum
+  'null': false
+  sql_type_metadata:
+    sql_type: cache_warming_status
+    type: enum
+  default: default
+  default_function:
+  has_default: true
   virtual: false
 - id: CommunityMembership#id
   model_name: CommunityMembership
@@ -11245,6 +11510,45 @@
   default:
   default_function:
   has_default: false
+  virtual: false
+- id: Item#cache_warming_default_enabled
+  model_name: Item
+  table_name: items
+  name: cache_warming_default_enabled
+  type: boolean
+  'null': false
+  sql_type_metadata:
+    sql_type: boolean
+    type: boolean
+  default: 'false'
+  default_function:
+  has_default: true
+  virtual: false
+- id: Item#cache_warming_enabled
+  model_name: Item
+  table_name: items
+  name: cache_warming_enabled
+  type: boolean
+  'null': false
+  sql_type_metadata:
+    sql_type: boolean
+    type: boolean
+  default: 'false'
+  default_function:
+  has_default: true
+  virtual: false
+- id: Item#cache_warming_status
+  model_name: Item
+  table_name: items
+  name: cache_warming_status
+  type: enum
+  'null': false
+  sql_type_metadata:
+    sql_type: cache_warming_status
+    type: enum
+  default: default
+  default_function:
+  has_default: true
   virtual: false
 - id: ItemAttribution#id
   model_name: ItemAttribution

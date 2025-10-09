@@ -5,6 +5,7 @@ module HierarchicalEntity
   extend DefinesMonadicOperation
 
   include AssociationHelpers
+  include CacheWarmable
   include ChecksContextualPermissions
   include ConfiguresContributionRole
   include EntityTemplating

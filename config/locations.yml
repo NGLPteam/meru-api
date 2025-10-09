@@ -1,0 +1,11 @@
+default: &default
+
+development:
+  <<: *default
+  admin_internal: "http://host.docker.internal:3000"
+  frontend_internal: "http://host.docker.internal:14700"
+
+test:
+  <<: *default
+  admin_internal: "http://admin.meru.test"
+  frontend_internal: "http://frontend.meru.test"

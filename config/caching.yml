@@ -1,0 +1,14 @@
+default: &default
+  warming_enabled: true
+
+development:
+  <<: *default
+  warming_enabled: false
+
+test:
+  <<: *default
+  warming_enabled: true
+
+production:
+  <<: *default
+  warming_enabled: true

@@ -183,6 +183,17 @@ CREATE TYPE public.blurb_background AS ENUM (
 
 
 --
+-- Name: cache_warming_status; Type: TYPE; Schema: public; Owner: -
+--
+
+CREATE TYPE public.cache_warming_status AS ENUM (
+    'default',
+    'on',
+    'off'
+);
+
+
+--
 -- Name: child_entity_kind; Type: TYPE; Schema: public; Owner: -
 --
 
@@ -4008,7 +4019,10 @@ CREATE TABLE public.collections (
     marked_for_purge boolean DEFAULT false NOT NULL,
     generation uuid,
     render_duration numeric,
-    last_rendered_at timestamp without time zone
+    last_rendered_at timestamp without time zone,
+    cache_warming_default_enabled boolean DEFAULT false NOT NULL,
+    cache_warming_enabled boolean DEFAULT false NOT NULL,
+    cache_warming_status public.cache_warming_status DEFAULT 'default'::public.cache_warming_status NOT NULL
 );
 
 
@@ -4055,7 +4069,10 @@ CREATE TABLE public.communities (
     marked_for_purge boolean DEFAULT false NOT NULL,
     generation uuid,
     render_duration numeric,
-    last_rendered_at timestamp without time zone
+    last_rendered_at timestamp without time zone,
+    cache_warming_default_enabled boolean DEFAULT true NOT NULL,
+    cache_warming_enabled boolean DEFAULT false NOT NULL,
+    cache_warming_status public.cache_warming_status DEFAULT 'default'::public.cache_warming_status NOT NULL
 );
 
 
@@ -4118,7 +4135,10 @@ CREATE TABLE public.items (
     marked_for_purge boolean DEFAULT false NOT NULL,
     generation uuid,
     render_duration numeric,
-    last_rendered_at timestamp without time zone
+    last_rendered_at timestamp without time zone,
+    cache_warming_default_enabled boolean DEFAULT false NOT NULL,
+    cache_warming_enabled boolean DEFAULT false NOT NULL,
+    cache_warming_status public.cache_warming_status DEFAULT 'default'::public.cache_warming_status NOT NULL
 );
 
 
@@ -4180,6 +4200,36 @@ CREATE VIEW public.audits_mismatched_item_parents AS
      JOIN public.items anc ON ((hier.ancestor_id = anc.id)))
   WHERE ((c.parent_id IS NOT NULL) AND (anc.collection_id <> c.collection_id))
   ORDER BY c.id, hier.generations DESC;
+
+
+--
+-- Name: cache_warmers; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.cache_warmers (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    warmable_type character varying NOT NULL,
+    warmable_id uuid NOT NULL,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+
+--
+-- Name: cache_warmings; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.cache_warmings (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    cache_warmer_id uuid NOT NULL,
+    status integer,
+    duration numeric,
+    url text NOT NULL,
+    error_klass text,
+    error_message text,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
 
 
 --
@@ -7973,6 +8023,22 @@ ALTER TABLE ONLY public.assets
 
 
 --
+-- Name: cache_warmers cache_warmers_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.cache_warmers
+    ADD CONSTRAINT cache_warmers_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: cache_warmings cache_warmings_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.cache_warmings
+    ADD CONSTRAINT cache_warmings_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: collection_attributions collection_attributions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -9821,6 +9887,20 @@ CREATE INDEX index_authorizing_entities_on_hierarchical ON public.authorizing_en
 --
 
 CREATE INDEX index_authorizing_entities_single_user ON public.authorizing_entities USING btree (auth_path, scope) INCLUDE (hierarchical_id, hierarchical_type);
+
+
+--
+-- Name: index_cache_warmers_on_warmable; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_cache_warmers_on_warmable ON public.cache_warmers USING btree (warmable_type, warmable_id);
+
+
+--
+-- Name: index_cache_warmings_on_cache_warmer_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_cache_warmings_on_cache_warmer_id ON public.cache_warmings USING btree (cache_warmer_id);
 
 
 --
@@ -13796,6 +13876,14 @@ ALTER TABLE ONLY public.granted_permissions
 
 
 --
+-- Name: cache_warmings fk_rails_490e4452b3; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.cache_warmings
+    ADD CONSTRAINT fk_rails_490e4452b3 FOREIGN KEY (cache_warmer_id) REFERENCES public.cache_warmers(id) ON DELETE CASCADE;
+
+
+--
 -- Name: access_grants fk_rails_4cf2824701; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -14922,6 +15010,9 @@ ALTER TABLE ONLY public.templates_ordering_instances
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20251009055637'),
+('20251009053907'),
+('20251009053741'),
 ('20251008224630'),
 ('20251008224043'),
 ('20251008180200'),
