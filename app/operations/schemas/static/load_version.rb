@@ -37,7 +37,9 @@ module Schemas
       def populate_root_layouts_for(version)
         defs = yield version.populate_root_layouts(skip_layout_invalidation:)
 
-        layout_definitions.concat defs
+        if LayoutsConfig.invalidate_on_deploy?
+          layout_definitions.concat defs
+        end
 
         Success()
       end
