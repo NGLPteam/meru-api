@@ -3,7 +3,15 @@
 class LocationsConfig < ApplicationConfig
   INCLUDED_PORT = Dry::Types["integer"].constrained(excluded_from: [80, 443])
 
-  attr_config frontend: "http://localhost:14700", admin: "http://localhost:3000", api: "http://localhost:6222", debug: "http://localhost:3400"
+  attr_config :frontend_internal, :admin_internal, frontend: "http://localhost:14700", admin: "http://localhost:3000", api: "http://localhost:6222", debug: "http://localhost:3400"
+
+  def admin_request
+    admin_internal.presence || admin
+  end
+
+  def frontend_request
+    frontend_internal.presence || frontend
+  end
 
   # @return [Hash]
   memoize def api_url_options

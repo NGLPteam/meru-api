@@ -7,10 +7,10 @@ Rails.application.configure do
   queues = [
     "maintenance:1",
     "rendering:1",
+    "+revalidations,cache_warming:1",
     "+purging,hierarchies,entities,orderings,invalidations,layouts:2",
     "+harvest_pruning,extraction,harvesting,asset_fetching:2",
     "permissions,processing,default,mailers,ahoy:2",
-    "revalidations:1",
   ].join(?;)
 
   config.good_job.preserve_job_records = :on_unhandled_error
@@ -45,6 +45,11 @@ Rails.application.configure do
       cron: "*/10 * * * *",
       class: "Attributions::Items::ManageJob",
       description: "Ensure item attributions are up to date",
+    },
+    "cache_warmers.enqueue_enabled": {
+      cron: "25 */2 * * *",
+      class: "CacheWarmers::EnqueueEnabledJob",
+      description: "Enqueue enabled cache warmers",
     },
     "contributors.audit_contribution_counts": {
       cron: "*/5 * * * *",
