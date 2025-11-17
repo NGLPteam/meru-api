@@ -5,7 +5,7 @@ module Types
     module ScalarPropertyType
       include Types::BaseInterface
 
-      implements SchemaPropertyType
+      implements ::Types::Schematic::SchemaPropertyType
 
       field :label, String, null: false do
         description <<~TEXT

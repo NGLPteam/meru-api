@@ -5,18 +5,20 @@ module Searching
   # @api private
   class PredicateCompiler
     include Dry::Effects::Handler.State(:joins)
-    include Dry::Effects::Handler.Resolve
     include Dry::Initializer[undefined: false].define -> do
       param :predicates, Searching::Operator::List.optional, default: proc { [] }
-
-      option :encode_join, Searching::Types::JoinEncoder, default: proc { MeruAPI::Container["searching.compilation.encode_join_name"] }
 
       option :scope, Searching::Types::Interface(:all), default: proc { Entity.all }
     end
 
+    # @return [Hash]
+    attr_reader :joins
+
     # @return [ActiveRecord::Relation<::Entity>, nil]
     def call
       return nil if predicates.blank?
+
+      @joins ||= {}
 
       compiled = compile
 
@@ -26,7 +28,7 @@ module Searching
 
       query.where! compiled[:conditions]
 
-      query.joins!(*compiled[:joins].values) if compiled[:joins].any?
+      query.joins!(*joins.values) if joins.any?
 
       return query.apply_order_to_exclude_duplicate_links
     end
@@ -35,26 +37,18 @@ module Searching
 
     def compile
       wrap_predicate_compilation do |compiled|
-        compiled[:conditions] = predicates.map(&:call).compact.reduce(nil) do |expr, pred|
+        compiled[:conditions] = predicates.map { _1.call(joins:) }.compact.reduce(nil) do |expr, pred|
           expr.present? ? expr.and(pred) : pred
         end
       end
     end
 
     def wrap_predicate_compilation
-      joins = Concurrent::Map.new
+      compiled = {}
 
-      expression = {}
+      yield compiled
 
-      joins, _ = with_joins(joins) do
-        provide(encode_join:) do
-          yield expression
-        end
-      end
-
-      expression[:joins] = joins.each_pair.to_h
-
-      return expression
+      return compiled
     end
   end
 end

@@ -13,7 +13,7 @@ RSpec.describe "Query.contributor", type: :request, disable_ordering_refresh: tr
       }
     }
 
-    fragment AnyContributorDetailsFragment on AnyContributor {
+    fragment AnyContributorDetailsFragment on Contributor {
       ... on OrganizationContributor {
         slug
 

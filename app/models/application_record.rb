@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# @abstract The base model for WDP-API.
+# @abstract The base model for Meru-API.
 class ApplicationRecord < ActiveRecord::Base
   self.abstract_class = true
 

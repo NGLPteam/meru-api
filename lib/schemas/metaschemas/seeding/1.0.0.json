@@ -2,7 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "WDP Entity Seed Schema",
   "description": "A meta-schema used by the NGLP Web Delivery Platform for importing entities in a specific hierarchy",
-  "$defs": {
+  "definitions": {
     "AssetData": {
       "description": "A Data URI that contains the actual asset encoded via Base64. Not recommended for very large assets.",
       "type": "string",
@@ -19,9 +19,9 @@
       "description": "A collection is an abstract grouping of items as well as other collections. A journal, a unit, or a series can be considered a collection.",
       "type": "object",
       "properties": {
-        "identifier": { "$ref": "#/$defs/Identifier" },
-        "title": { "$ref": "#/$defs/CoreProperties/Title" },
-        "subtitle": { "$ref": "#/$defs/CoreProperties/Subtitle" },
+        "identifier": { "$ref": "#/definitions/Identifier" },
+        "title": { "$ref": "#/definitions/CoreProperties/Title" },
+        "subtitle": { "$ref": "#/definitions/CoreProperties/Subtitle" },
         "schema": {
           "title": "Schema",
           "description": "The schema to use for this collection",
@@ -34,13 +34,13 @@
           ],
           "default": "default:collection"
         },
-        "doi": { "$ref": "#/$defs/StringIdentifiers/DOI" },
-        "issn": { "$ref": "#/$defs/StringIdentifiers/ISSN" },
-        "hero_image": { "$ref": "#/$defs/CoreProperties/HeroImage" },
-        "thumbnail": { "$ref": "#/$defs/CoreProperties/Thumbnail" },
+        "doi": { "$ref": "#/definitions/StringIdentifiers/DOI" },
+        "issn": { "$ref": "#/definitions/StringIdentifiers/ISSN" },
+        "hero_image": { "$ref": "#/definitions/CoreProperties/HeroImage" },
+        "thumbnail": { "$ref": "#/definitions/CoreProperties/Thumbnail" },
         "properties": { "type": "object" },
-        "collections": { "$ref": "#/$defs/Collections" },
-        "pages": { "$ref": "#/$defs/Pages" }
+        "collections": { "$ref": "#/definitions/Collections" },
+        "pages": { "$ref": "#/definitions/Pages" }
       },
       "required": ["identifier", "title", "schema"],
       "if": {
@@ -50,7 +50,7 @@
       },
       "then": {
         "properties": {
-          "properties": { "$ref": "#/$defs/CollectionProperties/nglp:journal" }
+          "properties": { "$ref": "#/definitions/CollectionProperties/nglp:journal" }
         }
       },
       "else": {
@@ -61,7 +61,7 @@
         },
         "then": {
           "properties": {
-            "properties": { "$ref": "#/$defs/CollectionProperties/nglp:series" }
+            "properties": { "$ref": "#/definitions/CollectionProperties/nglp:series" }
           }
         },
         "else": {
@@ -72,7 +72,7 @@
           },
           "then": {
             "properties": {
-              "properties": { "$ref": "#/$defs/CollectionProperties/nglp:unit" }
+              "properties": { "$ref": "#/definitions/CollectionProperties/nglp:unit" }
             }
           }
         }
@@ -95,7 +95,7 @@
             "description": "Whether or not this journal should be considered open access."
           },
           "description": {
-            "$ref": "#/$defs/Content/FullText"
+            "$ref": "#/definitions/Content/FullText"
           },
           "cc_license": {
             "title": "CC License",
@@ -116,7 +116,7 @@
         "type": "object",
         "properties": {
           "about": {
-            "$ref": "#/$defs/Content/Markdown"
+            "$ref": "#/definitions/Content/Markdown"
           }
         }
       },
@@ -124,7 +124,7 @@
         "type": "object",
         "properties": {
           "about": {
-            "$ref": "#/$defs/Content/Markdown"
+            "$ref": "#/definitions/Content/Markdown"
           }
         }
       }
@@ -134,7 +134,7 @@
       "description": "A list of collections at the current hierarchical scope.",
       "type": "array",
       "items": {
-        "$ref": "#/$defs/Collection"
+        "$ref": "#/definitions/Collection"
       }
     },
     "Community": {
@@ -142,8 +142,8 @@
       "description": "A community is a top-level organizational entity that acts as an entry point for accessing collections and their items within the WDP.",
       "type": "object",
       "properties": {
-        "identifier": { "$ref": "#/$defs/Identifier" },
-        "title": { "$ref": "#/$defs/CoreProperties/Title"},
+        "identifier": { "$ref": "#/definitions/Identifier" },
+        "title": { "$ref": "#/definitions/CoreProperties/Title"},
         "schema": {
           "title": "Schema",
           "description": "The schema to use for this community",
@@ -154,13 +154,13 @@
           "default": "default:community"
         },
         "hero_image": {
-          "$ref": "#/$defs/CoreProperties/HeroImage"
+          "$ref": "#/definitions/CoreProperties/HeroImage"
         },
-        "logo": { "$ref": "#/$defs/CoreProperties/Logo" },
-        "thumbnail": { "$ref": "#/$defs/CoreProperties/Thumbnail" },
-        "properties": { "$ref": "#/$defs/CommunityProperties/default:community" },
-        "collections": { "$ref": "#/$defs/Collections" },
-        "pages": { "$ref": "#/$defs/Pages" }
+        "logo": { "$ref": "#/definitions/CoreProperties/Logo" },
+        "thumbnail": { "$ref": "#/definitions/CoreProperties/Thumbnail" },
+        "properties": { "$ref": "#/definitions/CommunityProperties/default:community" },
+        "collections": { "$ref": "#/definitions/Collections" },
+        "pages": { "$ref": "#/definitions/Pages" }
       },
       "required": ["identifier", "title", "schema"]
     },
@@ -177,15 +177,15 @@
             "properties": {
               "journals": {
                 "title": "Journals",
-                "$ref": "#/$defs/Identifiers"
+                "$ref": "#/definitions/Identifiers"
               },
               "series": {
                 "title": "Series",
-                "$ref": "#/$defs/Identifiers"
+                "$ref": "#/definitions/Identifiers"
               },
               "units": {
                 "title": "Units",
-                "$ref": "#/$defs/Identifiers"
+                "$ref": "#/definitions/Identifiers"
               }
             }
           }
@@ -197,7 +197,7 @@
       "description": "A list of communities to define at the top level of the WDP installation.",
       "type": "array",
       "items": {
-        "$ref": "#/$defs/Community"
+        "$ref": "#/definitions/Community"
       }
     },
     "Content": {
@@ -268,21 +268,21 @@
         "title": "Hero Image",
         "description": "This image is displayed on the landing page for the entity.",
         "allOf": [
-          { "$ref": "#/$defs/OptionalRawAsset" }
+          { "$ref": "#/definitions/OptionalRawAsset" }
         ]
       },
       "Logo": {
         "title": "Logo",
         "description": "A community-specific image that acts as its logo.",
         "allOf": [
-          { "$ref": "#/$defs/OptionalRawAsset" }
+          { "$ref": "#/definitions/OptionalRawAsset" }
         ]
       },
       "Thumbnail": {
         "title": "Thumbnail",
         "description": "A representative image for the entity that is used when rendering in a list, search results, etc.",
         "allOf": [
-          { "$ref": "#/$defs/OptionalRawAsset" }
+          { "$ref": "#/definitions/OptionalRawAsset" }
         ]
       }
     },
@@ -294,23 +294,23 @@
     "IdentifierPath": {
       "type": "array",
       "items": {
-        "$ref": "#/$defs/Identifier"
+        "$ref": "#/definitions/Identifier"
       }
     },
     "Identifiers": {
       "type": "array",
       "items": {
-        "$ref": "#/$defs/IdentifierPath"
+        "$ref": "#/definitions/IdentifierPath"
       }
     },
     "Page": {
       "title": "Page",
       "description": "A markdown-based element that will appear as additional pages of arbitrary information on the associated entity.",
       "properties": {
-        "slug": { "$ref": "#/$defs/Slug" },
+        "slug": { "$ref": "#/definitions/Slug" },
         "title": { "type": "string" },
-        "body": { "$ref": "#/$defs/Content/Markdown" },
-        "hero_image": { "$ref": "#/$defs/CoreProperties/HeroImage" }
+        "body": { "$ref": "#/definitions/Content/Markdown" },
+        "hero_image": { "$ref": "#/definitions/CoreProperties/HeroImage" }
       },
       "required": ["slug", "title", "body"]
     },
@@ -318,7 +318,7 @@
       "title": "Pages",
       "description": "A listing of pages for the associated entity. They will be deterministically ordered based on the order defined in this import.",
       "type": "array",
-      "items": { "$ref": "#/$defs/Page" }
+      "items": { "$ref": "#/definitions/Page" }
     },
     "RawAsset": {
       "type": "object",
@@ -333,7 +333,7 @@
               "enum": ["url"],
               "default": "url"
             },
-            "url": { "$ref": "#/$defs/AssetURL" }
+            "url": { "$ref": "#/definitions/AssetURL" }
           },
           "required": ["format", "url"]
         },
@@ -347,7 +347,7 @@
               "enum": ["data"],
               "default": "data"
             },
-            "data": { "$ref": "#/$defs/AssetData" }
+            "data": { "$ref": "#/definitions/AssetData" }
           },
           "required": ["format", "data"]
         }
@@ -364,7 +364,7 @@
         },
         {
           "title": "Provided",
-          "$ref": "#/$defs/RawAsset"
+          "$ref": "#/definitions/RawAsset"
         }
       ]
     },
@@ -382,8 +382,8 @@
         "title": "A WDP Seeding Definition",
         "type": "object",
         "properties": {
-          "version": { "$ref": "#/$defs/Seed/Version" },
-          "communities": { "$ref": "#/$defs/Communities" }
+          "version": { "$ref": "#/definitions/Seed/Version" },
+          "communities": { "$ref": "#/definitions/Communities" }
         },
         "additionalProperties": false
       },
@@ -404,5 +404,5 @@
       "DOI": { "type": "string" }
     }
   },
-  "$ref": "#/$defs/Seed/Root"
+  "$ref": "#/definitions/Seed/Root"
 }

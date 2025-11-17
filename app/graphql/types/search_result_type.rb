@@ -3,8 +3,8 @@
 module Types
   # @see Resolvers::SearchResultResolver
   class SearchResultType < Types::BaseObject
-    implements GraphQL::Types::Relay::Node
-    implements Types::Sluggable
+    implements ::GraphQL::Types::Relay::Node
+    implements ::Types::SluggableType
 
     description <<~TEXT
     An entity that's the result of a search.
@@ -16,7 +16,7 @@ module Types
       TEXT
     end
 
-    field :entity, Types::AnyEntityType, null: false do
+    field :entity, "Types::EntityType", null: false do
       description <<~TEXT
       A reference to the actual entity returned by the search query.
       TEXT
@@ -28,7 +28,7 @@ module Types
       TEXT
     end
 
-    field :schema_version, Types::SchemaVersionType, null: false do
+    field :schema_version, "Types::SchemaVersionType", null: false do
       description <<~TEXT
       The schema version of the returned entity.
       TEXT
@@ -49,7 +49,7 @@ module Types
     load_association! :hierarchical, as: :entity
     load_association! :schema_version
 
-    # @return [Promise(String)]
+    # @return [String]
     def id
       entity.then do |ent|
         context.schema.id_from_object(ent, self.class, context)

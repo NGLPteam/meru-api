@@ -3,9 +3,10 @@
 module Types
   module Schematic
     class URLPropertyType < Types::AbstractObjectType
-      description "A schematic reference to a URL, with href, label, and optional title"
+      implements ::Types::Schematic::SchemaPropertyType
+      implements ::Types::Schematic::ScalarPropertyType
 
-      implements ScalarPropertyType
+      description "A schematic reference to a URL, with href, label, and optional title"
 
       field :url, Types::URLReferenceType, null: true, method: :value
     end

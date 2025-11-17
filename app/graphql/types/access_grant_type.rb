@@ -10,7 +10,7 @@ module Types
     as its accessControlList defines.
     TEXT
 
-    field :entity, Types::AnyEntityType, null: false, method: :accessible do
+    field :entity, Types::EntityType, null: false, method: :accessible do
       description "The polymorphic entity to which access has been granted"
     end
 

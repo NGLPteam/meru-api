@@ -14,13 +14,13 @@ module Types
       argument :slug, Types::SlugType, required: true
     end
 
-    field :contributor, Types::AnyContributorType, null: true do
+    field :contributor, Types::ContributorType, null: true do
       description "Look up a contributor by slug"
 
       argument :slug, Types::SlugType, required: true
     end
 
-    field :contributor_lookup, Types::AnyContributorType, null: true do
+    field :contributor_lookup, Types::ContributorType, null: true do
       description <<~TEXT
       Look up a contributor `by` a certain `value`.
       TEXT
@@ -66,7 +66,7 @@ module Types
     end
 
     def collection_contribution(slug:)
-      Support::Loaders::RecordLoader.for(CollectionContribution).load(slug)
+      load_record_with(::CollectionContribution, slug)
     end
 
     # @param [Contributable, nil] contributable
@@ -76,13 +76,15 @@ module Types
     end
 
     def contributor(slug:)
-      Support::Loaders::RecordLoader.for(Contributor).load(slug)
+      load_record_with(::Contributor, slug)
     end
 
     def contributor_lookup(**options)
       call_operation "contributors.lookup", **options do |m|
-        m.success do |contributor|
-          contributor
+        m.success do |mapped_options|
+          mapped_options => { value:, find_by:, }
+
+          load_record_with(::Contributor, value, find_by:)
         end
 
         m.failure(:invalid) do |_, reason|
@@ -98,7 +100,7 @@ module Types
     end
 
     def item_contribution(slug:)
-      Support::Loaders::RecordLoader.for(ItemContribution).load(slug)
+      load_record_with(::ItemContribution, slug)
     end
   end
 end

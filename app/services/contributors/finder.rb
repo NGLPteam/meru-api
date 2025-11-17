@@ -3,46 +3,49 @@
 module Contributors
   # @see Contributors::Lookup
   class Finder
+    include Dry::Monads[:result, :do]
     include Dry::Initializer[undefined: false].define -> do
       option :field, Contributors::Types::LookupField
       option :value, Contributors::Types::String
       option :order, Contributors::Types::LookupOrder, default: proc { "RECENT" }
     end
 
-    include Dry::Monads[:result, :do]
+    # @return [Hash]
+    attr_reader :options
 
     def call
       return Failure[:invalid, "must provide a non-blank value"] if value.blank?
 
-      loader = yield build_loader
+      yield build_options
 
-      Success loader.load value
+      Success options
     end
 
     private
 
-    def build_loader
-      column = yield derive_column_from_field
+    # @return [Dry::Monads::Result<void>]
+    def build_options
+      find_by = yield derive_find_by_from_field
 
       order = yield derive_order_expression
 
-      options = { column:, order: }
+      @options = { find_by:, order:, value: }
 
-      loader = Support::Loaders::RecordLoader.for(::Contributor, **options)
-
-      Success loader
+      Success()
     end
 
-    def derive_column_from_field
+    def derive_find_by_from_field
       Success field
     end
 
     def derive_order_expression
+      # :nocov:
       unless order == "OLDEST"
         Success(created_at: :desc)
       else
         Success(created_at: :asc)
       end
+      # :nocov:
     end
   end
 end

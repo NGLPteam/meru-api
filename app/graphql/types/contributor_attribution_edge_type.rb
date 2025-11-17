@@ -4,6 +4,6 @@ module Types
   class ContributorAttributionEdgeType < Types::BaseEdge
     graphql_name "ContributorAttributionEdge"
 
-    node_type Types::AnyContributorAttributionType
+    node_type Types::ContributorAttributionType
   end
 end

@@ -5,7 +5,13 @@ module Types
     module OptionablePropertyType
       include ::Types::BaseInterface
 
-      field :options, [SelectOptionType, { null: false }], null: false
+      description <<~TEXT
+      An interface for properties that have a set of predefined options to choose from.
+      TEXT
+
+      field :options, [SelectOptionType, { null: false }], null: false do
+        description "The list of predefined options available for this property."
+      end
     end
   end
 end

@@ -13,6 +13,7 @@ module Types
     implements Types::HasSchemaPropertiesType
     implements Types::PermalinkableType
     implements Types::AttachableType
+    implements Types::OrderingEntryableType
     implements Types::SchemaInstanceType
     implements Types::SearchableType
 

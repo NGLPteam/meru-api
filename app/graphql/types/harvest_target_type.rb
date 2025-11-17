@@ -12,7 +12,7 @@ module Types
     TEXT
 
     implements Types::EntityBaseType
-    implements Types::Sluggable
+    implements ::Types::SluggableType
 
     field :harvest_target_kind, Types::HarvestTargetKindType, null: false do
       description <<~TEXT

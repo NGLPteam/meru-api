@@ -3,10 +3,11 @@
 module Types
   module Schematic
     class ControlledVocabularyPropertyType < Types::AbstractObjectType
-      implements ScalarPropertyType
-      implements HasControlledVocabularyType
+      implements ::Types::Schematic::SchemaPropertyType
+      implements ::Types::Schematic::ScalarPropertyType
+      implements ::Types::Schematic::HasControlledVocabularyType
 
-      field :controlled_vocabulary_item, Types::ControlledVocabularyItemType, null: true, method: :value
+      field :controlled_vocabulary_item, "Types::ControlledVocabularyItemType", null: true, method: :value
     end
   end
 end

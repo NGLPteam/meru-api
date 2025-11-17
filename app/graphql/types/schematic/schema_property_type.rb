@@ -33,13 +33,13 @@ module Types
         TEXT
       end
 
-      field :kind, Types::SchemaPropertyKindType, null: false do
+      field :kind, "Types::SchemaPropertyKindType", null: false do
         description <<~TEXT
         Provided for introspection. This describes the underlying structure of the data type.
         TEXT
       end
 
-      field :type, Types::SchemaPropertyTypeType, null: false do
+      field :type, "Types::SchemaPropertyTypeType", null: false do
         description <<~TEXT
         Provided for introspection. This represents the actual data type this property
         uses.

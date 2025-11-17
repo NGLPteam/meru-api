@@ -30,7 +30,7 @@ module Types
     # @param [String] slug
     # @return [HarvestMapping, nil]
     def harvest_mapping(slug:)
-      Support::Loaders::RecordLoader.for(HarvestMapping).load(slug)
+      load_record_with(::HarvestMapping, slug)
     end
   end
 end

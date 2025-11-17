@@ -6,7 +6,9 @@ module Loaders
     # @return [void]
     def perform(entities)
       entities.each do |entity|
-        fulfill(entity, entity.check_layouts.value_or(nil))
+        layouts = entity.check_layouts.value_or(nil)
+
+        fulfill(entity, layouts)
       end
     end
 

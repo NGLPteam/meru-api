@@ -1,10 +1,5 @@
 # frozen_string_literal: true
 
-require "shrine/storage/memory"
-require "shrine/storage/s3"
-require "shrine/storage/url"
-require "tus/storage/s3"
-
 require Rails.root.join("lib", "middleware", "tus_uploader")
 
 aws_credentials = S3Config.to_h

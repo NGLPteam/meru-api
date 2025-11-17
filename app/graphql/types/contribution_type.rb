@@ -14,7 +14,7 @@ module Types
 
     implements Types::ContributionBaseType
 
-    field :contributor, "Types::AnyContributorType", null: false do
+    field :contributor, "Types::ContributorType", null: false do
       description <<~TEXT
       The contributor, loaded via union for the most control.
       TEXT

@@ -85,6 +85,41 @@ services:
       timeout: 10s
       retries: 3
       start_period: 15s
+  localprd:
+    command: bin/pitchfork -c config/pitchfork.rb
+    build:
+      context: .
+      secrets:
+        - maxmind_account_id
+        - maxmind_license_key
+    depends_on:
+      db:
+        condition: service_healthy
+      migrations:
+        condition: service_completed_successfully
+      redis:
+        condition: service_healthy
+    env_file:
+      - docker/compose.env
+      - docker/local-prd.env
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "10"
+    volumes:
+      - ./:/srv/app
+      - bundle_cache:/bundle
+      - minio_storage:/minio
+    ports:
+      - "6122:8080"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "-s", "-o", "/dev/null", "http://localhost:8080/up"]
+      interval: 1m30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
   worker:
     build:
       context: .

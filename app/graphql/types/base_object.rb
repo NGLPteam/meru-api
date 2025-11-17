@@ -17,7 +17,7 @@ module Types
     end
 
     # @api private
-    # @param [Promise(HierarchicalEntity)] promise
+    # @param [HierarchicalEntity, nil] promise
     # @return [void]
     def track_entity_event!(promise, name: "entity.view", **data)
       promise.then do |entity|

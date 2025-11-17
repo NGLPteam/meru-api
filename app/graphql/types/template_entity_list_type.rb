@@ -31,7 +31,7 @@ module Types
       TEXT
     end
 
-    field :entities, ["::Types::AnyEntityType", { null: false }], null: false, method: :valid_entities do
+    field :entities, ["::Types::EntityType", { null: false }], null: false, method: :valid_entities do
       description <<~TEXT
       The actual entity records within this list.
 

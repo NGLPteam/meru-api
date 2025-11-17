@@ -5,7 +5,13 @@
 # @see GraphqlController#execute
 # @subsystem GraphQL
 class APISchema < GraphQL::Schema
-  use GraphQL::Batch
+  if MeruConfig.experimental_dataloader?
+    use CustomDataloader
+  else
+    use GraphQL::Batch
+  end
+
+  trace_with(GraphQL::Tracing::ActiveSupportNotificationsTrace)
 
   use GraphQL::FragmentCache
 
@@ -33,6 +39,46 @@ class APISchema < GraphQL::Schema
   end
 
   extra_types(
+    Types::SchemaPropertyKindType,
+    Types::Schematic::AssetPropertyType,
+    Types::Schematic::AssetsPropertyType,
+    Types::Schematic::BooleanPropertyType,
+    Types::Schematic::ContributorPropertyType,
+    Types::Schematic::ContributorsPropertyType,
+    Types::Schematic::ControlledVocabulariesPropertyType,
+    Types::Schematic::ControlledVocabularyPropertyType,
+    Types::Schematic::DatePropertyType,
+    Types::Schematic::EmailPropertyType,
+    Types::Schematic::EntitiesPropertyType,
+    Types::Schematic::EntityPropertyType,
+    Types::Schematic::FloatPropertyType,
+    Types::Schematic::FullTextPropertyType,
+    Types::Schematic::GroupPropertyType,
+    Types::Schematic::HasAvailableEntitiesType,
+    Types::Schematic::HasControlledVocabularyType,
+    Types::Schematic::IntegerPropertyType,
+    Types::Schematic::MarkdownPropertyType,
+    Types::Schematic::MultiselectPropertyType,
+    Types::Schematic::OptionablePropertyType,
+    Types::Schematic::ScalarPropertyType,
+    Types::Schematic::SchemaPropertyType,
+    Types::Schematic::SelectOptionType,
+    Types::Schematic::SelectPropertyType,
+    Types::Schematic::StringPropertyType,
+    Types::Schematic::TagsPropertyType,
+    Types::Schematic::TimestampPropertyType,
+    Types::Schematic::UnknownPropertyType,
+    Types::Schematic::URLPropertyType,
+    Types::Schematic::VariableDatePropertyType,
+    Types::AnyChildEntityType,
+    Types::AnyContributableType,
+    Types::AnyContributionType,
+    Types::AnyContributorAttributionType,
+    Types::AnyContributorType,
+    Types::AnyEntityType,
+    Types::AnyOrderingPathType,
+    Types::AnyScalarPropertyType,
+    Types::AnySchemaPropertyType,
     Types::ContributorType,
     Types::ContributorBaseType,
     Types::ContributorAttributionType,
@@ -40,9 +86,48 @@ class APISchema < GraphQL::Schema
     Types::ContributorAttributionEdgeType,
     Types::ContributorCollectionAttributionType,
     Types::ContributorItemAttributionType,
+    Types::EntityType,
+    Types::OrderingPathType,
     Types::OrganizationContributorType,
     Types::PersonContributorType,
+    Types::SearchResultType,
+    Types::SchemaPropertyTypeType,
+    Types::SchemaInstanceType,
     Types::TemplateContributionType
+  )
+
+  orphan_types(
+    *Types::AnyOrderingPathType.possible_types,
+    Types::Schematic::AssetPropertyType,
+    Types::Schematic::AssetsPropertyType,
+    Types::Schematic::BooleanPropertyType,
+    Types::Schematic::ContributorPropertyType,
+    Types::Schematic::ContributorsPropertyType,
+    Types::Schematic::ControlledVocabulariesPropertyType,
+    Types::Schematic::ControlledVocabularyPropertyType,
+    Types::Schematic::DatePropertyType,
+    Types::Schematic::EmailPropertyType,
+    Types::Schematic::EntitiesPropertyType,
+    Types::Schematic::EntityPropertyType,
+    Types::Schematic::FloatPropertyType,
+    Types::Schematic::FullTextPropertyType,
+    Types::Schematic::GroupPropertyType,
+    Types::Schematic::IntegerPropertyType,
+    Types::Schematic::MarkdownPropertyType,
+    Types::Schematic::MultiselectPropertyType,
+    Types::Schematic::SelectOptionType,
+    Types::Schematic::SelectPropertyType,
+    Types::Schematic::StringPropertyType,
+    Types::Schematic::TagsPropertyType,
+    Types::Schematic::TimestampPropertyType,
+    Types::Schematic::UnknownPropertyType,
+    Types::Schematic::URLPropertyType,
+    Types::Schematic::VariableDatePropertyType,
+    Types::ContributorCollectionAttributionType,
+    Types::ContributorItemAttributionType,
+    Types::OrganizationContributorType,
+    Types::PersonContributorType,
+    Types::SearchResultType
   )
 
   class << self

@@ -8,7 +8,7 @@ module Types
 
     global_id_field :id
 
-    field :entity, "Types::AnyEntityType", null: false
+    field :entity, "Types::EntityType", null: false
 
     field :position, Integer, null: true
     field :title, String, null: false

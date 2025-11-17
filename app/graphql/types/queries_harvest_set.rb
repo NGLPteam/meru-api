@@ -26,7 +26,7 @@ module Types
     # @param [String] slug
     # @return [HarvestSet, nil]
     def harvest_set(slug:)
-      Support::Loaders::RecordLoader.for(HarvestSet).load(slug)
+      load_record_with(::HarvestSet, slug)
     end
   end
 end

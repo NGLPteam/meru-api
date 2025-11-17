@@ -10,13 +10,15 @@ module Types
     implements Types::HasSchemaPropertiesType
     implements Types::PermalinkableType
     implements Types::AttachableType
+    implements Types::OrderingEntryableType
     implements Types::SchemaInstanceType
     implements Types::SearchableType
 
     description "A community of users"
 
-    field :hero_image_layout, Types::HeroImageLayoutType, null: false,
-      description: "The layout to use when rendering this community's hero image."
+    field :hero_image_layout, Types::HeroImageLayoutType, null: false do
+      description "The layout to use when rendering this community's hero image."
+    end
 
     field :tagline, String, null: true
 

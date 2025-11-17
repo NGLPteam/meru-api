@@ -181,7 +181,7 @@ RSpec.shared_examples_for "a graphql entity with layouts" do
 
     }
 
-    fragment AnyEntityFragment on AnyEntity {
+    fragment AnyEntityFragment on Entity {
       __typename
 
       ... on Entity {

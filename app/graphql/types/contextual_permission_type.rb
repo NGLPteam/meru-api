@@ -7,27 +7,31 @@ module Types
     description "A contextual permission for a user, role, and entity"
 
     field :access_control_list, Types::AccessControlListType, null: true do
-      description "Derived access control list"
+      description <<~TEXT
+      The derived access control list for this user and entity.
+      TEXT
     end
 
-    field :access_grants, [Types::AnyUserAccessGrantType, { null: false }], null: false,
-      description: "The access grants that correspond to this contextual permission"
-
-    field :roles, [Types::RoleType, { null: false }], null: false,
-      description: "The roles that correspond to this contextual permission"
-
-    field :user, Types::UserType, null: false
-
-    def access_grants
-      object.association(:access_grants).loaded? ? object.access_grants : Support::Loaders::AssociationLoader.for(object.class, :access_grants).load(object)
+    field :access_grants, [Types::UserAccessGrantType, { null: false }], null: false do
+      description <<~TEXT
+      The access grants that correspond to this contextual permission.
+      TEXT
     end
 
-    def roles
-      object.association(:roles).loaded? ? object.roles : Support::Loaders::AssociationLoader.for(object.class, :roles).load(object)
+    field :roles, [Types::RoleType, { null: false }], null: false do
+      description <<~TEXT
+      The roles that correspond to this contextual permission.
+      TEXT
     end
 
-    def user
-      object.association(:user).loaded? ? object.user : Support::Loaders::AssociationLoader.for(object.class, :user).load(object)
+    field :user, Types::UserType, null: false do
+      description <<~TEXT
+      The user that has the contextual permission.
+      TEXT
     end
+
+    load_association! :access_grants
+    load_association! :roles
+    load_association! :user
   end
 end

@@ -50,7 +50,7 @@ RSpec.describe "Schema Instances", type: :request do
       }
     }
 
-    fragment PropInfoFragment on AnySchemaProperty {
+    fragment PropInfoFragment on SchemaProperty {
       __typename
 
       ... on ScalarProperty {

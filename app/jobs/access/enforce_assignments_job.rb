@@ -3,7 +3,7 @@
 module Access
   # @see Access::EnforceAssignments
   class EnforceAssignmentsJob < ApplicationJob
-    queue_as :permissions
+    queue_as :default
 
     unique_job! by: :job
 

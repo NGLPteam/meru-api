@@ -17,7 +17,7 @@ module Types
     def templates
       all_templates = object.template_definition_names.map { __send__(_1) }
 
-      Promise.all(all_templates).then do
+      maybe_await(all_templates).then do
         object.template_definitions
       end
     end

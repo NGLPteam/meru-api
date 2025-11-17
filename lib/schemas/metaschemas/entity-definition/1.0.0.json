@@ -2,25 +2,25 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "WDP Entity Definition Schema",
   "description": "A meta-schema used by the NGLP Web Delivery Platform for validating its entity schemas.",
-  "$defs": {
+  "definitions": {
     "Association": {
       "type": "object",
       "description": "A hierarchical declaration that determines what types of schemas can be above and below this schema.",
       "properties": {
         "namespace": {
-          "$ref": "#/$defs/Namespace"
+          "$ref": "#/definitions/Namespace"
         },
         "identifier": {
-          "$ref": "#/$defs/Identifier"
+          "$ref": "#/definitions/Identifier"
         },
         "version": {
           "description": "An optional declaration of the supported versions of the associated schema",
           "oneOf": [
             {
-              "$ref": "#/$defs/VersionRequirement"
+              "$ref": "#/definitions/VersionRequirement"
             },
             {
-              "$ref": "#/$defs/VersionRequirements"
+              "$ref": "#/definitions/VersionRequirements"
             }
           ]
         }
@@ -33,10 +33,10 @@
       "additionalProperties": false,
       "properties": {
         "namespace": {
-          "$ref": "#/$defs/Namespace"
+          "$ref": "#/definitions/Namespace"
         },
         "identifier": {
-          "$ref": "#/$defs/Identifier"
+          "$ref": "#/definitions/Identifier"
         }
       },
       "required": ["namespace", "identifier"]
@@ -46,7 +46,7 @@
       "description": "Limit the selection to entities that consume these schemas",
       "items": {
         "description": "The acceptable schema(s) for this association type",
-        "$ref": "#/$defs/Association"
+        "$ref": "#/definitions/Association"
       }
     },
     "CollectedReferenceProperties": {
@@ -75,7 +75,7 @@
       "title": "Entity Reference Scoping",
       "type": "object",
       "properties": {
-        "scope": { "$ref": "#/$defs/EntityReferenceSelectionScope" }
+        "scope": { "$ref": "#/definitions/EntityReferenceSelectionScope" }
       },
       "required": ["scope"]
     },
@@ -84,18 +84,18 @@
       "description": "When referencing an entity, we need to be able to declare a scope to select from",
       "type": "object",
       "properties": {
-        "origin": { "$ref": "#/$defs/EntityReferenceSelectionScopeOrigin" },
-        "schemas": { "$ref": "#/$defs/EntityReferenceSelectionSchemas"  },
-        "target": { "$ref": "#/$defs/EntityReferenceSelectionScopeTarget" }
+        "origin": { "$ref": "#/definitions/EntityReferenceSelectionScopeOrigin" },
+        "schemas": { "$ref": "#/definitions/EntityReferenceSelectionSchemas"  },
+        "target": { "$ref": "#/definitions/EntityReferenceSelectionScopeTarget" }
       },
       "required": ["origin", "target"],
       "dependencies": {
         "target": {
           "oneOf": [
-            { "$ref": "#/$defs/EntityReferenceSelectionScopeTargets/Any" },
-            { "$ref": "#/$defs/EntityReferenceSelectionScopeTargets/Descendants" },
-            { "$ref": "#/$defs/EntityReferenceSelectionScopeTargets/Links" },
-            { "$ref": "#/$defs/EntityReferenceSelectionScopeTargets/Siblings" }
+            { "$ref": "#/definitions/EntityReferenceSelectionScopeTargets/Any" },
+            { "$ref": "#/definitions/EntityReferenceSelectionScopeTargets/Descendants" },
+            { "$ref": "#/definitions/EntityReferenceSelectionScopeTargets/Links" },
+            { "$ref": "#/definitions/EntityReferenceSelectionScopeTargets/Siblings" }
           ]
         }
       }
@@ -104,7 +104,7 @@
       "type": "array",
       "items": {
         "description": "What scopes are available to the entity reference",
-        "$ref": "#/$defs/EntityReferenceSelectionScope"
+        "$ref": "#/definitions/EntityReferenceSelectionScope"
       },
       "minItems": 1
     },
@@ -114,15 +114,15 @@
       "description": "The originating schema instance to combine with the target and any other options",
       "default": "self",
       "oneOf": [
-        { "$ref": "#/$defs/EntityReferenceSelectionScopeOrigins/Ancestor" },
-        { "$ref": "#/$defs/EntityReferenceSelectionScopeOrigins/Community" },
-        { "$ref": "#/$defs/EntityReferenceSelectionScopeOrigins/Parent" },
-        { "$ref": "#/$defs/EntityReferenceSelectionScopeOrigins/Self" }
+        { "$ref": "#/definitions/EntityReferenceSelectionScopeOrigins/Ancestor" },
+        { "$ref": "#/definitions/EntityReferenceSelectionScopeOrigins/Community" },
+        { "$ref": "#/definitions/EntityReferenceSelectionScopeOrigins/Parent" },
+        { "$ref": "#/definitions/EntityReferenceSelectionScopeOrigins/Self" }
       ]
     },
     "EntityReferenceSelectionScopeOrigins": {
       "Ancestor": {
-        "$ref": "#/$defs/NamedAncestorReference",
+        "$ref": "#/definitions/NamedAncestorReference",
         "title": "Ancestor Reference",
         "description": "A named ancestor on the current schema instance"
       },
@@ -151,7 +151,7 @@
       "default": [],
       "items": {
         "description": "The acceptable schema(s) for this entity reference",
-        "$ref": "#/$defs/Association"
+        "$ref": "#/definitions/Association"
       },
       "maxItems": 5
     },
@@ -200,7 +200,7 @@
         "description": "The referenced entity must be linked to or from the schema instance",
         "properties": {
           "target": { "const": "links" },
-          "direction": { "$ref": "#/$defs/LinkReferenceDirection" }
+          "direction": { "$ref": "#/definitions/LinkReferenceDirection" }
         }
       },
       "Siblings": {
@@ -252,7 +252,7 @@
           "type": "object",
           "properties": {
             "name": {
-              "$ref": "#/$defs/Identifier",
+              "$ref": "#/definitions/Identifier",
               "title": "Name",
               "description": "The name of this ancestor association. It must be unique within the current schema."
             },
@@ -265,7 +265,7 @@
           },
           "required": ["name"]
         },
-        { "$ref": "#/$defs/Association" }
+        { "$ref": "#/definitions/Association" }
       ]
     },
     "NamedAncestorReference": {
@@ -276,7 +276,7 @@
       "type": "array",
       "items": {
         "description": "A list of (uniquely) named ancestors",
-        "$ref": "#/$defs/NamedAncestor"
+        "$ref": "#/definitions/NamedAncestor"
       },
       "uniqueItems": true
     },
@@ -301,7 +301,7 @@
       "properties": {
         "path": {
           "title": "Path",
-          "$ref": "#/$defs/OrderPath"
+          "$ref": "#/definitions/OrderPath"
         },
         "constant": {
           "type": "boolean",
@@ -354,7 +354,7 @@
       "properties": {
         "id": {
           "title": "Identifier",
-          "$ref": "#/$defs/Identifier"
+          "$ref": "#/definitions/Identifier"
         },
         "name": {
           "title": "Name",
@@ -381,7 +381,7 @@
         "handles": {
           "title": "Handles Schema",
           "description": "An ordering can be set up to handle rendering certain schemas in the explore browser on the frontend.",
-          "$ref": "#/$defs/AssociationSansVersion"
+          "$ref": "#/definitions/AssociationSansVersion"
         },
         "filter": {
           "type": "object",
@@ -393,7 +393,7 @@
               "type": "array",
               "items": {
                 "description": "These strings should be existing Schema IDs",
-                "$ref": "#/$defs/OrderingSchemaFilter"
+                "$ref": "#/definitions/OrderingSchemaFilter"
               }
             }
           }
@@ -401,7 +401,7 @@
         "order": {
           "description": "Specifies how to order the ordering",
           "items": {
-            "$ref": "#/$defs/Order"
+            "$ref": "#/definitions/Order"
           },
           "minItems": 1,
           "maxItems": 7,
@@ -412,7 +412,7 @@
           "title": "Render Options",
           "description": "Options for controlling how entities in an ordering render. These can have larger effects on the rest of the ordering",
           "properties": {
-            "mode": { "$ref": "#/$defs/OrderingRenderMode" }
+            "mode": { "$ref": "#/definitions/OrderingRenderMode" }
           }
         },
         "select": {
@@ -478,12 +478,12 @@
       "title": "Order Path",
       "description": "A path to an attribute that can be used to sort an ordering",
       "oneOf": [
-        { "$ref": "#/$defs/OrderPaths/AncestorPath" },
-        { "$ref": "#/$defs/OrderPaths/AncestorSchemaPropertyPath" },
-        { "$ref": "#/$defs/OrderPaths/EntityPath" },
-        { "$ref": "#/$defs/OrderPaths/LinkPath" },
-        { "$ref": "#/$defs/OrderPaths/SchemaPath" },
-        { "$ref": "#/$defs/OrderPaths/SchemaPropertyPath" }
+        { "$ref": "#/definitions/OrderPaths/AncestorPath" },
+        { "$ref": "#/definitions/OrderPaths/AncestorSchemaPropertyPath" },
+        { "$ref": "#/definitions/OrderPaths/EntityPath" },
+        { "$ref": "#/definitions/OrderPaths/LinkPath" },
+        { "$ref": "#/definitions/OrderPaths/SchemaPath" },
+        { "$ref": "#/definitions/OrderPaths/SchemaPropertyPath" }
       ]
     },
     "OrderPaths": {
@@ -545,19 +545,19 @@
       "description": "A declaration of a specific schema that can be included within an order",
       "properties": {
         "namespace": {
-          "$ref": "#/$defs/Namespace"
+          "$ref": "#/definitions/Namespace"
         },
         "identifier": {
-          "$ref": "#/$defs/Identifier"
+          "$ref": "#/definitions/Identifier"
         },
         "version": {
           "description": "An optional declaration of the supported versions of the associated schema",
           "oneOf": [
             {
-              "$ref": "#/$defs/VersionRequirement"
+              "$ref": "#/definitions/VersionRequirement"
             },
             {
-              "$ref": "#/$defs/VersionRequirements"
+              "$ref": "#/definitions/VersionRequirements"
             }
           ]
         }
@@ -597,7 +597,7 @@
         "path": {
           "title": "Path",
           "description": "The machine-readable name of this property",
-          "$ref": "#/$defs/PropertyPath"
+          "$ref": "#/definitions/PropertyPath"
         },
         "legend": {
           "title": "Form Legend",
@@ -605,7 +605,7 @@
           "type": "string"
         },
         "description": {
-          "$ref": "#/$defs/PropertyDescription"
+          "$ref": "#/definitions/PropertyDescription"
         },
         "properties": {
           "type": "array",
@@ -613,7 +613,7 @@
           "description": "The group's properties",
           "default": [{ "type": "string" }],
           "items": {
-            "$ref": "#/$defs/ScalarProperty"
+            "$ref": "#/definitions/ScalarProperty"
           }
         }
       }
@@ -644,7 +644,7 @@
       "description": "Not Yet Used",
       "type": "array",
       "uniqueItems": true,
-      "items": { "$ref": "#/$defs/PropertyMapping" }
+      "items": { "$ref": "#/definitions/PropertyMapping" }
     },
     "PropertyPath": {
       "description": "A path can reference a schema property",
@@ -658,19 +658,19 @@
         "path": {
           "title": "Path",
           "description": "The accessible path to this property. When contained in a group, the full path will be prefixed by the group's path",
-          "$ref": "#/$defs/PropertyPath"
+          "$ref": "#/definitions/PropertyPath"
         },
         "type": {
           "title": "Type",
-          "$ref": "#/$defs/ScalarPropertyType"
+          "$ref": "#/definitions/ScalarPropertyType"
         },
         "label": {
           "title": "Label",
           "description": "The human-readable label for this property. The path will be titlecased if this value is not provided.",
           "type": "string"
         },
-        "description": { "$ref": "#/$defs/PropertyDescription" },
-        "mappings": { "$ref": "#/$defs/PropertyMappings" },
+        "description": { "$ref": "#/definitions/PropertyDescription" },
+        "mappings": { "$ref": "#/definitions/PropertyMappings" },
         "required": {
           "title": "Required?",
           "description": "Whether the property is required for base validity",
@@ -689,76 +689,76 @@
           "type": "boolean",
           "default": false
         },
-        "function": { "$ref": "#/$defs/PropertyFunction" }
+        "function": { "$ref": "#/definitions/PropertyFunction" }
       },
       "dependencies": {
         "type": {
           "oneOf": [
             {
-              "$ref": "#/$defs/ScalarPropertyDefinitions/Asset"
+              "$ref": "#/definitions/ScalarPropertyDefinitions/Asset"
             },
             {
-              "$ref": "#/$defs/ScalarPropertyDefinitions/Assets"
+              "$ref": "#/definitions/ScalarPropertyDefinitions/Assets"
             },
             {
-              "$ref": "#/$defs/ScalarPropertyDefinitions/Boolean"
+              "$ref": "#/definitions/ScalarPropertyDefinitions/Boolean"
             },
             {
-              "$ref": "#/$defs/ScalarPropertyDefinitions/Contributor"
+              "$ref": "#/definitions/ScalarPropertyDefinitions/Contributor"
             },
             {
-              "$ref": "#/$defs/ScalarPropertyDefinitions/Contributors"
+              "$ref": "#/definitions/ScalarPropertyDefinitions/Contributors"
             },
             {
-              "$ref": "#/$defs/ScalarPropertyDefinitions/ControlledVocabulary"
+              "$ref": "#/definitions/ScalarPropertyDefinitions/ControlledVocabulary"
             },
             {
-              "$ref": "#/$defs/ScalarPropertyDefinitions/ControlledVocabularies"
+              "$ref": "#/definitions/ScalarPropertyDefinitions/ControlledVocabularies"
             },
             {
-              "$ref": "#/$defs/ScalarPropertyDefinitions/Date"
+              "$ref": "#/definitions/ScalarPropertyDefinitions/Date"
             },
             {
-              "$ref": "#/$defs/ScalarPropertyDefinitions/Email"
+              "$ref": "#/definitions/ScalarPropertyDefinitions/Email"
             },
             {
-              "$ref": "#/$defs/ScalarPropertyDefinitions/Entities"
+              "$ref": "#/definitions/ScalarPropertyDefinitions/Entities"
             },
             {
-              "$ref": "#/$defs/ScalarPropertyDefinitions/Entity"
+              "$ref": "#/definitions/ScalarPropertyDefinitions/Entity"
             },
             {
-              "$ref": "#/$defs/ScalarPropertyDefinitions/Float"
+              "$ref": "#/definitions/ScalarPropertyDefinitions/Float"
             },
             {
-              "$ref": "#/$defs/ScalarPropertyDefinitions/FullText"
+              "$ref": "#/definitions/ScalarPropertyDefinitions/FullText"
             },
             {
-              "$ref": "#/$defs/ScalarPropertyDefinitions/Integer"
+              "$ref": "#/definitions/ScalarPropertyDefinitions/Integer"
             },
             {
-              "$ref": "#/$defs/ScalarPropertyDefinitions/Markdown"
+              "$ref": "#/definitions/ScalarPropertyDefinitions/Markdown"
             },
             {
-              "$ref": "#/$defs/ScalarPropertyDefinitions/Multiselect"
+              "$ref": "#/definitions/ScalarPropertyDefinitions/Multiselect"
             },
             {
-              "$ref": "#/$defs/ScalarPropertyDefinitions/Select"
+              "$ref": "#/definitions/ScalarPropertyDefinitions/Select"
             },
             {
-              "$ref": "#/$defs/ScalarPropertyDefinitions/String"
+              "$ref": "#/definitions/ScalarPropertyDefinitions/String"
             },
             {
-              "$ref": "#/$defs/ScalarPropertyDefinitions/Tags"
+              "$ref": "#/definitions/ScalarPropertyDefinitions/Tags"
             },
             {
-              "$ref": "#/$defs/ScalarPropertyDefinitions/Timestamp"
+              "$ref": "#/definitions/ScalarPropertyDefinitions/Timestamp"
             },
             {
-              "$ref": "#/$defs/ScalarPropertyDefinitions/URL"
+              "$ref": "#/definitions/ScalarPropertyDefinitions/URL"
             },
             {
-              "$ref": "#/$defs/ScalarPropertyDefinitions/VariableDate"
+              "$ref": "#/definitions/ScalarPropertyDefinitions/VariableDate"
             }
           ]
         }
@@ -781,7 +781,7 @@
         },
         "required": ["path", "type"],
         "allOf": [
-          { "$ref": "#/$defs/CollectedReferenceProperties" }
+          { "$ref": "#/definitions/CollectedReferenceProperties" }
         ]
       },
       "Boolean": {
@@ -808,7 +808,7 @@
         },
         "required": ["path", "type"],
         "allOf": [
-          { "$ref": "#/$defs/CollectedReferenceProperties" }
+          { "$ref": "#/definitions/CollectedReferenceProperties" }
         ]
       },
       "ControlledVocabulary": {
@@ -835,7 +835,7 @@
         },
         "required": ["path", "type", "wants"],
         "allOf": [
-          { "$ref": "#/$defs/CollectedReferenceProperties" }
+          { "$ref": "#/definitions/CollectedReferenceProperties" }
         ]
       },
       "Date": {
@@ -867,8 +867,8 @@
         },
         "required": ["path", "type"],
         "allOf": [
-          { "$ref": "#/$defs/EntityReferenceScopeProperties" },
-          { "$ref": "#/$defs/CollectedReferenceProperties" }
+          { "$ref": "#/definitions/EntityReferenceScopeProperties" },
+          { "$ref": "#/definitions/CollectedReferenceProperties" }
         ]
       },
       "Entity": {
@@ -879,7 +879,7 @@
         },
         "required": ["path", "type"],
         "allOf": [
-          { "$ref": "#/$defs/EntityReferenceScopeProperties" }
+          { "$ref": "#/definitions/EntityReferenceScopeProperties" }
         ]
       },
       "Float": {
@@ -989,7 +989,7 @@
           "options": {
             "title": "Select Options",
             "items": {
-              "$ref": "#/$defs/SelectOption"
+              "$ref": "#/definitions/SelectOption"
             },
             "minItems": 1,
             "type": "array",
@@ -1025,7 +1025,7 @@
           "options": {
             "title": "Select Options",
             "items": {
-              "$ref": "#/$defs/SelectOption"
+              "$ref": "#/definitions/SelectOption"
             },
             "minItems": 1,
             "type": "array",
@@ -1152,12 +1152,12 @@
         "namespace": {
           "title": "Namespace",
           "description": "This identifies the namespace within which this schema should live.",
-          "$ref": "#/$defs/Namespace"
+          "$ref": "#/definitions/Namespace"
         },
         "identifier": {
           "title": "Identifier",
           "description": "This identifies the schema within its namespace.",
-          "$ref": "#/$defs/Identifier"
+          "$ref": "#/definitions/Identifier"
         },
         "name": {
           "title": "Name",
@@ -1166,29 +1166,29 @@
         },
         "version": {
           "title": "Version",
-          "$ref": "#/$defs/SemanticVersion"
+          "$ref": "#/definitions/SemanticVersion"
         },
         "kind": {
           "title": "Kind",
           "description": "The kind of entity that will implement this schema. Entities are also referred to as instances of the schema",
-          "$ref": "#/$defs/SchemaKind"
+          "$ref": "#/definitions/SchemaKind"
         },
         "ancestors": {
-          "$ref": "#/$defs/NamedAncestors"
+          "$ref": "#/definitions/NamedAncestors"
         },
         "parents": {
-          "$ref": "#/$defs/Associations",
+          "$ref": "#/definitions/Associations",
           "description": "The type(s) of parent(s) this schema accepts."
         },
         "children": {
-          "$ref": "#/$defs/Associations",
+          "$ref": "#/definitions/Associations",
           "description": "The type(s) of direct children this schema accepts."
         },
         "orderings": {
           "title": "Orderings",
           "description": "A schema can provide default orderings, which an instance can override.",
           "items": {
-            "$ref": "#/$defs/Ordering"
+            "$ref": "#/definitions/Ordering"
           },
           "type": "array"
         },
@@ -1197,11 +1197,11 @@
           "description": "Describes the properties that will be available for this schema",
           "type": "array",
           "items": {
-            "$ref": "#/$defs/TopLevelProperty"
+            "$ref": "#/definitions/TopLevelProperty"
           }
         },
         "render": {
-          "$ref": "#/$defs/SchemaRenderDefinition"
+          "$ref": "#/definitions/SchemaRenderDefinition"
         }
       }
     },
@@ -1221,7 +1221,7 @@
       "description": "Options for controlling how to render instances of this schema in isolated contexts, outside of orderings.",
       "additionalProperties": false,
       "properties": {
-        "list_mode": { "$ref": "#/$defs/SchemaRenderListMode" }
+        "list_mode": { "$ref": "#/definitions/SchemaRenderListMode" }
       }
     },
     "SchemaRenderListMode": {
@@ -1270,8 +1270,8 @@
     },
     "TopLevelProperty": {
       "oneOf": [
-        { "title": "Property", "$ref": "#/$defs/ScalarProperty" },
-        { "title": "Group", "$ref": "#/$defs/PropertyGroup" }
+        { "title": "Property", "$ref": "#/definitions/ScalarProperty" },
+        { "title": "Group", "$ref": "#/definitions/PropertyGroup" }
       ]
     },
     "VersionRequirement": {
@@ -1283,9 +1283,9 @@
       "type": "array",
       "description": "An array of version requirements, for establishing constraints",
       "items": {
-        "$ref": "#/$defs/VersionRequirement"
+        "$ref": "#/definitions/VersionRequirement"
       }
     }
   },
-  "$ref": "#/$defs/Schema"
+  "$ref": "#/definitions/Schema"
 }

@@ -26,7 +26,7 @@ module Types
     # @param [String] slug
     # @return [HarvestSource, nil]
     def harvest_source(slug:)
-      Support::Loaders::RecordLoader.for(HarvestSource).load(slug)
+      load_record_with(::HarvestSource, slug)
     end
   end
 end

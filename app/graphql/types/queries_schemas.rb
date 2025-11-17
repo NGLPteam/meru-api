@@ -8,7 +8,7 @@ module Types
     Fields for querying schemas and schema-related data.
     TEXT
 
-    field :ordering_paths, [Types::AnyOrderingPathType, { null: false }], null: false do
+    field :ordering_paths, [Types::OrderingPathType, { null: false }], null: false do
       description "A list of ordering paths for creating and updating orderings."
 
       argument :schemas, [Types::OrderingSchemaFilterInputType, { null: false }], required: false do

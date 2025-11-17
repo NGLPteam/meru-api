@@ -5,7 +5,7 @@ module Access
   #
   # @see Access::CalculateGrantedPermissions
   class CalculateGrantedPermissionsJob < ApplicationJob
-    queue_as :permissions
+    queue_as :default
 
     # @param [AccessGrant] access_grant
     # @return [void]

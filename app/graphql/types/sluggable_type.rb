@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Types
-  module Sluggable
+  module SluggableType
     include BaseInterface
 
     description "Objects have a serialized slug for looking them up in the system and generating links without UUIDs"

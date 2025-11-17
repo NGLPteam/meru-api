@@ -4,14 +4,15 @@ module Types
   module Schematic
     # @see Schemas::Properties::Scalar::Entities
     class EntitiesPropertyType < Types::AbstractObjectType
-      implements ScalarPropertyType
-      implements HasAvailableEntitiesType
+      implements ::Types::Schematic::SchemaPropertyType
+      implements ::Types::Schematic::ScalarPropertyType
+      implements ::Types::Schematic::HasAvailableEntitiesType
 
       description <<~TEXT
       A property that references a deterministically-ordered list of entities.
       TEXT
 
-      field :entities, [Types::AnyEntityType, { null: false }], null: false, method: :value do
+      field :entities, ["Types::EntityType", { null: false }], null: false, method: :value do
         description <<~TEXT
         A deterministically-ordered list of entities.
 

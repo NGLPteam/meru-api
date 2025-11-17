@@ -26,7 +26,7 @@ module Types
     # @param [String] slug
     # @return [ControlledVocabularySource, nil]
     def controlled_vocabulary_source(slug:)
-      Support::Loaders::RecordLoader.for(ControlledVocabularySource).load(slug)
+      load_record_with(::ControlledVocabularySource, slug)
     end
   end
 end

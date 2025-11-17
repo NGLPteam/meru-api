@@ -191,6 +191,10 @@ module Schemas
           "props.#{full_path}##{type}"
         end
 
+        # @api private
+        # @return [void]
+        def properties=(*); end
+
         # @!group Schema / Contract compilation
 
         def add_to_schema!(context)

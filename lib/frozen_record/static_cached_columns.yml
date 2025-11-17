@@ -16579,6 +16579,112 @@
   default_function: CURRENT_TIMESTAMP
   has_default: true
   virtual: false
+- id: RequestStep#id
+  model_name: RequestStep
+  table_name: request_steps
+  name: id
+  type: uuid
+  'null': false
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default:
+  default_function: gen_random_uuid()
+  has_default: true
+  virtual: false
+- id: RequestStep#request_query_id
+  model_name: RequestStep
+  table_name: request_steps
+  name: request_query_id
+  type: uuid
+  'null': false
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: RequestStep#request_id
+  model_name: RequestStep
+  table_name: request_steps
+  name: request_id
+  type: uuid
+  'null': true
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: RequestStep#name
+  model_name: RequestStep
+  table_name: request_steps
+  name: name
+  type: text
+  'null': false
+  sql_type_metadata:
+    sql_type: text
+    type: text
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: RequestStep#current_path
+  model_name: RequestStep
+  table_name: request_steps
+  name: current_path
+  type: text
+  'null': true
+  sql_type_metadata:
+    sql_type: text
+    type: text
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: RequestStep#duration
+  model_name: RequestStep
+  table_name: request_steps
+  name: duration
+  type: decimal
+  'null': false
+  sql_type_metadata:
+    sql_type: numeric
+    type: decimal
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: RequestStep#created_at
+  model_name: RequestStep
+  table_name: request_steps
+  name: created_at
+  type: datetime
+  'null': false
+  sql_type_metadata:
+    sql_type: timestamp(6) without time zone
+    type: datetime
+    precision: 6
+  default:
+  default_function: CURRENT_TIMESTAMP
+  has_default: true
+  virtual: false
+- id: RequestStep#updated_at
+  model_name: RequestStep
+  table_name: request_steps
+  name: updated_at
+  type: datetime
+  'null': false
+  sql_type_metadata:
+    sql_type: timestamp(6) without time zone
+    type: datetime
+    precision: 6
+  default:
+  default_function: CURRENT_TIMESTAMP
+  has_default: true
+  virtual: false
 - id: RequestTiming#id
   model_name: RequestTiming
   table_name: request_timings
@@ -16658,6 +16764,19 @@
   default:
   default_function: CURRENT_TIMESTAMP
   has_default: true
+  virtual: false
+- id: RequestTiming#request_id
+  model_name: RequestTiming
+  table_name: request_timings
+  name: request_id
+  type: uuid
+  'null': true
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default:
+  default_function:
+  has_default: false
   virtual: false
 - id: Role#id
   model_name: Role

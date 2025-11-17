@@ -32,7 +32,7 @@ module Frontend
       # @return [String]
       defines :uri_path, type: Types::String
 
-      base_url LocationsConfig.frontend
+      base_url LocationsConfig.frontend_request
 
       kind "instance"
 

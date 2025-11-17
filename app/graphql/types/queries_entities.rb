@@ -8,7 +8,7 @@ module Types
     Fields for querying all entities from the top level of the hierarchy.
     TEXT
 
-    field :asset, Types::AnyAssetType, null: true do
+    field :asset, Types::AssetType, null: true do
       description "Look up an asset by slug"
 
       argument :slug, Types::SlugType, required: true
@@ -43,17 +43,17 @@ module Types
     end
 
     def asset(slug:)
-      Support::Loaders::RecordLoader.for(Asset).load(slug)
+      load_record_with(::Asset, slug)
     end
 
     def collection(slug:)
-      Support::Loaders::RecordLoader.for(Collection).load(slug).tap do |collection|
+      load_record_with(::Collection, slug).tap do |collection|
         track_entity_event! collection
       end
     end
 
     def community(slug:)
-      Support::Loaders::RecordLoader.for(Community).load(slug).tap do |community|
+      load_record_with(::Community, slug).tap do |community|
         track_entity_event! community
       end
     end
@@ -67,7 +67,7 @@ module Types
     end
 
     def item(slug:)
-      Support::Loaders::RecordLoader.for(Item).load(slug).tap do |item|
+      load_record_with(::Item, slug).tap do |item|
         track_entity_event! item
       end
     end

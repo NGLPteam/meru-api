@@ -3,8 +3,9 @@
 module Types
   module Schematic
     class MarkdownPropertyType < Types::AbstractObjectType
-      implements ScalarPropertyType
-      implements Types::SearchablePropertyType
+      implements ::Types::Schematic::SchemaPropertyType
+      implements ::Types::Schematic::ScalarPropertyType
+      implements ::Types::SearchablePropertyType
 
       field :default, String, null: true
       field :content, String, null: true, method: :value

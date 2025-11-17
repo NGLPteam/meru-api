@@ -14,7 +14,7 @@ module Types
 
     implements Types::RenderableType
 
-    field :entity, Types::AnyEntityType, null: false do
+    field :entity, Types::EntityType, null: false do
       description <<~TEXT
       The associated entity for this template instance.
       TEXT

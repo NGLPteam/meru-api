@@ -9,8 +9,9 @@ module Types
     (and all its children) has been granted.
     TEXT
 
-    field :all_access_grants, resolver: Resolvers::AccessGrants::SubjectResolver,
-      description: "A polymorphic connection for access grants from a subject"
+    field :all_access_grants, resolver: Resolvers::AccessGrants::SubjectResolver do
+      description "A polymorphic connection for access grants from a subject"
+    end
 
     field :primary_role, Types::RoleType, null: true do
       description "The primary role associated with this subject."
@@ -26,14 +27,8 @@ module Types
       TEXT
     end
 
-    # @return [Promise<Role>]
-    def assignable_roles
-      Support::Loaders::AssociationLoader.for(object.class, :assignable_roles).load(object)
-    end
+    load_association! :assignable_roles
 
-    # @return [Promise(Role), Promise(nil)]
-    def primary_role
-      Support::Loaders::AssociationLoader.for(object.class, :primary_role).load(object)
-    end
+    load_association! :primary_role
   end
 end

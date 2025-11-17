@@ -9,28 +9,35 @@ module Types
 
     field :contributors, [Types::ContributorSelectOptionType, { null: false }], null: false
 
-    field :default_values, GraphQL::Types::JSON, null: false,
-      description: "Not yet populated. May be used in the future."
+    field :default_values, GraphQL::Types::JSON, null: false do
+      description "Not yet populated. May be used in the future."
+    end
 
-    field :entity_id, ID, null: false,
-      description: "The entity ID for this schema instance."
+    field :entity_id, ID, null: false do
+      description "The entity ID for this schema instance."
+    end
 
-    field :field_values, GraphQL::Types::JSON, null: false,
-      description: "The values for the schema form on this instance"
+    field :field_values, GraphQL::Types::JSON, null: false do
+      description "The values for the schema form on this instance"
+    end
 
-    field :schema_version_slug, String, null: false,
-      description: "The slug for the current schema version"
+    field :schema_version_slug, String, null: false do
+      description "The slug for the current schema version"
+    end
 
-    field :validity, Types::SchemaInstanceValidationType, null: true,
-      description: "Information about the validity of the schema instance"
+    field :validity, Types::SchemaInstanceValidationType, null: true do
+      description "Information about the validity of the schema instance"
+    end
 
     # @return [<Hash>]
     def assets
       instance = object.instance
 
+      # :nocov:
       return [] if instance.blank?
+      # :nocov:
 
-      Support::Loaders::AssociationLoader.for(instance.class, :assets).load(instance).then do |assets|
+      association_loader_for(:assets, klass: instance.class, record: instance).then do |assets|
         assets.map(&:to_schematic_referent_option)
       end
     end

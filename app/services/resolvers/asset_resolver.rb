@@ -5,7 +5,7 @@ module Resolvers
     include Resolvers::Enhancements::PageBasedPagination
     include Resolvers::SimplyOrdered
 
-    type Types::AnyAssetType.connection_type, null: false
+    type Types::AssetType.connection_type, null: false
 
     scope { object.present? ? object.assets : Asset.none }
 

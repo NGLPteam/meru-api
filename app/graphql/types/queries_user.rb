@@ -24,7 +24,7 @@ module Types
     # @param [String] slug
     # @return [User, nil]
     def user(slug:)
-      Support::Loaders::RecordLoader.for(User, column: :keycloak_id).load(slug)
+      load_record_with(::User, slug, find_by: :keycloak_id)
     end
 
     # @return [User, AnonymousUser]

@@ -3,9 +3,10 @@
 module Types
   module Schematic
     class ContributorsPropertyType < Types::AbstractObjectType
-      implements ScalarPropertyType
+      implements ::Types::Schematic::SchemaPropertyType
+      implements ::Types::Schematic::ScalarPropertyType
 
-      field :contributors, [Types::AnyContributorType, { null: false }], null: false, method: :value
+      field :contributors, ["Types::ContributorType", { null: false }], null: false, method: :value
     end
   end
 end

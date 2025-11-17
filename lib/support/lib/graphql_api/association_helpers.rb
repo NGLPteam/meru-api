@@ -6,15 +6,43 @@ module Support
     module AssociationHelpers
       extend ActiveSupport::Concern
 
+      # @param [Symbol] association
+      # @param [Class(ApplicationRecord), nil] klass
+      # @param [ApplicationRecord, Object] record
+      # @return [Promise, Object]
       def association_loader_for(association, klass: object&.class, record: object)
         if !record.kind_of?(ActiveRecord::Base)
           # Handle AnonymousUser, other proxies
-          Promise.resolve(record.try(association))
+          record.try(association)
         elsif record.association(association).loaded?
-          Promise.resolve(record.public_send(association))
+          record.public_send(association)
+        elsif MeruConfig.experimental_dataloader?
+          # :nocov:
+          dataloader.with(GraphQL::Dataloader::ActiveRecordAssociationSource, association).load(record)
+          # :nocov:
         else
           Support::Loaders::AssociationLoader.for(klass, association).load(record)
         end
+      end
+
+      def load_record_with(klass, id, **options)
+        if MeruConfig.experimental_dataloader?
+          # :nocov:
+          dataloader.with(GraphQL::Dataloader::ActiveRecordSource, klass, **options).load(id)
+          # :nocov:
+        else
+          Support::Loaders::RecordLoader.for(klass, **options).load(id)
+        end
+      end
+
+      # If we are using graphql-batch / promises, await the promises.
+      # Otherwise, just return the values as-is.
+      def maybe_await(promises)
+        # :nocov:
+        return promises if MeruConfig.experimental_dataloader?
+        # :nocov:
+
+        Promise.all(promises)
       end
 
       module ClassMethods

@@ -23,7 +23,7 @@ default: &default
 
   # For details on connection pooling, see Rails configuration guide
   # https://guides.rubyonrails.org/configuring.html#database-pooling
-  pool: 15
+  pool: <%= MeruConfig.pool_size %>
 
 development:
   <<: *default

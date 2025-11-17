@@ -9,7 +9,7 @@ RSpec.describe "Query.contributorLookup", type: :request do
       }
     }
 
-    fragment AnyContributorDetailsFragment on AnyContributor {
+    fragment AnyContributorDetailsFragment on Contributor {
       ... on OrganizationContributor {
         slug
 

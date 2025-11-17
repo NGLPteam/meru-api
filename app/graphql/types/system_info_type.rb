@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
 module Types
-  # A utility service for looking up information about the WDP-API ecosystem.
+  # A utility service for looking up information about the Meru-API ecosystem.
   class SystemInfoType < Types::BaseObject
     description <<~TEXT
-    A helper field that can look up various information about the WDP-API Ecosystem.
+    A helper field that can look up various information about the Meru-API Ecosystem.
     TEXT
 
     field :entity_hierarchy_exists, Boolean, null: false do

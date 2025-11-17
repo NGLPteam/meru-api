@@ -6,7 +6,7 @@ module Types
 
     description "A contribution to an item"
 
-    field :contributor, "Types::AnyContributorType", null: false
+    field :contributor, "Types::ContributorType", null: false
     field :item, "Types::ItemType", null: false
   end
 end

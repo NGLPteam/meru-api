@@ -10,7 +10,7 @@ module Types
     implements Types::HasEntityBreadcrumbs
     implements Types::HasSchemaPropertiesType
     implements Types::SearchableType
-    implements Types::Sluggable
+    implements ::Types::SluggableType
 
     description "An entity that exists in the hierarchy."
 
@@ -109,10 +109,13 @@ module Types
 
     # @!group Contextual Permission Support
 
-    # @see Loaders::ContextualPermissionLoader
-    # @return [Promise(ContextualPermission)]
+    # @return [ContextualPermission]
     def contextual_permission
-      Loaders::ContextualPermissionLoader.for(context[:current_user]).load(object)
+      if MeruConfig.experimental_dataloader?
+        dataloader.with(Sources::ContextualPermission, context[:current_user]).load(object)
+      else
+        Loaders::ContextualPermissionLoader.for(context[:current_user]).load(object)
+      end
     end
 
     # This surfaces the `access_control_list` from the associated {#contextual_permission}.
@@ -128,47 +131,59 @@ module Types
     # This surfaces the `allowed_actions` from the associated {#contextual_permission}.
     #
     # @see ContextualPermission#allowed_actions
-    # @return [Promise<String>]
+    # @return [String]
     def allowed_actions
       contextual_permission.then(&:allowed_actions)
     end
 
-    # @return [Promise<Role>]
+    # @return [Role]
     def assignable_roles
       contextual_permission.then(&:assignable_roles)
     end
 
-    # @return [Promise(<Role>)]
+    # @return [<Role>]
     def applicable_roles
       contextual_permission.then(&:roles)
     end
 
-    # @see Entities::CheckLayouts
-    # @see Entities::LayoutsChecker
-    # @see Types::EntityLayoutsType
-    # @return [Promise(Entities::LayoutsProxy)]
-    # @return [Promise(nil)]
-    def layouts
-      Loaders::EntityLayoutsLoader.load(object)
-    end
-
-    # @return [Promise<Permissions::Grant>]
+    # @return [<Permissions::Grant>]
     def permissions
       contextual_permission.then(&:permissions)
     end
 
     # @!endgroup
 
+    # @see Entities::CheckLayouts
+    # @see Entities::LayoutsChecker
+    # @see Sources::EntityLayouts
+    # @see Types::EntityLayoutsType
+    # @return [Entities::LayoutsProxy, nil]
+    def layouts
+      if MeruConfig.experimental_dataloader?
+        dataloader.with(Sources::EntityLayouts).load(object)
+      else
+        Loaders::EntityLayoutsLoader.load(object)
+      end
+    end
+
     # @param [String] identifier
     # @return [Ordering, nil]
     def ordering(identifier:)
-      Loaders::OrderingByIdentifierLoader.for(identifier).load(object)
+      if MeruConfig.experimental_dataloader?
+        dataloader.with(Sources::OrderingByIdentifier, identifier).load(object)
+      else
+        Loaders::OrderingByIdentifierLoader.for(identifier).load(object)
+      end
     end
 
     # @param [String] slug
     # @return [Ordering, nil]
     def ordering_for_schema(slug:)
-      Loaders::OrderingBySchemaLoader.for(slug).load(object)
+      if MeruConfig.experimental_dataloader?
+        dataloader.with(Sources::OrderingBySchema, slug).load(object)
+      else
+        Loaders::OrderingBySchemaLoader.for(slug).load(object)
+      end
     end
 
     # @param [String] slug
@@ -180,7 +195,7 @@ module Types
     # @param [String] slug
     # @return [Announcement, nil]
     def announcement(slug:)
-      Support::Loaders::RecordLoader.for(Announcement).load(slug)
+      load_record_with(::Announcement, slug)
     end
   end
 end

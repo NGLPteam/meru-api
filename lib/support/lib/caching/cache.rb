@@ -2,8 +2,8 @@
 
 module Support
   module Caching
-    # dry-effects provides a cache effect that is very useful, but has no fall-through
-    # when not wrapped.
+    # A caching mechanism for GraphQL requests that is safe to use
+    # within the context of a request, whether it dips into threads or fibers.
     #
     # This marries cache with the Reader effect to specify whether or not the cache
     # is active or not. It allows for safe evaluation of anything with the ability
@@ -11,16 +11,6 @@ module Support
     #
     # @api private
     class Cache
-      include Dry::Effects::Handler.Cache(:vog_safe_cache)
-      include Dry::Effects::Handler.Reader(:vog_safe_cache_active)
-      include Dry::Effects.Cache(:vog_safe_cache, shared: true)
-      include Dry::Effects.Reader(:vog_safe_cache_active, default: false)
-
-      alias vog_safe_cache_active? vog_safe_cache_active
-
-      private :cache
-      private :with_cache
-
       def vog_cache(...)
         if vog_safe_cache_active?
           cache(...)
@@ -29,14 +19,70 @@ module Support
         end
       end
 
+      # Activates the VOG cache for the duration of the block
+      # within a Thread.current variable.
+      # @return [void]
       def with_vog_cache
+        # :nocov:
         return yield if vog_safe_cache_active?
+        # :nocov:
 
-        with_vog_safe_cache_active true do
-          with_cache do
+        with_vog_safe_cache_active! do
+          with_cache! do
             yield
           end
         end
+      end
+
+      # @!attribute [r] vog_safe_cache_active
+      # @return [Boolean]
+      def vog_safe_cache_active
+        Thread.current.thread_variable_get(:vog_safe_cache_active) || false
+      end
+
+      alias vog_safe_cache_active? vog_safe_cache_active
+
+      alias vog_cache_active? vog_safe_cache_active
+
+      # @!attribute [r] vog_safe_cache
+      # @return [Concurrent::Map, nil]
+      def vog_safe_cache
+        Thread.current.thread_variable_get(:vog_safe_cache)
+      end
+
+      # @api private
+      # @param [Array<Object>] args the args to key by
+      # @return [Object]
+      def cache(*args, &)
+        vog_safe_cache.then do |c|
+          # :nocov:
+          return yield if c.nil?
+          # :nocov:
+
+          c.compute_if_absent(args, &)
+        end
+      end
+
+      # @return [void]
+      def with_cache!
+        original = vog_safe_cache
+
+        Thread.current.thread_variable_set(:vog_safe_cache, Concurrent::Map.new)
+
+        yield
+      ensure
+        Thread.current.thread_variable_set(:vog_safe_cache, original)
+      end
+
+      # @return [void]
+      def with_vog_safe_cache_active!
+        original = vog_safe_cache_active
+
+        Thread.current.thread_variable_set(:vog_safe_cache_active, true)
+
+        yield
+      ensure
+        Thread.current.thread_variable_set(:vog_safe_cache_active, original)
       end
 
       class << self
@@ -45,7 +91,7 @@ module Support
           @instance ||= new
         end
 
-        delegate :vog_cache, :with_vog_cache, to: :instance
+        delegate :vog_cache_active?, :vog_cache, :with_vog_cache, to: :instance
       end
     end
   end

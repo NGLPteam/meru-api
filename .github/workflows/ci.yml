@@ -15,19 +15,19 @@ jobs:
 
     runs-on: ubuntu-latest
     steps:
-      - name: "Install Dependent libraries"
-        run: |
-          sudo apt-get update
-          sudo apt-get -yqq install libpq-dev libvips libvips-dev
+      - uses: awalsh128/cache-apt-pkgs-action@latest
+        with:
+          packages: libpq-dev libvips libvips-dev
+          version: 1.0
 
       - name: "Checkout code"
         uses: actions/checkout@v1
 
-      - name: "Install Ruby 3.4.4"
+      - name: "Install Ruby"
         uses: ruby/setup-ruby@v1
         with:
           bundler-cache: true
-          ruby-version: 3.4.4
+          ruby-version: 3.4.7
 
       - name: "Run Rubocop"
         env:
@@ -61,19 +61,19 @@ jobs:
         options: --entrypoint redis-server
 
     steps:
-      - name: "Install Dependent libraries"
-        run: |
-          sudo apt-get update
-          sudo apt-get -yqq install libpq-dev libvips libvips-dev
+      - uses: awalsh128/cache-apt-pkgs-action@latest
+        with:
+          packages: libpq-dev libvips libvips-dev
+          version: 1.0
 
       - name: "Checkout code"
         uses: actions/checkout@v1
 
-      - name: "Install Ruby 3.4.4"
+      - name: "Install Ruby"
         uses: ruby/setup-ruby@v1
         with:
           bundler-cache: true
-          ruby-version: 3.4.4
+          ruby-version: 3.4.7
 
       - name: "Run API specs"
         env:

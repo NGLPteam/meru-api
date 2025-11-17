@@ -6,6 +6,7 @@ class RequestQuery < ApplicationRecord
 
   pg_enum! :kind, as: :request_query_kind, default: :query, allow_blank: false
 
+  has_many :request_steps, inverse_of: :request_query, dependent: :delete_all
   has_many :request_timings, inverse_of: :request_query, dependent: :delete_all
 
   before_validation :derive_query_info!
@@ -30,10 +31,13 @@ class RequestQuery < ApplicationRecord
 
     self.operation_name = operation_name.presence || definition.name
   rescue GraphQL::ParseError
+    # :nocov:
     errors.add(:query, "is not valid GraphQL")
+    # :nocov:
   end
 
   def set_kind_from_definition!(definition)
+    # :nocov:
     case definition.try(:operation_type)
     in "query"
       self.kind = :query
@@ -44,5 +48,6 @@ class RequestQuery < ApplicationRecord
     else
       self.kind = :other
     end
+    # :nocov:
   end
 end

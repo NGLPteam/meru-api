@@ -10,7 +10,7 @@ RUN --mount=type=secret,id=maxmind_account_id \
   GEOIPUPDATE_LICENSE_KEY_FILE=/run/secrets/maxmind_license_key \
   /usr/bin/geoipupdate
 
-FROM ruby:3.4.4-bookworm
+FROM ruby:3.4.7-bookworm
 
 ENV DEBIAN_FRONTEND=noninteractive
 
@@ -79,4 +79,4 @@ COPY --from=maxmind /usr/share/GeoIP /usr/share/GeoIP
 
 EXPOSE 8080
 
-CMD ["bin/puma", "-C", "config/puma.rb"]
+CMD ["bin/pitchfork", "-c", "config/pitchfork.rb"]

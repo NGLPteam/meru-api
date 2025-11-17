@@ -2883,17 +2883,17 @@ COMMENT ON OPERATOR public.# (NONE, public.variable_precision_date) IS 'Normaliz
 
 CREATE OPERATOR public.&& (
     FUNCTION = public.vpdate_overlaps,
-    LEFTARG = public.variable_precision_date,
+    LEFTARG = daterange,
     RIGHTARG = public.variable_precision_date,
     COMMUTATOR = OPERATOR(public.&&)
 );
 
 
 --
--- Name: OPERATOR && (public.variable_precision_date, public.variable_precision_date); Type: COMMENT; Schema: public; Owner: -
+-- Name: OPERATOR && (daterange, public.variable_precision_date); Type: COMMENT; Schema: public; Owner: -
 --
 
-COMMENT ON OPERATOR public.&& (public.variable_precision_date, public.variable_precision_date) IS 'overlaps';
+COMMENT ON OPERATOR public.&& (daterange, public.variable_precision_date) IS 'overlaps';
 
 
 --
@@ -2921,17 +2921,17 @@ COMMENT ON OPERATOR public.&& (public.variable_precision_date, daterange) IS 'ov
 
 CREATE OPERATOR public.&& (
     FUNCTION = public.vpdate_overlaps,
-    LEFTARG = daterange,
+    LEFTARG = public.variable_precision_date,
     RIGHTARG = public.variable_precision_date,
     COMMUTATOR = OPERATOR(public.&&)
 );
 
 
 --
--- Name: OPERATOR && (daterange, public.variable_precision_date); Type: COMMENT; Schema: public; Owner: -
+-- Name: OPERATOR && (public.variable_precision_date, public.variable_precision_date); Type: COMMENT; Schema: public; Owner: -
 --
 
-COMMENT ON OPERATOR public.&& (daterange, public.variable_precision_date) IS 'overlaps';
+COMMENT ON OPERATOR public.&& (public.variable_precision_date, public.variable_precision_date) IS 'overlaps';
 
 
 --
@@ -3028,18 +3028,6 @@ CREATE OPERATOR public.<> (
 
 CREATE OPERATOR public.<@ (
     FUNCTION = public.vpdate_contained_by,
-    LEFTARG = public.variable_precision_date,
-    RIGHTARG = public.variable_precision_date,
-    COMMUTATOR = OPERATOR(public.@>)
-);
-
-
---
--- Name: <@; Type: OPERATOR; Schema: public; Owner: -
---
-
-CREATE OPERATOR public.<@ (
-    FUNCTION = public.vpdate_contained_by,
     LEFTARG = date,
     RIGHTARG = public.variable_precision_date,
     COMMUTATOR = OPERATOR(public.@>)
@@ -3085,6 +3073,18 @@ COMMENT ON OPERATOR public.<@ (public.variable_precision_date, daterange) IS 'co
 
 
 --
+-- Name: <@; Type: OPERATOR; Schema: public; Owner: -
+--
+
+CREATE OPERATOR public.<@ (
+    FUNCTION = public.vpdate_contained_by,
+    LEFTARG = public.variable_precision_date,
+    RIGHTARG = public.variable_precision_date,
+    COMMUTATOR = OPERATOR(public.@>)
+);
+
+
+--
 -- Name: =; Type: OPERATOR; Schema: public; Owner: -
 --
 
@@ -3123,6 +3123,27 @@ CREATE OPERATOR public.>= (
 CREATE OPERATOR public.?! (
     FUNCTION = public.vpdate_precision_neq,
     LEFTARG = public.variable_precision_date,
+    RIGHTARG = public.date_precision,
+    NEGATOR = OPERATOR(public.?=),
+    RESTRICT = neqsel,
+    JOIN = neqjoinsel
+);
+
+
+--
+-- Name: OPERATOR ?! (public.variable_precision_date, public.date_precision); Type: COMMENT; Schema: public; Owner: -
+--
+
+COMMENT ON OPERATOR public.?! (public.variable_precision_date, public.date_precision) IS 'A.precision <> B';
+
+
+--
+-- Name: ?!; Type: OPERATOR; Schema: public; Owner: -
+--
+
+CREATE OPERATOR public.?! (
+    FUNCTION = public.vpdate_precision_neq,
+    LEFTARG = public.variable_precision_date,
     RIGHTARG = public.variable_precision_date,
     COMMUTATOR = OPERATOR(public.?!),
     NEGATOR = OPERATOR(public.?=),
@@ -3136,27 +3157,6 @@ CREATE OPERATOR public.?! (
 --
 
 COMMENT ON OPERATOR public.?! (public.variable_precision_date, public.variable_precision_date) IS 'A.precision <> B.precision';
-
-
---
--- Name: ?!; Type: OPERATOR; Schema: public; Owner: -
---
-
-CREATE OPERATOR public.?! (
-    FUNCTION = public.vpdate_precision_neq,
-    LEFTARG = public.variable_precision_date,
-    RIGHTARG = public.date_precision,
-    NEGATOR = OPERATOR(public.?=),
-    RESTRICT = neqsel,
-    JOIN = neqjoinsel
-);
-
-
---
--- Name: OPERATOR ?! (public.variable_precision_date, public.date_precision); Type: COMMENT; Schema: public; Owner: -
---
-
-COMMENT ON OPERATOR public.?! (public.variable_precision_date, public.date_precision) IS 'A.precision <> B';
 
 
 --
@@ -3221,6 +3221,28 @@ COMMENT ON OPERATOR public.?- (public.variable_precision_date, public.variable_p
 CREATE OPERATOR public.?< (
     FUNCTION = public.vpdate_precision_lt,
     LEFTARG = public.variable_precision_date,
+    RIGHTARG = public.date_precision,
+    COMMUTATOR = OPERATOR(public.?>),
+    NEGATOR = OPERATOR(public.?>=),
+    RESTRICT = scalarltsel,
+    JOIN = scalarltjoinsel
+);
+
+
+--
+-- Name: OPERATOR ?< (public.variable_precision_date, public.date_precision); Type: COMMENT; Schema: public; Owner: -
+--
+
+COMMENT ON OPERATOR public.?< (public.variable_precision_date, public.date_precision) IS 'A.precision < B, with none always pushed to the end';
+
+
+--
+-- Name: ?<; Type: OPERATOR; Schema: public; Owner: -
+--
+
+CREATE OPERATOR public.?< (
+    FUNCTION = public.vpdate_precision_lt,
+    LEFTARG = public.variable_precision_date,
     RIGHTARG = public.variable_precision_date,
     COMMUTATOR = OPERATOR(public.?>),
     NEGATOR = OPERATOR(public.?>=),
@@ -3237,25 +3259,25 @@ COMMENT ON OPERATOR public.?< (public.variable_precision_date, public.variable_p
 
 
 --
--- Name: ?<; Type: OPERATOR; Schema: public; Owner: -
+-- Name: ?<=; Type: OPERATOR; Schema: public; Owner: -
 --
 
-CREATE OPERATOR public.?< (
-    FUNCTION = public.vpdate_precision_lt,
+CREATE OPERATOR public.?<= (
+    FUNCTION = public.vpdate_precision_le,
     LEFTARG = public.variable_precision_date,
     RIGHTARG = public.date_precision,
-    COMMUTATOR = OPERATOR(public.?>),
-    NEGATOR = OPERATOR(public.?>=),
-    RESTRICT = scalarltsel,
-    JOIN = scalarltjoinsel
+    COMMUTATOR = OPERATOR(public.?>=),
+    NEGATOR = OPERATOR(public.?>),
+    RESTRICT = scalarlesel,
+    JOIN = scalarlejoinsel
 );
 
 
 --
--- Name: OPERATOR ?< (public.variable_precision_date, public.date_precision); Type: COMMENT; Schema: public; Owner: -
+-- Name: OPERATOR ?<= (public.variable_precision_date, public.date_precision); Type: COMMENT; Schema: public; Owner: -
 --
 
-COMMENT ON OPERATOR public.?< (public.variable_precision_date, public.date_precision) IS 'A.precision < B, with none always pushed to the end';
+COMMENT ON OPERATOR public.?<= (public.variable_precision_date, public.date_precision) IS 'A.precision <= B, with none always pushed to the end';
 
 
 --
@@ -3281,25 +3303,24 @@ COMMENT ON OPERATOR public.?<= (public.variable_precision_date, public.variable_
 
 
 --
--- Name: ?<=; Type: OPERATOR; Schema: public; Owner: -
+-- Name: ?=; Type: OPERATOR; Schema: public; Owner: -
 --
 
-CREATE OPERATOR public.?<= (
-    FUNCTION = public.vpdate_precision_le,
+CREATE OPERATOR public.?= (
+    FUNCTION = public.vpdate_precision_eq,
     LEFTARG = public.variable_precision_date,
     RIGHTARG = public.date_precision,
-    COMMUTATOR = OPERATOR(public.?>=),
-    NEGATOR = OPERATOR(public.?>),
-    RESTRICT = scalarlesel,
-    JOIN = scalarlejoinsel
+    NEGATOR = OPERATOR(public.?!),
+    RESTRICT = eqsel,
+    JOIN = eqjoinsel
 );
 
 
 --
--- Name: OPERATOR ?<= (public.variable_precision_date, public.date_precision); Type: COMMENT; Schema: public; Owner: -
+-- Name: OPERATOR ?= (public.variable_precision_date, public.date_precision); Type: COMMENT; Schema: public; Owner: -
 --
 
-COMMENT ON OPERATOR public.?<= (public.variable_precision_date, public.date_precision) IS 'A.precision <= B, with none always pushed to the end';
+COMMENT ON OPERATOR public.?= (public.variable_precision_date, public.date_precision) IS 'A.precision = B';
 
 
 --
@@ -3327,24 +3348,25 @@ COMMENT ON OPERATOR public.?= (public.variable_precision_date, public.variable_p
 
 
 --
--- Name: ?=; Type: OPERATOR; Schema: public; Owner: -
+-- Name: ?>; Type: OPERATOR; Schema: public; Owner: -
 --
 
-CREATE OPERATOR public.?= (
-    FUNCTION = public.vpdate_precision_eq,
+CREATE OPERATOR public.?> (
+    FUNCTION = public.vpdate_precision_gt,
     LEFTARG = public.variable_precision_date,
     RIGHTARG = public.date_precision,
-    NEGATOR = OPERATOR(public.?!),
-    RESTRICT = eqsel,
-    JOIN = eqjoinsel
+    COMMUTATOR = OPERATOR(public.?<),
+    NEGATOR = OPERATOR(public.?<=),
+    RESTRICT = scalargtsel,
+    JOIN = scalargtjoinsel
 );
 
 
 --
--- Name: OPERATOR ?= (public.variable_precision_date, public.date_precision); Type: COMMENT; Schema: public; Owner: -
+-- Name: OPERATOR ?> (public.variable_precision_date, public.date_precision); Type: COMMENT; Schema: public; Owner: -
 --
 
-COMMENT ON OPERATOR public.?= (public.variable_precision_date, public.date_precision) IS 'A.precision = B';
+COMMENT ON OPERATOR public.?> (public.variable_precision_date, public.date_precision) IS 'A.precision > B, with none always pushed to the end';
 
 
 --
@@ -3370,25 +3392,25 @@ COMMENT ON OPERATOR public.?> (public.variable_precision_date, public.variable_p
 
 
 --
--- Name: ?>; Type: OPERATOR; Schema: public; Owner: -
+-- Name: ?>=; Type: OPERATOR; Schema: public; Owner: -
 --
 
-CREATE OPERATOR public.?> (
-    FUNCTION = public.vpdate_precision_gt,
+CREATE OPERATOR public.?>= (
+    FUNCTION = public.vpdate_precision_ge,
     LEFTARG = public.variable_precision_date,
     RIGHTARG = public.date_precision,
-    COMMUTATOR = OPERATOR(public.?<),
-    NEGATOR = OPERATOR(public.?<=),
-    RESTRICT = scalargtsel,
-    JOIN = scalargtjoinsel
+    COMMUTATOR = OPERATOR(public.?<=),
+    NEGATOR = OPERATOR(public.?<),
+    RESTRICT = scalargesel,
+    JOIN = scalargejoinsel
 );
 
 
 --
--- Name: OPERATOR ?> (public.variable_precision_date, public.date_precision); Type: COMMENT; Schema: public; Owner: -
+-- Name: OPERATOR ?>= (public.variable_precision_date, public.date_precision); Type: COMMENT; Schema: public; Owner: -
 --
 
-COMMENT ON OPERATOR public.?> (public.variable_precision_date, public.date_precision) IS 'A.precision > B, with none always pushed to the end';
+COMMENT ON OPERATOR public.?>= (public.variable_precision_date, public.date_precision) IS 'A.precision >= B, with none always pushed to the end';
 
 
 --
@@ -3411,28 +3433,6 @@ CREATE OPERATOR public.?>= (
 --
 
 COMMENT ON OPERATOR public.?>= (public.variable_precision_date, public.variable_precision_date) IS 'A.precision >= B.precision, with none always pushed to the end';
-
-
---
--- Name: ?>=; Type: OPERATOR; Schema: public; Owner: -
---
-
-CREATE OPERATOR public.?>= (
-    FUNCTION = public.vpdate_precision_ge,
-    LEFTARG = public.variable_precision_date,
-    RIGHTARG = public.date_precision,
-    COMMUTATOR = OPERATOR(public.?<=),
-    NEGATOR = OPERATOR(public.?<),
-    RESTRICT = scalargesel,
-    JOIN = scalargejoinsel
-);
-
-
---
--- Name: OPERATOR ?>= (public.variable_precision_date, public.date_precision); Type: COMMENT; Schema: public; Owner: -
---
-
-COMMENT ON OPERATOR public.?>= (public.variable_precision_date, public.date_precision) IS 'A.precision >= B, with none always pushed to the end';
 
 
 --
@@ -3524,7 +3524,7 @@ COMMENT ON OPERATOR public.@& (NONE, public.variable_precision_date) IS 'Transfo
 
 CREATE OPERATOR public.@> (
     FUNCTION = public.vpdate_contains,
-    LEFTARG = public.variable_precision_date,
+    LEFTARG = daterange,
     RIGHTARG = public.variable_precision_date,
     COMMUTATOR = OPERATOR(public.<@)
 );
@@ -3560,7 +3560,7 @@ CREATE OPERATOR public.@> (
 
 CREATE OPERATOR public.@> (
     FUNCTION = public.vpdate_contains,
-    LEFTARG = daterange,
+    LEFTARG = public.variable_precision_date,
     RIGHTARG = public.variable_precision_date,
     COMMUTATOR = OPERATOR(public.<@)
 );
@@ -3626,24 +3626,6 @@ COMMENT ON OPERATOR public.~>? (public.date_precision, public.date_precision) IS
 
 CREATE OPERATOR public.~>? (
     FUNCTION = public.vpdate_cmp_precision,
-    LEFTARG = public.variable_precision_date,
-    RIGHTARG = public.date_precision
-);
-
-
---
--- Name: OPERATOR ~>? (public.variable_precision_date, public.date_precision); Type: COMMENT; Schema: public; Owner: -
---
-
-COMMENT ON OPERATOR public.~>? (public.variable_precision_date, public.date_precision) IS 'Compare variable precision dates by precision *only*';
-
-
---
--- Name: ~>?; Type: OPERATOR; Schema: public; Owner: -
---
-
-CREATE OPERATOR public.~>? (
-    FUNCTION = public.vpdate_cmp_precision,
     LEFTARG = public.date_precision,
     RIGHTARG = public.variable_precision_date
 );
@@ -3654,6 +3636,24 @@ CREATE OPERATOR public.~>? (
 --
 
 COMMENT ON OPERATOR public.~>? (public.date_precision, public.variable_precision_date) IS 'Compare variable precision dates by precision *only*';
+
+
+--
+-- Name: ~>?; Type: OPERATOR; Schema: public; Owner: -
+--
+
+CREATE OPERATOR public.~>? (
+    FUNCTION = public.vpdate_cmp_precision,
+    LEFTARG = public.variable_precision_date,
+    RIGHTARG = public.date_precision
+);
+
+
+--
+-- Name: OPERATOR ~>? (public.variable_precision_date, public.date_precision); Type: COMMENT; Schema: public; Owner: -
+--
+
+COMMENT ON OPERATOR public.~>? (public.variable_precision_date, public.date_precision) IS 'Compare variable precision dates by precision *only*';
 
 
 --
@@ -6662,6 +6662,22 @@ CREATE TABLE public.request_queries (
 
 
 --
+-- Name: request_steps; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.request_steps (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    request_query_id uuid NOT NULL,
+    request_id uuid,
+    name text NOT NULL,
+    current_path text,
+    duration numeric NOT NULL,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+
+--
 -- Name: request_timings; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -6671,7 +6687,8 @@ CREATE TABLE public.request_timings (
     duration numeric NOT NULL,
     variables jsonb,
     created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    request_id uuid
 );
 
 
@@ -8740,6 +8757,14 @@ ALTER TABLE ONLY public.rendering_template_logs
 
 ALTER TABLE ONLY public.request_queries
     ADD CONSTRAINT request_queries_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: request_steps request_steps_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.request_steps
+    ADD CONSTRAINT request_steps_pkey PRIMARY KEY (id);
 
 
 --
@@ -12375,6 +12400,13 @@ CREATE INDEX index_rendering_template_logs_on_template_definition ON public.rend
 
 
 --
+-- Name: index_request_steps_on_request_query_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_request_steps_on_request_query_id ON public.request_steps USING btree (request_query_id);
+
+
+--
 -- Name: index_request_timings_on_request_query_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -14468,6 +14500,14 @@ ALTER TABLE ONLY public.assets
 
 
 --
+-- Name: request_steps fk_rails_aaed006f41; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.request_steps
+    ADD CONSTRAINT fk_rails_aaed006f41 FOREIGN KEY (request_query_id) REFERENCES public.request_queries(id) ON DELETE CASCADE;
+
+
+--
 -- Name: harvest_attempt_transitions fk_rails_abb01db8f3; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -15010,6 +15050,7 @@ ALTER TABLE ONLY public.templates_ordering_instances
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20251114195823'),
 ('20251009055637'),
 ('20251009053907'),
 ('20251009053741'),

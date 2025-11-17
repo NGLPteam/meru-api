@@ -4,8 +4,10 @@ module Types
   class EntityLinkType < Types::AbstractModel
     description "A link between different entities"
 
-    field :source, Types::AnyEntityType, null: false
-    field :target, Types::AnyEntityType, null: false
+    implements Types::OrderingEntryableType
+
+    field :source, Types::EntityType, null: false
+    field :target, Types::EntityType, null: false
     field :operator, Types::EntityLinkOperatorType, null: false
     field :scope, Types::EntityLinkScopeType, null: false
 

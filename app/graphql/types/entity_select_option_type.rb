@@ -15,9 +15,11 @@ module Types
 
     field :kind, Types::EntityKindType, null: false, method: :to_schematic_referent_kind
 
-    field :entity, Types::AnyEntityType, null: false
+    field :entity, "Types::EntityType", null: false
 
-    field :schema_version, Types::SchemaVersionType, null: false
+    field :schema_version, "Types::SchemaVersionType", null: false
+
+    load_association! :schema_version
 
     # @return [HierarchicalEntity]
     def entity
@@ -30,11 +32,6 @@ module Types
         raise GraphQL::ExecutionError, "can't get entity from #{object.class.name}"
         # :nocov:
       end
-    end
-
-    # @return [SchemaVersion]
-    def schema_version
-      Support::Loaders::AssociationLoader.for(object.class, :schema_version).load(object)
     end
   end
 end
