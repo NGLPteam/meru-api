@@ -9,7 +9,7 @@ module Types
     but no ability to traverse the hierarchy.
     TEXT
 
-    implements Types::Sluggable
+    implements ::Types::SluggableType
 
     field :title, String, null: false do
       description <<~TEXT

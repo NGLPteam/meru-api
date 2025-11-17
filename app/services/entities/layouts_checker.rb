@@ -9,8 +9,6 @@ module Entities
 
     standard_execution!
 
-    around_execute :acquire_check_lock!
-
     # A freshly-loaded record with nothing else attached to it
     # that we will use to check.
     #
@@ -46,18 +44,15 @@ module Entities
 
       yield entity.render_layouts
 
-      @rendered = true
+      if entity.stale?
+        # Something went wrong with the re-rerendering process.
+        # Mark it as invalid again so it can be retried later.
+        entity.invalidate_layouts!
+      else
+        @rendered = true
+      end
 
       super
-    end
-
-    private
-
-    # @return [void]
-    def acquire_check_lock!
-      original_entity.class.with_advisory_lock!("check_layouts/#{original_entity.id}", disable_query_cache: true, timeout_seconds: 30) do
-        yield
-      end
     end
   end
 end

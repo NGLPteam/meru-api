@@ -4,7 +4,7 @@ module Types
   # @abstract
   class AbstractModel < Types::BaseObject
     implements GraphQL::Types::Relay::Node
-    implements Types::Sluggable
+    implements ::Types::SluggableType
 
     global_id_field :id
 

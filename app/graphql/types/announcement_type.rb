@@ -11,7 +11,7 @@ module Types
     to provide time-sensensitive information and news about a specific entity in the system.
     TEXT
 
-    field :entity, "Types::AnyEntityType", null: false,
+    field :entity, "Types::EntityType", null: false,
       description: "The entity that owns the announcement"
 
     field :published_on, GraphQL::Types::ISO8601Date, null: false,

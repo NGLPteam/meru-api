@@ -7,10 +7,9 @@ Rails.application.configure do
   queues = [
     "maintenance:1",
     "rendering:1",
-    "+revalidations,cache_warming:1",
     "+purging,hierarchies,entities,orderings,invalidations,layouts:2",
     "+harvest_pruning,extraction,harvesting,asset_fetching:2",
-    "permissions,processing,default,mailers,ahoy:2",
+    "default,mailers,ahoy:2",
   ].join(?;)
 
   config.good_job.preserve_job_records = :on_unhandled_error
@@ -20,10 +19,9 @@ Rails.application.configure do
   config.good_job.execution_mode = Rails.env.test? ? :inline : :external
   # :nocov:
   config.good_job.queues = queues
-  config.good_job.max_threads = 10
+  config.good_job.max_threads = 4
   config.good_job.poll_interval = 10 # seconds
   config.good_job.shutdown_timeout = 25 # seconds
-  config.good_job.advisory_lock_heartbeat = true
   config.good_job.enable_cron = !Rails.env.test?
   config.good_job.enable_listen_notify = true
   config.good_job.enable_pauses = true

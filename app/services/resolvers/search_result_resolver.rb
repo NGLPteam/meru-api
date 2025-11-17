@@ -25,7 +25,9 @@ module Resolvers
     If _none_ of these are set, the search will be considered empty, and return 0 results.
     TEXT
 
-    scope { object.base_relation.all }
+    scope do
+      object.base_relation.all
+    end
 
     PREDICATES_DESC = <<~TEXT
     The predicates to search for, if any.

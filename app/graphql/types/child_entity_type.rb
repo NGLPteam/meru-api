@@ -38,7 +38,7 @@ module Types
     field :root, Boolean, null: false, method: :root?
     field :leaf, Boolean, null: false, method: :leaf?
 
-    field :ancestor_by_name, Types::AnyEntityType, null: true do
+    field :ancestor_by_name, Types::EntityType, null: true do
       description <<~TEXT
       Directly fetch a defined named ancestor by its name. It can be null,
       either because an invalid name was provided, the schema hierarchy is
@@ -48,7 +48,7 @@ module Types
       argument :name, String, required: true, description: "The name of the ancestor to fetch"
     end
 
-    field :ancestor_of_type, Types::AnyEntityType, null: true do
+    field :ancestor_of_type, Types::EntityType, null: true do
       description <<~TEXT
       Look up an ancestor for this entity that implements a specific type. It ascends from this entity,
       so it will first check the parent, then the grandparent, and so on.
@@ -89,7 +89,11 @@ module Types
     # @param [String] schema
     # @return [HierarchicalEntity, nil]
     def ancestor_of_type(schema:)
-      Loaders::AncestorOfTypeLoader.for(schema).load(object)
+      if MeruConfig.experimental_dataloader?
+        dataloader.with(Sources::AncestorOfType, schema).load(object)
+      else
+        Loaders::AncestorOfTypeLoader.for(schema).load(object)
+      end
     end
   end
 end

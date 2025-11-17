@@ -7,6 +7,6 @@ module Types
     description "A contribution to a collection"
 
     field :collection, "Types::CollectionType", null: false
-    field :contributor, "Types::AnyContributorType", null: false
+    field :contributor, "Types::ContributorType", null: false
   end
 end

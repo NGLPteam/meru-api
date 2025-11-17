@@ -3,7 +3,8 @@
 module Types
   module Schematic
     class UnknownPropertyType < Types::AbstractObjectType
-      implements ScalarPropertyType
+      implements ::Types::Schematic::SchemaPropertyType
+      implements ::Types::Schematic::ScalarPropertyType
 
       field :default, GraphQL::Types::JSON, null: true
       field :unknown_value, GraphQL::Types::JSON, null: true, method: :value

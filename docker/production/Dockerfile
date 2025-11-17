@@ -10,7 +10,7 @@ RUN --mount=type=secret,id=maxmind_account_id \
   GEOIPUPDATE_LICENSE_KEY_FILE=/run/secrets/maxmind_license_key \
   /usr/bin/geoipupdate
 
-FROM ruby:3.4.4-bookworm
+FROM ruby:3.4.7-bookworm
 
 RUN apt-get update -qq && apt-get install -y -qq --no-install-recommends \
     build-essential \
@@ -57,7 +57,6 @@ ENV RUBY_GC_HEAP_2_INIT_SLOTS=455808
 ENV RUBY_GC_HEAP_3_INIT_SLOTS=19968
 ENV RUBY_GC_HEAP_4_INIT_SLOTS=9265
 
-
 RUN gem update --system && gem install bundler:2.7.2
 
 COPY Gemfile Gemfile.lock ./
@@ -80,4 +79,4 @@ COPY --from=maxmind /usr/share/GeoIP/ /usr/share/GeoIP
 
 EXPOSE 8080
 
-CMD ["bin/puma", "-C", "config/puma.rb"]
+CMD ["bin/pitchfork", "-c", "config/pitchfork.rb"]

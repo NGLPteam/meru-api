@@ -12,31 +12,32 @@ module Types
     navigation or calculate statistics about what various entities contain.
     TEXT
 
-    field :count, Integer, null: false, method: :schema_count,
-      description: "The number of entities that implement this schema from this point in the hierarchy."
-
-    field :rank, Integer, null: false, method: :schema_rank,
-      description: "The rank of this schema at this point in the hierarchy, based on the statistical mode of its depth relative to the parent."
-
-    field :distinct_version_count, Integer, null: false,
-      description: "A count of distinct versions of this specific schema type from this point of the hierarchy."
-
-    field :schema_definition, Types::SchemaDefinitionType, null: false,
-      description: "A reference to the discrete schema definition"
-
-    field :slug, String, null: false,
-      description: "A fully-qualified unique value that can be used to refer to this schema within the system",
-      method: :schema_slug
-
-    field :version_ranks, [Types::HierarchicalSchemaVersionRankType, { null: false }], null: false,
-      description: "A reference to the schema versions from this ranking"
-
-    def schema_definition
-      Support::Loaders::AssociationLoader.for(object.class, :schema_definition).load(object)
+    field :count, Integer, null: false, method: :schema_count do
+      description "The number of entities that implement this schema from this point in the hierarchy."
     end
 
-    def version_ranks
-      Support::Loaders::AssociationLoader.for(object.class, :hierarchical_schema_version_ranks).load(object)
+    field :rank, Integer, null: false, method: :schema_rank do
+      description "The rank of this schema at this point in the hierarchy, based on the statistical mode of its depth relative to the parent."
     end
+
+    field :distinct_version_count, Integer, null: false do
+      description "A count of distinct versions of this specific schema type from this point of the hierarchy."
+    end
+
+    field :schema_definition, Types::SchemaDefinitionType, null: false do
+      description "A reference to the discrete schema definition"
+    end
+
+    field :slug, String, null: false, method: :schema_slug do
+      description "A fully-qualified unique value that can be used to refer to this schema within the system"
+    end
+
+    field :version_ranks, [Types::HierarchicalSchemaVersionRankType, { null: false }], null: false do
+      description "A reference to the schema versions from this ranking"
+    end
+
+    load_association! :schema_definition
+
+    load_association! :hierarchical_schema_version_ranks, as: :version_ranks
   end
 end

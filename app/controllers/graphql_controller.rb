@@ -4,7 +4,7 @@
 class GraphQLController < ApplicationController
   before_action :authenticate_user!
 
-  # This method handles all GraphQL requests that WDP-API receives.
+  # This method handles all GraphQL requests that Meru-API receives.
   #
   # @see APISchema
   # @return [void]
@@ -17,19 +17,23 @@ class GraphQLController < ApplicationController
 
     request_state = Support::Requests::State.new
 
+    request_state.set_up_timer!(
+      query:,
+      operation_name:,
+      variables:,
+    )
+
     context = {
       ahoy:,
       current_user: @current_user,
       request_state:,
     }
 
-    result = request_state.wrap do
-      Utility::RequestTimer.measure!(query:, operation_name:, variables:) do
-        APISchema.execute(query, variables:, context:, operation_name:)
-      end
+    json = request_state.wrap do
+      APISchema.execute(query, variables:, context:, operation_name:)
     end
 
-    render json: result
+    render(json:)
   rescue StandardError => e
     # :nocov:
     raise e unless Rails.env.development?

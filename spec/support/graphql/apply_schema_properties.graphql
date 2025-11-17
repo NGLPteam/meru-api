@@ -53,7 +53,7 @@ fragment GetSchemaInstanceFragment on SchemaInstance {
   }
 }
 
-fragment GetPropertyInfoFragment on AnyScalarProperty {
+fragment GetPropertyInfoFragment on ScalarProperty {
   __typename
 
   ... on ScalarProperty {
@@ -178,23 +178,19 @@ fragment GetPropertyInfoFragment on AnyScalarProperty {
   }
 }
 
-fragment GetAssetInfoFragment on AnyAsset {
-  ... on Asset {
-    id
-    kind
-    downloadUrl
-  }
+fragment GetAssetInfoFragment on Asset {
+  id
+  kind
+  downloadUrl
 }
 
-fragment GetContributorInfoFragment on AnyContributor {
+fragment GetContributorInfoFragment on Contributor {
   __typename
 
-  ... on Contributor {
-    identifier
-    kind
-    name
-    email
-  }
+  identifier
+  kind
+  name
+  email
 }
 
 fragment GetControlledVocabularyInfoFragment on ControlledVocabulary {

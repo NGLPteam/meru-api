@@ -446,6 +446,11 @@ Rails/EnvLocal:
 Rails/ExpandedDateRange:
   Enabled: true
 
+Rails/Exit:
+  Exclude:
+    - spec/spec_helper.rb
+    - spec/rails_helper.rb
+
 Rails/FilePath:
   Enabled: false
 
@@ -488,6 +493,12 @@ Rails/MultipleRoutePaths:
 
 Rails/NegateInclude:
   Enabled: false
+
+Rails/Output:
+  Exclude:
+    - "lib/tasks/**/*.rake"
+    - spec/rails_helper.rb
+    - spec/spec_helper.rb
 
 # That's what html_safe is for.
 Rails/OutputSafety:

@@ -6,6 +6,13 @@
 class ApplicationController < ActionController::API
   include OperationHelpers
 
+  before_action :attach_request_id!
+
+  # @return [void]
+  def attach_request_id!
+    Support::Requests::Current.request_id = request.request_id
+  end
+
   # {#perform_operation Perform} the {Users::Authenticate authenticate operation}
   # for the current request.
   #
@@ -15,6 +22,8 @@ class ApplicationController < ActionController::API
   def authenticate_user!
     perform_operation "users.authenticate", request.env do |m|
       m.success do |user|
+        Support::Requests::Current.current_user = user
+
         @current_user = user
       end
 

@@ -69,7 +69,7 @@ module Types
       role_label
     end
 
-    # @return [Promise(String)]
+    # @return [String]
     def role_label
       contribution_role.then(&:label)
     end

@@ -22,9 +22,9 @@ end
 # On Datadog this would be the distribution type. On Prometheus this would be
 # the histogram type.
 Autotuner.metrics_reporter = proc do |metrics|
-  tuples = metrics.map { |name, value| { name:, value: value.to_i } }
+  # tuples = metrics.map { |name, value| { name:, value: value.to_i } }
 
-  ::TunerMetric.insert_all(tuples)
+  # ::TunerMetric.insert_all(tuples)
 rescue Exception
   # intentionally left blank
 end

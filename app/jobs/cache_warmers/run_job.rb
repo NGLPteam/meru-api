@@ -5,7 +5,9 @@ module CacheWarmers
   # @see CacheWarmers::Run
   # @see CacheWarmers::Runner
   class RunJob < ApplicationJob
-    queue_as :cache_warming
+    queue_as :default
+
+    queue_with_priority 800
 
     unique_job! by: :first_arg
 

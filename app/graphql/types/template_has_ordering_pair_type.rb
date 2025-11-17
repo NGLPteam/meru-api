@@ -20,11 +20,11 @@ module Types
     load_association! :prev_sibling
     load_association! :next_sibling
 
-    # @return [Promise(Templates::OrderingPair)]
+    # @return [Templates::OrderingPair]
     def ordering_pair
       assocs = [ordering, ordering_entry_count, prev_sibling, next_sibling]
 
-      Promise.all(assocs).then do
+      maybe_await(assocs).then do
         object.ordering_pair
       end
     end

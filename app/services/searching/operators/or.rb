@@ -5,8 +5,8 @@ module Searching
     class Or < Searching::Operator
       def compile
         # :nocov:
-        left_expr = left.map(&:call).reduce(&:and)
-        right_expr = right.map(&:call).reduce(&:and)
+        left_expr = compile_nested(left)
+        right_expr = compile_nested(right)
 
         if left_expr.present? && right_expr.present?
           left_expr.or(right_expr)
@@ -15,7 +15,7 @@ module Searching
         elsif right_expr
           right_expr
         else
-          skip
+          raise Searching::Skip
         end
         # :nocov:
       end

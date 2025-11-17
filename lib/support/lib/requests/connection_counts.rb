@@ -8,8 +8,6 @@ module Support
     #
     # @api private
     class ConnectionCounts < GraphQL::Schema::FieldExtension
-      include Dry::Effects::Handler.Resolve
-
       extras %i[lookahead]
 
       # @return [void]
@@ -22,12 +20,14 @@ module Support
 
         wants_unfiltered_count = pagination.selects?(:total_unfiltered_count)
 
-        options = { path: context[:current_path], wants_total_count:, wants_unfiltered_count: }
+        current_path = context[:current_path] || ConnectionInfo::UNKNOWN_PATH
 
-        connection_info = Support::Requests::ConnectionInfo.new(**options)
+        options = { path: current_path, wants_total_count:, wants_unfiltered_count: }
 
-        provide(connection_info:) do
-          yield object, arguments, connection_info
+        info = Support::Requests::ConnectionInfo.new(**options)
+
+        Support::Requests::CurrentConnection.set(info:, current_path:) do
+          yield object, arguments, info
         end
       end
 

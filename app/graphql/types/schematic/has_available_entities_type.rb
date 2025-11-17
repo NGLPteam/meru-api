@@ -5,7 +5,7 @@ module Types
     module HasAvailableEntitiesType
       include Types::BaseInterface
 
-      field :available_entities, [Types::EntitySelectOptionType, { null: false }], null: false do
+      field :available_entities, ["Types::EntitySelectOptionType", { null: false }], null: false do
         description <<~TEXT
         Expose all available entities for this schema property.
         TEXT

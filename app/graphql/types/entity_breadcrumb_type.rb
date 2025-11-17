@@ -6,15 +6,13 @@ module Types
 
     global_id_field :id
 
-    field :crumb, Types::AnyEntityType, null: false
+    field :crumb, Types::EntityType, null: false
     field :depth, Int, null: false
     field :label, String, null: false
     field :kind,  Types::EntityKindType, null: false
     field :slug,  String, null: false
 
-    def crumb
-      Support::Loaders::AssociationLoader.for(EntityBreadcrumb, :crumb).load(object)
-    end
+    load_association! :crumb
 
     def label
       crumb.then do |crumb|

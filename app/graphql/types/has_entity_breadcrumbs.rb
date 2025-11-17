@@ -9,11 +9,6 @@ module Types
       description "Previous entries in the hierarchy"
     end
 
-    # @see HierarchicalEntity#entity_breadcrumbs
-    # @see Support::Loaders::AssociationLoader
-    # @return [<EntityBreadcrumb>]
-    def breadcrumbs
-      Support::Loaders::AssociationLoader.for(object.class, :entity_breadcrumbs).load(object)
-    end
+    load_association! :entity_breadcrumbs, as: :breadcrumbs
   end
 end

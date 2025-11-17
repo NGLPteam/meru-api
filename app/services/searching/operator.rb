@@ -5,9 +5,9 @@ module Searching
   class Operator
     extend ActiveModel::Callbacks
 
+    include Searching::EncodesJoin
+
     include Dry::Core::Memoizable
-    include Dry::Effects.State(:joins)
-    include Dry::Effects.Resolve(:encode_join)
     include Dry::Effects::Handler.Interrupt(:skip, as: :catch_skip)
     include Dry::Effects.Interrupt(:skip)
     include Dry::Initializer[undefined: false].define -> do
@@ -23,25 +23,29 @@ module Searching
 
     delegate :value_column, :type, to: :property, allow_nil: true, prefix: true
 
+    # @return [Hash]
+    attr_reader :joins
+
+    # @return [Arel::Expressions, nil]
     attr_reader :expression
 
     # @return [Arel::Expressions, nil]
-    def call
-      skipped, _ = catch_skip do
-        run_callbacks :prepare do
-          prepare!
-        end
+    def call(joins: {})
+      @joins = joins
 
-        run_callbacks :compile do
-          @expression = compile
-        end
+      run_callbacks :prepare do
+        prepare!
       end
 
-      # :nocov:
-      return if skipped
-      # :nocov:
+      run_callbacks :compile do
+        @expression = compile
+      end
 
       return @expression
+    rescue Searching::Skip
+      # :nocov:
+      return nil
+      # :nocov:
     end
 
     # @!attribute [r] property
@@ -54,7 +58,7 @@ module Searching
         MeruAPI::Container["schemas.properties.parse_path"].(left).value_or(nil)
       else
         # :nocov:
-        skip
+        raise Searching::Skip
         # :nocov:
       end
     end
@@ -135,13 +139,22 @@ module Searching
       # :nocov:
     end
 
+    # @param [Array<Searching::Operator>] operators
+    # @return [Arel::Expressions, nil]
+    def compile_nested(operators)
+      operators.map { _1.(joins:) }.compact_blank.reduce(&:and)
+    end
+
     # @return [Arel::Nodes::TableAlias]
     def join_for(path)
-      expr = joins.compute_if_absent path do
-        join_name = encode_join.(path)
+      joins[path] ||=
+        begin
+          join_name = encode_join(path)
 
-        yield join_name
-      end
+          yield join_name
+        end
+
+      expr = joins.fetch(path)
 
       expr.left
     end

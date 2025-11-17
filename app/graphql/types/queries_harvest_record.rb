@@ -30,7 +30,7 @@ module Types
     # @param [String] slug
     # @return [HarvestRecord, nil]
     def harvest_record(slug:)
-      Support::Loaders::RecordLoader.for(HarvestRecord).load(slug)
+      load_record_with(::HarvestRecord, slug)
     end
   end
 end

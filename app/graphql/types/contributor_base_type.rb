@@ -14,7 +14,7 @@ module Types
     TEXT
 
     implements Types::HasHarvestModificationStatusType
-    implements Types::Sluggable
+    implements ::Types::SluggableType
 
     field :kind, Types::ContributorKindType, null: false
 

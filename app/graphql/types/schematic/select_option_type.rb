@@ -3,8 +3,15 @@
 module Types
   module Schematic
     class SelectOptionType < Types::BaseObject
-      field :label, String, null: false
-      field :value, String, null: false
+      description "An option for a select-type property."
+
+      field :label, String, null: false do
+        description "The display label for the option."
+      end
+
+      field :value, String, null: false do
+        description "The underlying value for the option."
+      end
     end
   end
 end

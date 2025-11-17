@@ -11,8 +11,13 @@ module Support
           connection_klass_name: "Types::#{base_name}ConnectionType",
           edge_klass_name: "Types::#{base_name}EdgeType"
         )
-          @connection_type = connection_klass_name.constantize
-          @edge_type = edge_klass_name.constantize
+          define_singleton_method(:edge_type) do
+            @edge_type ||= edge_klass_name.constantize
+          end
+
+          define_singleton_method(:connection_type) do
+            @connection_type ||= connection_klass_name.constantize
+          end
         end
       end
     end

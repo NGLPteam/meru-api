@@ -3,9 +3,10 @@
 module Types
   module Schematic
     class AssetsPropertyType < Types::AbstractObjectType
-      implements ScalarPropertyType
+      implements ::Types::Schematic::SchemaPropertyType
+      implements ::Types::Schematic::ScalarPropertyType
 
-      field :assets, [Types::AnyAssetType, { null: false }], null: false, method: :value
+      field :assets, ["Types::AssetType", { null: false }], null: false, method: :value
     end
   end
 end

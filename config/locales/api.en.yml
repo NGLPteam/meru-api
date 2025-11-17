@@ -1,6 +1,6 @@
 # These translations really only exist for API concerns,
 # generating error messages for tests and local development,
-# etc. When WDP-API has its content translated, the keys in
+# etc. When Meru-API has its content translated, the keys in
 # this document do not need to be included in that process.
 
 en:

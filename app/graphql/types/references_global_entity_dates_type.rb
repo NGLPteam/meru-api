@@ -15,13 +15,11 @@ module Types
       description "The date this entity was published"
     end
 
-    def load_named_variable_dates
-      Support::Loaders::AssociationLoader.for(object.class, :named_variable_dates)
-    end
+    load_association! :named_variable_dates
 
     def published
-      load_named_variable_dates.then do
-        Promise.resolve object.published
+      named_variable_dates.then do
+        object.published
       end.then do |value|
         VariablePrecisionDate.parse value
       end

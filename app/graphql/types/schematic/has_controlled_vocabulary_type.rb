@@ -5,7 +5,7 @@ module Types
     module HasControlledVocabularyType
       include Types::BaseInterface
 
-      field :controlled_vocabulary, ::Types::ControlledVocabularyType, null: true do
+      field :controlled_vocabulary, "::Types::ControlledVocabularyType", null: true do
         description <<~TEXT
         The vocabulary configured for this property, based on its `wants` value
         and whatever is currently configured in `ControlledVocabularySource`.
@@ -20,9 +20,13 @@ module Types
         TEXT
       end
 
-      # @return [Promise(ControlledVocabulary), nil]
+      # @return [ControlledVocabulary, nil]
       def controlled_vocabulary
-        Loaders::ControlledVocabularyProvider.load object.wants
+        if MeruConfig.experimental_dataloader?
+          dataloader.with(Sources::ControlledVocabularyProvider).load(object.wants)
+        else
+          ::Loaders::ControlledVocabularyProvider.load object.wants
+        end
       end
     end
   end

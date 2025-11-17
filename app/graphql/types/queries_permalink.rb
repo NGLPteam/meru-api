@@ -38,13 +38,13 @@ module Types
     # @param [String] slug
     # @return [Permalink, nil]
     def permalink(slug:)
-      Support::Loaders::RecordLoader.for(Permalink).load(slug)
+      load_record_with(::Permalink, slug)
     end
 
     # @param [String] uri
     # @return [Permalink, nil]
     def permalink_by_uri(uri:)
-      Support::Loaders::RecordLoader.for(Permalink, column: :uri).load(uri)
+      load_record_with(::Permalink, uri, find_by: :uri)
     end
   end
 end

@@ -28,7 +28,7 @@ module Types
 
     field :layout_kind, Types::LayoutKindType, null: false
 
-    field :entity, Types::AnyEntityType, null: false do
+    field :entity, Types::EntityType, null: false do
       description <<~TEXT
       The associated entity for this layout instance.
       TEXT
@@ -41,7 +41,7 @@ module Types
     def templates
       all_templates = object.template_instance_names.map { __send__(_1) }
 
-      Promise.all(all_templates).then do
+      maybe_await(all_templates).then do
         object.template_instances
       end
     end

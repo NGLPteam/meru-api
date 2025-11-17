@@ -3,7 +3,8 @@
 module Types
   module Schematic
     class EmailPropertyType < Types::AbstractObjectType
-      implements ScalarPropertyType
+      implements ::Types::Schematic::SchemaPropertyType
+      implements ::Types::Schematic::ScalarPropertyType
 
       field :default_address, String, null: true, method: :default
       field :address, String, null: true, method: :value

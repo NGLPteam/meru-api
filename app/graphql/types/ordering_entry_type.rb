@@ -14,7 +14,7 @@ module Types
       TEXT
     end
 
-    field :entry, "Types::AnyOrderingEntryType", null: false do
+    field :entry, "Types::OrderingEntryableType", null: false do
       description <<~TEXT
       The actual element being ordered. At present, this will only be a `Community`, `Collection`, or `Item`,
       but future implementations of orderings may include other content, such as presentation elements.
@@ -80,14 +80,12 @@ module Types
 
     # @!group Delegated Entity Methods
 
-    # @return [Promise(String)]
-    # @return [Promise(nil)]
+    # @return [String, nil]
     def entry_slug
       entry.then { |entity| entity.id if entity.kind_of?(HierarchicalEntity) }
     end
 
-    # @return [Promise(String)]
-    # @return [Promise(nil)]
+    # @return [String, nil]
     def entry_title
       entry.then { |entity| entity.title if entity.respond_to?(:title) }
     end

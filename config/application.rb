@@ -100,6 +100,7 @@ module MeruAPI
 
     if Rails.env.development?
       config.hosts << "www.example.com"
+      config.hosts << "host.docker.internal"
       config.hosts << /[a-z0-9.-]+\.ngrok\.io/
       config.hosts << /[a-z0-9.-]+\.ngrok-free\.app/
     end

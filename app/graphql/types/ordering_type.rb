@@ -7,7 +7,7 @@ module Types
 
     implements Types::SearchableType
 
-    field :entity, Types::AnyEntityType, null: false do
+    field :entity, Types::EntityType, null: false do
       description "The entity that owns the ordering"
     end
 
@@ -87,25 +87,21 @@ module Types
       TEXT
     end
 
-    # @see Loaders::OrderingEntryCountLoader
+    load_association! :entity
+
     # @return [Integer]
     def count
-      Loaders::OrderingEntryCountLoader.load object
+      if MeruConfig.experimental_dataloader?
+        dataloader.with(Sources::OrderingEntryCount).load(object)
+      else
+        Loaders::OrderingEntryCountLoader.load(object)
+      end
     end
 
     # @see Schemas::Orderings::Definition#filter
     # @return [Schemas::Orderings::FilterDefinition]
     def filter
       object.definition.filter
-    end
-
-    # @return [Promise<HierarchicalEntity>]
-    def entity
-      if object.association(:entity).loaded?
-        Promise.resolve(object.entity)
-      else
-        Support::Loaders::AssociationLoader.for(object.class, :entity).load(object)
-      end
     end
 
     # @see Schemas::Orderings::Definition#select

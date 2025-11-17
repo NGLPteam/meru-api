@@ -3,13 +3,14 @@
 module Types
   module AssetType
     include Types::BaseInterface
-    include GraphQL::Types::Relay::NodeBehaviors
-    include Types::Sluggable
+
+    implements ::GraphQL::Types::Relay::Node
+    implements ::Types::SluggableType
 
     description "A generic asset type, implemented by all the more specific kinds"
 
     field :alt_text, String, null: true
-    field :attachable, Types::AnyAttachableType, null: false
+    field :attachable, Types::AttachableType, null: false
     field :name, String, null: false
     field :caption, String, null: true
     field :kind, Types::AssetKindType, null: false

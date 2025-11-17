@@ -14,7 +14,7 @@ module Access
 
     unique_job! by: :job
 
-    queue_as :permissions
+    queue_as :default
 
     # @param [String] cursor
     # @return [void]

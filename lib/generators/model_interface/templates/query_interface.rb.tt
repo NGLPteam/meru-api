@@ -37,7 +37,7 @@ module Types
     # @param [String] slug
     # @return [<%= model_name %>, nil]
     def <%= field_single_name %>(slug:)
-      Support::Loaders::RecordLoader.for(<%= model_name %>).load(slug)
+      load_record_with(<%= model_name %>, slug)
     end
     <%- if skip_resolver? -%>
 

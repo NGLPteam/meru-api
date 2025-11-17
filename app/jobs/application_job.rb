@@ -9,17 +9,9 @@ class ApplicationJob < ActiveJob::Base
 
   include GoodJob::ActiveJobExtensions::Concurrency
 
-  JobTimeoutError = Class.new(StandardError)
-
-  defines :max_runtime, type: Support::Types.Instance(ActiveSupport::Duration)
-
-  max_runtime 10.minutes
-
   retry_on ActiveRecord::QueryCanceled, wait: :polynomially_longer, attempts: 10
 
   retry_on ActiveRecord::StatementInvalid, wait: :polynomially_longer, attempts: 10
-
-  retry_on JobTimeoutError, wait: :polynomially_longer, attempts: 10
 
   retry_on GoodJob::InterruptError, wait: :polynomially_longer, attempts: Float::INFINITY
 
@@ -35,13 +27,6 @@ class ApplicationJob < ActiveJob::Base
   # :nocov:
   discard_on NameError unless Rails.env.test?
   # :nocov:
-
-  around_perform do |job, block|
-    # Timeout jobs after 10 minutes
-    Timeout.timeout(job.class.max_runtime, JobTimeoutError) do
-      block.call
-    end
-  end
 
   def call_operation!(name, ...)
     MeruAPI::Container[name].call(...).value!

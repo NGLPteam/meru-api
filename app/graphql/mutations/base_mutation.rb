@@ -36,7 +36,17 @@ module Mutations
 
       operation = resolve_container_value name
 
-      middleware.call operation, **args
+      wrap_mutation_call do
+        middleware.call operation, **args
+      end
+    end
+
+    def wrap_mutation_call
+      return yield unless MeruConfig.experimental_dataloader?
+
+      Sync(annotation: "mutation.resolve") do
+        yield
+      end
     end
 
     class << self

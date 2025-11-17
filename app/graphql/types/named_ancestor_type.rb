@@ -15,7 +15,7 @@ module Types
       description "The name of the ancestor. Guaranteed to be unique for this specific entity."
     end
 
-    field :ancestor, Types::AnyEntityType, null: false do
+    field :ancestor, Types::EntityType, null: false do
       description "The actual ancestor"
     end
 

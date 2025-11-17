@@ -5,7 +5,7 @@ module Types
   class EntityDescendantType < Types::BaseObject
     description "A descendant of an `Entity`."
 
-    field :descendant, "Types::AnyEntityType", null: false do
+    field :descendant, "Types::EntityType", null: false do
       description "The actual descendant entity"
     end
 
@@ -17,9 +17,6 @@ module Types
       description "The scope of this entity relative to its ancestor"
     end
 
-    # @return [HierarchicalEntity]
-    def descendant
-      Support::Loaders::AssociationLoader.for(object.class, :descendant).load(object)
-    end
+    load_association! :descendant
   end
 end

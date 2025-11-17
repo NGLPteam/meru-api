@@ -8,7 +8,7 @@ module Types
 
     description "A candidate for a link target, scoped to a parent source"
 
-    field :target, "Types::AnyLinkTargetType", null: false,
+    field :target, "Types::EntityType", null: false,
       description: "The actual target"
 
     field :target_id, ID, null: false,

@@ -29,7 +29,7 @@ module Types
       TEXT
     end
 
-    field :searchable_properties, [Types::AnySearchablePropertyType, { null: false }], null: false do
+    field :searchable_properties, [Types::SearchablePropertyType, { null: false }], null: false do
       description <<~TEXT
       A subset of properties that can be searched for this schema.
       TEXT
@@ -83,13 +83,9 @@ module Types
       description "A boolean for the logic on `enforcedChildVersions`."
     end
 
-    def enforced_parent_versions
-      Support::Loaders::AssociationLoader.for(object.class, :enforced_parent_versions).load(object)
-    end
+    load_association! :enforced_parent_versions
 
-    def enforced_child_versions
-      Support::Loaders::AssociationLoader.for(object.class, :enforced_child_versions).load(object)
-    end
+    load_association! :enforced_child_versions
 
     # @see Schemas::Versions::Configuration#render
     # @return [Schemas::Versions::RenderDefinition]

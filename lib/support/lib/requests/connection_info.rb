@@ -4,6 +4,8 @@ module Support
   module Requests
     # @api private
     class ConnectionInfo < Support::WritableStruct
+      UNKNOWN_PATH = %w[unknown].freeze
+
       attribute :path, Types::Path
 
       attribute? :total_count, Types::Count
@@ -14,6 +16,13 @@ module Support
 
       alias wants_total_count? wants_total_count
       alias wants_unfiltered_count? wants_unfiltered_count
+
+      class << self
+        # @return [ConnectionInfo]
+        def unknown
+          new(path: UNKNOWN_PATH)
+        end
+      end
     end
   end
 end

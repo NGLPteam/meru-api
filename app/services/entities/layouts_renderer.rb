@@ -57,8 +57,10 @@ module Entities
 
     # @return [void]
     def acquire_render_lock!
-      entity.class.with_advisory_lock!(entity.render_lock_key, disable_query_cache: true, timeout_seconds: 30) do
-        yield
+      entity.class.transaction do
+        entity.class.with_advisory_lock!(entity.render_lock_key, disable_query_cache: true, timeout_seconds: 30, transaction: true) do
+          yield
+        end
       end
     end
 

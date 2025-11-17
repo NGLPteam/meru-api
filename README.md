@@ -1,4 +1,4 @@
-# WDP-API
+# Meru-API
 
 ## Setting up locally
 

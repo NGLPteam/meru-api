@@ -4,23 +4,23 @@ module Support
   module Loaders
     # A loader for a specific record.
     class RecordLoader < GraphQL::Batch::Loader
-      def initialize(model, column: model.primary_key, order: nil, where: nil)
+      def initialize(model, find_by: model.primary_key, order: nil, where: nil)
         super()
         @model = model
-        @column = column.to_s
-        @column_type = model.type_for_attribute(@column)
+        @find_by = find_by.to_s
+        @find_by_type = model.type_for_attribute(@find_by)
         @order = order if order.present?
-        @is_primary_key = column == model.primary_key
+        @is_primary_key = find_by == model.primary_key
         @where = where
       end
 
       def load(key)
-        super(@column_type.cast(key))
+        super(@find_by_type.cast(key))
       end
 
       def perform(keys)
         query(keys).each do |record|
-          key = record.public_send(@column)
+          key = record.public_send(@find_by)
 
           next if fulfilled? key
 
@@ -37,12 +37,12 @@ module Support
         scope = scope.where(@where) if @where
 
         unless @is_primary_key
-          scope = scope.distinct_on @column
-          scope = scope.order @column
+          scope = scope.distinct_on @find_by
+          scope = scope.order @find_by
           scope = scope.order @order
         end
 
-        scope.where(@column => keys)
+        scope.where(@find_by => keys)
       end
     end
   end
