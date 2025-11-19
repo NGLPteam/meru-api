@@ -8,14 +8,20 @@ module MeruPitchfork
   BASE_PROCS = WEB_CONCURRENCY * 2
 
   # Ensure there is always at least 1 process (dev uses WEB_CONCURRENCY=0)
-  PROCESS_COUNT = BASE_PROCS.clamp(1, 12)
+  PROCESS_COUNT = BASE_PROCS.clamp(1, 16)
 
   PORT = ENV.fetch("PORT", 8080).to_i
+
+  QUEUE_MAX = PROCESS_COUNT.fdiv(2).ceil.clamp(1, 4)
+
+  DEFAULT_QUEUES = PROCESS_COUNT == 1 ? 1 : PROCESS_COUNT.fdiv(2).ceil
+
+  QUEUES = ENV.fetch("PITCHFORK_QUEUES", DEFAULT_QUEUES).to_i.clamp(1, QUEUE_MAX)
 end
 
 worker_processes MeruPitchfork::PROCESS_COUNT
 
-listen MeruPitchfork::PORT, tcp_nopush: true, reuseport: true
+listen MeruPitchfork::PORT, tcp_nopush: true, reuseport: true, queues: MeruPitchfork::QUEUES
 
 timeout 60
 

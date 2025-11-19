@@ -30,6 +30,8 @@ module System
 
       yield populate_sources.()
 
+      Frontend::Cache::RevalidateInstanceJob.set(wait: 1.minute).perform_later
+
       Success()
     end
   end

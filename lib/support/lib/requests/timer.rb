@@ -40,6 +40,8 @@ module Support
         end
       ensure
         store_steps!
+
+        log_request!
       end
 
       private
@@ -49,6 +51,13 @@ module Support
         ::RequestQuery.where(query:).first_or_create! do |rq|
           rq.operation_name = operation_name
         end
+      end
+
+      # @return [void]
+      def log_request!
+        milliseconds = (duration * 1000).round(2)
+
+        Rails.logger.info("[graphql][#{request_query.kind}] Operation=#{request_query.operation_name || 'N/A'} Duration=#{milliseconds}ms")
       end
 
       # @return [void]

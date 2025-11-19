@@ -1,13 +1,12 @@
 # frozen_string_literal: true
 
 ActiveSupport::Notifications.subscribe(/graphql/) do |event|
+  # :nocov:
   name = event.name
 
   duration = event.duration.round(2)
 
-  # :nocov:
   next if duration < 10.0
-  # :nocov:
 
   operation_name = Support::Requests::Current.graphql_operation_name
 
@@ -25,6 +24,8 @@ ActiveSupport::Notifications.subscribe(/graphql/) do |event|
 
   Support::Requests::Current.graphql_steps << step
 
+  next unless MeruConfig.log_slow_fields?
+
   tags = ["graphql", operation_name, name]
 
   tags << current_path if name == "graphql.execute_field" && current_path.present?
@@ -32,4 +33,5 @@ ActiveSupport::Notifications.subscribe(/graphql/) do |event|
   prefix = tags.compact_blank.map { |tag| "[#{tag}]" }.join
 
   Rails.logger.info("#{prefix} Completed in #{duration}ms")
+  # :nocov:
 end
