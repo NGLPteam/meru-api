@@ -22,7 +22,7 @@ class EntityTaskRevalidator
     in Support::GlobalTypes::UUID => id
       Maybe(klass.find_by(id:))
     else
-      Maybe(klass)
+      Maybe(klass.find_graphql_slug(slug_or_id))
     end
   end
 

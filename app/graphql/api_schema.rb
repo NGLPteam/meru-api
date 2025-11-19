@@ -13,6 +13,8 @@ class APISchema < GraphQL::Schema
 
   trace_with(GraphQL::Tracing::ActiveSupportNotificationsTrace)
 
+  validate_timeout nil
+
   use GraphQL::FragmentCache
 
   mutation Types::MutationType

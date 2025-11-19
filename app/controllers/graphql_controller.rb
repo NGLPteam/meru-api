@@ -30,7 +30,7 @@ class GraphQLController < ApplicationController
     }
 
     json = request_state.wrap do
-      APISchema.execute(query, variables:, context:, operation_name:)
+      APISchema.execute(query, variables:, context:, operation_name:, validate: MeruConfig.validate_graphql_query?)
     end
 
     render(json:)

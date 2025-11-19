@@ -4,6 +4,7 @@ default: &default
   tenant_id: "meru"
   tenant_name: "Meru"
   serialize_rendering: false
+  validate_graphql_query: true
 
 development:
   <<: *default
@@ -22,9 +23,11 @@ staging:
   include_development_schemas: false
   include_testing_schemas: false
   tenant_id: "meru-stg"
+  validate_graphql_query: false
 
 production:
   <<: *default
   include_development_schemas: false
   include_testing_schemas: false
   tenant_id: "meru-prd"
+  validate_graphql_query: false
