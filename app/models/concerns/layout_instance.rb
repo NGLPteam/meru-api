@@ -40,20 +40,6 @@ module LayoutInstance
     after_save :clear_template_instances!
   end
 
-  # @!attribute [r] all_hidden
-  # @return [Boolean]
-  def all_hidden
-    template_instances.blank? || template_instances.all?(&:hidden?)
-  end
-
-  # @!attribute [r] all_slots_empty
-  # @return [Boolean]
-  def all_slots_empty
-    template_instances.blank? || template_instances.all?(&:all_slots_empty?)
-  end
-
-  alias all_slots_empty? all_slots_empty
-
   # @api private
   # @see Layouts::Digests::Upserter
   # @return [Hash]
