@@ -13,6 +13,8 @@ module Layouts
       # @return [Dry::Monads::Success(LayoutInstance)]
       def call
         run_callbacks :execute do
+          yield reprocess_templates!
+
           yield process!
         end
 

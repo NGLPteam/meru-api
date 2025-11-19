@@ -5,6 +5,7 @@ module Templates
     # @see Templates::Instances::Process
     class Processor < Support::HookBased::Actor
       include Dry::Initializer[undefined: false].define -> do
+        param :template_instance, Templates::Types::TemplateInstance
       end
 
       standard_execution!
@@ -12,13 +13,15 @@ module Templates
       # @return [Dry::Monads::Result]
       def call
         run_callbacks :execute do
-          yield prepare!
+          yield process!
         end
 
         Success()
       end
 
-      wrapped_hook! def prepare
+      wrapped_hook! def process
+        yield template_instance.post_process
+
         super
       end
     end
