@@ -43,6 +43,8 @@ module Templates
     # @return [<Layouts::ListItemInstance>]
     attr_reader :list_item_layouts
 
+    alias list_item_layout_instances list_item_layouts
+
     # @return [Integer, nil]
     attr_reader :maximum_depth
 
@@ -77,6 +79,17 @@ module Templates
       @flat_depth = minimum_depth.present? && maximum_depth.present? && minimum_depth == maximum_depth
     end
 
+    def to_tuple
+      {
+        count:,
+        empty:,
+        fallback:,
+        flat_depth:,
+        maximum_depth:,
+        minimum_depth:,
+      }
+    end
+
     private
 
     # @return [Array]
@@ -89,6 +102,7 @@ module Templates
 
         [
           {
+            schema_version: [],
             list_item_layout_instance: [
               :entity,
               :layout_definition,

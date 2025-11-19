@@ -4966,7 +4966,10 @@ CREATE TABLE public.layouts_instance_digests (
     generation uuid NOT NULL,
     config jsonb DEFAULT '{}'::jsonb NOT NULL,
     created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    post_processed_at timestamp without time zone,
+    all_hidden boolean DEFAULT false NOT NULL,
+    all_slots_empty boolean DEFAULT false NOT NULL
 );
 
 
@@ -5029,7 +5032,11 @@ CREATE TABLE public.templates_instance_digests (
     render_duration numeric,
     last_rendered_at timestamp without time zone,
     created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    post_processed_at timestamp without time zone,
+    all_slots_empty boolean DEFAULT false NOT NULL,
+    allow_hide boolean DEFAULT true NOT NULL,
+    hidden boolean DEFAULT false NOT NULL
 );
 
 
@@ -6096,7 +6103,10 @@ CREATE TABLE public.layouts_hero_instances (
     render_duration numeric,
     created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    config jsonb DEFAULT '{}'::jsonb NOT NULL
+    config jsonb DEFAULT '{}'::jsonb NOT NULL,
+    post_processed_at timestamp without time zone,
+    all_hidden boolean DEFAULT false NOT NULL,
+    all_slots_empty boolean DEFAULT false NOT NULL
 );
 
 
@@ -6133,7 +6143,10 @@ CREATE TABLE public.layouts_list_item_instances (
     render_duration numeric,
     created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    config jsonb DEFAULT '{}'::jsonb NOT NULL
+    config jsonb DEFAULT '{}'::jsonb NOT NULL,
+    post_processed_at timestamp without time zone,
+    all_hidden boolean DEFAULT false NOT NULL,
+    all_slots_empty boolean DEFAULT false NOT NULL
 );
 
 
@@ -6170,7 +6183,10 @@ CREATE TABLE public.layouts_main_instances (
     render_duration numeric,
     created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    config jsonb DEFAULT '{}'::jsonb NOT NULL
+    config jsonb DEFAULT '{}'::jsonb NOT NULL,
+    post_processed_at timestamp without time zone,
+    all_hidden boolean DEFAULT false NOT NULL,
+    all_slots_empty boolean DEFAULT false NOT NULL
 );
 
 
@@ -6207,7 +6223,10 @@ CREATE TABLE public.layouts_metadata_instances (
     render_duration numeric,
     created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    config jsonb DEFAULT '{}'::jsonb NOT NULL
+    config jsonb DEFAULT '{}'::jsonb NOT NULL,
+    post_processed_at timestamp without time zone,
+    all_hidden boolean DEFAULT false NOT NULL,
+    all_slots_empty boolean DEFAULT false NOT NULL
 );
 
 
@@ -6244,7 +6263,10 @@ CREATE TABLE public.layouts_navigation_instances (
     render_duration numeric,
     created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    config jsonb DEFAULT '{}'::jsonb NOT NULL
+    config jsonb DEFAULT '{}'::jsonb NOT NULL,
+    post_processed_at timestamp without time zone,
+    all_hidden boolean DEFAULT false NOT NULL,
+    all_slots_empty boolean DEFAULT false NOT NULL
 );
 
 
@@ -6281,7 +6303,10 @@ CREATE TABLE public.layouts_supplementary_instances (
     render_duration numeric,
     created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    config jsonb DEFAULT '{}'::jsonb NOT NULL
+    config jsonb DEFAULT '{}'::jsonb NOT NULL,
+    post_processed_at timestamp without time zone,
+    all_hidden boolean DEFAULT false NOT NULL,
+    all_slots_empty boolean DEFAULT false NOT NULL
 );
 
 
@@ -6962,7 +6987,50 @@ CREATE TABLE public.templates_blurb_instances (
     created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     config jsonb DEFAULT '{}'::jsonb NOT NULL,
-    slots jsonb DEFAULT '{}'::jsonb NOT NULL
+    slots jsonb DEFAULT '{}'::jsonb NOT NULL,
+    post_processed_at timestamp without time zone,
+    all_slots_empty boolean DEFAULT false NOT NULL,
+    allow_hide boolean DEFAULT true NOT NULL,
+    hidden boolean DEFAULT false NOT NULL,
+    hidden_by_empty_slots boolean DEFAULT false NOT NULL
+);
+
+
+--
+-- Name: templates_cached_entity_list_items; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.templates_cached_entity_list_items (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    cached_entity_list_id uuid NOT NULL,
+    list_item_layout_instance_id uuid NOT NULL,
+    schema_version_id uuid NOT NULL,
+    entity_type character varying NOT NULL,
+    entity_id uuid NOT NULL,
+    "position" bigint NOT NULL,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+
+--
+-- Name: templates_cached_entity_lists; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.templates_cached_entity_lists (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    template_instance_type character varying NOT NULL,
+    template_instance_id uuid NOT NULL,
+    entity_type character varying NOT NULL,
+    entity_id uuid NOT NULL,
+    count integer DEFAULT 0 NOT NULL,
+    empty boolean DEFAULT false NOT NULL,
+    fallback boolean DEFAULT false NOT NULL,
+    flat_depth boolean DEFAULT false NOT NULL,
+    maximum_depth integer,
+    minimum_depth integer,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 
 
@@ -7006,7 +7074,12 @@ CREATE TABLE public.templates_contributor_list_instances (
     created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     config jsonb DEFAULT '{}'::jsonb NOT NULL,
-    slots jsonb DEFAULT '{}'::jsonb NOT NULL
+    slots jsonb DEFAULT '{}'::jsonb NOT NULL,
+    post_processed_at timestamp without time zone,
+    all_slots_empty boolean DEFAULT false NOT NULL,
+    allow_hide boolean DEFAULT true NOT NULL,
+    hidden boolean DEFAULT false NOT NULL,
+    hidden_by_empty_slots boolean DEFAULT false NOT NULL
 );
 
 
@@ -7072,7 +7145,14 @@ CREATE TABLE public.templates_descendant_list_instances (
     updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     config jsonb DEFAULT '{}'::jsonb NOT NULL,
     slots jsonb DEFAULT '{}'::jsonb NOT NULL,
-    see_all_ordering_id uuid
+    see_all_ordering_id uuid,
+    post_processed_at timestamp without time zone,
+    all_slots_empty boolean DEFAULT false NOT NULL,
+    allow_hide boolean DEFAULT true NOT NULL,
+    hidden boolean DEFAULT false NOT NULL,
+    hidden_by_empty_slots boolean DEFAULT false NOT NULL,
+    hidden_by_entity_list boolean DEFAULT false NOT NULL,
+    entity_list_cached_at timestamp without time zone
 );
 
 
@@ -7118,7 +7198,12 @@ CREATE TABLE public.templates_detail_instances (
     created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     config jsonb DEFAULT '{}'::jsonb NOT NULL,
-    slots jsonb DEFAULT '{}'::jsonb NOT NULL
+    slots jsonb DEFAULT '{}'::jsonb NOT NULL,
+    post_processed_at timestamp without time zone,
+    all_slots_empty boolean DEFAULT false NOT NULL,
+    allow_hide boolean DEFAULT true NOT NULL,
+    hidden boolean DEFAULT false NOT NULL,
+    hidden_by_empty_slots boolean DEFAULT false NOT NULL
 );
 
 
@@ -7173,7 +7258,12 @@ CREATE TABLE public.templates_hero_instances (
     created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     config jsonb DEFAULT '{}'::jsonb NOT NULL,
-    slots jsonb DEFAULT '{}'::jsonb NOT NULL
+    slots jsonb DEFAULT '{}'::jsonb NOT NULL,
+    post_processed_at timestamp without time zone,
+    all_slots_empty boolean DEFAULT false NOT NULL,
+    allow_hide boolean DEFAULT true NOT NULL,
+    hidden boolean DEFAULT false NOT NULL,
+    hidden_by_empty_slots boolean DEFAULT false NOT NULL
 );
 
 
@@ -7237,7 +7327,14 @@ CREATE TABLE public.templates_link_list_instances (
     updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     config jsonb DEFAULT '{}'::jsonb NOT NULL,
     slots jsonb DEFAULT '{}'::jsonb NOT NULL,
-    see_all_ordering_id uuid
+    see_all_ordering_id uuid,
+    post_processed_at timestamp without time zone,
+    all_slots_empty boolean DEFAULT false NOT NULL,
+    allow_hide boolean DEFAULT true NOT NULL,
+    hidden boolean DEFAULT false NOT NULL,
+    hidden_by_empty_slots boolean DEFAULT false NOT NULL,
+    hidden_by_entity_list boolean DEFAULT false NOT NULL,
+    entity_list_cached_at timestamp without time zone
 );
 
 
@@ -7291,7 +7388,14 @@ CREATE TABLE public.templates_list_item_instances (
     updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     config jsonb DEFAULT '{}'::jsonb NOT NULL,
     slots jsonb DEFAULT '{}'::jsonb NOT NULL,
-    see_all_ordering_id uuid
+    see_all_ordering_id uuid,
+    post_processed_at timestamp without time zone,
+    all_slots_empty boolean DEFAULT false NOT NULL,
+    allow_hide boolean DEFAULT true NOT NULL,
+    hidden boolean DEFAULT false NOT NULL,
+    hidden_by_empty_slots boolean DEFAULT false NOT NULL,
+    hidden_by_entity_list boolean DEFAULT false NOT NULL,
+    entity_list_cached_at timestamp without time zone
 );
 
 
@@ -7332,7 +7436,12 @@ CREATE TABLE public.templates_metadata_instances (
     created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     config jsonb DEFAULT '{}'::jsonb NOT NULL,
-    slots jsonb DEFAULT '{}'::jsonb NOT NULL
+    slots jsonb DEFAULT '{}'::jsonb NOT NULL,
+    post_processed_at timestamp without time zone,
+    all_slots_empty boolean DEFAULT false NOT NULL,
+    allow_hide boolean DEFAULT true NOT NULL,
+    hidden boolean DEFAULT false NOT NULL,
+    hidden_by_empty_slots boolean DEFAULT false NOT NULL
 );
 
 
@@ -7374,7 +7483,12 @@ CREATE TABLE public.templates_navigation_instances (
     created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     config jsonb DEFAULT '{}'::jsonb NOT NULL,
-    slots jsonb DEFAULT '{}'::jsonb NOT NULL
+    slots jsonb DEFAULT '{}'::jsonb NOT NULL,
+    post_processed_at timestamp without time zone,
+    all_slots_empty boolean DEFAULT false NOT NULL,
+    allow_hide boolean DEFAULT true NOT NULL,
+    hidden boolean DEFAULT false NOT NULL,
+    hidden_by_empty_slots boolean DEFAULT false NOT NULL
 );
 
 
@@ -7425,7 +7539,12 @@ CREATE TABLE public.templates_ordering_instances (
     config jsonb DEFAULT '{}'::jsonb NOT NULL,
     slots jsonb DEFAULT '{}'::jsonb NOT NULL,
     ordering_id uuid,
-    ordering_entry_id uuid
+    ordering_entry_id uuid,
+    post_processed_at timestamp without time zone,
+    all_slots_empty boolean DEFAULT false NOT NULL,
+    allow_hide boolean DEFAULT true NOT NULL,
+    hidden boolean DEFAULT false NOT NULL,
+    hidden_by_empty_slots boolean DEFAULT false NOT NULL
 );
 
 
@@ -7467,7 +7586,12 @@ CREATE TABLE public.templates_page_list_instances (
     created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     config jsonb DEFAULT '{}'::jsonb NOT NULL,
-    slots jsonb DEFAULT '{}'::jsonb NOT NULL
+    slots jsonb DEFAULT '{}'::jsonb NOT NULL,
+    post_processed_at timestamp without time zone,
+    all_slots_empty boolean DEFAULT false NOT NULL,
+    allow_hide boolean DEFAULT true NOT NULL,
+    hidden boolean DEFAULT false NOT NULL,
+    hidden_by_empty_slots boolean DEFAULT false NOT NULL
 );
 
 
@@ -7508,7 +7632,12 @@ CREATE TABLE public.templates_supplementary_instances (
     created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     config jsonb DEFAULT '{}'::jsonb NOT NULL,
-    slots jsonb DEFAULT '{}'::jsonb NOT NULL
+    slots jsonb DEFAULT '{}'::jsonb NOT NULL,
+    post_processed_at timestamp without time zone,
+    all_slots_empty boolean DEFAULT false NOT NULL,
+    allow_hide boolean DEFAULT true NOT NULL,
+    hidden boolean DEFAULT false NOT NULL,
+    hidden_by_empty_slots boolean DEFAULT false NOT NULL
 );
 
 
@@ -7860,7 +7989,8 @@ CREATE VIEW public.templates_instance_siblings AS
     sibling.config,
     sibling.layout_kind,
     sibling.template_kind,
-    sibling.width
+    sibling.width,
+    sibling.hidden
    FROM (public.templates_instance_digests source
      JOIN public.templates_instance_digests sibling USING (layout_instance_type, layout_instance_id))
   WHERE (source.template_instance_id <> sibling.template_instance_id);
@@ -8904,6 +9034,22 @@ ALTER TABLE ONLY public.templates_blurb_instances
 
 
 --
+-- Name: templates_cached_entity_list_items templates_cached_entity_list_items_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.templates_cached_entity_list_items
+    ADD CONSTRAINT templates_cached_entity_list_items_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: templates_cached_entity_lists templates_cached_entity_lists_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.templates_cached_entity_lists
+    ADD CONSTRAINT templates_cached_entity_lists_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: templates_contributor_list_definitions templates_contributor_list_definitions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -9289,6 +9435,13 @@ CREATE INDEX idx_layouts_navigation_instances_defn ON public.layouts_navigation_
 --
 
 CREATE INDEX idx_layouts_supplementary_instances_defn ON public.layouts_supplementary_instances USING btree (layout_definition_id);
+
+
+--
+-- Name: idx_on_list_item_layout_instance_id_3e916a1bef; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX idx_on_list_item_layout_instance_id_3e916a1bef ON public.templates_cached_entity_list_items USING btree (list_item_layout_instance_id);
 
 
 --
@@ -9926,6 +10079,20 @@ CREATE UNIQUE INDEX index_cache_warmers_on_warmable ON public.cache_warmers USIN
 --
 
 CREATE INDEX index_cache_warmings_on_cache_warmer_id ON public.cache_warmings USING btree (cache_warmer_id);
+
+
+--
+-- Name: index_cached_entity_list_items_uniqueness; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_cached_entity_list_items_uniqueness ON public.templates_cached_entity_list_items USING btree (cached_entity_list_id, "position");
+
+
+--
+-- Name: index_cached_entity_list_uniqueness; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_cached_entity_list_uniqueness ON public.templates_cached_entity_lists USING btree (template_instance_type, template_instance_id);
 
 
 --
@@ -12701,6 +12868,27 @@ CREATE INDEX index_templates_blurb_instances_on_position ON public.templates_blu
 
 
 --
+-- Name: index_templates_cached_entity_list_items_on_entity; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_templates_cached_entity_list_items_on_entity ON public.templates_cached_entity_list_items USING btree (entity_type, entity_id);
+
+
+--
+-- Name: index_templates_cached_entity_list_items_on_schema_version_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_templates_cached_entity_list_items_on_schema_version_id ON public.templates_cached_entity_list_items USING btree (schema_version_id);
+
+
+--
+-- Name: index_templates_cached_entity_lists_on_entity; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_templates_cached_entity_lists_on_entity ON public.templates_cached_entity_lists USING btree (entity_type, entity_id);
+
+
+--
 -- Name: index_templates_contributor_list_definitions_on_position; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -13468,6 +13656,14 @@ ALTER TABLE ONLY public.harvest_mapping_record_links
 
 
 --
+-- Name: templates_cached_entity_list_items fk_rails_0411e3b4a6; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.templates_cached_entity_list_items
+    ADD CONSTRAINT fk_rails_0411e3b4a6 FOREIGN KEY (list_item_layout_instance_id) REFERENCES public.layouts_list_item_instances(id) ON DELETE CASCADE;
+
+
+--
 -- Name: entity_search_documents fk_rails_0421c10e03; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -14140,6 +14336,14 @@ ALTER TABLE ONLY public.entity_links
 
 
 --
+-- Name: templates_cached_entity_list_items fk_rails_6d36cabf22; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.templates_cached_entity_list_items
+    ADD CONSTRAINT fk_rails_6d36cabf22 FOREIGN KEY (cached_entity_list_id) REFERENCES public.templates_cached_entity_lists(id) ON DELETE CASCADE;
+
+
+--
 -- Name: templates_hero_instances fk_rails_6d92b15d3f; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -14796,6 +15000,14 @@ ALTER TABLE ONLY public.schematic_texts
 
 
 --
+-- Name: templates_cached_entity_list_items fk_rails_db1b5d8ca2; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.templates_cached_entity_list_items
+    ADD CONSTRAINT fk_rails_db1b5d8ca2 FOREIGN KEY (schema_version_id) REFERENCES public.schema_versions(id) ON DELETE CASCADE;
+
+
+--
 -- Name: ahoy_visits fk_rails_db648022ad; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -15050,6 +15262,11 @@ ALTER TABLE ONLY public.templates_ordering_instances
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20251119062322'),
+('20251119042325'),
+('20251119040707'),
+('20251119034349'),
+('20251119033901'),
 ('20251114195823'),
 ('20251009055637'),
 ('20251009053907'),

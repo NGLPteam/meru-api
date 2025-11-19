@@ -4,8 +4,6 @@ module JournalSources
   module Parsers
     # @abstract
     class Abstract
-      include Dry::Effects::Handler.Interrupt(:found_known, as: :catch_known)
-      include Dry::Effects.Interrupt(:found_known)
       include Dry::Monads[:maybe]
       include MeruAPI::Deps[
         extract: "journal_sources.extract"
@@ -24,15 +22,13 @@ module JournalSources
       def call(*inputs)
         inputs.flatten!
 
-        caught, parsed = catch_known do
+        parsed = catch :found do
           try_parsing_inputs!(inputs)
-        end
 
-        if caught
-          parsed.to_monad
-        else
           None()
         end
+
+        parsed.to_monad
       end
 
       # @param [<String>] inputs
@@ -65,7 +61,7 @@ module JournalSources
       def check_parsed!(**attrs)
         parsed = build_parsed(**attrs)
 
-        found_known(parsed) if parsed.known?
+        throw :found, parsed if parsed.known?
       rescue Dry::Struct::Error
         # :nocov:
         # intentionally left blank

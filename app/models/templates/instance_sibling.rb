@@ -2,7 +2,6 @@
 
 module Templates
   class InstanceSibling < ApplicationRecord
-    include Support::Caching::Usage
     include View
 
     self.primary_key = %i[template_instance_id sibling_instance_id]
@@ -24,14 +23,7 @@ module Templates
     scope :for_prev, -> { prev_sibling.with_sibling.in_prev_order }
     scope :for_next, -> { next_sibling.with_sibling.in_next_order }
 
-    # @!attribute [r] hidden
-    # @return [Boolean]
-    def hidden
-      vog_cache sibling_instance_id, :hidden do
-        sibling_instance.hidden?
-      end
-    end
-
-    alias hidden? hidden
+    scope :hidden, -> { where(hidden: true) }
+    scope :visible, -> { where(hidden: false) }
   end
 end

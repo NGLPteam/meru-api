@@ -25,6 +25,8 @@ class SchemaVersion < ApplicationRecord
 
   belongs_to :schema_definition, inverse_of: :schema_versions
 
+  has_many :cached_entity_list_items, inverse_of: :schema_version, dependent: :delete_all, class_name: "Templates::CachedEntityListItem"
+
   has_many :communities, dependent: :restrict_with_error, inverse_of: :schema_version
   has_many :collections, dependent: :restrict_with_error, inverse_of: :schema_version
   has_many :items, dependent: :restrict_with_error, inverse_of: :schema_version

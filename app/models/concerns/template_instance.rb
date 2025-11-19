@@ -7,7 +7,6 @@ module TemplateInstance
   include HasLayoutKind
   include HasTemplateKind
   include Renderable
-  include Support::Caching::Usage
 
   included do
     attribute :config, Templates::Instances::Config.to_type
@@ -24,22 +23,6 @@ module TemplateInstance
     before_validation :infer_config!
   end
 
-  # @!attribute [r] all_slots_empty
-  # @see Templates::SlotMappings::AbstractInstanceSlots#all_empty?
-  # @return [Boolean]
-  def all_slots_empty
-    slots.all_empty?
-  end
-
-  alias all_slots_empty? all_slots_empty
-
-  # Boolean complement of {#force_show?}.
-  #
-  # Used in {#hidden} to bypass the hide logic.
-  def allow_hide?
-    !force_show?
-  end
-
   # @see Templates::Instances::BuildConfig
   # @see Templates::Instances::ConfigBuilder
   monadic_operation! def build_config
@@ -50,6 +33,23 @@ module TemplateInstance
   # @see Templates::Instances::DigestAttributesBuilder
   monadic_operation! def build_digest_attributes
     call_operation("templates.instances.build_digest_attributes", self)
+  end
+
+  # Boolean complement of {#force_show?}.
+  #
+  # Used when calculating {#hidden} to bypass the hide logic.
+  def calculate_allow_hide?
+    !force_show?
+  end
+
+  # For most templates, it is just derived from from {#hidden_by_empty_slots}.
+  #
+  # @abstract Provides the uncached value for {#hidden} and can be overridden in subclasses.
+  # @api private
+  # @see #hidden?
+  # @return [Boolean]
+  def calculate_hidden
+    hidden_by_empty_slots?
   end
 
   # @api private
@@ -64,37 +64,25 @@ module TemplateInstance
     force_show
   end
 
-  # For most templates, it is just derived from from {#hidden_by_empty_slots}.
-  #
-  # @abstract Provides the uncached value for {#hidden} and can be overridden in subclasses.
-  # @api private
-  # @see #hidden?
-  # @return [Boolean]
-  def calculate_hidden
-    hidden_by_empty_slots?
+  # @see Templates::Instances::PostProcessor
+  # @return [Dry::Monads::Success(TemplateInstance)]
+  monadic_operation! def post_process
+    call_operation("templates.instances.post_process", self)
   end
 
-  # @!attribute [r] hidden
-  # Whether or not the template should be hidden in the frontend, derived from {#calculate_hidden}.
-  #
-  # Because it can be expensive to calculate at runtime, and we need to expose
-  # it on siblings, it uses {Support::Caching::Cache} to safely store the value across requests.
-  # @return [Boolean]
-  def hidden
-    vog_cache cache_key, :hidden do
-      allow_hide? && calculate_hidden
-    end
+  # @see Templates::Instances::Processor
+  # @return [Dry::Monads::Success(TemplateInstance)]
+  monadic_operation! def process
+    call_operation("templates.instances.process", self)
   end
 
-  alias hidden? hidden
-
-  # @!attribute [r] hidden_by_empty_slots
-  # @return [Boolean]
-  def hidden_by_empty_slots
-    slots.hides_template?
+  # @see Templates::Instances::Reprocessor
+  # @param [Hash] options
+  # @option options [Boolean] :update_digest (false)
+  # @return [Dry::Monads::Success(TemplateInstance)]
+  monadic_operation! def reprocess(**options)
+    call_operation("templates.instances.reprocess", self, **options)
   end
-
-  alias hidden_by_empty_slots? hidden_by_empty_slots
 
   # @see Templates::Digests::Instances::TemplateUpserter
   monadic_operation! def upsert_instance_digests
