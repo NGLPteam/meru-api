@@ -33,6 +33,8 @@ module Support
 
         @request_query ||= load_request_query!
 
+        @duration = 0.0
+
         update_current_request!
 
         run_callbacks :measure do

@@ -16,7 +16,13 @@ module Templates
       include Templates::Instances::HasSelectionSource
 
       included do
+        has_one :cached_entity_list, as: :template_instance, class_name: "Templates::CachedEntityList", inverse_of: :template_instance, dependent: :delete
+
         after_save :clear_entity_list!
+      end
+
+      monadic_operation! def cache_entity_list
+        call_operation("templates.instances.cache_entity_list", self)
       end
 
       # @return [Templates::EntityList]
@@ -31,14 +37,6 @@ module Templates
       def calculate_hidden
         super || hidden_by_entity_list?
       end
-
-      # @!attribute [r] hidden_by_entity_list
-      # @return [Boolean]
-      def hidden_by_entity_list
-        !list_item_template? && entity_list.empty?
-      end
-
-      alias hidden_by_entity_list? hidden_by_entity_list
 
       private
 

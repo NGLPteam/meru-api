@@ -13,6 +13,7 @@ module Entities
 
     around_execute :acquire_render_lock!
 
+    # @return [Dry::Monads::Success(HierarchicalEntity)]
     def call
       run_callbacks :execute do
         yield derive_layout_definitions!

@@ -1,15 +1,11 @@
 # frozen_string_literal: true
 
 module Layouts
+  # @see Layouts::Disabled
   class Disabler
-    include Dry::Effects::Handler.Reader(:layout_invalidation_disabled)
-    include Dry::Effects.Reader(:layout_invalidation_disabled, default: false)
-
     # @return [void]
     def disable!
-      return yield if layout_invalidation_disabled
-
-      with_layout_invalidation_disabled(true) do
+      Layouts::Disabled.set(currently: true) do
         yield
       end
     end

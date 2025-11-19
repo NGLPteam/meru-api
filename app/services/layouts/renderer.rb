@@ -31,7 +31,7 @@ module Layouts
 
         yield prune_removed_templates!
 
-        yield upsert_digests!
+        yield process!
       end
 
       Success entity
@@ -74,10 +74,8 @@ module Layouts
       super
     end
 
-    wrapped_hook! def upsert_digests
-      yield layout_instance.upsert_layout_instance_digest
-
-      yield layout_instance.upsert_template_instance_digests
+    wrapped_hook! def process
+      yield layout_instance.process
 
       super
     end

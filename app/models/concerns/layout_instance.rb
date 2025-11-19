@@ -21,6 +21,14 @@ module LayoutInstance
 
     template_instance_names [].freeze
 
+    if model_name == "Layouts::ListItemInstance"
+      has_many :cached_entity_list_items,
+        class_name: "Templates::CachedEntityListItem",
+        foreign_key: :list_item_layout_instance_id,
+        inverse_of: :list_item_layout_instance,
+        dependent: :delete_all
+    end
+
     scope :root, -> { joins(:layout_definition).merge(layout_record.definition_klass.root) }
 
     scope :with_template_instances, -> { includes(*template_instance_names) }
@@ -60,6 +68,9 @@ module LayoutInstance
       layout_kind:,
       generation:,
       config:,
+      post_processed_at:,
+      all_hidden:,
+      all_slots_empty:,
     }
   end
 
@@ -90,6 +101,18 @@ module LayoutInstance
   # @return [<TemplateInstance>]
   def template_instances
     @template_instances ||= fetch_template_instances
+  end
+
+  monadic_operation! def post_process(**options)
+    call_operation("layouts.instances.post_process", self, **options)
+  end
+
+  monadic_operation! def process(**options)
+    call_operation("layouts.instances.process", self, **options)
+  end
+
+  monadic_operation! def reprocess(**options)
+    call_operation("layouts.instances.reprocess", self, **options)
   end
 
   monadic_operation! def upsert_layout_instance_digest

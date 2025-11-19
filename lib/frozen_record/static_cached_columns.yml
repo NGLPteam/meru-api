@@ -12439,6 +12439,45 @@
   default_function:
   has_default: true
   virtual: false
+- id: Layouts::HeroInstance#post_processed_at
+  model_name: Layouts::HeroInstance
+  table_name: layouts_hero_instances
+  name: post_processed_at
+  type: datetime
+  'null': true
+  sql_type_metadata:
+    sql_type: timestamp without time zone
+    type: datetime
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: Layouts::HeroInstance#all_hidden
+  model_name: Layouts::HeroInstance
+  table_name: layouts_hero_instances
+  name: all_hidden
+  type: boolean
+  'null': false
+  sql_type_metadata:
+    sql_type: boolean
+    type: boolean
+  default: 'false'
+  default_function:
+  has_default: true
+  virtual: false
+- id: Layouts::HeroInstance#all_slots_empty
+  model_name: Layouts::HeroInstance
+  table_name: layouts_hero_instances
+  name: all_slots_empty
+  type: boolean
+  'null': false
+  sql_type_metadata:
+    sql_type: boolean
+    type: boolean
+  default: 'false'
+  default_function:
+  has_default: true
+  virtual: false
 - id: Layouts::InstanceDigest#id
   model_name: Layouts::InstanceDigest
   table_name: layouts_instance_digests
@@ -12595,6 +12634,45 @@
     precision: 6
   default:
   default_function: CURRENT_TIMESTAMP
+  has_default: true
+  virtual: false
+- id: Layouts::InstanceDigest#post_processed_at
+  model_name: Layouts::InstanceDigest
+  table_name: layouts_instance_digests
+  name: post_processed_at
+  type: datetime
+  'null': true
+  sql_type_metadata:
+    sql_type: timestamp without time zone
+    type: datetime
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: Layouts::InstanceDigest#all_hidden
+  model_name: Layouts::InstanceDigest
+  table_name: layouts_instance_digests
+  name: all_hidden
+  type: boolean
+  'null': false
+  sql_type_metadata:
+    sql_type: boolean
+    type: boolean
+  default: 'false'
+  default_function:
+  has_default: true
+  virtual: false
+- id: Layouts::InstanceDigest#all_slots_empty
+  model_name: Layouts::InstanceDigest
+  table_name: layouts_instance_digests
+  name: all_slots_empty
+  type: boolean
+  'null': false
+  sql_type_metadata:
+    sql_type: boolean
+    type: boolean
+  default: 'false'
+  default_function:
   has_default: true
   virtual: false
 - id: Layouts::ListItemDefinition#id
@@ -12871,6 +12949,45 @@
     sql_type: jsonb
     type: jsonb
   default: "{}"
+  default_function:
+  has_default: true
+  virtual: false
+- id: Layouts::ListItemInstance#post_processed_at
+  model_name: Layouts::ListItemInstance
+  table_name: layouts_list_item_instances
+  name: post_processed_at
+  type: datetime
+  'null': true
+  sql_type_metadata:
+    sql_type: timestamp without time zone
+    type: datetime
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: Layouts::ListItemInstance#all_hidden
+  model_name: Layouts::ListItemInstance
+  table_name: layouts_list_item_instances
+  name: all_hidden
+  type: boolean
+  'null': false
+  sql_type_metadata:
+    sql_type: boolean
+    type: boolean
+  default: 'false'
+  default_function:
+  has_default: true
+  virtual: false
+- id: Layouts::ListItemInstance#all_slots_empty
+  model_name: Layouts::ListItemInstance
+  table_name: layouts_list_item_instances
+  name: all_slots_empty
+  type: boolean
+  'null': false
+  sql_type_metadata:
+    sql_type: boolean
+    type: boolean
+  default: 'false'
   default_function:
   has_default: true
   virtual: false
@@ -13151,6 +13268,45 @@
   default_function:
   has_default: true
   virtual: false
+- id: Layouts::MainInstance#post_processed_at
+  model_name: Layouts::MainInstance
+  table_name: layouts_main_instances
+  name: post_processed_at
+  type: datetime
+  'null': true
+  sql_type_metadata:
+    sql_type: timestamp without time zone
+    type: datetime
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: Layouts::MainInstance#all_hidden
+  model_name: Layouts::MainInstance
+  table_name: layouts_main_instances
+  name: all_hidden
+  type: boolean
+  'null': false
+  sql_type_metadata:
+    sql_type: boolean
+    type: boolean
+  default: 'false'
+  default_function:
+  has_default: true
+  virtual: false
+- id: Layouts::MainInstance#all_slots_empty
+  model_name: Layouts::MainInstance
+  table_name: layouts_main_instances
+  name: all_slots_empty
+  type: boolean
+  'null': false
+  sql_type_metadata:
+    sql_type: boolean
+    type: boolean
+  default: 'false'
+  default_function:
+  has_default: true
+  virtual: false
 - id: Layouts::MetadataDefinition#id
   model_name: Layouts::MetadataDefinition
   table_name: layouts_metadata_definitions
@@ -13425,6 +13581,45 @@
     sql_type: jsonb
     type: jsonb
   default: "{}"
+  default_function:
+  has_default: true
+  virtual: false
+- id: Layouts::MetadataInstance#post_processed_at
+  model_name: Layouts::MetadataInstance
+  table_name: layouts_metadata_instances
+  name: post_processed_at
+  type: datetime
+  'null': true
+  sql_type_metadata:
+    sql_type: timestamp without time zone
+    type: datetime
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: Layouts::MetadataInstance#all_hidden
+  model_name: Layouts::MetadataInstance
+  table_name: layouts_metadata_instances
+  name: all_hidden
+  type: boolean
+  'null': false
+  sql_type_metadata:
+    sql_type: boolean
+    type: boolean
+  default: 'false'
+  default_function:
+  has_default: true
+  virtual: false
+- id: Layouts::MetadataInstance#all_slots_empty
+  model_name: Layouts::MetadataInstance
+  table_name: layouts_metadata_instances
+  name: all_slots_empty
+  type: boolean
+  'null': false
+  sql_type_metadata:
+    sql_type: boolean
+    type: boolean
+  default: 'false'
   default_function:
   has_default: true
   virtual: false
@@ -13705,6 +13900,45 @@
   default_function:
   has_default: true
   virtual: false
+- id: Layouts::NavigationInstance#post_processed_at
+  model_name: Layouts::NavigationInstance
+  table_name: layouts_navigation_instances
+  name: post_processed_at
+  type: datetime
+  'null': true
+  sql_type_metadata:
+    sql_type: timestamp without time zone
+    type: datetime
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: Layouts::NavigationInstance#all_hidden
+  model_name: Layouts::NavigationInstance
+  table_name: layouts_navigation_instances
+  name: all_hidden
+  type: boolean
+  'null': false
+  sql_type_metadata:
+    sql_type: boolean
+    type: boolean
+  default: 'false'
+  default_function:
+  has_default: true
+  virtual: false
+- id: Layouts::NavigationInstance#all_slots_empty
+  model_name: Layouts::NavigationInstance
+  table_name: layouts_navigation_instances
+  name: all_slots_empty
+  type: boolean
+  'null': false
+  sql_type_metadata:
+    sql_type: boolean
+    type: boolean
+  default: 'false'
+  default_function:
+  has_default: true
+  virtual: false
 - id: Layouts::SupplementaryDefinition#id
   model_name: Layouts::SupplementaryDefinition
   table_name: layouts_supplementary_definitions
@@ -13979,6 +14213,45 @@
     sql_type: jsonb
     type: jsonb
   default: "{}"
+  default_function:
+  has_default: true
+  virtual: false
+- id: Layouts::SupplementaryInstance#post_processed_at
+  model_name: Layouts::SupplementaryInstance
+  table_name: layouts_supplementary_instances
+  name: post_processed_at
+  type: datetime
+  'null': true
+  sql_type_metadata:
+    sql_type: timestamp without time zone
+    type: datetime
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: Layouts::SupplementaryInstance#all_hidden
+  model_name: Layouts::SupplementaryInstance
+  table_name: layouts_supplementary_instances
+  name: all_hidden
+  type: boolean
+  'null': false
+  sql_type_metadata:
+    sql_type: boolean
+    type: boolean
+  default: 'false'
+  default_function:
+  has_default: true
+  virtual: false
+- id: Layouts::SupplementaryInstance#all_slots_empty
+  model_name: Layouts::SupplementaryInstance
+  table_name: layouts_supplementary_instances
+  name: all_slots_empty
+  type: boolean
+  'null': false
+  sql_type_metadata:
+    sql_type: boolean
+    type: boolean
+  default: 'false'
   default_function:
   has_default: true
   virtual: false
@@ -19143,6 +19416,365 @@
   default_function:
   has_default: true
   virtual: false
+- id: Templates::BlurbInstance#post_processed_at
+  model_name: Templates::BlurbInstance
+  table_name: templates_blurb_instances
+  name: post_processed_at
+  type: datetime
+  'null': true
+  sql_type_metadata:
+    sql_type: timestamp without time zone
+    type: datetime
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: Templates::BlurbInstance#all_slots_empty
+  model_name: Templates::BlurbInstance
+  table_name: templates_blurb_instances
+  name: all_slots_empty
+  type: boolean
+  'null': false
+  sql_type_metadata:
+    sql_type: boolean
+    type: boolean
+  default: 'false'
+  default_function:
+  has_default: true
+  virtual: false
+- id: Templates::BlurbInstance#allow_hide
+  model_name: Templates::BlurbInstance
+  table_name: templates_blurb_instances
+  name: allow_hide
+  type: boolean
+  'null': false
+  sql_type_metadata:
+    sql_type: boolean
+    type: boolean
+  default: 'true'
+  default_function:
+  has_default: true
+  virtual: false
+- id: Templates::BlurbInstance#hidden
+  model_name: Templates::BlurbInstance
+  table_name: templates_blurb_instances
+  name: hidden
+  type: boolean
+  'null': false
+  sql_type_metadata:
+    sql_type: boolean
+    type: boolean
+  default: 'false'
+  default_function:
+  has_default: true
+  virtual: false
+- id: Templates::BlurbInstance#hidden_by_empty_slots
+  model_name: Templates::BlurbInstance
+  table_name: templates_blurb_instances
+  name: hidden_by_empty_slots
+  type: boolean
+  'null': false
+  sql_type_metadata:
+    sql_type: boolean
+    type: boolean
+  default: 'false'
+  default_function:
+  has_default: true
+  virtual: false
+- id: Templates::CachedEntityList#id
+  model_name: Templates::CachedEntityList
+  table_name: templates_cached_entity_lists
+  name: id
+  type: uuid
+  'null': false
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default:
+  default_function: gen_random_uuid()
+  has_default: true
+  virtual: false
+- id: Templates::CachedEntityList#template_instance_type
+  model_name: Templates::CachedEntityList
+  table_name: templates_cached_entity_lists
+  name: template_instance_type
+  type: string
+  'null': false
+  sql_type_metadata:
+    sql_type: character varying
+    type: string
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: Templates::CachedEntityList#template_instance_id
+  model_name: Templates::CachedEntityList
+  table_name: templates_cached_entity_lists
+  name: template_instance_id
+  type: uuid
+  'null': false
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: Templates::CachedEntityList#entity_type
+  model_name: Templates::CachedEntityList
+  table_name: templates_cached_entity_lists
+  name: entity_type
+  type: string
+  'null': false
+  sql_type_metadata:
+    sql_type: character varying
+    type: string
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: Templates::CachedEntityList#entity_id
+  model_name: Templates::CachedEntityList
+  table_name: templates_cached_entity_lists
+  name: entity_id
+  type: uuid
+  'null': false
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: Templates::CachedEntityList#count
+  model_name: Templates::CachedEntityList
+  table_name: templates_cached_entity_lists
+  name: count
+  type: integer
+  'null': false
+  sql_type_metadata:
+    sql_type: integer
+    type: integer
+    limit: 4
+  default: '0'
+  default_function:
+  has_default: true
+  virtual: false
+- id: Templates::CachedEntityList#empty
+  model_name: Templates::CachedEntityList
+  table_name: templates_cached_entity_lists
+  name: empty
+  type: boolean
+  'null': false
+  sql_type_metadata:
+    sql_type: boolean
+    type: boolean
+  default: 'false'
+  default_function:
+  has_default: true
+  virtual: false
+- id: Templates::CachedEntityList#fallback
+  model_name: Templates::CachedEntityList
+  table_name: templates_cached_entity_lists
+  name: fallback
+  type: boolean
+  'null': false
+  sql_type_metadata:
+    sql_type: boolean
+    type: boolean
+  default: 'false'
+  default_function:
+  has_default: true
+  virtual: false
+- id: Templates::CachedEntityList#flat_depth
+  model_name: Templates::CachedEntityList
+  table_name: templates_cached_entity_lists
+  name: flat_depth
+  type: boolean
+  'null': false
+  sql_type_metadata:
+    sql_type: boolean
+    type: boolean
+  default: 'false'
+  default_function:
+  has_default: true
+  virtual: false
+- id: Templates::CachedEntityList#maximum_depth
+  model_name: Templates::CachedEntityList
+  table_name: templates_cached_entity_lists
+  name: maximum_depth
+  type: integer
+  'null': true
+  sql_type_metadata:
+    sql_type: integer
+    type: integer
+    limit: 4
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: Templates::CachedEntityList#minimum_depth
+  model_name: Templates::CachedEntityList
+  table_name: templates_cached_entity_lists
+  name: minimum_depth
+  type: integer
+  'null': true
+  sql_type_metadata:
+    sql_type: integer
+    type: integer
+    limit: 4
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: Templates::CachedEntityList#created_at
+  model_name: Templates::CachedEntityList
+  table_name: templates_cached_entity_lists
+  name: created_at
+  type: datetime
+  'null': false
+  sql_type_metadata:
+    sql_type: timestamp(6) without time zone
+    type: datetime
+    precision: 6
+  default:
+  default_function: CURRENT_TIMESTAMP
+  has_default: true
+  virtual: false
+- id: Templates::CachedEntityList#updated_at
+  model_name: Templates::CachedEntityList
+  table_name: templates_cached_entity_lists
+  name: updated_at
+  type: datetime
+  'null': false
+  sql_type_metadata:
+    sql_type: timestamp(6) without time zone
+    type: datetime
+    precision: 6
+  default:
+  default_function: CURRENT_TIMESTAMP
+  has_default: true
+  virtual: false
+- id: Templates::CachedEntityListItem#id
+  model_name: Templates::CachedEntityListItem
+  table_name: templates_cached_entity_list_items
+  name: id
+  type: uuid
+  'null': false
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default:
+  default_function: gen_random_uuid()
+  has_default: true
+  virtual: false
+- id: Templates::CachedEntityListItem#cached_entity_list_id
+  model_name: Templates::CachedEntityListItem
+  table_name: templates_cached_entity_list_items
+  name: cached_entity_list_id
+  type: uuid
+  'null': false
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: Templates::CachedEntityListItem#list_item_layout_instance_id
+  model_name: Templates::CachedEntityListItem
+  table_name: templates_cached_entity_list_items
+  name: list_item_layout_instance_id
+  type: uuid
+  'null': false
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: Templates::CachedEntityListItem#schema_version_id
+  model_name: Templates::CachedEntityListItem
+  table_name: templates_cached_entity_list_items
+  name: schema_version_id
+  type: uuid
+  'null': false
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: Templates::CachedEntityListItem#entity_type
+  model_name: Templates::CachedEntityListItem
+  table_name: templates_cached_entity_list_items
+  name: entity_type
+  type: string
+  'null': false
+  sql_type_metadata:
+    sql_type: character varying
+    type: string
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: Templates::CachedEntityListItem#entity_id
+  model_name: Templates::CachedEntityListItem
+  table_name: templates_cached_entity_list_items
+  name: entity_id
+  type: uuid
+  'null': false
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: Templates::CachedEntityListItem#position
+  model_name: Templates::CachedEntityListItem
+  table_name: templates_cached_entity_list_items
+  name: position
+  type: integer
+  'null': false
+  sql_type_metadata:
+    sql_type: bigint
+    type: integer
+    limit: 8
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: Templates::CachedEntityListItem#created_at
+  model_name: Templates::CachedEntityListItem
+  table_name: templates_cached_entity_list_items
+  name: created_at
+  type: datetime
+  'null': false
+  sql_type_metadata:
+    sql_type: timestamp(6) without time zone
+    type: datetime
+    precision: 6
+  default:
+  default_function: CURRENT_TIMESTAMP
+  has_default: true
+  virtual: false
+- id: Templates::CachedEntityListItem#updated_at
+  model_name: Templates::CachedEntityListItem
+  table_name: templates_cached_entity_list_items
+  name: updated_at
+  type: datetime
+  'null': false
+  sql_type_metadata:
+    sql_type: timestamp(6) without time zone
+    type: datetime
+    precision: 6
+  default:
+  default_function: CURRENT_TIMESTAMP
+  has_default: true
+  virtual: false
 - id: Templates::ContributorListDefinition#id
   model_name: Templates::ContributorListDefinition
   table_name: templates_contributor_list_definitions
@@ -19511,6 +20143,71 @@
     sql_type: jsonb
     type: jsonb
   default: "{}"
+  default_function:
+  has_default: true
+  virtual: false
+- id: Templates::ContributorListInstance#post_processed_at
+  model_name: Templates::ContributorListInstance
+  table_name: templates_contributor_list_instances
+  name: post_processed_at
+  type: datetime
+  'null': true
+  sql_type_metadata:
+    sql_type: timestamp without time zone
+    type: datetime
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: Templates::ContributorListInstance#all_slots_empty
+  model_name: Templates::ContributorListInstance
+  table_name: templates_contributor_list_instances
+  name: all_slots_empty
+  type: boolean
+  'null': false
+  sql_type_metadata:
+    sql_type: boolean
+    type: boolean
+  default: 'false'
+  default_function:
+  has_default: true
+  virtual: false
+- id: Templates::ContributorListInstance#allow_hide
+  model_name: Templates::ContributorListInstance
+  table_name: templates_contributor_list_instances
+  name: allow_hide
+  type: boolean
+  'null': false
+  sql_type_metadata:
+    sql_type: boolean
+    type: boolean
+  default: 'true'
+  default_function:
+  has_default: true
+  virtual: false
+- id: Templates::ContributorListInstance#hidden
+  model_name: Templates::ContributorListInstance
+  table_name: templates_contributor_list_instances
+  name: hidden
+  type: boolean
+  'null': false
+  sql_type_metadata:
+    sql_type: boolean
+    type: boolean
+  default: 'false'
+  default_function:
+  has_default: true
+  virtual: false
+- id: Templates::ContributorListInstance#hidden_by_empty_slots
+  model_name: Templates::ContributorListInstance
+  table_name: templates_contributor_list_instances
+  name: hidden_by_empty_slots
+  type: boolean
+  'null': false
+  sql_type_metadata:
+    sql_type: boolean
+    type: boolean
+  default: 'false'
   default_function:
   has_default: true
   virtual: false
@@ -20580,6 +21277,97 @@
   default_function:
   has_default: false
   virtual: false
+- id: Templates::DescendantListInstance#post_processed_at
+  model_name: Templates::DescendantListInstance
+  table_name: templates_descendant_list_instances
+  name: post_processed_at
+  type: datetime
+  'null': true
+  sql_type_metadata:
+    sql_type: timestamp without time zone
+    type: datetime
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: Templates::DescendantListInstance#all_slots_empty
+  model_name: Templates::DescendantListInstance
+  table_name: templates_descendant_list_instances
+  name: all_slots_empty
+  type: boolean
+  'null': false
+  sql_type_metadata:
+    sql_type: boolean
+    type: boolean
+  default: 'false'
+  default_function:
+  has_default: true
+  virtual: false
+- id: Templates::DescendantListInstance#allow_hide
+  model_name: Templates::DescendantListInstance
+  table_name: templates_descendant_list_instances
+  name: allow_hide
+  type: boolean
+  'null': false
+  sql_type_metadata:
+    sql_type: boolean
+    type: boolean
+  default: 'true'
+  default_function:
+  has_default: true
+  virtual: false
+- id: Templates::DescendantListInstance#hidden
+  model_name: Templates::DescendantListInstance
+  table_name: templates_descendant_list_instances
+  name: hidden
+  type: boolean
+  'null': false
+  sql_type_metadata:
+    sql_type: boolean
+    type: boolean
+  default: 'false'
+  default_function:
+  has_default: true
+  virtual: false
+- id: Templates::DescendantListInstance#hidden_by_empty_slots
+  model_name: Templates::DescendantListInstance
+  table_name: templates_descendant_list_instances
+  name: hidden_by_empty_slots
+  type: boolean
+  'null': false
+  sql_type_metadata:
+    sql_type: boolean
+    type: boolean
+  default: 'false'
+  default_function:
+  has_default: true
+  virtual: false
+- id: Templates::DescendantListInstance#hidden_by_entity_list
+  model_name: Templates::DescendantListInstance
+  table_name: templates_descendant_list_instances
+  name: hidden_by_entity_list
+  type: boolean
+  'null': false
+  sql_type_metadata:
+    sql_type: boolean
+    type: boolean
+  default: 'false'
+  default_function:
+  has_default: true
+  virtual: false
+- id: Templates::DescendantListInstance#entity_list_cached_at
+  model_name: Templates::DescendantListInstance
+  table_name: templates_descendant_list_instances
+  name: entity_list_cached_at
+  type: datetime
+  'null': true
+  sql_type_metadata:
+    sql_type: timestamp without time zone
+    type: datetime
+  default:
+  default_function:
+  has_default: false
+  virtual: false
 - id: Templates::DetailDefinition#id
   model_name: Templates::DetailDefinition
   table_name: templates_detail_definitions
@@ -20973,6 +21761,71 @@
     sql_type: jsonb
     type: jsonb
   default: "{}"
+  default_function:
+  has_default: true
+  virtual: false
+- id: Templates::DetailInstance#post_processed_at
+  model_name: Templates::DetailInstance
+  table_name: templates_detail_instances
+  name: post_processed_at
+  type: datetime
+  'null': true
+  sql_type_metadata:
+    sql_type: timestamp without time zone
+    type: datetime
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: Templates::DetailInstance#all_slots_empty
+  model_name: Templates::DetailInstance
+  table_name: templates_detail_instances
+  name: all_slots_empty
+  type: boolean
+  'null': false
+  sql_type_metadata:
+    sql_type: boolean
+    type: boolean
+  default: 'false'
+  default_function:
+  has_default: true
+  virtual: false
+- id: Templates::DetailInstance#allow_hide
+  model_name: Templates::DetailInstance
+  table_name: templates_detail_instances
+  name: allow_hide
+  type: boolean
+  'null': false
+  sql_type_metadata:
+    sql_type: boolean
+    type: boolean
+  default: 'true'
+  default_function:
+  has_default: true
+  virtual: false
+- id: Templates::DetailInstance#hidden
+  model_name: Templates::DetailInstance
+  table_name: templates_detail_instances
+  name: hidden
+  type: boolean
+  'null': false
+  sql_type_metadata:
+    sql_type: boolean
+    type: boolean
+  default: 'false'
+  default_function:
+  has_default: true
+  virtual: false
+- id: Templates::DetailInstance#hidden_by_empty_slots
+  model_name: Templates::DetailInstance
+  table_name: templates_detail_instances
+  name: hidden_by_empty_slots
+  type: boolean
+  'null': false
+  sql_type_metadata:
+    sql_type: boolean
+    type: boolean
+  default: 'false'
   default_function:
   has_default: true
   virtual: false
@@ -21489,6 +22342,71 @@
   default_function:
   has_default: true
   virtual: false
+- id: Templates::HeroInstance#post_processed_at
+  model_name: Templates::HeroInstance
+  table_name: templates_hero_instances
+  name: post_processed_at
+  type: datetime
+  'null': true
+  sql_type_metadata:
+    sql_type: timestamp without time zone
+    type: datetime
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: Templates::HeroInstance#all_slots_empty
+  model_name: Templates::HeroInstance
+  table_name: templates_hero_instances
+  name: all_slots_empty
+  type: boolean
+  'null': false
+  sql_type_metadata:
+    sql_type: boolean
+    type: boolean
+  default: 'false'
+  default_function:
+  has_default: true
+  virtual: false
+- id: Templates::HeroInstance#allow_hide
+  model_name: Templates::HeroInstance
+  table_name: templates_hero_instances
+  name: allow_hide
+  type: boolean
+  'null': false
+  sql_type_metadata:
+    sql_type: boolean
+    type: boolean
+  default: 'true'
+  default_function:
+  has_default: true
+  virtual: false
+- id: Templates::HeroInstance#hidden
+  model_name: Templates::HeroInstance
+  table_name: templates_hero_instances
+  name: hidden
+  type: boolean
+  'null': false
+  sql_type_metadata:
+    sql_type: boolean
+    type: boolean
+  default: 'false'
+  default_function:
+  has_default: true
+  virtual: false
+- id: Templates::HeroInstance#hidden_by_empty_slots
+  model_name: Templates::HeroInstance
+  table_name: templates_hero_instances
+  name: hidden_by_empty_slots
+  type: boolean
+  'null': false
+  sql_type_metadata:
+    sql_type: boolean
+    type: boolean
+  default: 'false'
+  default_function:
+  has_default: true
+  virtual: false
 - id: Templates::InstanceDigest#id
   model_name: Templates::InstanceDigest
   table_name: templates_instance_digests
@@ -21778,6 +22696,58 @@
   default_function: CURRENT_TIMESTAMP
   has_default: true
   virtual: false
+- id: Templates::InstanceDigest#post_processed_at
+  model_name: Templates::InstanceDigest
+  table_name: templates_instance_digests
+  name: post_processed_at
+  type: datetime
+  'null': true
+  sql_type_metadata:
+    sql_type: timestamp without time zone
+    type: datetime
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: Templates::InstanceDigest#all_slots_empty
+  model_name: Templates::InstanceDigest
+  table_name: templates_instance_digests
+  name: all_slots_empty
+  type: boolean
+  'null': false
+  sql_type_metadata:
+    sql_type: boolean
+    type: boolean
+  default: 'false'
+  default_function:
+  has_default: true
+  virtual: false
+- id: Templates::InstanceDigest#allow_hide
+  model_name: Templates::InstanceDigest
+  table_name: templates_instance_digests
+  name: allow_hide
+  type: boolean
+  'null': false
+  sql_type_metadata:
+    sql_type: boolean
+    type: boolean
+  default: 'true'
+  default_function:
+  has_default: true
+  virtual: false
+- id: Templates::InstanceDigest#hidden
+  model_name: Templates::InstanceDigest
+  table_name: templates_instance_digests
+  name: hidden
+  type: boolean
+  'null': false
+  sql_type_metadata:
+    sql_type: boolean
+    type: boolean
+  default: 'false'
+  default_function:
+  has_default: true
+  virtual: false
 - id: Templates::InstanceSibling#template_instance_type
   model_name: Templates::InstanceSibling
   table_name: templates_instance_siblings
@@ -21918,6 +22888,19 @@
   sql_type_metadata:
     sql_type: template_width
     type: enum
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: Templates::InstanceSibling#hidden
+  model_name: Templates::InstanceSibling
+  table_name: templates_instance_siblings
+  name: hidden
+  type: boolean
+  'null': true
+  sql_type_metadata:
+    sql_type: boolean
+    type: boolean
   default:
   default_function:
   has_default: false
@@ -22553,6 +23536,97 @@
   default_function:
   has_default: false
   virtual: false
+- id: Templates::LinkListInstance#post_processed_at
+  model_name: Templates::LinkListInstance
+  table_name: templates_link_list_instances
+  name: post_processed_at
+  type: datetime
+  'null': true
+  sql_type_metadata:
+    sql_type: timestamp without time zone
+    type: datetime
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: Templates::LinkListInstance#all_slots_empty
+  model_name: Templates::LinkListInstance
+  table_name: templates_link_list_instances
+  name: all_slots_empty
+  type: boolean
+  'null': false
+  sql_type_metadata:
+    sql_type: boolean
+    type: boolean
+  default: 'false'
+  default_function:
+  has_default: true
+  virtual: false
+- id: Templates::LinkListInstance#allow_hide
+  model_name: Templates::LinkListInstance
+  table_name: templates_link_list_instances
+  name: allow_hide
+  type: boolean
+  'null': false
+  sql_type_metadata:
+    sql_type: boolean
+    type: boolean
+  default: 'true'
+  default_function:
+  has_default: true
+  virtual: false
+- id: Templates::LinkListInstance#hidden
+  model_name: Templates::LinkListInstance
+  table_name: templates_link_list_instances
+  name: hidden
+  type: boolean
+  'null': false
+  sql_type_metadata:
+    sql_type: boolean
+    type: boolean
+  default: 'false'
+  default_function:
+  has_default: true
+  virtual: false
+- id: Templates::LinkListInstance#hidden_by_empty_slots
+  model_name: Templates::LinkListInstance
+  table_name: templates_link_list_instances
+  name: hidden_by_empty_slots
+  type: boolean
+  'null': false
+  sql_type_metadata:
+    sql_type: boolean
+    type: boolean
+  default: 'false'
+  default_function:
+  has_default: true
+  virtual: false
+- id: Templates::LinkListInstance#hidden_by_entity_list
+  model_name: Templates::LinkListInstance
+  table_name: templates_link_list_instances
+  name: hidden_by_entity_list
+  type: boolean
+  'null': false
+  sql_type_metadata:
+    sql_type: boolean
+    type: boolean
+  default: 'false'
+  default_function:
+  has_default: true
+  virtual: false
+- id: Templates::LinkListInstance#entity_list_cached_at
+  model_name: Templates::LinkListInstance
+  table_name: templates_link_list_instances
+  name: entity_list_cached_at
+  type: datetime
+  'null': true
+  sql_type_metadata:
+    sql_type: timestamp without time zone
+    type: datetime
+  default:
+  default_function:
+  has_default: false
+  virtual: false
 - id: Templates::ListItemDefinition#id
   model_name: Templates::ListItemDefinition
   table_name: templates_list_item_definitions
@@ -23050,6 +24124,97 @@
   sql_type_metadata:
     sql_type: uuid
     type: uuid
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: Templates::ListItemInstance#post_processed_at
+  model_name: Templates::ListItemInstance
+  table_name: templates_list_item_instances
+  name: post_processed_at
+  type: datetime
+  'null': true
+  sql_type_metadata:
+    sql_type: timestamp without time zone
+    type: datetime
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: Templates::ListItemInstance#all_slots_empty
+  model_name: Templates::ListItemInstance
+  table_name: templates_list_item_instances
+  name: all_slots_empty
+  type: boolean
+  'null': false
+  sql_type_metadata:
+    sql_type: boolean
+    type: boolean
+  default: 'false'
+  default_function:
+  has_default: true
+  virtual: false
+- id: Templates::ListItemInstance#allow_hide
+  model_name: Templates::ListItemInstance
+  table_name: templates_list_item_instances
+  name: allow_hide
+  type: boolean
+  'null': false
+  sql_type_metadata:
+    sql_type: boolean
+    type: boolean
+  default: 'true'
+  default_function:
+  has_default: true
+  virtual: false
+- id: Templates::ListItemInstance#hidden
+  model_name: Templates::ListItemInstance
+  table_name: templates_list_item_instances
+  name: hidden
+  type: boolean
+  'null': false
+  sql_type_metadata:
+    sql_type: boolean
+    type: boolean
+  default: 'false'
+  default_function:
+  has_default: true
+  virtual: false
+- id: Templates::ListItemInstance#hidden_by_empty_slots
+  model_name: Templates::ListItemInstance
+  table_name: templates_list_item_instances
+  name: hidden_by_empty_slots
+  type: boolean
+  'null': false
+  sql_type_metadata:
+    sql_type: boolean
+    type: boolean
+  default: 'false'
+  default_function:
+  has_default: true
+  virtual: false
+- id: Templates::ListItemInstance#hidden_by_entity_list
+  model_name: Templates::ListItemInstance
+  table_name: templates_list_item_instances
+  name: hidden_by_entity_list
+  type: boolean
+  'null': false
+  sql_type_metadata:
+    sql_type: boolean
+    type: boolean
+  default: 'false'
+  default_function:
+  has_default: true
+  virtual: false
+- id: Templates::ListItemInstance#entity_list_cached_at
+  model_name: Templates::ListItemInstance
+  table_name: templates_list_item_instances
+  name: entity_list_cached_at
+  type: datetime
+  'null': true
+  sql_type_metadata:
+    sql_type: timestamp without time zone
+    type: datetime
   default:
   default_function:
   has_default: false
@@ -23650,6 +24815,71 @@
   default_function:
   has_default: true
   virtual: false
+- id: Templates::MetadataInstance#post_processed_at
+  model_name: Templates::MetadataInstance
+  table_name: templates_metadata_instances
+  name: post_processed_at
+  type: datetime
+  'null': true
+  sql_type_metadata:
+    sql_type: timestamp without time zone
+    type: datetime
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: Templates::MetadataInstance#all_slots_empty
+  model_name: Templates::MetadataInstance
+  table_name: templates_metadata_instances
+  name: all_slots_empty
+  type: boolean
+  'null': false
+  sql_type_metadata:
+    sql_type: boolean
+    type: boolean
+  default: 'false'
+  default_function:
+  has_default: true
+  virtual: false
+- id: Templates::MetadataInstance#allow_hide
+  model_name: Templates::MetadataInstance
+  table_name: templates_metadata_instances
+  name: allow_hide
+  type: boolean
+  'null': false
+  sql_type_metadata:
+    sql_type: boolean
+    type: boolean
+  default: 'true'
+  default_function:
+  has_default: true
+  virtual: false
+- id: Templates::MetadataInstance#hidden
+  model_name: Templates::MetadataInstance
+  table_name: templates_metadata_instances
+  name: hidden
+  type: boolean
+  'null': false
+  sql_type_metadata:
+    sql_type: boolean
+    type: boolean
+  default: 'false'
+  default_function:
+  has_default: true
+  virtual: false
+- id: Templates::MetadataInstance#hidden_by_empty_slots
+  model_name: Templates::MetadataInstance
+  table_name: templates_metadata_instances
+  name: hidden_by_empty_slots
+  type: boolean
+  'null': false
+  sql_type_metadata:
+    sql_type: boolean
+    type: boolean
+  default: 'false'
+  default_function:
+  has_default: true
+  virtual: false
 - id: Templates::NavigationDefinition#id
   model_name: Templates::NavigationDefinition
   table_name: templates_navigation_definitions
@@ -23991,6 +25221,71 @@
     sql_type: jsonb
     type: jsonb
   default: "{}"
+  default_function:
+  has_default: true
+  virtual: false
+- id: Templates::NavigationInstance#post_processed_at
+  model_name: Templates::NavigationInstance
+  table_name: templates_navigation_instances
+  name: post_processed_at
+  type: datetime
+  'null': true
+  sql_type_metadata:
+    sql_type: timestamp without time zone
+    type: datetime
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: Templates::NavigationInstance#all_slots_empty
+  model_name: Templates::NavigationInstance
+  table_name: templates_navigation_instances
+  name: all_slots_empty
+  type: boolean
+  'null': false
+  sql_type_metadata:
+    sql_type: boolean
+    type: boolean
+  default: 'false'
+  default_function:
+  has_default: true
+  virtual: false
+- id: Templates::NavigationInstance#allow_hide
+  model_name: Templates::NavigationInstance
+  table_name: templates_navigation_instances
+  name: allow_hide
+  type: boolean
+  'null': false
+  sql_type_metadata:
+    sql_type: boolean
+    type: boolean
+  default: 'true'
+  default_function:
+  has_default: true
+  virtual: false
+- id: Templates::NavigationInstance#hidden
+  model_name: Templates::NavigationInstance
+  table_name: templates_navigation_instances
+  name: hidden
+  type: boolean
+  'null': false
+  sql_type_metadata:
+    sql_type: boolean
+    type: boolean
+  default: 'false'
+  default_function:
+  has_default: true
+  virtual: false
+- id: Templates::NavigationInstance#hidden_by_empty_slots
+  model_name: Templates::NavigationInstance
+  table_name: templates_navigation_instances
+  name: hidden_by_empty_slots
+  type: boolean
+  'null': false
+  sql_type_metadata:
+    sql_type: boolean
+    type: boolean
+  default: 'false'
   default_function:
   has_default: true
   virtual: false
@@ -24455,6 +25750,71 @@
   default_function:
   has_default: false
   virtual: false
+- id: Templates::OrderingInstance#post_processed_at
+  model_name: Templates::OrderingInstance
+  table_name: templates_ordering_instances
+  name: post_processed_at
+  type: datetime
+  'null': true
+  sql_type_metadata:
+    sql_type: timestamp without time zone
+    type: datetime
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: Templates::OrderingInstance#all_slots_empty
+  model_name: Templates::OrderingInstance
+  table_name: templates_ordering_instances
+  name: all_slots_empty
+  type: boolean
+  'null': false
+  sql_type_metadata:
+    sql_type: boolean
+    type: boolean
+  default: 'false'
+  default_function:
+  has_default: true
+  virtual: false
+- id: Templates::OrderingInstance#allow_hide
+  model_name: Templates::OrderingInstance
+  table_name: templates_ordering_instances
+  name: allow_hide
+  type: boolean
+  'null': false
+  sql_type_metadata:
+    sql_type: boolean
+    type: boolean
+  default: 'true'
+  default_function:
+  has_default: true
+  virtual: false
+- id: Templates::OrderingInstance#hidden
+  model_name: Templates::OrderingInstance
+  table_name: templates_ordering_instances
+  name: hidden
+  type: boolean
+  'null': false
+  sql_type_metadata:
+    sql_type: boolean
+    type: boolean
+  default: 'false'
+  default_function:
+  has_default: true
+  virtual: false
+- id: Templates::OrderingInstance#hidden_by_empty_slots
+  model_name: Templates::OrderingInstance
+  table_name: templates_ordering_instances
+  name: hidden_by_empty_slots
+  type: boolean
+  'null': false
+  sql_type_metadata:
+    sql_type: boolean
+    type: boolean
+  default: 'false'
+  default_function:
+  has_default: true
+  virtual: false
 - id: Templates::PageListDefinition#id
   model_name: Templates::PageListDefinition
   table_name: templates_page_list_definitions
@@ -24799,6 +26159,71 @@
   default_function:
   has_default: true
   virtual: false
+- id: Templates::PageListInstance#post_processed_at
+  model_name: Templates::PageListInstance
+  table_name: templates_page_list_instances
+  name: post_processed_at
+  type: datetime
+  'null': true
+  sql_type_metadata:
+    sql_type: timestamp without time zone
+    type: datetime
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: Templates::PageListInstance#all_slots_empty
+  model_name: Templates::PageListInstance
+  table_name: templates_page_list_instances
+  name: all_slots_empty
+  type: boolean
+  'null': false
+  sql_type_metadata:
+    sql_type: boolean
+    type: boolean
+  default: 'false'
+  default_function:
+  has_default: true
+  virtual: false
+- id: Templates::PageListInstance#allow_hide
+  model_name: Templates::PageListInstance
+  table_name: templates_page_list_instances
+  name: allow_hide
+  type: boolean
+  'null': false
+  sql_type_metadata:
+    sql_type: boolean
+    type: boolean
+  default: 'true'
+  default_function:
+  has_default: true
+  virtual: false
+- id: Templates::PageListInstance#hidden
+  model_name: Templates::PageListInstance
+  table_name: templates_page_list_instances
+  name: hidden
+  type: boolean
+  'null': false
+  sql_type_metadata:
+    sql_type: boolean
+    type: boolean
+  default: 'false'
+  default_function:
+  has_default: true
+  virtual: false
+- id: Templates::PageListInstance#hidden_by_empty_slots
+  model_name: Templates::PageListInstance
+  table_name: templates_page_list_instances
+  name: hidden_by_empty_slots
+  type: boolean
+  'null': false
+  sql_type_metadata:
+    sql_type: boolean
+    type: boolean
+  default: 'false'
+  default_function:
+  has_default: true
+  virtual: false
 - id: Templates::SupplementaryDefinition#id
   model_name: Templates::SupplementaryDefinition
   table_name: templates_supplementary_definitions
@@ -25127,6 +26552,71 @@
     sql_type: jsonb
     type: jsonb
   default: "{}"
+  default_function:
+  has_default: true
+  virtual: false
+- id: Templates::SupplementaryInstance#post_processed_at
+  model_name: Templates::SupplementaryInstance
+  table_name: templates_supplementary_instances
+  name: post_processed_at
+  type: datetime
+  'null': true
+  sql_type_metadata:
+    sql_type: timestamp without time zone
+    type: datetime
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: Templates::SupplementaryInstance#all_slots_empty
+  model_name: Templates::SupplementaryInstance
+  table_name: templates_supplementary_instances
+  name: all_slots_empty
+  type: boolean
+  'null': false
+  sql_type_metadata:
+    sql_type: boolean
+    type: boolean
+  default: 'false'
+  default_function:
+  has_default: true
+  virtual: false
+- id: Templates::SupplementaryInstance#allow_hide
+  model_name: Templates::SupplementaryInstance
+  table_name: templates_supplementary_instances
+  name: allow_hide
+  type: boolean
+  'null': false
+  sql_type_metadata:
+    sql_type: boolean
+    type: boolean
+  default: 'true'
+  default_function:
+  has_default: true
+  virtual: false
+- id: Templates::SupplementaryInstance#hidden
+  model_name: Templates::SupplementaryInstance
+  table_name: templates_supplementary_instances
+  name: hidden
+  type: boolean
+  'null': false
+  sql_type_metadata:
+    sql_type: boolean
+    type: boolean
+  default: 'false'
+  default_function:
+  has_default: true
+  virtual: false
+- id: Templates::SupplementaryInstance#hidden_by_empty_slots
+  model_name: Templates::SupplementaryInstance
+  table_name: templates_supplementary_instances
+  name: hidden_by_empty_slots
+  type: boolean
+  'null': false
+  sql_type_metadata:
+    sql_type: boolean
+    type: boolean
+  default: 'false'
   default_function:
   has_default: true
   virtual: false

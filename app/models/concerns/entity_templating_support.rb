@@ -6,10 +6,12 @@ module EntityTemplatingSupport
   extend ActiveSupport::Concern
   extend DefinesMonadicOperation
 
-  include Dry::Effects.Reader(:layout_invalidation_disabled, default: false)
   include ModelMutationSupport
 
   included do
+    has_many :cached_entity_lists, as: :entity, class_name: "Templates::CachedEntityList", inverse_of: :entity, dependent: :delete_all
+    has_many :cached_entity_list_items, as: :entity, class_name: "Templates::CachedEntityListItem", inverse_of: :entity, dependent: :delete_all
+
     has_many :entity_derived_layout_definitions, as: :entity, inverse_of: :entity, dependent: :delete_all
 
     has_many_readonly :missing_layout_instances, as: :entity, inverse_of: :entity, class_name: "EntityMissingLayoutInstance"
@@ -82,9 +84,16 @@ module EntityTemplatingSupport
     call_operation("entities.invalidate_related_layouts", self)
   end
 
+  # @see Layouts::Disabled
+  # @see Layouts::Disabler
+  # @return [void]
+  def layout_invalidation_currently_disabled?
+    Layouts::Disabled.currently?
+  end
+
   # @see ModelMutationSupport#in_graphql_mutation?
   def layout_invalidation_disabled?
-    in_graphql_mutation? || layout_invalidation_disabled || force_disable_layout_invalidation
+    in_graphql_mutation? || layout_invalidation_currently_disabled? || force_disable_layout_invalidation
   end
 
   # @return [String]
@@ -107,25 +116,23 @@ module EntityTemplatingSupport
     call_operation("entities.render_layouts", self)
   end
 
-  def stale?
-    has_layout_invalidations? || has_missing_layouts? || has_missing_templates? || has_no_layout_definitions_derived?
+  # @see Entities::ReprocessLayout
+  # @see Entities::LayoutReprocessor
+  # @param [Layouts::Types::Kind] layout_kind
+  # @return [Dry::Monads::Success(HierarchicalEntity)]
+  def reprocess_layout(layout_kind)
+    call_operation("entities.reprocess_layout", self, layout_kind:)
   end
 
-  # @return [HierarchicalEntity]
-  def validated_layout_source
-    if has_invalid_layouts?
-      invalidation = layout_invalidations.latest
+  # @see Entities::ReprocessLayouts
+  # @see Entities::LayoutsReprocessor
+  # @return [Dry::Monads::Success(HierarchicalEntity)]
+  monadic_matcher! def reprocess_layouts
+    call_operation("entities.reprocess_layouts", self)
+  end
 
-      invalidation.process!
-
-      reload
-    elsif has_missing_layouts?
-      render_layouts!
-
-      reload
-    end
-
-    return self
+  def stale?
+    has_layout_invalidations? || has_missing_layouts? || has_missing_templates? || has_no_layout_definitions_derived?
   end
 
   module ClassMethods

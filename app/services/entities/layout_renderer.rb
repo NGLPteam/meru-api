@@ -16,6 +16,7 @@ module Entities
     # @return [LayoutDefinition]
     attr_reader :layout_definition
 
+    # @return [Dry::Monads::Success(HierarchicalEntity)]
     def call
       run_callbacks :execute do
         yield prepare!

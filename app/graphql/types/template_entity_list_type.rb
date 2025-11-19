@@ -74,5 +74,9 @@ module Types
       The minimum hierarchical depth for the entities in the list (if known).
       TEXT
     end
+
+    load_association! :entities
+
+    load_association! :list_item_layout_instances, as: :list_item_layouts
   end
 end

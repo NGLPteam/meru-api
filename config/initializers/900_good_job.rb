@@ -9,7 +9,7 @@ Rails.application.configure do
     "rendering:1",
     "+purging,hierarchies,entities,orderings,invalidations,layouts:2",
     "+harvest_pruning,extraction,harvesting,asset_fetching:2",
-    "default,mailers,ahoy:2",
+    "default,mailers,ahoy,processing,cache_warming:2",
   ].join(?;)
 
   config.good_job.preserve_job_records = :on_unhandled_error
@@ -28,6 +28,12 @@ Rails.application.configure do
   config.good_job.queue_select_limit = 1000
   config.good_job.dashboard_live_poll_enabled = false
   config.good_job.inline_execution_respects_schedule = true
+
+  config.cleanup_discarded_jobs = false
+  config.cleanup_preserved_jobs_before_seconds_ago = 1.hour
+  config.cleanup_interval_jobs = 500
+  config.cleanup_interval_seconds = 300
+
   config.good_job.cron = {
     "access.enforce_assignments": {
       cron: "*/5 * * * *",
@@ -174,3 +180,35 @@ GoodJob::Engine.middleware.use Rack::MethodOverride
 GoodJob::Engine.middleware.use ActionDispatch::Flash
 GoodJob::Engine.middleware.use ActionDispatch::Cookies
 GoodJob::Engine.middleware.use ActionDispatch::Session::CookieStore
+
+GOOD_JOB_KEEP_RUNNING = Concurrent::AtomicBoolean.new(true)
+
+# :nocov:
+if GoodJob.cli?
+  GOOD_JOB_STARTED_AT = Process.clock_gettime(Process::CLOCK_MONOTONIC)
+
+  GOOD_JOB_MAX_RUNTIME = 72_000.0
+
+  GOOD_JOB_MONITOR_THREAD = Thread.new do
+    loop do
+      now = Process.clock_gettime(Process::CLOCK_MONOTONIC)
+
+      elapsed = now - GOOD_JOB_STARTED_AT
+
+      if elapsed >= GOOD_JOB_MAX_RUNTIME
+        warn "GoodJob workers have been running for over 20 hours, initiating shutdown..."
+
+        GOOD_JOB_KEEP_RUNNING.make_false
+      end
+
+      break unless GOOD_JOB_KEEP_RUNNING.value
+
+      sleep 5
+    end
+
+    warn "Shutting down GoodJob workers..."
+
+    GoodJob.shutdown(timeout: 25)
+  end
+end
+# :nocov:

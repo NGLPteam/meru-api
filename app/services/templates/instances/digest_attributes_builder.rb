@@ -21,6 +21,10 @@ module Templates
         :template_definition,
         :template_kind,
         :template_record,
+        :post_processed_at,
+        :all_slots_empty,
+        :allow_hide,
+        :hidden,
         to: :template_instance
 
       delegate :config, :slots, to: :template_instance, prefix: :template
@@ -101,6 +105,10 @@ module Templates
           width:,
           render_duration:,
           last_rendered_at:,
+          post_processed_at:,
+          all_slots_empty:,
+          allow_hide:,
+          hidden:,
         }
       end
 

@@ -14,7 +14,7 @@ module Support
 
       around_request :provide_current_state!
 
-      around_request :provide_vog_cache!
+      # around_request :provide_vog_cache!
 
       around_request :measure!
 
@@ -53,9 +53,9 @@ module Support
       end
 
       # @return [void]
-      def provide_vog_cache!(&)
-        Support::Caching.with_vog_cache(&)
-      end
+      # def provide_vog_cache!(&)
+      #   Support::Caching.with_vog_cache(&)
+      # end
     end
   end
 end
