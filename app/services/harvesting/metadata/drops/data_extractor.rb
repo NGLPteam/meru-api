@@ -32,7 +32,9 @@ module Harvesting
         def extract(data)
           value = data.public_send(attr)
 
-          cast = cast_type[value]
+          result = cast_type.try(value).to_monad
+
+          cast = result.value_or(default)
 
           cast.nil? ? default : cast
         end
