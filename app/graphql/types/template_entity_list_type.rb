@@ -31,7 +31,7 @@ module Types
       TEXT
     end
 
-    field :entities, ["::Types::EntityType", { null: false }], null: false, method: :valid_entities do
+    field :entities, ["::Types::EntityType", { null: false }], null: false do
       description <<~TEXT
       The actual entity records within this list.
 
@@ -75,8 +75,12 @@ module Types
       TEXT
     end
 
-    load_association! :entities
+    load_association! :cached_entity_list_items
 
     load_association! :list_item_layout_instances, as: :list_item_layouts
+
+    def entities
+      cached_entity_list_items.then { _1.map(&:entity) }
+    end
   end
 end

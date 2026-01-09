@@ -10,6 +10,8 @@ module Templates
 
     Assigns = Hash.map(Coercible::String, Any)
 
+    CachedEntityList = ModelInstance("Templates::CachedEntityList")
+
     Contribution = Instance(::Contribution)
 
     Contributions = Coercible::Array.of(Contribution)

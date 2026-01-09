@@ -17,9 +17,6 @@ module Templates
 
       delegate :entity_id, :entity_type, :list_item_template?, to: :template_instance
 
-      # @return [String]
-      attr_reader :advisory_lock_key
-
       # @return [Templates::CachedEntityList]
       attr_reader :cached_entity_list
 
@@ -46,8 +43,6 @@ module Templates
       end
 
       wrapped_hook! def prepare
-        @advisory_lock_key = "templates/instances/entity_list_caching/#{template_instance.id}"
-
         @entity_list = template_instance.entity_list
 
         @hidden_by_entity_list = !list_item_template? && entity_list.empty?
@@ -63,12 +58,6 @@ module Templates
         yield store_items!
 
         yield prune_items!
-
-        super
-      end
-
-      wrapped_hook! def update_template
-        template_instance.update_columns(hidden_by_entity_list:)
 
         super
       end
@@ -119,6 +108,14 @@ module Templates
 
       wrapped_hook! def prune_items
         cached_entity_list.prune_items!
+
+        cached_entity_list.touch(:refreshed_at, :updated_at)
+
+        super
+      end
+
+      wrapped_hook! def update_template
+        template_instance.update_columns(hidden_by_entity_list:)
 
         super
       end
