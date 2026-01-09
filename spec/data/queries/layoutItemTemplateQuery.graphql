@@ -1,0 +1,879 @@
+query layoutItemTemplateQuery(
+  $slug: Slug!
+) {
+  item(slug: $slug) {
+    layouts {
+      hero {
+        ...HeroTemplateFragment
+        id
+      }
+      navigation {
+        ...EntityNavigationTemplateFragment
+        id
+      }
+      ...ProcessingCheckFragment
+      ...FullTextCheckFragment
+    }
+    ...SearchButtonFragment
+    ...EntityNavBarFragment
+    community {
+      ...SetCommunityFragment
+      id
+    }
+    id
+  }
+}
+
+fragment BreadcrumbLinkFragment on EntityBreadcrumb {
+  label
+  kind
+  slug
+}
+
+fragment BreadcrumbsBarFragment on Entity {
+  __isEntity: __typename
+  __typename
+  title
+  ... on Sluggable {
+    __isSluggable: __typename
+    slug
+  }
+  ... on Permalinkable {
+    __isPermalinkable: __typename
+    permalinks {
+      canonical
+      uri
+      id
+    }
+  }
+  ...BreadcrumbsFragment
+}
+
+fragment BreadcrumbsFragment on Entity {
+  __isEntity: __typename
+  __typename
+  title
+  breadcrumbs {
+    depth
+    ...BreadcrumbLinkFragment
+    id
+  }
+  ... on Sluggable {
+    __isSluggable: __typename
+    slug
+  }
+}
+
+fragment CommunityContextFragment on Community {
+  ...CommunityNameFragment
+  ...CommunityNavListFragment
+  ...CommunityPickerCommunityNameFragment
+}
+
+fragment CommunityHeroHeaderFragment on HeroLayoutInstance {
+  entity {
+    __typename
+    ... on Community {
+      heroImage {
+        ...ImageHeroTemplateFragment
+        hero {
+          webp {
+            url
+          }
+        }
+      }
+      heroImageLayout
+    }
+    ... on Node {
+      __isNode: __typename
+      id
+    }
+  }
+  template {
+    definition {
+      showHeroImage
+      showBigSearchPrompt
+      id
+    }
+    slots {
+      bigSearchPrompt {
+        ...sharedInlineSlotFragment
+      }
+      header {
+        empty
+      }
+      headerSummary {
+        empty
+      }
+    }
+    ...HeaderHeroFragment
+    id
+  }
+}
+
+fragment CommunityLogoFragment on ImageAttachment {
+  storage
+  original {
+    url
+    alt
+    width
+    height
+  }
+}
+
+fragment CommunityNameFragment on Community {
+  title
+  slug
+  logo {
+    storage
+    original {
+      width
+      height
+    }
+    ...CommunityLogoFragment
+  }
+}
+
+fragment CommunityNavListContentFragment on Community {
+  slug
+  orderings(availability: ENABLED) {
+    nodes {
+      name
+      slug
+      identifier
+      count
+      id
+    }
+  }
+  pages {
+    nodes {
+      slug
+      title
+      id
+    }
+  }
+}
+
+fragment CommunityNavListFragment on Community {
+  ...CommunityNavListContentFragment
+}
+
+fragment CommunityPickerCommunityNameFragment on Community {
+  title
+}
+
+fragment ContributorNameFragment on AnyContributor {
+  __isAnyContributor: __typename
+  ... on PersonContributor {
+    __typename
+    familyName
+    givenName
+  }
+  ... on OrganizationContributor {
+    __typename
+    legalName
+  }
+}
+
+fragment ContributorsListFragment on Entity {
+  __isEntity: __typename
+  ... on Item {
+    attributions {
+      roles {
+        label
+        id
+      }
+      contributor {
+        __typename
+        slug
+        ...ContributorNameFragment
+        ... on Node {
+          __isNode: __typename
+          id
+        }
+      }
+      id
+    }
+  }
+  ... on Collection {
+    attributions {
+      roles {
+        label
+        id
+      }
+      contributor {
+        __typename
+        slug
+        ...ContributorNameFragment
+        ... on Node {
+          __isNode: __typename
+          id
+        }
+      }
+      id
+    }
+  }
+}
+
+fragment CoverCardListFragment on ImageAttachment {
+  image: medium {
+    webp {
+      url
+      alt
+      width
+      height
+    }
+  }
+}
+
+fragment CoverImageFragment on ImageAttachment {
+  image: medium {
+    webp {
+      url
+      alt
+      width
+      height
+    }
+  }
+}
+
+fragment DOIFragment on HasDOI {
+  __isHasDOI: __typename
+  doiData {
+    doi
+    url
+  }
+}
+
+fragment DetailContentFragment on HeroTemplateInstance {
+  entity {
+    __typename
+    ... on Item {
+      slug
+      ...ContributorsListFragment
+    }
+    ... on Node {
+      __isNode: __typename
+      id
+    }
+  }
+  definition {
+    listContributors
+    id
+  }
+  slots {
+    subheader {
+      ...sharedInlineSlotFragment
+    }
+    subheaderSubtitle {
+      ...sharedInlineSlotFragment
+    }
+    subheaderAside {
+      ...sharedInlineSlotFragment
+    }
+    subheaderSummary {
+      ...sharedBlockSlotFragment
+    }
+    metadata {
+      ...sharedInlineSlotFragment
+    }
+    callToAction {
+      ...sharedBlockSlotFragment
+    }
+  }
+}
+
+fragment DetailCoverImageFragment on Entity {
+  __isEntity: __typename
+  ... on Collection {
+    id
+    title
+    ...getThumbWithFallbackFragment
+  }
+  ... on Item {
+    id
+    title
+    ...getThumbWithFallbackFragment
+  }
+}
+
+fragment DetailHeroFragment on HeroTemplateInstance {
+  entity {
+    __typename
+    ...DetailCoverImageFragment
+    ... on Node {
+      __isNode: __typename
+      id
+    }
+  }
+  definition {
+    showThumbnailImage
+    id
+  }
+  ...DetailContentFragment
+  ...DetailSidebarFragment
+}
+
+fragment DetailSidebarFragment on HeroTemplateInstance {
+  entity {
+    __typename
+    ... on Item {
+      entityViews {
+        ...ViewCountFragment
+      }
+      assetDownloads {
+        ...DownloadCountFragment
+      }
+    }
+    ... on Collection {
+      entityViews {
+        ...ViewCountFragment
+      }
+      assetDownloads {
+        ...DownloadCountFragment
+      }
+    }
+    ... on Node {
+      __isNode: __typename
+      id
+    }
+  }
+  definition {
+    showBasicViewMetrics
+    id
+  }
+  slots {
+    sidebar {
+      ...sharedBlockSlotFragment
+    }
+  }
+}
+
+fragment DownloadCountFragment on AnalyticsEventCountSummary {
+  total
+}
+
+fragment EntityHeroHeaderFragment on HeroLayoutInstance {
+  entity {
+    __typename
+    ... on Collection {
+      __typename
+      visibility
+      currentlyHidden
+      heroImage {
+        storage
+        ...ImageHeroTemplateFragment
+      }
+      schemaDefinition {
+        identifier
+        id
+      }
+    }
+    ... on Item {
+      __typename
+      visibility
+      currentlyHidden
+      heroImage {
+        storage
+        ...ImageHeroTemplateFragment
+      }
+      schemaDefinition {
+        identifier
+        id
+      }
+    }
+    ...BreadcrumbsBarFragment
+    ... on Node {
+      __isNode: __typename
+      id
+    }
+  }
+  template {
+    definition {
+      background
+      showHeroImage
+      showBreadcrumbs
+      showSharingLink
+      showSplitDisplay
+      id
+    }
+    ...HeaderHeroFragment
+    ...DetailHeroFragment
+    id
+  }
+}
+
+fragment EntityNavBarFragment on Entity {
+  __isEntity: __typename
+  ... on Node {
+    __isNode: __typename
+    id
+  }
+  ... on Sluggable {
+    __isSluggable: __typename
+    slug
+  }
+  title
+  ...EntityNavListFragment
+  layouts {
+    hero {
+      template {
+        definition {
+          enableDescendantBrowsing
+          enableDescendantSearch
+          id
+        }
+        slots {
+          descendantSearchPrompt {
+            ...sharedInlineSlotFragment
+          }
+        }
+        id
+      }
+      id
+    }
+  }
+}
+
+fragment EntityNavListFragment on Entity {
+  __isEntity: __typename
+  __typename
+  schemaVersion {
+    name
+    identifier
+    id
+  }
+  orderings(availability: ENABLED) {
+    nodes {
+      name
+      slug
+      identifier
+      count
+      id
+    }
+  }
+  pages {
+    nodes {
+      title
+      slug
+      id
+    }
+  }
+}
+
+fragment EntityNavigationTemplateFragment on NavigationLayoutInstance {
+  template {
+    definition {
+      background
+      id
+    }
+    ...NavigationTabsFragment
+    id
+  }
+}
+
+fragment FullTextCheckFragment on EntityLayouts {
+  main {
+    templates {
+      __typename
+      ... on DetailTemplateInstance {
+        definition {
+          showBody
+          variant
+          id
+        }
+        slots {
+          body {
+            valid
+            content
+          }
+        }
+      }
+      ... on Node {
+        __isNode: __typename
+        id
+      }
+    }
+    id
+  }
+}
+
+fragment HeaderHeroFragment on HeroTemplateInstance {
+  definition {
+    showSplitDisplay
+    id
+  }
+  ...HeaderSidebarFragment
+  ...HeaderTitleBlockFragment
+}
+
+fragment HeaderSidebarFragment on HeroTemplateInstance {
+  entity {
+    __typename
+    ... on HasDOI {
+      __isHasDOI: __typename
+      doiData {
+        doi
+      }
+    }
+    ...DOIFragment
+    ... on Item {
+      entityViews {
+        ...ViewCountFragment
+      }
+      assetDownloads {
+        ...DownloadCountFragment
+      }
+    }
+    ... on Collection {
+      entityViews {
+        ...ViewCountFragment
+      }
+      assetDownloads {
+        ...DownloadCountFragment
+      }
+    }
+    ... on Node {
+      __isNode: __typename
+      id
+    }
+  }
+  definition {
+    showDOI
+    showBasicViewMetrics
+    showSplitDisplay
+    id
+  }
+  slots {
+    headerSidebar {
+      ...sharedBlockSlotFragment
+    }
+  }
+}
+
+fragment HeaderTitleBlockFragment on HeroTemplateInstance {
+  entity {
+    __typename
+    ... on Community {
+      ...ContributorsListFragment
+    }
+    ... on Item {
+      ...ContributorsListFragment
+    }
+    ... on Collection {
+      id
+      slug
+      title
+      ...ContributorsListFragment
+      thumbnail {
+        storage
+        medium {
+          webp {
+            width
+            height
+          }
+        }
+        ...CoverImageFragment
+      }
+    }
+    ... on Node {
+      __isNode: __typename
+      id
+    }
+  }
+  definition {
+    listContributors
+    showThumbnailImage
+    showSplitDisplay
+    id
+  }
+  slots {
+    header {
+      ...sharedInlineSlotFragment
+    }
+    headerSubtitle {
+      ...sharedInlineSlotFragment
+    }
+    headerParent {
+      ...sharedInlineSlotFragment
+    }
+    headerAside {
+      ...sharedInlineSlotFragment
+    }
+    headerSummary {
+      ...sharedBlockSlotFragment
+    }
+    callToAction {
+      ...sharedBlockSlotFragment
+    }
+  }
+}
+
+fragment HeroTemplateFragment on HeroLayoutInstance {
+  entity {
+    __typename
+    ... on Community {
+      __typename
+    }
+    ... on Node {
+      __isNode: __typename
+      id
+    }
+  }
+  ...CommunityHeroHeaderFragment
+  ...EntityHeroHeaderFragment
+}
+
+fragment ImageHeroTemplateFragment on ImageAttachment {
+  hero {
+    webp {
+      url
+      alt
+      width
+      height
+    }
+  }
+  large {
+    webp {
+      url
+      width
+    }
+  }
+  medium {
+    webp {
+      url
+      width
+    }
+  }
+}
+
+fragment NavigationTabsFragment on NavigationTemplateInstance {
+  entity {
+    __typename
+    ... on Item {
+      __typename
+      pages {
+        edges {
+          node {
+            title
+            slug
+            id
+          }
+        }
+      }
+      contributions {
+        pageInfo {
+          totalCount
+        }
+      }
+      assets {
+        pageInfo {
+          totalCount
+        }
+      }
+    }
+    ... on Collection {
+      __typename
+      pages {
+        edges {
+          node {
+            title
+            slug
+            id
+          }
+        }
+      }
+      contributions {
+        pageInfo {
+          totalCount
+        }
+      }
+      assets {
+        pageInfo {
+          totalCount
+        }
+      }
+    }
+    ... on Community {
+      __typename
+      pages {
+        edges {
+          node {
+            title
+            slug
+            id
+          }
+        }
+      }
+      assets {
+        pageInfo {
+          totalCount
+        }
+      }
+    }
+    ... on Node {
+      __isNode: __typename
+      id
+    }
+  }
+  definition {
+    hideMetadata
+    id
+  }
+  slots {
+    entityLabel {
+      ...sharedInlineSlotFragment
+    }
+  }
+}
+
+fragment ProcessingCheckFragment on EntityLayouts {
+  main {
+    allHidden
+    templates {
+      __typename
+      ... on TemplateInstance {
+        __isTemplateInstance: __typename
+        __typename
+      }
+      ... on Node {
+        __isNode: __typename
+        id
+      }
+    }
+    id
+  }
+}
+
+fragment SearchButtonFragment on Entity {
+  __isEntity: __typename
+  ...SearchModalFragment
+}
+
+fragment SearchModalFragment on Entity {
+  __isEntity: __typename
+  __typename
+  ... on Sluggable {
+    __isSluggable: __typename
+    slug
+  }
+  title
+  breadcrumbs {
+    crumb {
+      __typename
+      ... on Sluggable {
+        __isSluggable: __typename
+        slug
+      }
+      __isEntity: __typename
+      title
+      ... on Node {
+        __isNode: __typename
+        id
+      }
+    }
+    id
+  }
+}
+
+fragment SetCommunityFragment on Community {
+  ...CommunityContextFragment
+}
+
+fragment ViewCountFragment on AnalyticsEventCountSummary {
+  total
+}
+
+fragment getThumbWithFallbackFragment on Entity {
+  __isEntity: __typename
+  ... on Collection {
+    thumbnail {
+      image: medium {
+        webp {
+          url
+        }
+      }
+      ...CoverImageFragment
+      ...CoverCardListFragment
+    }
+    breadcrumbs {
+      crumb {
+        __typename
+        ... on Collection {
+          thumbnail {
+            image: medium {
+              webp {
+                url
+              }
+            }
+            ...CoverImageFragment
+            ...CoverCardListFragment
+          }
+        }
+        ... on Node {
+          __isNode: __typename
+          id
+        }
+      }
+      id
+    }
+  }
+  ... on Item {
+    thumbnail {
+      image: medium {
+        webp {
+          url
+        }
+      }
+      ...CoverImageFragment
+      ...CoverCardListFragment
+    }
+    breadcrumbs {
+      crumb {
+        __typename
+        ... on Collection {
+          thumbnail {
+            image: medium {
+              webp {
+                url
+              }
+            }
+            ...CoverImageFragment
+            ...CoverCardListFragment
+          }
+        }
+        ... on Item {
+          thumbnail {
+            image: medium {
+              webp {
+                url
+              }
+            }
+            ...CoverImageFragment
+            ...CoverCardListFragment
+          }
+        }
+        ... on Node {
+          __isNode: __typename
+          id
+        }
+      }
+      id
+    }
+  }
+}
+
+fragment sharedBlockSlotFragment on TemplateSlotBlockInstance {
+  empty
+  content
+  kind
+  valid
+}
+
+fragment sharedInlineSlotFragment on TemplateSlotInlineInstance {
+  empty
+  content
+  kind
+  valid
+  hidesTemplate
+}

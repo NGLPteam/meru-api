@@ -1,0 +1,42 @@
+query itemMetadataQuery(
+  $slug: Slug!
+) {
+  item(slug: $slug) {
+    title
+    heroImage {
+      image: large {
+        webp {
+          url
+        }
+      }
+    }
+    heroImageMetadata {
+      alt
+    }
+    thumbnail {
+      image: large {
+        webp {
+          url
+        }
+      }
+    }
+    thumbnailMetadata {
+      alt
+    }
+    about: schemaProperty(fullPath: "about") {
+      __typename
+      ... on MarkdownProperty {
+        content
+      }
+    }
+    abstract: schemaProperty(fullPath: "abstract") {
+      __typename
+      ... on FullTextProperty {
+        fullText {
+          content
+        }
+      }
+    }
+    id
+  }
+}

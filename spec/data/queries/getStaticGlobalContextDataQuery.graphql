@@ -1,0 +1,27 @@
+query getStaticGlobalContextDataQuery {
+  globalConfiguration {
+    site {
+      providerName
+      installationName
+      installationHomePageCopy
+      logoMode
+      footer {
+        description
+        copyrightStatement
+      }
+    }
+    entities {
+      suppressExternalLinks
+    }
+    id
+  }
+  allCommunities: communities(order: POSITION_ASCENDING) {
+    edges {
+      node {
+        slug
+        title
+        id
+      }
+    }
+  }
+}

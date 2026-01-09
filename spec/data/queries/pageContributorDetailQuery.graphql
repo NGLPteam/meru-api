@@ -1,0 +1,162 @@
+query pageContributorDetailQuery(
+  $slug: Slug!
+  $page: Int
+) {
+  contributor(slug: $slug) {
+    __typename
+    ...ContributorDetailFragment
+    ... on Node {
+      __isNode: __typename
+      id
+    }
+  }
+}
+
+fragment BrowseListLayoutFragment on PageInfo {
+  ...PaginationFragment
+  ...PageCountFragment
+}
+
+fragment ContributionSummaryEntityFragment on Entity {
+  __isEntity: __typename
+  __typename
+  title
+  subtitle
+  thumbnail {
+    storage
+    ...SquareThumbnailFragment
+  }
+  ... on ReferencesGlobalEntityDates {
+    __isReferencesGlobalEntityDates: __typename
+    published {
+      value
+      ...PrecisionDateFragment
+    }
+  }
+  ... on Sluggable {
+    __isSluggable: __typename
+    slug
+  }
+  ... on Item {
+    summary
+  }
+  ... on Collection {
+    summary
+  }
+}
+
+fragment ContributionSummaryFragment on ContributorAttribution {
+  __isContributorAttribution: __typename
+  ... on ContributorItemAttribution {
+    roles {
+      identifier
+      label
+      id
+    }
+    entity: item {
+      ...ContributionSummaryEntityFragment
+      id
+    }
+  }
+  ... on ContributorCollectionAttribution {
+    roles {
+      identifier
+      label
+      id
+    }
+    entity: collection {
+      ...ContributionSummaryEntityFragment
+      id
+    }
+  }
+}
+
+fragment ContributorAvatarFragment on ImageAttachment {
+  small {
+    webp {
+      alt
+      url
+    }
+  }
+}
+
+fragment ContributorDetailFragment on Contributor {
+  __isContributor: __typename
+  ...ContributorNameFragment
+  bio
+  orcid
+  attributions(page: $page, perPage: 25) {
+    nodes {
+      __typename
+      ... on ContributorItemAttribution {
+        id
+      }
+      ... on ContributorCollectionAttribution {
+        id
+      }
+      ...ContributionSummaryFragment
+      ... on Node {
+        __isNode: __typename
+        id
+      }
+    }
+    pageInfo {
+      totalCount
+      ...BrowseListLayoutFragment
+    }
+  }
+  image {
+    storage
+    ...ContributorAvatarFragment
+  }
+  links {
+    title
+    url
+  }
+  ... on PersonContributor {
+    affiliation
+    title
+  }
+  ... on Node {
+    __isNode: __typename
+    id
+  }
+}
+
+fragment ContributorNameFragment on AnyContributor {
+  __isAnyContributor: __typename
+  ... on PersonContributor {
+    __typename
+    familyName
+    givenName
+  }
+  ... on OrganizationContributor {
+    __typename
+    legalName
+  }
+}
+
+fragment PageCountFragment on PageInfo {
+  totalCount
+  page
+  perPage
+}
+
+fragment PaginationFragment on PageInfo {
+  page
+  pageCount
+}
+
+fragment PrecisionDateFragment on VariablePrecisionDate {
+  precision
+  value
+}
+
+fragment SquareThumbnailFragment on ImageAttachment {
+  thumb: medium {
+    webp {
+      alt
+      url
+    }
+  }
+}
