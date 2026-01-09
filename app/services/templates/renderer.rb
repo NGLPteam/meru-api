@@ -28,6 +28,8 @@ module Templates
         yield persist_instance!
 
         yield render!
+
+        yield process!
       end
 
       Success template_instance
@@ -60,6 +62,13 @@ module Templates
     end
 
     around_render :track_render!
+
+    # @see Templates::Instances::Processor
+    wrapped_hook! def process
+      yield template_instance.process
+
+      super
+    end
 
     private
 

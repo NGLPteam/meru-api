@@ -9,6 +9,8 @@ module TemplateInstance
   include Renderable
 
   included do
+    self.filter_attributes = [:config, :slots]
+
     attribute :config, Templates::Instances::Config.to_type
 
     belongs_to :entity, polymorphic: true

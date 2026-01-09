@@ -42,5 +42,23 @@ FactoryBot.define do
         Rails.root.join("spec", "data", "lorempixel.jpg").open
       end
     end
+
+    trait :journal_article do
+      transient do
+        issue_position { nil }
+
+        schema_properties do
+          {
+            issue_position:,
+          }
+        end
+      end
+
+      schema { "nglp:journal_article" }
+
+      after(:create) do |item, evaluator|
+        item.patch_properties!(evaluator.schema_properties)
+      end
+    end
   end
 end

@@ -7030,7 +7030,8 @@ CREATE TABLE public.templates_cached_entity_lists (
     maximum_depth integer,
     minimum_depth integer,
     created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    refreshed_at timestamp without time zone
 );
 
 
@@ -12889,6 +12890,13 @@ CREATE INDEX index_templates_cached_entity_lists_on_entity ON public.templates_c
 
 
 --
+-- Name: index_templates_cached_entity_lists_on_refreshed_at; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_templates_cached_entity_lists_on_refreshed_at ON public.templates_cached_entity_lists USING btree (refreshed_at);
+
+
+--
 -- Name: index_templates_contributor_list_definitions_on_position; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -15262,6 +15270,7 @@ ALTER TABLE ONLY public.templates_ordering_instances
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20260109184446'),
 ('20251119062322'),
 ('20251119042325'),
 ('20251119040707'),

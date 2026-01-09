@@ -74,6 +74,7 @@ module Layouts
       super
     end
 
+    # @see Layouts::Instances::Processor
     wrapped_hook! def process
       yield layout_instance.process
 

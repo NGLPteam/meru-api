@@ -19655,6 +19655,19 @@
   default_function: CURRENT_TIMESTAMP
   has_default: true
   virtual: false
+- id: Templates::CachedEntityList#refreshed_at
+  model_name: Templates::CachedEntityList
+  table_name: templates_cached_entity_lists
+  name: refreshed_at
+  type: datetime
+  'null': true
+  sql_type_metadata:
+    sql_type: timestamp without time zone
+    type: datetime
+  default:
+  default_function:
+  has_default: false
+  virtual: false
 - id: Templates::CachedEntityListItem#id
   model_name: Templates::CachedEntityListItem
   table_name: templates_cached_entity_list_items
