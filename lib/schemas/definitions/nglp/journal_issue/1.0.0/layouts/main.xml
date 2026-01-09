@@ -33,6 +33,7 @@
     </contributor-list>
     <ordering>
       <background>light</background>
+      <ordering-identifier>issues</ordering-identifier>
       <ordering-source>parent</ordering-source>
       <selection-source>self</selection-source>
       <slots>
