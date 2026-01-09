@@ -23,6 +23,7 @@
     </descendant-list>
     <ordering>
       <background>light</background>
+      <ordering-identifier>volumes</ordering-identifier>
       <ordering-source>parent</ordering-source>
       <selection-source>self</selection-source>
       <slots>
