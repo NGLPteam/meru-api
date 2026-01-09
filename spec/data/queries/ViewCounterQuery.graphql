@@ -1,0 +1,16 @@
+query ViewCounterQuery(
+  $slug: Slug!
+) {
+  item(slug: $slug) {
+    __typename
+    id
+  }
+  collection(slug: $slug) {
+    __typename
+    id
+  }
+  community(slug: $slug) {
+    __typename
+    id
+  }
+}

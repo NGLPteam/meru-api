@@ -1,0 +1,139 @@
+query DashboardLayoutQuery(
+  $page: Int
+  $order: EntityOrder
+) {
+  ...DashboardInstallationFragment
+  ...DashboardCollectionsFragment_1KnpCu
+  ...DashboardItemsFragment_1KnpCu
+}
+
+fragment DashboardCollectionsFragment_1KnpCu on Query {
+  viewer {
+    collections(access: UPDATE, page: $page, order: $order, perPage: 10) {
+      ...DashboardCollectionsListFragment
+    }
+    id
+  }
+}
+
+fragment DashboardCollectionsListFragment on CollectionConnection {
+  nodes {
+    id
+    title
+    slug
+    schemaVersion {
+      name
+      number
+      id
+    }
+    ...EntityThumbnailColumnFragment
+  }
+  ...ModelPageCountActionsFragment
+  ...ModelPaginationFragment
+}
+
+fragment DashboardInstallationFragment on Query {
+  communities {
+    pageInfo {
+      totalCount
+    }
+  }
+  contributors {
+    pageInfo {
+      totalCount
+    }
+  }
+  users {
+    pageInfo {
+      totalCount
+    }
+  }
+  viewer {
+    allCollections: collections(nodeFilter: ROOTS_AND_LEAVES) {
+      pageInfo {
+        totalCount
+      }
+    }
+    allItems: items(nodeFilter: ROOTS_AND_LEAVES) {
+      pageInfo {
+        totalCount
+      }
+    }
+    id
+  }
+}
+
+fragment DashboardItemsFragment_1KnpCu on Query {
+  viewer {
+    items(access: UPDATE, page: $page, order: $order, perPage: 10) {
+      ...DashboardItemsListFragment
+    }
+    id
+  }
+}
+
+fragment DashboardItemsListFragment on ItemConnection {
+  nodes {
+    id
+    title
+    slug
+    schemaVersion {
+      name
+      number
+      id
+    }
+    ...EntityThumbnailColumnFragment
+  }
+  ...ModelPageCountActionsFragment
+  ...ModelPaginationFragment
+}
+
+fragment EntityThumbnailColumnFragment on Entity {
+  __isEntity: __typename
+  __typename
+  title
+  thumbnail {
+    storage
+    thumb: small {
+      webp {
+        ...ImageFragment
+      }
+    }
+  }
+  ... on Node {
+    __isNode: __typename
+    id
+  }
+  ... on Sluggable {
+    __isSluggable: __typename
+    slug
+  }
+}
+
+fragment ImageFragment on Image {
+  __isImage: __typename
+  alt
+  url
+  width
+  height
+}
+
+fragment ModelPageCountActionsFragment on Paginated {
+  __isPaginated: __typename
+  pageInfo {
+    page
+    pageCount
+    perPage
+    hasNextPage
+    hasPreviousPage
+    totalCount
+  }
+}
+
+fragment ModelPaginationFragment on Paginated {
+  __isPaginated: __typename
+  pageInfo {
+    page
+    pageCount
+  }
+}

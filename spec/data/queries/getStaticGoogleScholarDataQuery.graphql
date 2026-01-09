@@ -1,0 +1,131 @@
+query getStaticGoogleScholarDataQuery(
+  $slug: Slug!
+) {
+  item(slug: $slug) {
+    ...getStaticGoogleScholarDataFragment
+    id
+  }
+}
+
+fragment getStaticGoogleScholarDataFragment on Entity {
+  __isEntity: __typename
+  ... on Item {
+    title
+    schemaDefinition {
+      identifier
+      id
+    }
+    published {
+      precision
+      value
+    }
+    pdf: schemaProperty(fullPath: "pdf_version") {
+      __typename
+      ... on AssetProperty {
+        asset {
+          __typename
+          ... on AssetPDF {
+            downloadUrl
+          }
+          id
+        }
+      }
+    }
+    community {
+      title
+      id
+    }
+    contributions {
+      nodes {
+        role
+        contributor {
+          __typename
+          ... on PersonContributor {
+            __typename
+            familyName
+            givenName
+          }
+          ... on OrganizationContributor {
+            __typename
+            legalName
+          }
+          ... on Node {
+            __isNode: __typename
+            id
+          }
+        }
+        id
+      }
+    }
+    issueNumber: schemaProperty(fullPath: "issue.number") {
+      __typename
+      ... on StringProperty {
+        value: content
+      }
+    }
+    volumeNumber: schemaProperty(fullPath: "volume.id") {
+      __typename
+      ... on StringProperty {
+        value: content
+      }
+    }
+    startPage: schemaProperty(fullPath: "issue.fpage") {
+      __typename
+      ... on IntegerProperty {
+        value: integerValue
+      }
+    }
+    endPage: schemaProperty(fullPath: "issue.lpage") {
+      __typename
+      ... on IntegerProperty {
+        value: integerValue
+      }
+    }
+    institution: schemaProperty(fullPath: "degree.grantor") {
+      __typename
+      ... on StringProperty {
+        value: content
+      }
+    }
+    journal: ancestorOfType(schema: "nglp:journal") {
+      __typename
+      ... on Collection {
+        title
+      }
+      ... on Node {
+        __isNode: __typename
+        id
+      }
+    }
+    volume: ancestorOfType(schema: "nglp:journal_volume") {
+      __typename
+      ... on Collection {
+        number: schemaProperty(fullPath: "number") {
+          __typename
+          ... on StringProperty {
+            value: content
+          }
+        }
+      }
+      ... on Node {
+        __isNode: __typename
+        id
+      }
+    }
+    issue: ancestorOfType(schema: "nglp:journal_issue") {
+      __typename
+      ... on Collection {
+        number: schemaProperty(fullPath: "number") {
+          __typename
+          ... on StringProperty {
+            value: content
+          }
+        }
+      }
+      ... on Node {
+        __isNode: __typename
+        id
+      }
+    }
+  }
+}

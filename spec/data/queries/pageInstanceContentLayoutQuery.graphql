@@ -1,0 +1,81 @@
+query pageInstanceContentLayoutQuery {
+  communities(order: POSITION_ASCENDING) {
+    edges {
+      node {
+        slug
+        id
+      }
+    }
+    pageInfo {
+      totalCount
+    }
+    ...InstanceCommunitiesFragment
+  }
+  ...InstanceHeroFragment
+}
+
+fragment InstanceCommunitiesFragment on CommunityConnection {
+  edges {
+    node {
+      slug
+      ...InstanceCommunitySummaryFragment
+      id
+    }
+  }
+}
+
+fragment InstanceCommunitySummaryFragment on Community {
+  slug
+  title
+  tagline
+  summary
+  orderings {
+    nodes {
+      slug
+      name
+      count
+      id
+    }
+  }
+  heroImage {
+    large {
+      webp {
+        alt
+        url
+        width
+        height
+      }
+    }
+    medium {
+      webp {
+        url
+        width
+      }
+    }
+    small {
+      webp {
+        url
+        width
+      }
+    }
+  }
+  logo {
+    original {
+      alt
+      url
+      width
+      height
+    }
+  }
+}
+
+fragment InstanceHeroFragment on Query {
+  globalConfiguration {
+    site {
+      providerName
+      installationName
+      installationHomePageCopy
+    }
+    id
+  }
+}

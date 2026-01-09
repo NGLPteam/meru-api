@@ -1,0 +1,34 @@
+query collectionMetadataQuery(
+  $slug: Slug!
+) {
+  collection(slug: $slug) {
+    title
+    heroImage {
+      image: large {
+        webp {
+          url
+        }
+      }
+    }
+    heroImageMetadata {
+      alt
+    }
+    thumbnail {
+      image: large {
+        webp {
+          url
+        }
+      }
+    }
+    thumbnailMetadata {
+      alt
+    }
+    about: schemaProperty(fullPath: "about") {
+      __typename
+      ... on MarkdownProperty {
+        content
+      }
+    }
+    id
+  }
+}

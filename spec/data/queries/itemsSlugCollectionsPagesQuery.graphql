@@ -1,0 +1,294 @@
+query itemsSlugCollectionsPagesQuery(
+  $order: EntityOrder
+  $page: Int!
+  $predicates: [SearchPredicateInput!]
+  $query: String
+  $hasQuery: Boolean!
+  $slug: Slug!
+  $schema: [String!]
+) {
+  collection(slug: $slug) {
+    items(order: $order, page: $page, perPage: 20) {
+      ...ItemListFragment
+    }
+    search(visibility: ALL, maxDepth: 1) {
+      ...ItemListSearchFragment_1V70IR
+    }
+    id
+  }
+}
+
+fragment ContributorsColumnFragment on Entity {
+  __isEntity: __typename
+  ... on Item {
+    slug
+    contributions(page: 1, perPage: 1) {
+      edges {
+        node {
+          contributor {
+            __typename
+            ... on OrganizationContributor {
+              slug
+              legalName
+            }
+            ... on PersonContributor {
+              slug
+              givenName
+              familyName
+            }
+            ... on Node {
+              __isNode: __typename
+              id
+            }
+          }
+          id
+        }
+      }
+      pageInfo {
+        totalCount
+      }
+    }
+  }
+}
+
+fragment CurrentSearchFiltersFragment on SearchScope {
+  coreProperties {
+    ... on SearchableProperty {
+      __isSearchableProperty: __typename
+      searchPath
+      label
+    }
+  }
+  schemas: availableSchemaVersions {
+    name
+    schemaDefinition {
+      slug
+      id
+    }
+    searchableProperties {
+      __typename
+      __isSearchableProperty: __typename
+      searchPath
+      label
+    }
+    id
+  }
+}
+
+fragment EntityThumbnailColumnFragment on Entity {
+  __isEntity: __typename
+  __typename
+  title
+  thumbnail {
+    storage
+    thumb: small {
+      webp {
+        ...ImageFragment
+      }
+    }
+  }
+  ... on Node {
+    __isNode: __typename
+    id
+  }
+  ... on Sluggable {
+    __isSluggable: __typename
+    slug
+  }
+}
+
+fragment ImageFragment on Image {
+  __isImage: __typename
+  alt
+  url
+  width
+  height
+}
+
+fragment ItemListFragment on ItemConnection {
+  nodes {
+    id
+    slug
+    title
+    schemaVersion {
+      name
+      number
+      id
+    }
+    items {
+      pageInfo {
+        totalCount
+      }
+    }
+    allowedActions
+    ...ContributorsColumnFragment
+    ...EntityThumbnailColumnFragment
+    ...PublishedDateColumnFragment
+  }
+  ...ModelListPageFragment
+}
+
+fragment ItemListSearchFragment_1V70IR on SearchScope {
+  results(access: UPDATE, query: $query, page: $page, perPage: 20, predicates: $predicates, order: $order, scope: ITEM, schema: $schema) @include(if: $hasQuery) {
+    nodes {
+      slug
+      entity {
+        __typename
+        ... on Node {
+          __isNode: __typename
+          id
+        }
+        ... on Sluggable {
+          __isSluggable: __typename
+          slug
+        }
+        __isEntity: __typename
+        title
+        schemaVersion {
+          name
+          number
+          id
+        }
+        allowedActions
+        ...ContributorsColumnFragment
+        ...EntityThumbnailColumnFragment
+        ...PublishedDateColumnFragment
+        ... on Item {
+          items {
+            pageInfo {
+              totalCount
+            }
+          }
+        }
+      }
+      id
+    }
+    ...ModelListPageFragment
+  }
+  ...ModelListPageSearchFragment
+}
+
+fragment ModelListPageFragment on Paginated {
+  __isPaginated: __typename
+  ...ModelPageCountActionsFragment
+  ...ModelPaginationFragment
+}
+
+fragment ModelListPageSearchFragment on SearchScope {
+  ...CurrentSearchFiltersFragment
+  ...SearchWithFiltersFragment
+}
+
+fragment ModelPageCountActionsFragment on Paginated {
+  __isPaginated: __typename
+  pageInfo {
+    page
+    pageCount
+    perPage
+    hasNextPage
+    hasPreviousPage
+    totalCount
+  }
+}
+
+fragment ModelPaginationFragment on Paginated {
+  __isPaginated: __typename
+  pageInfo {
+    page
+    pageCount
+  }
+}
+
+fragment PrecisionDateFragment on VariablePrecisionDate {
+  precision
+  value
+}
+
+fragment PublishedDateColumnFragment on ReferencesGlobalEntityDates {
+  __isReferencesGlobalEntityDates: __typename
+  published {
+    ...PrecisionDateFragment
+  }
+}
+
+fragment SearchFilterBooleanFragment on SearchableProperty {
+  __isSearchableProperty: __typename
+  label
+  description
+  searchPath
+  searchOperators
+}
+
+fragment SearchFilterDrawerFragment on SearchScope {
+  ...SearchFilterFormFragment
+}
+
+fragment SearchFilterFormFragment on SearchScope {
+  coreProperties {
+    ... on SearchableProperty {
+      __isSearchableProperty: __typename
+      searchPath
+    }
+    ...SearchFilterFragment
+  }
+  schemas: availableSchemaVersions {
+    searchableProperties {
+      __typename
+      __isSearchableProperty: __typename
+      searchPath
+      label
+      ...SearchFilterFragment
+    }
+    id
+  }
+  ...SearchSchemaFilterFragment
+}
+
+fragment SearchFilterFragment on SearchableProperty {
+  __isSearchableProperty: __typename
+  ... on ScalarProperty {
+    __isScalarProperty: __typename
+    type
+  }
+  ...SearchFilterInputFragment
+  ...SearchFilterSelectFragment
+  ...SearchFilterBooleanFragment
+}
+
+fragment SearchFilterInputFragment on SearchableProperty {
+  __isSearchableProperty: __typename
+  label
+  description
+  searchPath
+  searchOperators
+}
+
+fragment SearchFilterSelectFragment on SearchableProperty {
+  __isSearchableProperty: __typename
+  label
+  description
+  searchPath
+  searchOperators
+  ... on SelectProperty {
+    options {
+      label
+      value
+    }
+  }
+}
+
+fragment SearchSchemaFilterFragment on SearchScope {
+  schemas: availableSchemaVersions {
+    name
+    kind
+    schemaDefinition {
+      slug
+      id
+    }
+    id
+  }
+}
+
+fragment SearchWithFiltersFragment on SearchScope {
+  ...SearchFilterDrawerFragment
+}

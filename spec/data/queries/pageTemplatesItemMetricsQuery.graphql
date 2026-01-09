@@ -1,0 +1,49 @@
+query pageTemplatesItemMetricsQuery(
+  $slug: Slug!
+  $dateRange: DateFilterInput!
+  $precision: AnalyticsPrecision!
+  $usOnly: Boolean!
+) {
+  item(slug: $slug) {
+    ...ArticleAnalyticsBlockFragment_3yzii9
+    id
+  }
+}
+
+fragment ArticleAnalyticsBlockFragment_3yzii9 on Item {
+  downloadsByDate: assetDownloads(dateFilter: $dateRange, precision: $precision) {
+    total
+    unfilteredTotal
+    minDate
+    results {
+      count
+      date
+    }
+  }
+  assetDownloadsByRegion(dateFilter: $dateRange, usOnly: $usOnly) {
+    total
+    results {
+      countryCode
+      regionCode
+      count
+    }
+  }
+  viewsByDate: entityViews(dateFilter: $dateRange, precision: $precision) {
+    total
+    unfilteredTotal
+    minDate
+    results {
+      count
+      date
+    }
+  }
+  entityViewsByRegion(dateFilter: $dateRange, usOnly: $usOnly) {
+    total
+    results {
+      countryCode
+      regionCode
+      count
+    }
+  }
+  id
+}

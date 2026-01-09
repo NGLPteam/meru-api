@@ -1,0 +1,1022 @@
+query pageTemplatesItemMetadataQuery(
+  $slug: Slug!
+) {
+  item(slug: $slug) {
+    layouts {
+      metadata {
+        template {
+          ...MetadataTemplateFragment
+          id
+        }
+        id
+      }
+      main {
+        ...MainLayoutFragment
+        id
+      }
+    }
+    id
+  }
+}
+
+fragment AnnouncementsFragment on AnnouncementConnection {
+  nodes {
+    teaser
+    header
+    slug
+    id
+  }
+}
+
+fragment BlurbTemplateFragment on BlurbTemplateInstance {
+  __typename
+  hidden
+  blurbDefinition: definition {
+    background
+    width
+    id
+  }
+  slots {
+    header {
+      ...sharedInlineSlotFragment
+    }
+    subheader {
+      ...sharedInlineSlotFragment
+    }
+    body {
+      ...sharedBlockSlotFragment
+    }
+  }
+}
+
+fragment ColumnsDetailFragment on DetailTemplateInstance {
+  slots {
+    header {
+      ...sharedInlineSlotFragment
+    }
+    itemsA {
+      ...sharedBlockSlotFragment
+    }
+    itemsB {
+      ...sharedBlockSlotFragment
+    }
+    itemsC {
+      ...sharedBlockSlotFragment
+    }
+    itemsD {
+      ...sharedBlockSlotFragment
+    }
+  }
+}
+
+fragment ContentImageFragment on ImageAttachment {
+  large {
+    webp {
+      alt
+      url
+      width
+      height
+    }
+  }
+  medium {
+    webp {
+      url
+      width
+    }
+  }
+  small {
+    webp {
+      url
+      width
+    }
+  }
+}
+
+fragment ContributorAvatarFragment on ImageAttachment {
+  small {
+    webp {
+      alt
+      url
+    }
+  }
+}
+
+fragment ContributorFragment on Attribution {
+  __isAttribution: __typename
+  roles {
+    identifier
+    label
+    id
+  }
+  contributor {
+    __typename
+    title
+    affiliation
+    slug
+    image {
+      ...ContributorAvatarFragment
+    }
+    ...ContributorNameFragment
+    ... on Node {
+      __isNode: __typename
+      id
+    }
+  }
+}
+
+fragment ContributorNameFragment on AnyContributor {
+  __isAnyContributor: __typename
+  ... on PersonContributor {
+    __typename
+    familyName
+    givenName
+  }
+  ... on OrganizationContributor {
+    __typename
+    legalName
+  }
+}
+
+fragment ContributorsListFragment on Entity {
+  __isEntity: __typename
+  ... on Item {
+    attributions {
+      roles {
+        label
+        id
+      }
+      contributor {
+        __typename
+        slug
+        ...ContributorNameFragment
+        ... on Node {
+          __isNode: __typename
+          id
+        }
+      }
+      id
+    }
+  }
+  ... on Collection {
+    attributions {
+      roles {
+        label
+        id
+      }
+      contributor {
+        __typename
+        slug
+        ...ContributorNameFragment
+        ... on Node {
+          __isNode: __typename
+          id
+        }
+      }
+      id
+    }
+  }
+}
+
+fragment ContributorsTemplateFragment on ContributorListTemplateInstance {
+  __typename
+  entity {
+    __typename
+    ... on Item {
+      __typename
+      slug
+      attributions {
+        ...ContributorFragment
+        id
+      }
+    }
+    ... on Collection {
+      __typename
+      slug
+      attributions {
+        ...ContributorFragment
+        id
+      }
+    }
+    ... on Node {
+      __isNode: __typename
+      id
+    }
+  }
+  contributorsDefinition: definition {
+    background
+    limit
+    width
+    id
+  }
+  slots {
+    header {
+      ...sharedInlineSlotFragment
+    }
+  }
+}
+
+fragment CoverCardListFragment on ImageAttachment {
+  image: medium {
+    webp {
+      url
+      alt
+      width
+      height
+    }
+  }
+}
+
+fragment CoverImageFragment on ImageAttachment {
+  image: medium {
+    webp {
+      url
+      alt
+      width
+      height
+    }
+  }
+}
+
+fragment DescendantsTemplateFragment on AnyMainTemplateInstance {
+  __isAnyMainTemplateInstance: __typename
+  ... on DescendantListTemplateInstance {
+    entity {
+      __typename
+      ... on Sluggable {
+        __isSluggable: __typename
+        slug
+      }
+      ... on Node {
+        __isNode: __typename
+        id
+      }
+    }
+    descendantsDefinition: definition {
+      variant
+      id
+    }
+  }
+  ...sharedListTemplateFragment
+}
+
+fragment DetailTemplateFragment on DetailTemplateInstance {
+  __typename
+  hidden
+  detailDefinition: definition {
+    background
+    variant
+    id
+  }
+  ...SummaryDetailFragment
+  ...FullDetailFragment
+  ...ColumnsDetailFragment
+}
+
+fragment FactoryTemplatesFragment on AnyMainTemplateInstance {
+  __isAnyMainTemplateInstance: __typename
+  ... on TemplateInstance {
+    __isTemplateInstance: __typename
+    templateKind
+  }
+  ... on ContributorListTemplateInstance {
+    ...ContributorsTemplateFragment
+  }
+  ... on DetailTemplateInstance {
+    ...DetailTemplateFragment
+  }
+  ... on OrderingTemplateInstance {
+    ...OrderingNavigationTemplateFragment
+  }
+  ... on PageListTemplateInstance {
+    ...PagesTemplateFragment
+  }
+  ... on DescendantListTemplateInstance {
+    slots {
+      blockHeader {
+        content
+      }
+    }
+    entityList {
+      empty
+    }
+  }
+  ... on LinkListTemplateInstance {
+    entityList {
+      empty
+    }
+  }
+  ... on BlurbTemplateInstance {
+    ...BlurbTemplateFragment
+  }
+  ...DescendantsTemplateFragment
+  ...LinksTemplateFragment
+}
+
+fragment FullDetailFragment on DetailTemplateInstance {
+  entity {
+    __typename
+    ... on Item {
+      __typename
+      heroImage {
+        storage
+        ...ContentImageFragment
+      }
+    }
+    ... on Collection {
+      __typename
+      heroImage {
+        storage
+        ...ContentImageFragment
+      }
+    }
+    ... on Node {
+      __isNode: __typename
+      id
+    }
+  }
+  detailDefinition: definition {
+    showBody
+    showHeroImage
+    id
+  }
+  slots {
+    header {
+      ...sharedInlineSlotFragment
+    }
+    subheader {
+      ...sharedInlineSlotFragment
+    }
+    body {
+      ...sharedBlockSlotFragment
+    }
+  }
+}
+
+fragment LinksTemplateFragment on AnyMainTemplateInstance {
+  __isAnyMainTemplateInstance: __typename
+  ... on LinkListTemplateInstance {
+    __typename
+    linksDefinition: definition {
+      variant
+      id
+    }
+  }
+  ...sharedListTemplateFragment
+}
+
+fragment ListPagesTemplateFragment on Entity {
+  __isEntity: __typename
+  ... on Item {
+    pages {
+      edges {
+        node {
+          slug
+          title
+          id
+        }
+      }
+    }
+  }
+  ... on Collection {
+    pages {
+      edges {
+        node {
+          slug
+          title
+          id
+        }
+      }
+    }
+  }
+  ... on Community {
+    pages {
+      edges {
+        node {
+          slug
+          title
+          id
+        }
+      }
+    }
+  }
+}
+
+fragment MainLayoutFragment on MainLayoutInstance {
+  allHidden
+  entity {
+    __typename
+    ... on Node {
+      __isNode: __typename
+      id
+    }
+  }
+  templates {
+    __typename
+    ... on TemplateInstance {
+      __isTemplateInstance: __typename
+      hidden
+      templateKind
+      prevSiblings {
+        dark
+        hidden
+        position
+        templateKind
+        id
+      }
+      nextSiblings {
+        dark
+        hidden
+        position
+        templateKind
+        id
+      }
+    }
+    ...FactoryTemplatesFragment
+    ... on Node {
+      __isNode: __typename
+      id
+    }
+  }
+}
+
+fragment MetadataTemplateFragment on MetadataTemplateInstance {
+  definition {
+    background
+    id
+  }
+  slots {
+    header {
+      ...sharedInlineSlotFragment
+    }
+    itemsA {
+      ...sharedBlockSlotFragment
+    }
+    itemsB {
+      ...sharedBlockSlotFragment
+    }
+    itemsC {
+      ...sharedBlockSlotFragment
+    }
+    itemsD {
+      ...sharedBlockSlotFragment
+    }
+  }
+}
+
+fragment NavButtonsFragment on OrderingTemplateInstance {
+  orderingPair {
+    exists
+    first
+    last
+    nextSibling {
+      ...routesOrderingTemplateFragment
+      id
+    }
+    prevSibling {
+      ...routesOrderingTemplateFragment
+      id
+    }
+  }
+  slots {
+    nextLabel {
+      ...sharedInlineSlotFragment
+    }
+    previousLabel {
+      ...sharedInlineSlotFragment
+    }
+  }
+}
+
+fragment OrderingNavigationTemplateFragment on OrderingTemplateInstance {
+  hidden
+  orderingDefinition: definition {
+    background
+    width
+    id
+  }
+  orderingPair {
+    exists
+  }
+  ...NavButtonsFragment
+}
+
+fragment PagesTemplateFragment on PageListTemplateInstance {
+  __typename
+  hidden
+  pagesDefinition: definition {
+    background
+    width
+    id
+  }
+  entity {
+    __typename
+    ...ListPagesTemplateFragment
+    ... on Node {
+      __isNode: __typename
+      id
+    }
+  }
+}
+
+fragment SummaryDetailFragment on DetailTemplateInstance {
+  entity {
+    __typename
+    ... on Collection {
+      __typename
+      announcements {
+        ...AnnouncementsFragment
+        nodes {
+          slug
+          id
+        }
+      }
+    }
+    ... on Community {
+      __typename
+      announcements {
+        ...AnnouncementsFragment
+        nodes {
+          slug
+          id
+        }
+      }
+    }
+    ... on Item {
+      __typename
+      announcements {
+        ...AnnouncementsFragment
+        nodes {
+          slug
+          id
+        }
+      }
+    }
+    ... on Node {
+      __isNode: __typename
+      id
+    }
+  }
+  detailDefinition: definition {
+    showAnnouncements
+    id
+  }
+  slots {
+    header {
+      ...sharedInlineSlotFragment
+    }
+    subheader {
+      ...sharedInlineSlotFragment
+    }
+    summary {
+      ...sharedBlockSlotFragment
+    }
+  }
+}
+
+fragment getThumbWithFallbackFragment on Entity {
+  __isEntity: __typename
+  ... on Collection {
+    thumbnail {
+      image: medium {
+        webp {
+          url
+        }
+      }
+      ...CoverImageFragment
+      ...CoverCardListFragment
+    }
+    breadcrumbs {
+      crumb {
+        __typename
+        ... on Collection {
+          thumbnail {
+            image: medium {
+              webp {
+                url
+              }
+            }
+            ...CoverImageFragment
+            ...CoverCardListFragment
+          }
+        }
+        ... on Node {
+          __isNode: __typename
+          id
+        }
+      }
+      id
+    }
+  }
+  ... on Item {
+    thumbnail {
+      image: medium {
+        webp {
+          url
+        }
+      }
+      ...CoverImageFragment
+      ...CoverCardListFragment
+    }
+    breadcrumbs {
+      crumb {
+        __typename
+        ... on Collection {
+          thumbnail {
+            image: medium {
+              webp {
+                url
+              }
+            }
+            ...CoverImageFragment
+            ...CoverCardListFragment
+          }
+        }
+        ... on Item {
+          thumbnail {
+            image: medium {
+              webp {
+                url
+              }
+            }
+            ...CoverImageFragment
+            ...CoverCardListFragment
+          }
+        }
+        ... on Node {
+          __isNode: __typename
+          id
+        }
+      }
+      id
+    }
+  }
+}
+
+fragment routesOrderingTemplateFragment on OrderingEntry {
+  entrySlug
+  entry {
+    __typename
+    ... on Collection {
+      __typename
+    }
+    ... on Item {
+      __typename
+    }
+    ... on Community {
+      __typename
+    }
+    ... on EntityLink {
+      __typename
+      target {
+        __typename
+        ... on Collection {
+          __typename
+        }
+        ... on Item {
+          __typename
+        }
+        ... on Community {
+          __typename
+        }
+        ... on Node {
+          __isNode: __typename
+          id
+        }
+      }
+    }
+    id
+  }
+}
+
+fragment sharedBlockSlotFragment on TemplateSlotBlockInstance {
+  empty
+  content
+  kind
+  valid
+}
+
+fragment sharedInlineSlotFragment on TemplateSlotInlineInstance {
+  empty
+  content
+  kind
+  valid
+  hidesTemplate
+}
+
+fragment sharedListItemTemplateFragment on ListItemTemplateInstance {
+  definition {
+    seeAllOrderingIdentifier
+    id
+  }
+  entity {
+    __typename
+    ... on Collection {
+      __typename
+      id
+      slug
+      title
+      hierarchicalDepth
+      ...getThumbWithFallbackFragment
+      attributions {
+        id
+      }
+      ...ContributorsListFragment
+      heroImage {
+        large {
+          webp {
+            alt
+            url
+            width
+            height
+          }
+        }
+        medium {
+          webp {
+            url
+            width
+          }
+        }
+        thumb {
+          webp {
+            url
+            width
+          }
+        }
+      }
+    }
+    ... on Item {
+      __typename
+      id
+      slug
+      title
+      hierarchicalDepth
+      attributions {
+        id
+      }
+      ...getThumbWithFallbackFragment
+      ...ContributorsListFragment
+      heroImage {
+        large {
+          webp {
+            alt
+            url
+            width
+            height
+          }
+        }
+        medium {
+          webp {
+            url
+            width
+          }
+        }
+        thumb {
+          webp {
+            url
+            width
+          }
+        }
+      }
+    }
+    ... on Node {
+      __isNode: __typename
+      id
+    }
+  }
+  slots {
+    contextFull {
+      ...sharedInlineSlotFragment
+    }
+    contextAbbr {
+      ...sharedInlineSlotFragment
+    }
+    contextC {
+      ...sharedInlineSlotFragment
+    }
+    description {
+      ...sharedBlockSlotFragment
+    }
+    header {
+      ...sharedInlineSlotFragment
+    }
+    metaA {
+      ...sharedInlineSlotFragment
+    }
+    metaB {
+      ...sharedInlineSlotFragment
+    }
+    subheader {
+      ...sharedInlineSlotFragment
+    }
+    nestedHeader {
+      ...sharedInlineSlotFragment
+    }
+    nestedSubheader {
+      ...sharedInlineSlotFragment
+    }
+    nestedContext {
+      ...sharedInlineSlotFragment
+    }
+    nestedMetadata {
+      ...sharedInlineSlotFragment
+    }
+  }
+}
+
+fragment sharedListItemsTemplateFragment on TemplateEntityList {
+  empty
+  count
+  depths: listItemLayouts {
+    template {
+      entity {
+        __typename
+        ... on Collection {
+          hierarchicalDepth
+        }
+        ... on Item {
+          hierarchicalDepth
+        }
+        ... on Node {
+          __isNode: __typename
+          id
+        }
+      }
+      id
+    }
+    id
+  }
+  listItemLayouts {
+    template {
+      entity {
+        __typename
+        ... on Collection {
+          hierarchicalDepth
+        }
+        ... on Item {
+          hierarchicalDepth
+        }
+        ... on Node {
+          __isNode: __typename
+          id
+        }
+      }
+      ...sharedListItemTemplateFragment
+      entityList {
+        empty
+        count
+        listItemLayouts {
+          template {
+            ...sharedListItemTemplateFragment
+            id
+          }
+          id
+        }
+      }
+      id
+    }
+    id
+  }
+}
+
+fragment sharedListTemplateFragment on AnyMainTemplateInstance {
+  __isAnyMainTemplateInstance: __typename
+  ... on LinkListTemplateInstance {
+    entity {
+      __typename
+      ... on Community {
+        __typename
+        slug
+      }
+      ... on Collection {
+        __typename
+        slug
+        ...getThumbWithFallbackFragment
+      }
+      ... on Item {
+        __typename
+        slug
+        ...getThumbWithFallbackFragment
+      }
+      ... on Node {
+        __isNode: __typename
+        id
+      }
+    }
+    linksDefinition: definition {
+      background
+      seeAllButtonLabel
+      showSeeAllButton
+      selectionMode
+      selectionLimit
+      showEntityContext
+      title
+      variant
+      showHeroImage
+      width
+      showNestedEntities
+      seeAllOrderingIdentifier
+      showContributors
+      id
+    }
+    slots {
+      blockHeader {
+        ...sharedInlineSlotFragment
+      }
+      header {
+        ...sharedInlineSlotFragment
+      }
+      headerAside {
+        ...sharedInlineSlotFragment
+      }
+      metadata {
+        ...sharedInlineSlotFragment
+      }
+      subtitle {
+        ...sharedInlineSlotFragment
+      }
+    }
+    entityList {
+      count
+      empty
+      ...sharedListItemsTemplateFragment
+    }
+  }
+  ... on DescendantListTemplateInstance {
+    seeAllOrdering {
+      count
+      name
+      id
+    }
+    entity {
+      __typename
+      ... on Community {
+        __typename
+        slug
+      }
+      ... on Collection {
+        __typename
+        id
+        title
+        slug
+        ...getThumbWithFallbackFragment
+      }
+      ... on Item {
+        __typename
+        id
+        title
+        slug
+        ...getThumbWithFallbackFragment
+      }
+      ... on Node {
+        __isNode: __typename
+        id
+      }
+    }
+    descendantsDefinition: definition {
+      background
+      seeAllButtonLabel
+      showSeeAllButton
+      selectionMode
+      selectionPropertyPath
+      orderingIdentifier
+      dynamicOrderingDefinition {
+        filter {
+          schemas {
+            namespace
+            identifier
+          }
+        }
+      }
+      selectionLimit
+      entityContext
+      title
+      variant
+      showHeroImage
+      width
+      showNestedEntities
+      seeAllOrderingIdentifier
+      showContributors
+      id
+    }
+    slots {
+      blockHeader {
+        ...sharedInlineSlotFragment
+      }
+      header {
+        ...sharedInlineSlotFragment
+      }
+      headerAside {
+        ...sharedInlineSlotFragment
+      }
+      metadata {
+        ...sharedInlineSlotFragment
+      }
+      subtitle {
+        ...sharedInlineSlotFragment
+      }
+    }
+    entityList {
+      ...sharedListItemsTemplateFragment
+    }
+  }
+}

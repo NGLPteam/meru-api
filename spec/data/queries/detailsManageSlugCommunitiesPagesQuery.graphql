@@ -1,0 +1,391 @@
+query detailsManageSlugCommunitiesPagesQuery(
+  $slug: Slug!
+) {
+  community(slug: $slug) {
+    ...CommunityUpdateFormFragment
+    id
+  }
+}
+
+fragment AssetPropertyFragment on AssetProperty {
+  ...ScalarPropertyFragment
+}
+
+fragment AssetsPropertyFragment on AssetsProperty {
+  ...ScalarPropertyFragment
+}
+
+fragment BooleanPropertyFragment on BooleanProperty {
+  ...ScalarPropertyFragment
+  checked
+  checkedByDefault
+}
+
+fragment CommunityUpdateFormFieldsFragment on Community {
+  title
+  tagline
+  summary
+  heroImageLayout
+  position
+  heroImage {
+    ...FileUploadFragment
+  }
+  logo {
+    ...FileUploadFragment
+  }
+  heroImageMetadata {
+    alt
+  }
+}
+
+fragment CommunityUpdateFormFragment on Community {
+  communityId: id
+  ...CommunityUpdateFormFieldsFragment
+  ...SchemaFormFieldsFragment
+  ...useSchemaPropertiesFragment
+  context: schemaInstanceContext {
+    ...useSchemaContextFragment
+  }
+}
+
+fragment ContributorPropertyFragment on ContributorProperty {
+  ...ScalarPropertyFragment
+}
+
+fragment ContributorsPropertyFragment on ContributorsProperty {
+  ...ScalarPropertyFragment
+}
+
+fragment DatePropertyFragment on DateProperty {
+  ...ScalarPropertyFragment
+  date
+}
+
+fragment EmailPropertyFragment on EmailProperty {
+  ...ScalarPropertyFragment
+  address
+  defaultAddress
+}
+
+fragment EntitiesPropertyFragment on EntitiesProperty {
+  ...ScalarPropertyFragment
+  availableEntities {
+    label
+    value
+    entity {
+      __typename
+      ...getEntityTitleFragment
+      ... on Node {
+        __isNode: __typename
+        id
+      }
+    }
+  }
+}
+
+fragment EntityPropertyFragment on EntityProperty {
+  ...ScalarPropertyFragment
+  availableEntities {
+    label
+    value
+    entity {
+      __typename
+      ...getEntityTitleFragment
+      ... on Node {
+        __isNode: __typename
+        id
+      }
+    }
+  }
+}
+
+fragment FileUploadFragment on ImageAttachment {
+  originalFilename
+  storage
+  thumb {
+    png {
+      alt
+      url
+    }
+  }
+}
+
+fragment FloatPropertyFragment on FloatProperty {
+  ...ScalarPropertyFragment
+  floatValue
+  defaultFloat
+}
+
+fragment FullTextPropertyFragment on FullTextProperty {
+  ...ScalarPropertyFragment
+  description
+  fullText {
+    content
+    kind
+    lang
+  }
+}
+
+fragment GroupPropertyFragment on GroupProperty {
+  legend
+  path
+  properties {
+    __typename
+    ...SchemaPropertyFragment
+  }
+}
+
+fragment IntegerPropertyFragment on IntegerProperty {
+  ...ScalarPropertyFragment
+  integerValue
+  defaultInteger
+}
+
+fragment MarkdownPropertyFragment on MarkdownProperty {
+  ...ScalarPropertyFragment
+  content
+  default
+}
+
+fragment MultiselectPropertyFragment on MultiselectProperty {
+  ...ScalarPropertyFragment
+  options {
+    label
+    value
+  }
+}
+
+fragment ScalarPropertyFragment on ScalarProperty {
+  __isScalarProperty: __typename
+  name: fullPath
+  label
+  path
+  required
+  type
+  isWide
+}
+
+fragment SchemaFormFieldsContextFragment on SchemaInstance {
+  __isSchemaInstance: __typename
+  context: schemaInstanceContext {
+    ...useSchemaContextFragment
+  }
+  ... on Node {
+    __isNode: __typename
+    id
+  }
+}
+
+fragment SchemaFormFieldsFragment on SchemaInstance {
+  __isSchemaInstance: __typename
+  properties: schemaProperties {
+    __typename
+    ...SchemaInstancePropertyFragment
+  }
+  ...SchemaSelectorDataFragment
+  ...SchemaFormFieldsContextFragment
+}
+
+fragment SchemaInstancePropertyFragment on SchemaProperty {
+  __isSchemaProperty: __typename
+  __typename
+  ... on GroupProperty {
+    ...GroupPropertyFragment
+  }
+  ...SchemaPropertyFragment
+}
+
+fragment SchemaPropertyFragment on ScalarProperty {
+  __isScalarProperty: __typename
+  __typename
+  ... on AssetProperty {
+    ...AssetPropertyFragment
+  }
+  ... on AssetsProperty {
+    ...AssetsPropertyFragment
+  }
+  ... on BooleanProperty {
+    ...BooleanPropertyFragment
+  }
+  ... on ContributorProperty {
+    ...ContributorPropertyFragment
+  }
+  ... on ContributorsProperty {
+    ...ContributorsPropertyFragment
+  }
+  ... on DateProperty {
+    ...DatePropertyFragment
+  }
+  ... on EmailProperty {
+    ...EmailPropertyFragment
+  }
+  ... on FloatProperty {
+    ...FloatPropertyFragment
+  }
+  ... on IntegerProperty {
+    ...IntegerPropertyFragment
+  }
+  ... on MarkdownProperty {
+    ...MarkdownPropertyFragment
+  }
+  ... on MultiselectProperty {
+    ...MultiselectPropertyFragment
+  }
+  ... on SelectProperty {
+    ...SelectPropertyFragment
+  }
+  ... on StringProperty {
+    ...StringPropertyFragment
+  }
+  ... on TagsProperty {
+    ...TagsPropertyFragment
+  }
+  ... on FullTextProperty {
+    ...FullTextPropertyFragment
+  }
+  ... on URLProperty {
+    ...URLPropertyFragment
+  }
+  ... on VariableDateProperty {
+    ...VariableDatePropertyFragment
+  }
+  ... on EntityProperty {
+    ...EntityPropertyFragment
+  }
+  ... on EntitiesProperty {
+    ...EntitiesPropertyFragment
+  }
+}
+
+fragment SchemaSelectorDataFragment on Entity {
+  __isEntity: __typename
+  ... on Collection {
+    entityId: id
+    schemaVersion {
+      name
+      number
+      slug
+      id
+    }
+  }
+  ... on Item {
+    entityId: id
+    schemaVersion {
+      name
+      number
+      slug
+      id
+    }
+  }
+  ... on Community {
+    entityId: id
+    schemaVersion {
+      name
+      number
+      slug
+      id
+    }
+  }
+}
+
+fragment SelectPropertyFragment on SelectProperty {
+  options {
+    label
+    value
+  }
+  ...ScalarPropertyFragment
+}
+
+fragment StringPropertyFragment on StringProperty {
+  ...ScalarPropertyFragment
+  content
+  default
+}
+
+fragment TagsPropertyFragment on TagsProperty {
+  ...ScalarPropertyFragment
+  tags
+}
+
+fragment URLPropertyFragment on URLProperty {
+  ...ScalarPropertyFragment
+  url {
+    href
+    label
+    title
+  }
+}
+
+fragment VariableDatePropertyFragment on VariableDateProperty {
+  ...ScalarPropertyFragment
+  dateWithPrecision {
+    ...VariablePrecisionDateControlFragment
+  }
+}
+
+fragment VariablePrecisionDateControlFragment on VariablePrecisionDate {
+  precision
+  value
+}
+
+fragment getEntityTitleFragment on Entity {
+  __isEntity: __typename
+  __typename
+  title
+  schemaVersion {
+    identifier
+    id
+  }
+  ... on Collection {
+    namedAncestors {
+      ancestor {
+        __typename
+        __isEntity: __typename
+        title
+        ... on Node {
+          __isNode: __typename
+          id
+        }
+      }
+    }
+  }
+  ... on Item {
+    namedAncestors {
+      ancestor {
+        __typename
+        __isEntity: __typename
+        title
+        ... on Node {
+          __isNode: __typename
+          id
+        }
+      }
+    }
+  }
+}
+
+fragment useSchemaContextFragment on SchemaInstanceContext {
+  assets {
+    kind
+    label
+    value
+  }
+  contributors {
+    kind
+    label
+    value
+  }
+  defaultValues
+  entityId
+  fieldValues
+  schemaVersionSlug
+}
+
+fragment useSchemaPropertiesFragment on SchemaInstance {
+  __isSchemaInstance: __typename
+  properties: schemaProperties {
+    __typename
+    __isSchemaProperty: __typename
+    fullPath
+  }
+}

@@ -1,0 +1,94 @@
+query layoutAllPagesQuery {
+  ...ViewerContextFragment
+  ...AppBodyFragment
+}
+
+fragment AppBodyFragment on Query {
+  ...AppHeaderFragment
+  ...AppFooterFragment
+}
+
+fragment AppFooterFragment on Query {
+  communities(order: POSITION_ASCENDING) {
+    pageInfo {
+      totalCount
+    }
+  }
+  globalConfiguration {
+    ...InstallationNameFragment
+    id
+  }
+  ...CommunityPickerFragment
+}
+
+fragment AppHeaderFragment on Query {
+  communities(order: POSITION_ASCENDING) {
+    pageInfo {
+      totalCount
+    }
+  }
+  globalConfiguration {
+    site {
+      logoMode
+    }
+    ...InstallationNameFragment
+    id
+  }
+  ...CommunityPickerFragment
+}
+
+fragment CommunityPickerFragment on Query {
+  pickerCommunities: communities(order: POSITION_ASCENDING) {
+    edges {
+      node {
+        slug
+        title
+        id
+      }
+    }
+  }
+}
+
+fragment InstallationNameFragment on GlobalConfiguration {
+  site {
+    installationName
+    logoMode
+  }
+  logo {
+    storage
+    original {
+      originalFilename
+      alt
+      url
+      width
+      height
+    }
+    sansText {
+      size
+      webp {
+        alt
+        url
+        width
+        height
+      }
+    }
+  }
+}
+
+fragment ViewerContextFragment on Query {
+  viewer {
+    name
+    allowedActions
+    uploadAccess
+    uploadToken
+    avatar {
+      small {
+        png {
+          url
+          alt
+        }
+      }
+    }
+    id
+  }
+}

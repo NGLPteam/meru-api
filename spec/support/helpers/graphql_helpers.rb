@@ -7,6 +7,8 @@ using TestProf::Ext::ActiveRecordRefind
 module TestHelpers
   module GraphQLRequest
     module ExampleHelpers
+      QUERIES_ROOT = Rails.root.join("spec", "data", "queries")
+
       def expect_request!(**options, &)
         tester = TestingAPI::TestContainer["requests.build"].(&)
 
@@ -63,6 +65,13 @@ module TestHelpers
         post("/graphql", params: params.to_json, headers:)
 
         expect(Array(graphql_response(:errors))).to eq([]) if no_top_level_errors
+      end
+
+      # @param [String] name
+      def named_query(name)
+        basename = "#{name}.graphql"
+
+        QUERIES_ROOT.join(basename).read
       end
 
       def expect_graphql_data(shape)

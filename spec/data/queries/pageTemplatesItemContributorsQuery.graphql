@@ -1,0 +1,75 @@
+query pageTemplatesItemContributorsQuery(
+  $slug: Slug!
+) {
+  item(slug: $slug) {
+    ...ContributionsBlockFragment
+    id
+  }
+}
+
+fragment ContributionsBlockFragment on Item {
+  attributions {
+    slug
+    roles {
+      label
+      id
+    }
+    contributor {
+      __typename
+      image {
+        storage
+      }
+      ... on Node {
+        __isNode: __typename
+        id
+      }
+    }
+    ...ContributorFragment
+    id
+  }
+}
+
+fragment ContributorAvatarFragment on ImageAttachment {
+  small {
+    webp {
+      alt
+      url
+    }
+  }
+}
+
+fragment ContributorFragment on Attribution {
+  __isAttribution: __typename
+  roles {
+    identifier
+    label
+    id
+  }
+  contributor {
+    __typename
+    title
+    affiliation
+    slug
+    image {
+      ...ContributorAvatarFragment
+    }
+    ...ContributorNameFragment
+    ... on Node {
+      __isNode: __typename
+      id
+    }
+  }
+}
+
+fragment ContributorNameFragment on AnyContributor {
+  __isAnyContributor: __typename
+  ... on PersonContributor {
+    __typename
+    familyName
+    givenName
+  }
+  ... on OrganizationContributor {
+    __typename
+    legalName
+  }
+}

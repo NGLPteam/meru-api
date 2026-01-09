@@ -1,0 +1,63 @@
+query pageTemplatesItemFilesQuery(
+  $slug: Slug!
+) {
+  item(slug: $slug) {
+    assets {
+      ...AssetsBlockFragment
+    }
+    id
+  }
+}
+
+fragment AssetBlockItemFragment on Asset {
+  __isAsset: __typename
+  caption
+  contentType
+  downloadUrl
+  fileSize
+  kind
+  name
+  slug
+  ...AssetThumbnailFragment
+  ... on AssetDocument {
+    updatedAt
+  }
+  ... on AssetImage {
+    updatedAt
+  }
+  ... on AssetPDF {
+    updatedAt
+  }
+  ... on AssetAudio {
+    updatedAt
+  }
+  ... on AssetVideo {
+    updatedAt
+  }
+}
+
+fragment AssetThumbnailFragment on Asset {
+  __isAsset: __typename
+  kind
+  slug
+  altText
+  preview {
+    storage
+    image: small {
+      webp {
+        alt
+        url
+      }
+    }
+  }
+}
+
+fragment AssetsBlockFragment on AssetConnection {
+  edges {
+    node {
+      __typename
+      ...AssetBlockItemFragment
+      id
+    }
+  }
+}
