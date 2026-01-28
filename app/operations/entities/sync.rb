@@ -10,6 +10,7 @@ module Entities
       calculate_authorizing: "entities.calculate_authorizing",
       index_search_documents: "entities.index_search_documents",
       prefix_sanitize: "searching.prefix_sanitize",
+      sync_hierarchies: "entities.sync_hierarchies",
       validate_sync: "entities.validate_sync",
     ]
 
@@ -23,13 +24,11 @@ module Entities
 
       yield upsert! attributes
 
-      yield maybe_upsert_visibility! source
+      yield handle_child_entity! source
 
       yield index_search! source
 
-      unless entity_sync_captured?(source)
-        Entities::SyncHierarchiesJob.perform_later source
-      end
+      yield sync_hierarchies.(source) unless entity_sync_captured?(source)
 
       yield calculate_authorizing! source
 
@@ -67,15 +66,25 @@ module Entities
       index_search_documents.(entity:)
     end
 
-    # @param [SyncsEntities] source
-    # @return [Dry::Monads::Result]
-    def maybe_upsert_visibility!(source)
-      return Success() unless source.kind_of?(ChildEntity)
+    # @param [ChildEntity] entity
+    # @return [Dry::Monads::Success(void)]
+    def handle_child_entity!(entity)
+      return Success() unless entity.kind_of?(ChildEntity)
 
+      yield maybe_upsert_visibility! entity
+
+      yield entity.calculate_ancestors
+
+      Success()
+    end
+
+    # @param [ChildEntity] entity
+    # @return [Dry::Monads::Result]
+    def maybe_upsert_visibility!(entity)
       tuple = {}
 
-      tuple[:entity_id] = source.id_for_entity
-      tuple[:entity_type] = source.entity_type
+      tuple[:entity_id] = entity.id_for_entity
+      tuple[:entity_type] = entity.entity_type
 
       monadic_upsert EntityVisibility, tuple, unique_by: UNIQUE_INDEX, skip_find: true
     end

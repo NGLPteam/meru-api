@@ -14,7 +14,6 @@ module ReferencesEntityVisibility
       :visible_until_at,
       :visible_after_at,
       :hidden_at,
-      :visibility_range,
       :visibility_hidden?,
       :visibility_visible?,
       :visibility_limited?,

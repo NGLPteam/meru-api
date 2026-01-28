@@ -40,9 +40,9 @@ end
 RSpec.shared_context "a simple v1 hierarchy" do
   include TestHelpers::SimpleV1Hierarchy
 
-  let!(:simple_community_v1) { FactoryBot.create :schema_version, :simple_community, :v1 }
-  let!(:simple_collection_v1) { FactoryBot.create :schema_version, :simple_collection, :v1 }
-  let!(:simple_item_v1) { FactoryBot.create :schema_version, :simple_item, :v1 }
+  let_it_be(:simple_community_v1, refind: true) { FactoryBot.create :schema_version, :simple_community, :v1 }
+  let_it_be(:simple_collection_v1, refind: true) { FactoryBot.create :schema_version, :simple_collection, :v1 }
+  let_it_be(:simple_item_v1, refind: true) { FactoryBot.create :schema_version, :simple_item, :v1 }
 
   let(:v1_schemas) do
     {
@@ -52,7 +52,7 @@ RSpec.shared_context "a simple v1 hierarchy" do
     }.with_indifferent_access
   end
 
-  let!(:collection) { FactoryBot.create :collection, schema_version: simple_collection_v1 }
+  let_it_be(:collection, refind: true) { FactoryBot.create :collection, schema_version: simple_collection_v1 }
 end
 
 RSpec.configure do |config|

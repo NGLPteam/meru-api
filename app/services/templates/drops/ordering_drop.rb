@@ -2,6 +2,9 @@
 
 module Templates
   module Drops
+    # A drop representing an {Ordering}.
+    #
+    # @see Templates::Drops::OrderingsDrop
     class OrderingDrop < Templates::Drops::AbstractDrop
       # @return [Integer]
       attr_reader :count
@@ -18,7 +21,7 @@ module Templates
       def initialize(ordering)
         @ordering = ordering
 
-        @count = ordering.ordering_entry_count.try(:visible_count) || 0
+        @count = ordering.visible_count
 
         @latest_published = Templates::Drops::VariablePrecisionDateDrop.new(@ordering.latest_published)
 

@@ -4560,15 +4560,28 @@
     'items'::ltree]))"
   has_default: false
   virtual: true
+- id: EntityAncestor#id
+  model_name: EntityAncestor
+  table_name: entity_ancestors
+  name: id
+  type: uuid
+  'null': false
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default:
+  default_function: gen_random_uuid()
+  has_default: true
+  virtual: false
 - id: EntityAncestor#entity_type
   model_name: EntityAncestor
   table_name: entity_ancestors
   name: entity_type
-  type: text
-  'null': true
+  type: string
+  'null': false
   sql_type_metadata:
-    sql_type: text
-    type: text
+    sql_type: character varying
+    type: string
   default:
   default_function:
   has_default: false
@@ -4578,23 +4591,10 @@
   table_name: entity_ancestors
   name: entity_id
   type: uuid
-  'null': true
+  'null': false
   sql_type_metadata:
     sql_type: uuid
     type: uuid
-  default:
-  default_function:
-  has_default: false
-  virtual: false
-- id: EntityAncestor#name
-  model_name: EntityAncestor
-  table_name: entity_ancestors
-  name: name
-  type: text
-  'null': true
-  sql_type_metadata:
-    sql_type: text
-    type: text
   default:
   default_function:
   has_default: false
@@ -4603,11 +4603,11 @@
   model_name: EntityAncestor
   table_name: entity_ancestors
   name: ancestor_type
-  type: text
-  'null': true
+  type: string
+  'null': false
   sql_type_metadata:
-    sql_type: text
-    type: text
+    sql_type: character varying
+    type: string
   default:
   default_function:
   has_default: false
@@ -4617,7 +4617,7 @@
   table_name: entity_ancestors
   name: ancestor_id
   type: uuid
-  'null': true
+  'null': false
   sql_type_metadata:
     sql_type: uuid
     type: uuid
@@ -4630,10 +4630,23 @@
   table_name: entity_ancestors
   name: ancestor_schema_version_id
   type: uuid
-  'null': true
+  'null': false
   sql_type_metadata:
     sql_type: uuid
     type: uuid
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: EntityAncestor#name
+  model_name: EntityAncestor
+  table_name: entity_ancestors
+  name: name
+  type: text
+  'null': false
+  sql_type_metadata:
+    sql_type: text
+    type: text
   default:
   default_function:
   has_default: false
@@ -4643,11 +4656,11 @@
   table_name: entity_ancestors
   name: origin_depth
   type: integer
-  'null': true
+  'null': false
   sql_type_metadata:
-    sql_type: integer
+    sql_type: bigint
     type: integer
-    limit: 4
+    limit: 8
   default:
   default_function:
   has_default: false
@@ -4657,11 +4670,11 @@
   table_name: entity_ancestors
   name: ancestor_depth
   type: integer
-  'null': true
+  'null': false
   sql_type_metadata:
-    sql_type: integer
+    sql_type: bigint
     type: integer
-    limit: 4
+    limit: 8
   default:
   default_function:
   has_default: false
@@ -4671,14 +4684,42 @@
   table_name: entity_ancestors
   name: relative_depth
   type: integer
-  'null': true
+  'null': false
   sql_type_metadata:
-    sql_type: integer
+    sql_type: bigint
     type: integer
-    limit: 4
+    limit: 8
   default:
   default_function:
   has_default: false
+  virtual: false
+- id: EntityAncestor#created_at
+  model_name: EntityAncestor
+  table_name: entity_ancestors
+  name: created_at
+  type: datetime
+  'null': false
+  sql_type_metadata:
+    sql_type: timestamp(6) without time zone
+    type: datetime
+    precision: 6
+  default:
+  default_function: CURRENT_TIMESTAMP
+  has_default: true
+  virtual: false
+- id: EntityAncestor#updated_at
+  model_name: EntityAncestor
+  table_name: entity_ancestors
+  name: updated_at
+  type: datetime
+  'null': false
+  sql_type_metadata:
+    sql_type: timestamp(6) without time zone
+    type: datetime
+    precision: 6
+  default:
+  default_function: CURRENT_TIMESTAMP
+  has_default: true
   virtual: false
 - id: EntityAuthorContribution#contribution_id
   model_name: EntityAuthorContribution
@@ -4972,126 +5013,6 @@
   default_function:
   has_default: false
   virtual: false
-- id: EntityCachedAncestor#entity_type
-  model_name: EntityCachedAncestor
-  table_name: entity_cached_ancestors
-  name: entity_type
-  type: text
-  'null': true
-  sql_type_metadata:
-    sql_type: text
-    type: text
-  default:
-  default_function:
-  has_default: false
-  virtual: false
-- id: EntityCachedAncestor#entity_id
-  model_name: EntityCachedAncestor
-  table_name: entity_cached_ancestors
-  name: entity_id
-  type: uuid
-  'null': true
-  sql_type_metadata:
-    sql_type: uuid
-    type: uuid
-  default:
-  default_function:
-  has_default: false
-  virtual: false
-- id: EntityCachedAncestor#name
-  model_name: EntityCachedAncestor
-  table_name: entity_cached_ancestors
-  name: name
-  type: text
-  'null': true
-  sql_type_metadata:
-    sql_type: text
-    type: text
-  default:
-  default_function:
-  has_default: false
-  virtual: false
-- id: EntityCachedAncestor#ancestor_type
-  model_name: EntityCachedAncestor
-  table_name: entity_cached_ancestors
-  name: ancestor_type
-  type: text
-  'null': true
-  sql_type_metadata:
-    sql_type: text
-    type: text
-  default:
-  default_function:
-  has_default: false
-  virtual: false
-- id: EntityCachedAncestor#ancestor_id
-  model_name: EntityCachedAncestor
-  table_name: entity_cached_ancestors
-  name: ancestor_id
-  type: uuid
-  'null': true
-  sql_type_metadata:
-    sql_type: uuid
-    type: uuid
-  default:
-  default_function:
-  has_default: false
-  virtual: false
-- id: EntityCachedAncestor#ancestor_schema_version_id
-  model_name: EntityCachedAncestor
-  table_name: entity_cached_ancestors
-  name: ancestor_schema_version_id
-  type: uuid
-  'null': true
-  sql_type_metadata:
-    sql_type: uuid
-    type: uuid
-  default:
-  default_function:
-  has_default: false
-  virtual: false
-- id: EntityCachedAncestor#origin_depth
-  model_name: EntityCachedAncestor
-  table_name: entity_cached_ancestors
-  name: origin_depth
-  type: integer
-  'null': true
-  sql_type_metadata:
-    sql_type: integer
-    type: integer
-    limit: 4
-  default:
-  default_function:
-  has_default: false
-  virtual: false
-- id: EntityCachedAncestor#ancestor_depth
-  model_name: EntityCachedAncestor
-  table_name: entity_cached_ancestors
-  name: ancestor_depth
-  type: integer
-  'null': true
-  sql_type_metadata:
-    sql_type: integer
-    type: integer
-    limit: 4
-  default:
-  default_function:
-  has_default: false
-  virtual: false
-- id: EntityCachedAncestor#relative_depth
-  model_name: EntityCachedAncestor
-  table_name: entity_cached_ancestors
-  name: relative_depth
-  type: integer
-  'null': true
-  sql_type_metadata:
-    sql_type: integer
-    type: integer
-    limit: 4
-  default:
-  default_function:
-  has_default: false
-  virtual: false
 - id: EntityComposedText#id
   model_name: EntityComposedText
   table_name: entity_composed_texts
@@ -5171,6 +5092,126 @@
   default:
   default_function: CURRENT_TIMESTAMP
   has_default: true
+  virtual: false
+- id: EntityDerivedAncestor#entity_type
+  model_name: EntityDerivedAncestor
+  table_name: entity_derived_ancestors
+  name: entity_type
+  type: text
+  'null': true
+  sql_type_metadata:
+    sql_type: text
+    type: text
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: EntityDerivedAncestor#entity_id
+  model_name: EntityDerivedAncestor
+  table_name: entity_derived_ancestors
+  name: entity_id
+  type: uuid
+  'null': true
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: EntityDerivedAncestor#name
+  model_name: EntityDerivedAncestor
+  table_name: entity_derived_ancestors
+  name: name
+  type: text
+  'null': true
+  sql_type_metadata:
+    sql_type: text
+    type: text
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: EntityDerivedAncestor#ancestor_type
+  model_name: EntityDerivedAncestor
+  table_name: entity_derived_ancestors
+  name: ancestor_type
+  type: text
+  'null': true
+  sql_type_metadata:
+    sql_type: text
+    type: text
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: EntityDerivedAncestor#ancestor_id
+  model_name: EntityDerivedAncestor
+  table_name: entity_derived_ancestors
+  name: ancestor_id
+  type: uuid
+  'null': true
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: EntityDerivedAncestor#ancestor_schema_version_id
+  model_name: EntityDerivedAncestor
+  table_name: entity_derived_ancestors
+  name: ancestor_schema_version_id
+  type: uuid
+  'null': true
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: EntityDerivedAncestor#origin_depth
+  model_name: EntityDerivedAncestor
+  table_name: entity_derived_ancestors
+  name: origin_depth
+  type: integer
+  'null': true
+  sql_type_metadata:
+    sql_type: integer
+    type: integer
+    limit: 4
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: EntityDerivedAncestor#ancestor_depth
+  model_name: EntityDerivedAncestor
+  table_name: entity_derived_ancestors
+  name: ancestor_depth
+  type: integer
+  'null': true
+  sql_type_metadata:
+    sql_type: integer
+    type: integer
+    limit: 4
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: EntityDerivedAncestor#relative_depth
+  model_name: EntityDerivedAncestor
+  table_name: entity_derived_ancestors
+  name: relative_depth
+  type: integer
+  'null': true
+  sql_type_metadata:
+    sql_type: integer
+    type: integer
+    limit: 4
+  default:
+  default_function:
+  has_default: false
   virtual: false
 - id: EntityDerivedLayoutDefinition#id
   model_name: EntityDerivedLayoutDefinition
@@ -7029,6 +7070,19 @@
   default_function: calculate_visibility_range(visibility, visible_after_at, visible_until_at)
   has_default: false
   virtual: true
+- id: EntityVisibility#active
+  model_name: EntityVisibility
+  table_name: entity_visibilities
+  name: active
+  type: boolean
+  'null': false
+  sql_type_metadata:
+    sql_type: boolean
+    type: boolean
+  default: 'false'
+  default_function:
+  has_default: true
+  virtual: false
 - id: FrontendRevalidation#id
   model_name: FrontendRevalidation
   table_name: frontend_revalidations
@@ -14933,6 +14987,99 @@
   default_function:
   has_default: false
   virtual: false
+- id: Ordering#visible_count
+  model_name: Ordering
+  table_name: orderings
+  name: visible_count
+  type: integer
+  'null': false
+  sql_type_metadata:
+    sql_type: bigint
+    type: integer
+    limit: 8
+  default: '0'
+  default_function:
+  has_default: true
+  virtual: false
+- id: Ordering#entries_count
+  model_name: Ordering
+  table_name: orderings
+  name: entries_count
+  type: integer
+  'null': false
+  sql_type_metadata:
+    sql_type: bigint
+    type: integer
+    limit: 8
+  default: '0'
+  default_function:
+  has_default: true
+  virtual: false
+- id: Ordering#oldest_published
+  model_name: Ordering
+  table_name: orderings
+  name: oldest_published
+  type: variable_precision_date
+  'null': true
+  sql_type_metadata:
+    sql_type: variable_precision_date
+    type: variable_precision_date
+  default: "(,none)"
+  default_function:
+  has_default: true
+  virtual: false
+- id: Ordering#latest_published
+  model_name: Ordering
+  table_name: orderings
+  name: latest_published
+  type: variable_precision_date
+  'null': true
+  sql_type_metadata:
+    sql_type: variable_precision_date
+    type: variable_precision_date
+  default: "(,none)"
+  default_function:
+  has_default: true
+  virtual: false
+- id: OrderingDateRange#ordering_id
+  model_name: OrderingDateRange
+  table_name: ordering_date_ranges
+  name: ordering_id
+  type: uuid
+  'null': true
+  sql_type_metadata:
+    sql_type: uuid
+    type: uuid
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: OrderingDateRange#oldest_published
+  model_name: OrderingDateRange
+  table_name: ordering_date_ranges
+  name: oldest_published
+  type: variable_precision_date
+  'null': true
+  sql_type_metadata:
+    sql_type: variable_precision_date
+    type: variable_precision_date
+  default:
+  default_function:
+  has_default: false
+  virtual: false
+- id: OrderingDateRange#latest_published
+  model_name: OrderingDateRange
+  table_name: ordering_date_ranges
+  name: latest_published
+  type: variable_precision_date
+  'null': true
+  sql_type_metadata:
+    sql_type: variable_precision_date
+    type: variable_precision_date
+  default:
+  default_function:
+  has_default: false
+  virtual: false
 - id: OrderingEntry#id
   model_name: OrderingEntry
   table_name: ordering_entries
@@ -18889,11 +19036,11 @@
   model_name: SchematicText
   table_name: schematic_texts
   name: dictionary
-  type: regconfig
+  type: enum
   'null': false
   sql_type_metadata:
-    sql_type: regconfig
-    type: regconfig
+    sql_type: meru_dictionary
+    type: enum
   default: simple
   default_function:
   has_default: true
@@ -18965,19 +19112,6 @@
   default_function: CURRENT_TIMESTAMP
   has_default: true
   virtual: false
-- id: SchematicText#document
-  model_name: SchematicText
-  table_name: schematic_texts
-  name: document
-  type: tsvector
-  'null': true
-  sql_type_metadata:
-    sql_type: tsvector
-    type: tsvector
-  default:
-  default_function: setweight(to_tsvector(dictionary, text_content), (weight)::"char")
-  has_default: false
-  virtual: true
 - id: SchematicText#schema_version_property_id
   model_name: SchematicText
   table_name: schematic_texts
@@ -18991,6 +19125,19 @@
   default_function:
   has_default: false
   virtual: false
+- id: SchematicText#document
+  model_name: SchematicText
+  table_name: schematic_texts
+  name: document
+  type: tsvector
+  'null': false
+  sql_type_metadata:
+    sql_type: tsvector
+    type: tsvector
+  default:
+  default_function: meru_tsvector(dictionary, text_content, weight)
+  has_default: false
+  virtual: true
 - id: StaleEntity#id
   model_name: StaleEntity
   table_name: stale_entities

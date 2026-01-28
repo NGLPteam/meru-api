@@ -13,7 +13,7 @@ module Types
 
     field :children, resolver: Resolvers::OrderingEntryResolver
 
-    field :count, Integer, null: false do
+    field :count, Integer, null: false, method: :visible_count do
       description "The number of entries currently visible within the ordering"
     end
 
@@ -88,15 +88,6 @@ module Types
     end
 
     load_association! :entity
-
-    # @return [Integer]
-    def count
-      if MeruConfig.experimental_dataloader?
-        dataloader.with(Sources::OrderingEntryCount).load(object)
-      else
-        Loaders::OrderingEntryCountLoader.load(object)
-      end
-    end
 
     # @see Schemas::Orderings::Definition#filter
     # @return [Schemas::Orderings::FilterDefinition]

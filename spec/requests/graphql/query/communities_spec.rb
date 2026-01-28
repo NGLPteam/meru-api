@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe "Query.communities", :with_clean_fixture, type: :request do
+RSpec.describe "Query.communities", type: :request do
   let_it_be(:community_k0) do
     Timecop.freeze(1.hour.ago) do
       FactoryBot.create :community, title: "KK", position: 1

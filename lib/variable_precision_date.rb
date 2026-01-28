@@ -181,6 +181,10 @@ class VariablePrecisionDate
     value unless none?
   end
 
+  def to_liquid
+    self
+  end
+
   def to_s
     case precision
     in :day then iso8601

@@ -3,14 +3,19 @@
 # A named, derived ancestor for a specific {Entity}, based on the defined
 # ancestors in its {SchemaVersion}.
 #
+# It gets populated and updated automatically when an entity is created or
+# reparented. The data comes from {EntityDerivedAncestor}.
+#
 # @see SchemaVersionAncestor
 class EntityAncestor < ApplicationRecord
-  include View
+  include HasEphemeralSystemSlug
+  include TimestampScopes
 
-  self.primary_key = %i[entity_type entity_id name].freeze
+  belongs_to :entity, polymorphic: true, inverse_of: :named_ancestors
 
-  belongs_to :entity, polymorphic: true
-  belongs_to :ancestor, polymorphic: true
+  belongs_to :ancestor, polymorphic: true, inverse_of: :named_descendants
+
+  belongs_to :ancestor_schema_version, class_name: "SchemaVersion", inverse_of: :entity_ancestors
 
   scope :by_name, ->(name) { where(name:) }
   scope :in_default_order, -> { order(relative_depth: :asc, name: :asc) }

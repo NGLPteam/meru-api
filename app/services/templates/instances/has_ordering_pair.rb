@@ -25,8 +25,6 @@ module Templates
           foreign_key: %i[ordering_id ordering_entry_id],
           optional: true
 
-        has_one :ordering_entry_count, through: :ordering
-
         has_one :prev_sibling, -> { includes(:entity) }, through: :ordering_entry
         has_one :next_sibling, -> { includes(:entity) }, through: :ordering_entry
 
@@ -40,7 +38,7 @@ module Templates
 
       # @return [Templates::OrderingPair]
       def ordering_pair
-        Templates::OrderingPair.new(self)
+        @ordering_pair ||= Templates::OrderingPair.new(self)
       end
 
       # @see Templates::Instances::FetchOrderingEntry
@@ -50,7 +48,6 @@ module Templates
         call_operation("templates.instances.fetch_ordering_entry", self)
       end
 
-      # @param [HierarchicalEntity] entity
       # @see Templates::Definitions::ResolveSelectionSource
       # @see Templates::Definitions::SelectionSourceResolver
       # @return [Dry::Monads::Success(HierarchicalEntity)]

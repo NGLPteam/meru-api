@@ -83,6 +83,8 @@ module Schemas
       end
     end
 
+    Ordering = ModelInstance("Ordering")
+
     # A type that matches either a scalar property or a property group.
     #
     # @see Schemas::Properties::GroupDefinition

@@ -31,14 +31,37 @@ module Entities
     SUFFIX = <<~SQL.strip_heredoc
         ORDER BY ent.entity_id, ldh.layout_kind, ldh.depth DESC
     )
-    INSERT INTO entity_derived_layout_definitions (schema_version_id, entity_type, entity_id, layout_definition_type, layout_definition_id, layout_kind)
-    SELECT schema_version_id, entity_type, entity_id, layout_definition_type, layout_definition_id, layout_kind FROM derivations d
-    ON CONFLICT (entity_id, layout_kind) DO UPDATE SET
-      schema_version_id = EXCLUDED.schema_version_id,
-      entity_type = EXCLUDED.entity_type,
-      layout_definition_type = EXCLUDED.layout_definition_type,
-      layout_definition_id = EXCLUDED.layout_definition_id,
+    MERGE INTO entity_derived_layout_definitions edld
+    USING derivations ON (edld.entity_id = derivations.entity_id AND edld.layout_kind = derivations.layout_kind)
+    WHEN MATCHED AND (
+      edld.schema_version_id <> derivations.schema_version_id
+      OR
+      edld.entity_type <> derivations.entity_type
+      OR
+      edld.layout_definition_type <> derivations.layout_definition_type
+      OR
+      edld.layout_definition_id <> derivations.layout_definition_id
+    ) THEN UPDATE SET
+      schema_version_id = derivations.schema_version_id,
+      entity_type = derivations.entity_type,
+      layout_definition_type = derivations.layout_definition_type,
+      layout_definition_id = derivations.layout_definition_id,
       updated_at = CURRENT_TIMESTAMP
+    WHEN NOT MATCHED THEN INSERT (
+      schema_version_id,
+      entity_type,
+      entity_id,
+      layout_definition_type,
+      layout_definition_id,
+      layout_kind
+    ) VALUES (
+      derivations.schema_version_id,
+      derivations.entity_type,
+      derivations.entity_id,
+      derivations.layout_definition_type,
+      derivations.layout_definition_id,
+      derivations.layout_kind
+    );
     SQL
 
     standard_execution!
@@ -66,6 +89,7 @@ module Entities
       @entity_constraint = with_quoted_id_for(entity, <<~SQL)
       AND ent.entity_id = %1$s
       SQL
+
       super
     end
 

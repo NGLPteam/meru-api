@@ -55,11 +55,6 @@ Rails.application.configure do
       class: "CacheWarmers::EnqueueEnabledJob",
       description: "Enqueue enabled cache warmers",
     },
-    "contributors.audit_contribution_counts": {
-      cron: "*/5 * * * *",
-      class: "Contributors::AuditContributionCountsJob",
-      description: "Ensure contribution counts are up to date",
-    },
     "contributors.refresh_attributions": {
       cron: "*/10 * * * *",
       class: "Contributors::RefreshAttributionsJob",
@@ -73,11 +68,6 @@ Rails.application.configure do
     "entities.audit_authorizing": {
       cron: "*/5 * * * *",
       class: "Entities::AuditAuthorizingJob",
-      description: "Audit authorizing entities",
-    },
-    "entities.audit_hierarchies": {
-      cron: "*/5 * * * *",
-      class: "Entities::AuditHierarchiesJob",
       description: "Audit authorizing entities",
     },
     "entities.audit_mismatched_schemas": {
@@ -95,20 +85,10 @@ Rails.application.configure do
       class: "Entities::PopulateMissingOrderingsJob",
       description: "Populate any missing orderings on entities",
     },
-    "entities.populate_visibilities": {
-      cron: "*/10 * * * *",
-      class: "Entities::PopulateVisibilitiesJob",
-      description: "Populate entity visibilities",
-    },
     "entities.refresh_author_contributions": {
       cron: "7,17,27,37,47,57 * * * *",
       class: "Entities::RefreshAuthorContributionsJob",
       description: "Refresh author contributions",
-    },
-    "entities.refresh_cached_ancestors": {
-      cron: "*/2 * * * *",
-      class: "Entities::RefreshCachedAncestorsJob",
-      description: "Refresh entity cached ancestors",
     },
     "entities.reindex_all_search_documents": {
       cron: "9,19,29,39,49,59 * * * *",
@@ -142,10 +122,10 @@ Rails.application.configure do
       description: "Process stale entities to re-render",
       args: -> { [Time.current.iso8601] }
     },
-    "schemas.orderings.refresh_counts": {
-      cron: "*/10 * * * *",
-      class: "Schemas::Orderings::RefreshEntryCountsJob",
-      description: "Refresh ordering entry counts",
+    "system.check": {
+      cron: "*/5 * * * *",
+      class: "System::CheckJob",
+      description: "Perform system checks",
     },
     "system.collect_pg_hero_query_stats": {
       cron: "*/5 * * * *",

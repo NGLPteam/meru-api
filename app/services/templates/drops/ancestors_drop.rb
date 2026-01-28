@@ -8,13 +8,15 @@ module Templates
         super()
 
         @entity = entity
+
+        @cache = Concurrent::Map.new
       end
 
       # @raise [Liquid::UndefinedDropMethod]
       def liquid_method_missing(name)
-        ancestor = @entity.ancestor_by_name(name, enforce_known: true)
-
-        return entity_drop_for(ancestor) if ancestor
+        @cache.compute_if_absent(name) do
+          @entity.ancestor_by_name(name, enforce_known: true).then { entity_drop_for(_1) }
+        end
       rescue Entities::UnknownAncestor => e
         # :nocov:
         raise Liquid::UndefinedDropMethod, e.message

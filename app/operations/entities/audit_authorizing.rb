@@ -22,7 +22,7 @@ module Entities
     DELETE FROM authorizing_entities ae
     USING (
       WITH calculated AS (
-        SELECT
+        SELECT DISTINCT ON (ent.auth_path, subent.id, subent.scope, subent.hierarchical_type, subent.hierarchical_id)
         ent.auth_path AS auth_path,
         subent.id AS entity_id,
         subent.scope,
@@ -30,7 +30,6 @@ module Entities
         subent.hierarchical_id
         FROM entities ent
         INNER JOIN entities subent ON ent.auth_path @> subent.auth_path
-        GROUP BY 1, 2, 3, 4, 5
       )
       SELECT
         auth_path, entity_id, scope, hierarchical_type, hierarchical_id

@@ -73,14 +73,12 @@ module Templates
 
       # @return [Date, nil]
       def unwrap_date(value)
-        # :nocov:
         case value
         when ::Templates::Drops::VariablePrecisionDateDrop, ::VariablePrecisionDate
           value.value
         else
           value
         end
-        # :nocov:
       end
 
       # @param [Object] value

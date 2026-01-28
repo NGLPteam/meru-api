@@ -118,6 +118,8 @@ module Schemas
           updated_sibling_count:,
         }
 
+        yield ordering.calculate_stats
+
         Success response
       end
 

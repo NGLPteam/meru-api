@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe "GraphQL Query", :with_clean_fixture, type: :request do
+RSpec.describe "GraphQL Query", type: :request do
   as_an_admin_user do
     describe "using the relay node resolver" do
       let_it_be(:collection) { FactoryBot.create :collection }

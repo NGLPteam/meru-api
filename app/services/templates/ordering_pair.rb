@@ -60,7 +60,7 @@ module Templates
     def initialize(...)
       super
 
-      @count = instance.ordering_entry_count&.visible_count
+      @count = instance.ordering.try(:visible_count) || 0
 
       @in_ordering = instance.ordering.present? && instance.ordering_entry.present?
 

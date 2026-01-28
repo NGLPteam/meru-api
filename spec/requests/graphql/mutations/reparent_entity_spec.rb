@@ -27,8 +27,8 @@ RSpec.describe Mutations::ReparentEntity, type: :request, graphql: :mutation, di
 
   stub_operation! "frontend.cache.revalidate_entity", as: :revalidate_entity_operation, auto_succeed: true
 
-  let!(:new_parent) { nil }
-  let!(:child) { nil }
+  let_it_be(:new_parent, refind: true) { nil }
+  let_it_be(:child, refind: true) { nil }
 
   let_mutation_input!(:child_id) { child&.to_encoded_id }
   let_mutation_input!(:parent_id) { new_parent&.to_encoded_id }
@@ -69,17 +69,17 @@ RSpec.describe Mutations::ReparentEntity, type: :request, graphql: :mutation, di
     context "when moving a subcollection to the top level in a new community" do
       let_it_be(:old_parent) { FactoryBot.create :collection, community: }
 
-      let!(:child) { FactoryBot.create :collection, parent: old_parent, title: "Child" }
+      let_it_be(:child, refind: true) { FactoryBot.create :collection, parent: old_parent, title: "Child" }
 
-      let!(:new_parent) { FactoryBot.create :community, title: "New Parent" }
+      let_it_be(:new_parent, refind: true) { FactoryBot.create :community, title: "New Parent" }
 
       it_behaves_like "moving a leaf to a root"
       it_behaves_like "a valid mutation"
 
       context "when dealing with descendants" do
-        let!(:grandchild) { FactoryBot.create :collection, parent: child, title: "Grandchild" }
+        let_it_be(:grandchild, refind: true) { FactoryBot.create :collection, parent: child, title: "Grandchild" }
 
-        let!(:subitem) { FactoryBot.create :item, collection: child }
+        let_it_be(:subitem, refind: true) { FactoryBot.create :item, collection: child }
 
         it "ensures the hierarchy looks correct" do
           flush_enqueued_jobs
@@ -105,9 +105,9 @@ RSpec.describe Mutations::ReparentEntity, type: :request, graphql: :mutation, di
     context "when moving to another collection" do
       let_it_be(:old_parent) { FactoryBot.create :collection, community: }
 
-      let!(:child) { FactoryBot.create :collection, parent: old_parent }
+      let_it_be(:child, refind: true) { FactoryBot.create :collection, parent: old_parent }
 
-      let!(:new_parent) { FactoryBot.create :collection, community: }
+      let_it_be(:new_parent, refind: true) { FactoryBot.create :collection, community: }
 
       it_behaves_like "a valid mutation"
 
@@ -124,9 +124,9 @@ RSpec.describe Mutations::ReparentEntity, type: :request, graphql: :mutation, di
       let_it_be(:old_collection) { FactoryBot.create :collection }
       let_it_be(:old_parent) { FactoryBot.create :item, collection: old_collection }
 
-      let!(:child) { FactoryBot.create :item, parent: old_parent }
+      let_it_be(:child, refind: true) { FactoryBot.create :item, parent: old_parent }
 
-      let!(:new_parent) { FactoryBot.create :collection }
+      let_it_be(:new_parent, refind: true) { FactoryBot.create :collection }
 
       it_behaves_like "moving a leaf to a root"
       it_behaves_like "a valid mutation"
@@ -143,8 +143,8 @@ RSpec.describe Mutations::ReparentEntity, type: :request, graphql: :mutation, di
     end
 
     context "when moving a parent underneath a child" do
-      let!(:child) { FactoryBot.create :collection }
-      let!(:new_parent) { FactoryBot.create :collection, parent: child }
+      let_it_be(:child, refind: true) { FactoryBot.create :collection }
+      let_it_be(:new_parent, refind: true) { FactoryBot.create :collection, parent: child }
 
       let(:expected_shape) do
         gql.mutation :reparent_entity, no_errors: false do |m|
@@ -160,8 +160,8 @@ RSpec.describe Mutations::ReparentEntity, type: :request, graphql: :mutation, di
     end
 
     context "when trying to parent one's self" do
-      let!(:child) { FactoryBot.create :collection }
-      let!(:new_parent) { child }
+      let_it_be(:child, refind: true) { FactoryBot.create :collection }
+      let_it_be(:new_parent) { child }
 
       let(:expected_shape) do
         gql.mutation :reparent_entity, no_errors: false do |m|
@@ -177,8 +177,8 @@ RSpec.describe Mutations::ReparentEntity, type: :request, graphql: :mutation, di
     end
 
     context "when trying to reparent something nonsensical" do
-      let!(:child) { FactoryBot.create :collection }
-      let!(:new_parent) { FactoryBot.create :item }
+      let_it_be(:child, refind: true) { FactoryBot.create :collection }
+      let_it_be(:new_parent, refind: true) { FactoryBot.create :item }
 
       let(:expected_shape) do
         gql.mutation :reparent_entity, no_global_errors: false do |m|
@@ -194,17 +194,17 @@ RSpec.describe Mutations::ReparentEntity, type: :request, graphql: :mutation, di
     end
 
     context "when moving an item with children to another item" do
-      let_it_be(:old_parent) { FactoryBot.create :collection, community: }
+      let_it_be(:old_parent, refind: true) { FactoryBot.create :collection, community: }
 
-      let(:new_grandparent) { FactoryBot.create :collection, community: }
+      let_it_be(:new_grandparent, refind: true) { FactoryBot.create :collection, community: }
 
-      let!(:item) { FactoryBot.create :item, collection: old_parent }
+      let_it_be(:item, refind: true) { FactoryBot.create :item, collection: old_parent }
 
-      let!(:subitem) { FactoryBot.create :item, parent: item }
+      let_it_be(:subitem, refind: true) { FactoryBot.create :item, parent: item }
 
-      let(:child) { item }
+      let_it_be(:child) { item }
 
-      let!(:new_parent) { FactoryBot.create :item, collection: new_grandparent }
+      let_it_be(:new_parent, refind: true) { FactoryBot.create :item, collection: new_grandparent }
 
       it "maintains the proper hierarchy" do
         flush_enqueued_jobs

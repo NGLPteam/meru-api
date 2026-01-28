@@ -64,8 +64,8 @@ class Community < ApplicationRecord
   # @api private
   # @see Communities::GrantSystemRoles
   # @return [void]
-  def grant_system_roles!
-    call_operation("communities.grant_system_roles", self).value!
+  monadic_operation! def grant_system_roles
+    call_operation("communities.grant_system_roles", self)
   end
 
   # @see Communities::Purge

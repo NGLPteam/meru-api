@@ -3,7 +3,7 @@
 RSpec.describe Collection, type: :model do
   include ActiveJob::TestHelper
 
-  let!(:collection) { FactoryBot.create :collection }
+  let_it_be(:collection, refind: true) { FactoryBot.create :collection }
 
   it_behaves_like "an entity with a reference"
   it_behaves_like "an entity with schematic properties", :collection
@@ -11,9 +11,9 @@ RSpec.describe Collection, type: :model do
 
   context "when creating a collection" do
     context "with a schema that defines orderings" do
-      let!(:community) { FactoryBot.create :community, :simple }
+      let_it_be(:community, refind: true) { FactoryBot.create :community, :simple }
 
-      let!(:simple_collection_v1) { FactoryBot.create :schema_version, :simple_collection, :v1 }
+      let_it_be(:simple_collection_v1, refind: true) { FactoryBot.create :schema_version, :simple_collection, :v1 }
 
       it "creates the orderings defined in the schema" do
         expect do
@@ -24,7 +24,7 @@ RSpec.describe Collection, type: :model do
   end
 
   describe "#largest_child_collection" do
-    let(:collection) { nil }
+    let!(:collection) { nil }
 
     let_it_be(:parent_collection) { perform_enqueued_jobs { FactoryBot.create :collection } }
     let_it_be(:subcollection_1) { perform_enqueued_jobs { FactoryBot.create :collection, parent: parent_collection } }
@@ -38,7 +38,7 @@ RSpec.describe Collection, type: :model do
   end
 
   context "with inherited orderings", simple_v1_hierarchy: true do
-    let!(:collection) { create_v1_collection }
+    let_it_be(:collection, refind: true) { create_v1_collection }
 
     describe "#ordering" do
       it "fetches a known ordering" do
