@@ -22,16 +22,20 @@ class EntityVisibility < ApplicationRecord
 
   pg_enum! :visibility, as: "entity_visibility", prefix: :visibility
 
+  scope :active, -> { where(active: true) }
+  scope :inactive, -> { where(active: false) }
+
   scope :visible_at, ->(time) { build_visibility_scope_for(:visible, at: time) }
   scope :hidden_at, ->(time) { build_visibility_scope_for(:hidden, at: time) }
 
   scope :currently_visible, -> { visible_at Time.current }
   scope :currently_hidden, -> { hidden_at Time.current }
 
-  validate :enforce_range_with_limited_visibility!
-  validate :enforce_hidden_visibility!
+  before_validation :enforce_hidden_visibility!
 
-  after_save :reload_range!, if: :saved_change_to_visibility?
+  validate :enforce_range_with_limited_visibility!
+
+  after_validation :calculate_active!
 
   def currently_visible?
     visible_as_of? Time.current
@@ -77,7 +81,23 @@ class EntityVisibility < ApplicationRecord
     visible_until_at > now
   end
 
-  # @api private
+  private
+
+  # @return [void]
+  def calculate_active!
+    self.active = derive_active
+  end
+
+  # @return [Boolean]
+  def derive_active
+    case visibility
+    in "visible" then true
+    in "limited" then visible_as_of?(Time.current)
+    else
+      false
+    end
+  end
+
   # @return [void]
   def enforce_hidden_visibility!
     if visibility_hidden?
@@ -87,7 +107,6 @@ class EntityVisibility < ApplicationRecord
     end
   end
 
-  # @api private
   # @return [void]
   def enforce_range_with_limited_visibility!
     unless visibility_limited?
@@ -104,12 +123,6 @@ class EntityVisibility < ApplicationRecord
     return if visible_after_at? || visible_until_at?
 
     errors.add :visibility, :missing_range
-  end
-
-  # @api private
-  # @return [void]
-  def reload_range!
-    reload
   end
 
   class << self

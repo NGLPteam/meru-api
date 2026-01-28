@@ -5,6 +5,7 @@
 # @see Entities::Sync
 module SyncsEntities
   extend ActiveSupport::Concern
+  extend DefinesMonadicOperation
 
   included do
     has_one :entity, as: :entity, dependent: :destroy
@@ -71,8 +72,8 @@ module SyncsEntities
   # @api private
   # @see Entities::Sync
   # @return [void]
-  def sync_entity!
-    call_operation("entities.sync", self).value!
+  monadic_operation! def sync_entity
+    call_operation("entities.sync", self)
   end
 
   # This generates the tuple of attributes to send to {#sync_entity!} besides

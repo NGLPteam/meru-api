@@ -614,6 +614,16 @@ CREATE TYPE public.main_template_kind AS ENUM (
 
 
 --
+-- Name: meru_dictionary; Type: TYPE; Schema: public; Owner: -
+--
+
+CREATE TYPE public.meru_dictionary AS ENUM (
+    'simple',
+    'english'
+);
+
+
+--
 -- Name: metadata_background; Type: TYPE; Schema: public; Owner: -
 --
 
@@ -1284,6 +1294,22 @@ $_$;
 
 
 --
+-- Name: entity_visibility_active(public.entity_visibility, tstzrange, timestamp with time zone); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.entity_visibility_active(public.entity_visibility, tstzrange, timestamp with time zone) RETURNS boolean
+    LANGUAGE sql IMMUTABLE PARALLEL SAFE
+    AS $_$
+SELECT
+  CASE $1
+  WHEN 'visible' THEN TRUE
+  WHEN 'hidden' THEN FALSE
+  WHEN 'limited' THEN $2 IS NOT NULL AND $3 IS NOT NULL AND $2 @> $3
+  ELSE FALSE END
+$_$;
+
+
+--
 -- Name: extract_doi_from_data(jsonb); Type: FUNCTION; Schema: public; Owner: -
 --
 
@@ -1768,6 +1794,69 @@ SELECT public.nlevel(
     public.index($1, $3, public.index($1, $2))
   )
 );
+$_$;
+
+
+--
+-- Name: meru_dictionary_to_regconfig(public.meru_dictionary); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.meru_dictionary_to_regconfig(public.meru_dictionary) RETURNS regconfig
+    LANGUAGE sql IMMUTABLE PARALLEL SAFE
+    AS $_$
+SELECT CASE $1
+  WHEN 'simple' THEN 'simple'::regconfig
+  WHEN 'english' THEN 'english'::regconfig
+  ELSE 'simple'::regconfig
+END;
+$_$;
+
+
+--
+-- Name: meru_safe_dictionary(text); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.meru_safe_dictionary(text) RETURNS public.meru_dictionary
+    LANGUAGE sql IMMUTABLE PARALLEL SAFE
+    AS $_$
+SELECT CASE $1
+  WHEN 'simple' THEN 'simple'::public.meru_dictionary
+  WHEN 'english' THEN 'english'::public.meru_dictionary
+  ELSE 'simple'::public.meru_dictionary
+END;
+$_$;
+
+
+--
+-- Name: meru_tsvector(text); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.meru_tsvector(text) RETURNS tsvector
+    LANGUAGE sql IMMUTABLE PARALLEL SAFE
+    AS $_$
+SELECT public.meru_tsvector('english'::public.meru_dictionary, $1, 'D'::public.full_text_weight);
+$_$;
+
+
+--
+-- Name: meru_tsvector(public.meru_dictionary, text); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.meru_tsvector(public.meru_dictionary, text) RETURNS tsvector
+    LANGUAGE sql IMMUTABLE PARALLEL SAFE
+    AS $_$
+SELECT public.meru_tsvector($1, $2, 'D'::public.full_text_weight);
+$_$;
+
+
+--
+-- Name: meru_tsvector(public.meru_dictionary, text, public.full_text_weight); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.meru_tsvector(public.meru_dictionary, text, public.full_text_weight) RETURNS tsvector
+    LANGUAGE sql IMMUTABLE PARALLEL SAFE
+    AS $_$
+SELECT pg_catalog.setweight(pg_catalog.to_tsvector(public.meru_dictionary_to_regconfig($1), $2), $3::"char");
 $_$;
 
 
@@ -4638,37 +4727,23 @@ CREATE TABLE public.controlled_vocabulary_sources (
 
 
 --
--- Name: schema_version_ancestors; Type: TABLE; Schema: public; Owner: -
+-- Name: entity_ancestors; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE TABLE public.schema_version_ancestors (
+CREATE TABLE public.entity_ancestors (
     id uuid DEFAULT gen_random_uuid() NOT NULL,
-    schema_version_id uuid NOT NULL,
-    target_version_id uuid NOT NULL,
+    entity_type character varying NOT NULL,
+    entity_id uuid NOT NULL,
+    ancestor_type character varying NOT NULL,
+    ancestor_id uuid NOT NULL,
+    ancestor_schema_version_id uuid NOT NULL,
     name text NOT NULL,
+    origin_depth bigint NOT NULL,
+    ancestor_depth bigint NOT NULL,
+    relative_depth bigint NOT NULL,
     created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
-
-
---
--- Name: entity_ancestors; Type: VIEW; Schema: public; Owner: -
---
-
-CREATE VIEW public.entity_ancestors AS
- SELECT DISTINCT ON (sva.name, ent.entity_id) ent.entity_type,
-    ent.entity_id,
-    sva.name,
-    anc.entity_type AS ancestor_type,
-    anc.entity_id AS ancestor_id,
-    anc.schema_version_id AS ancestor_schema_version_id,
-    ent.depth AS origin_depth,
-    anc.depth AS ancestor_depth,
-    (ent.depth - anc.depth) AS relative_depth
-   FROM ((public.entities ent
-     JOIN public.schema_version_ancestors sva USING (schema_version_id))
-     JOIN public.entities anc ON (((ent.auth_path OPERATOR(public.<@) anc.auth_path) AND (anc.entity_id <> ent.entity_id) AND (anc.schema_version_id = sva.target_version_id))))
-  ORDER BY sva.name, ent.entity_id, anc.depth DESC;
 
 
 --
@@ -4761,6 +4836,20 @@ CREATE VIEW public.entity_breadcrumbs AS
 
 
 --
+-- Name: schema_version_ancestors; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.schema_version_ancestors (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    schema_version_id uuid NOT NULL,
+    target_version_id uuid NOT NULL,
+    name text NOT NULL,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+
+--
 -- Name: entity_cached_ancestors; Type: MATERIALIZED VIEW; Schema: public; Owner: -
 --
 
@@ -4793,6 +4882,33 @@ CREATE TABLE public.entity_composed_texts (
     created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
+
+
+--
+-- Name: entity_derived_ancestors; Type: VIEW; Schema: public; Owner: -
+--
+
+CREATE VIEW public.entity_derived_ancestors AS
+ SELECT ent.entity_type,
+    ent.entity_id,
+    sva.name,
+    anc.ancestor_type,
+    anc.ancestor_id,
+    anc.ancestor_schema_version_id,
+    ent.depth AS origin_depth,
+    anc.ancestor_depth,
+    (ent.depth - anc.ancestor_depth) AS relative_depth
+   FROM ((public.schema_version_ancestors sva
+     JOIN public.entities ent USING (schema_version_id))
+     LEFT JOIN LATERAL ( SELECT x.entity_type AS ancestor_type,
+            x.entity_id AS ancestor_id,
+            x.schema_version_id AS ancestor_schema_version_id,
+            x.depth AS ancestor_depth
+           FROM public.entities x
+          WHERE ((x.link_operator IS NULL) AND (x.depth < ent.depth) AND (ent.auth_path OPERATOR(public.<@) x.auth_path) AND (x.schema_version_id = sva.target_version_id))
+          ORDER BY x.depth DESC
+         LIMIT 1) anc ON (true))
+  WHERE ((ent.link_operator IS NULL) AND (anc.ancestor_id IS NOT NULL));
 
 
 --
@@ -4892,6 +5008,10 @@ CREATE TABLE public.orderings (
     constant boolean GENERATED ALWAYS AS (COALESCE(public.jsonb_to_boolean((definition -> 'constant'::text)), false)) STORED NOT NULL,
     disabled boolean GENERATED ALWAYS AS ((disabled_at IS NOT NULL)) STORED NOT NULL,
     handled_schema_definition_id uuid,
+    visible_count bigint DEFAULT 0 NOT NULL,
+    entries_count bigint DEFAULT 0 NOT NULL,
+    oldest_published public.variable_precision_date DEFAULT '(,none)'::public.variable_precision_date,
+    latest_published public.variable_precision_date DEFAULT '(,none)'::public.variable_precision_date,
     CONSTRAINT enforce_ordering_identifier_parity CHECK (((identifier)::text = (definition ->> 'id'::text)))
 );
 
@@ -5146,7 +5266,8 @@ CREATE TABLE public.entity_visibilities (
     visibility public.entity_visibility DEFAULT 'visible'::public.entity_visibility NOT NULL,
     created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    visibility_range tstzrange GENERATED ALWAYS AS (public.calculate_visibility_range(visibility, visible_after_at, visible_until_at)) STORED
+    visibility_range tstzrange GENERATED ALWAYS AS (public.calculate_visibility_range(visibility, visible_after_at, visible_until_at)) STORED,
+    active boolean DEFAULT false NOT NULL
 );
 
 
@@ -5850,96 +5971,6 @@ CREATE VIEW public.hierarchical_schema_version_ranks AS
 
 
 --
--- Name: ordering_entries; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.ordering_entries (
-    id uuid DEFAULT gen_random_uuid() NOT NULL,
-    ordering_id uuid NOT NULL,
-    entity_type character varying NOT NULL,
-    entity_id uuid NOT NULL,
-    "position" bigint NOT NULL,
-    inverse_position bigint NOT NULL,
-    link_operator public.link_operator,
-    auth_path public.ltree NOT NULL,
-    scope public.ltree NOT NULL,
-    relative_depth integer NOT NULL,
-    tree_depth bigint,
-    tree_parent_type character varying,
-    tree_parent_id uuid,
-    stale_at timestamp(6) without time zone,
-    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    order_props jsonb DEFAULT '{}'::jsonb NOT NULL
-);
-
-
---
--- Name: ordering_entry_counts; Type: MATERIALIZED VIEW; Schema: public; Owner: -
---
-
-CREATE MATERIALIZED VIEW public.ordering_entry_counts AS
- SELECT oe.ordering_id,
-    count(*) FILTER (WHERE visibility.visible) AS visible_count,
-    count(*) AS entries_count
-   FROM ((public.ordering_entries oe
-     LEFT JOIN public.entity_visibilities ev USING (entity_type, entity_id))
-     LEFT JOIN LATERAL ( SELECT
-                CASE ev.visibility
-                    WHEN 'visible'::public.entity_visibility THEN true
-                    WHEN 'hidden'::public.entity_visibility THEN false
-                    WHEN 'limited'::public.entity_visibility THEN (ev.visibility_range @> CURRENT_TIMESTAMP)
-                    ELSE false
-                END AS visible) visibility ON (true))
-  GROUP BY oe.ordering_id
-  WITH NO DATA;
-
-
---
--- Name: initial_ordering_derivations; Type: VIEW; Schema: public; Owner: -
---
-
-CREATE VIEW public.initial_ordering_derivations AS
- SELECT DISTINCT ON (ord.entity_id) ord.entity_id,
-    ord.entity_type,
-    ord.id AS ordering_id,
-    ord.identifier
-   FROM (public.orderings ord
-     LEFT JOIN public.ordering_entry_counts oec ON ((oec.ordering_id = ord.id)))
-  WHERE ((ord.disabled_at IS NULL) AND (NOT ord.hidden))
-  ORDER BY ord.entity_id, oec.visible_count DESC NULLS LAST, ord."position", ord.name, ord.identifier;
-
-
---
--- Name: initial_ordering_links; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.initial_ordering_links (
-    id uuid DEFAULT gen_random_uuid() NOT NULL,
-    entity_type text NOT NULL,
-    entity_id uuid NOT NULL,
-    ordering_id uuid NOT NULL,
-    kind public.initial_ordering_kind NOT NULL,
-    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
-);
-
-
---
--- Name: initial_ordering_selections; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.initial_ordering_selections (
-    id uuid DEFAULT gen_random_uuid() NOT NULL,
-    entity_type character varying NOT NULL,
-    entity_id uuid NOT NULL,
-    ordering_id uuid NOT NULL,
-    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
-);
-
-
---
 -- Name: item_authorizations; Type: MATERIALIZED VIEW; Schema: public; Owner: -
 --
 
@@ -6366,6 +6397,44 @@ CREATE VIEW public.link_target_candidates AS
 
 
 --
+-- Name: ordering_entries; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.ordering_entries (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    ordering_id uuid NOT NULL,
+    entity_type character varying NOT NULL,
+    entity_id uuid NOT NULL,
+    "position" bigint NOT NULL,
+    inverse_position bigint NOT NULL,
+    link_operator public.link_operator,
+    auth_path public.ltree NOT NULL,
+    scope public.ltree NOT NULL,
+    relative_depth integer NOT NULL,
+    tree_depth bigint,
+    tree_parent_type character varying,
+    tree_parent_id uuid,
+    stale_at timestamp(6) without time zone,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    order_props jsonb DEFAULT '{}'::jsonb NOT NULL
+);
+
+
+--
+-- Name: ordering_date_ranges; Type: VIEW; Schema: public; Owner: -
+--
+
+CREATE VIEW public.ordering_date_ranges AS
+ SELECT DISTINCT ON (oe.ordering_id) oe.ordering_id,
+    first_value(pd.normalized) OVER w AS oldest_published,
+    last_value(pd.normalized) OVER w AS latest_published
+   FROM (public.ordering_entries oe
+     JOIN public.named_variable_dates pd ON (((pd.entity_type = (oe.entity_type)::text) AND (pd.entity_id = oe.entity_id) AND (pd.path = '$published$'::text) AND (pd."precision" IS NOT NULL) AND (pd.value IS NOT NULL))))
+  WINDOW w AS (PARTITION BY oe.ordering_id ORDER BY pd.value, pd."precision" DESC ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING);
+
+
+--
 -- Name: ordering_entry_ancestor_links; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -6425,6 +6494,19 @@ CREATE VIEW public.ordering_entry_candidates AS
    FROM ((public.entities ent
      JOIN public.schema_versions sv ON ((sv.id = ent.schema_version_id)))
      JOIN public.schema_definitions sd ON ((sd.id = sv.schema_definition_id)));
+
+
+--
+-- Name: ordering_entry_counts; Type: VIEW; Schema: public; Owner: -
+--
+
+CREATE VIEW public.ordering_entry_counts AS
+ SELECT oe.ordering_id,
+    count(*) FILTER (WHERE ev.active) AS visible_count,
+    count(*) AS entries_count
+   FROM (public.ordering_entries oe
+     LEFT JOIN public.entity_visibilities ev USING (entity_type, entity_id))
+  GROUP BY oe.ordering_id;
 
 
 --
@@ -6923,14 +7005,14 @@ CREATE TABLE public.schematic_texts (
     path public.citext NOT NULL,
     lang public.citext,
     kind public.citext DEFAULT 'text'::public.citext,
-    dictionary regconfig DEFAULT 'simple'::regconfig NOT NULL,
+    dictionary public.meru_dictionary DEFAULT 'simple'::public.meru_dictionary NOT NULL,
     weight public.full_text_weight DEFAULT 'D'::"char" NOT NULL,
     content text,
     text_content text,
     created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    document tsvector GENERATED ALWAYS AS (setweight(to_tsvector(dictionary, text_content), (weight)::"char")) STORED,
-    schema_version_property_id uuid
+    schema_version_property_id uuid,
+    document tsvector GENERATED ALWAYS AS (public.meru_tsvector(dictionary, text_content, weight)) STORED NOT NULL
 );
 
 
@@ -8291,6 +8373,14 @@ ALTER TABLE ONLY public.entities
 
 
 --
+-- Name: entity_ancestors entity_ancestors_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.entity_ancestors
+    ADD CONSTRAINT entity_ancestors_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: entity_composed_texts entity_composed_texts_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -8600,22 +8690,6 @@ ALTER TABLE ONLY public.harvest_sets
 
 ALTER TABLE ONLY public.harvest_sources
     ADD CONSTRAINT harvest_sources_pkey PRIMARY KEY (id);
-
-
---
--- Name: initial_ordering_links initial_ordering_links_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.initial_ordering_links
-    ADD CONSTRAINT initial_ordering_links_pkey PRIMARY KEY (id);
-
-
---
--- Name: initial_ordering_selections initial_ordering_selections_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.initial_ordering_selections
-    ADD CONSTRAINT initial_ordering_selections_pkey PRIMARY KEY (id);
 
 
 --
@@ -10552,6 +10626,13 @@ CREATE INDEX index_entities_crumb_source ON public.entities USING gist (depth, a
 
 
 --
+-- Name: index_entities_for_child_entity_tuples; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_entities_for_child_entity_tuples ON public.entities USING btree (entity_type, entity_id) WHERE (scope OPERATOR(public.=) ANY (ARRAY['collections'::public.ltree, 'items'::public.ltree]));
+
+
+--
 -- Name: index_entities_for_descendant_parents; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -10661,6 +10742,27 @@ CREATE INDEX index_entities_schematic_descendant_querying ON public.entities USI
 --
 
 CREATE INDEX index_entities_staleness ON public.entities USING btree (stale);
+
+
+--
+-- Name: index_entity_ancestors_on_ancestor; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_entity_ancestors_on_ancestor ON public.entity_ancestors USING btree (ancestor_type, ancestor_id);
+
+
+--
+-- Name: index_entity_ancestors_on_ancestor_schema_version_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_entity_ancestors_on_ancestor_schema_version_id ON public.entity_ancestors USING btree (ancestor_schema_version_id);
+
+
+--
+-- Name: index_entity_ancestors_uniqueness; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_entity_ancestors_uniqueness ON public.entity_ancestors USING btree (entity_id, name);
 
 
 --
@@ -10913,6 +11015,13 @@ CREATE UNIQUE INDEX index_entity_search_documents_on_entity ON public.entity_sea
 --
 
 CREATE INDEX index_entity_search_documents_on_item_id ON public.entity_search_documents USING btree (item_id);
+
+
+--
+-- Name: index_entity_visibilities_active; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_entity_visibilities_active ON public.entity_visibilities USING btree (entity_type, entity_id, active);
 
 
 --
@@ -11686,34 +11795,6 @@ CREATE UNIQUE INDEX index_herl_transitions_parent_most_recent ON public.harvest_
 
 
 --
--- Name: index_initial_ordering_links_on_entity; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE UNIQUE INDEX index_initial_ordering_links_on_entity ON public.initial_ordering_links USING btree (entity_type, entity_id);
-
-
---
--- Name: index_initial_ordering_links_on_ordering_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_initial_ordering_links_on_ordering_id ON public.initial_ordering_links USING btree (ordering_id);
-
-
---
--- Name: index_initial_ordering_selections_on_entity; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE UNIQUE INDEX index_initial_ordering_selections_on_entity ON public.initial_ordering_selections USING btree (entity_type, entity_id);
-
-
---
--- Name: index_initial_ordering_selections_on_ordering_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_initial_ordering_selections_on_ordering_id ON public.initial_ordering_selections USING btree (ordering_id);
-
-
---
 -- Name: index_item_attributions_ordering; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -12148,6 +12229,13 @@ CREATE INDEX index_named_variable_dates_on_schema_version_property_id ON public.
 
 
 --
+-- Name: index_named_variable_dates_ranging; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_named_variable_dates_ranging ON public.named_variable_dates USING btree (entity_type, entity_id, path, value, "precision" DESC) INCLUDE (normalized) WHERE (("precision" IS NOT NULL) AND (value IS NOT NULL));
+
+
+--
 -- Name: index_named_variable_dates_uniqueness; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -12327,13 +12415,6 @@ CREATE INDEX index_orderings_deterministic_by_schema_position ON public.ordering
 --
 
 CREATE INDEX index_orderings_enabled_by_entity ON public.orderings USING btree (entity_id, entity_type) WHERE (disabled_at IS NULL);
-
-
---
--- Name: index_orderings_for_initial; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_orderings_for_initial ON public.orderings USING btree (id, entity_id, entity_type, "position", name, identifier) WHERE ((disabled_at IS NULL) AND (NOT hidden));
 
 
 --
@@ -13464,13 +13545,6 @@ CREATE UNIQUE INDEX legacy_index_harvest_records_uniqueness ON public.legacy_har
 
 
 --
--- Name: ordering_entry_counts_pkey; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE UNIQUE INDEX ordering_entry_counts_pkey ON public.ordering_entry_counts USING btree (ordering_id);
-
-
---
 -- Name: role_permissions_context; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -14368,14 +14442,6 @@ ALTER TABLE ONLY public.harvest_attempts
 
 
 --
--- Name: initial_ordering_links fk_rails_725f496dff; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.initial_ordering_links
-    ADD CONSTRAINT fk_rails_725f496dff FOREIGN KEY (ordering_id) REFERENCES public.orderings(id) ON DELETE CASCADE;
-
-
---
 -- Name: item_contributions fk_rails_73af22b63e; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -14928,6 +14994,14 @@ ALTER TABLE ONLY public.templates_contributor_list_instances
 
 
 --
+-- Name: entity_ancestors fk_rails_d021f91915; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.entity_ancestors
+    ADD CONSTRAINT fk_rails_d021f91915 FOREIGN KEY (ancestor_schema_version_id) REFERENCES public.schema_versions(id) ON DELETE RESTRICT;
+
+
+--
 -- Name: granted_permissions fk_rails_d060f47715; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -15224,14 +15298,6 @@ ALTER TABLE ONLY public.harvest_attempt_entity_links
 
 
 --
--- Name: initial_ordering_selections fk_rails_fb3fc2b564; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.initial_ordering_selections
-    ADD CONSTRAINT fk_rails_fb3fc2b564 FOREIGN KEY (ordering_id) REFERENCES public.orderings(id) ON DELETE CASCADE;
-
-
---
 -- Name: harvest_messages fk_rails_fb5520bb9b; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -15270,6 +15336,15 @@ ALTER TABLE ONLY public.templates_ordering_instances
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20260112070213'),
+('20260112070114'),
+('20260111065455'),
+('20260110114750'),
+('20260110111739'),
+('20260110053118'),
+('20260110052157'),
+('20260110051906'),
+('20260110051709'),
 ('20260109184446'),
 ('20251119062322'),
 ('20251119042325'),

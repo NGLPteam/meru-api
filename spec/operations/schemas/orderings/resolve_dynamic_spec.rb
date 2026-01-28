@@ -48,10 +48,6 @@ RSpec.describe Schemas::Orderings::ResolveDynamic, type: :operation do
     )
   end
 
-  before do
-    EntityCachedAncestor.refresh!
-  end
-
   it "retrieves things in the correct order" do
     expect_calling_with(definition:, entity:, limit:, id:).to succeed.with([new_article, old_article])
   end

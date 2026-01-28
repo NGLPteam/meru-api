@@ -16,13 +16,12 @@ module Types
     end
 
     load_association! :ordering
-    load_association! :ordering_entry_count
     load_association! :prev_sibling
     load_association! :next_sibling
 
     # @return [Templates::OrderingPair]
     def ordering_pair
-      assocs = [ordering, ordering_entry_count, prev_sibling, next_sibling]
+      assocs = [ordering, prev_sibling, next_sibling]
 
       maybe_await(assocs).then do
         object.ordering_pair

@@ -166,10 +166,7 @@ services:
         condition: service_healthy
     env_file:
       - docker/compose.env
-    environment:
-      - RACK_ENV=test
-      - RAILS_ENV=test
-      - REDIS_URL=redis://test-redis:6379
+      - docker/test.env
     logging:
       driver: json-file
       options:

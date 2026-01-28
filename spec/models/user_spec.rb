@@ -1,7 +1,12 @@
 # frozen_string_literal: true
 
 RSpec.describe User, type: :model do
-  let!(:user) { FactoryBot.create :user }
+  let_it_be(:entity, refind: true) { FactoryBot.create :community }
+  let_it_be(:manager, refind: true) { FactoryBot.create :user, manager_on: entity }
+  let_it_be(:editor, refind: true) { FactoryBot.create :user, editor_on: entity }
+  let_it_be(:reader, refind: true) { FactoryBot.create :user, reader_on: entity }
+  let_it_be(:admin, refind: true) { FactoryBot.create :user, :admin }
+  let_it_be(:user, refind: true) { FactoryBot.create :user }
 
   subject { user }
 
@@ -89,7 +94,7 @@ RSpec.describe User, type: :model do
   end
 
   context "as an admin" do
-    let!(:user) { FactoryBot.create :user, :admin }
+    subject { admin }
 
     it { is_expected.to have_allowed_action "settings.update" }
 
@@ -103,10 +108,8 @@ RSpec.describe User, type: :model do
   end
 
   context "with a contextual role" do
-    let!(:entity) { FactoryBot.create :community }
-
     context "as a manager" do
-      let!(:user) { FactoryBot.create :user, manager_on: entity }
+      subject { manager }
 
       it { is_expected.not_to have_allowed_action "settings.update" }
 
@@ -120,7 +123,7 @@ RSpec.describe User, type: :model do
     end
 
     context "as an editor" do
-      let!(:user) { FactoryBot.create :user, editor_on: entity }
+      subject { editor }
 
       it { is_expected.not_to have_allowed_action "contributors.delete" }
       it { is_expected.not_to have_allowed_action "settings.update" }
@@ -136,7 +139,7 @@ RSpec.describe User, type: :model do
     end
 
     context "as a reader" do
-      let!(:user) { FactoryBot.create :user, reader_on: entity }
+      subject { reader }
 
       it { is_expected.not_to have_allowed_action "contributors.delete" }
       it { is_expected.not_to have_allowed_action "settings.update" }
@@ -152,6 +155,8 @@ RSpec.describe User, type: :model do
   end
 
   context "as a user with no special assignments" do
+    subject { user }
+
     include_examples "common assigned actions"
 
     it { is_expected.not_to have_allowed_action "contributors.read" }

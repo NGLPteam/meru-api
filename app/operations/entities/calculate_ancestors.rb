@@ -1,12 +1,10 @@
 # frozen_string_literal: true
 
 module Entities
+  # Calculate {EntityAncestor}s for a given descendant entity.
+  #
   # @see Entities::AncestorCalculator
-  class CalculateAncestors
-    # @param [SyncsEntities] descendant
-    # @return [Dry::Monads::Result]
-    def call(descendant)
-      Entities::AncestorCalculator.new(descendant).call
-    end
+  class CalculateAncestors < Support::SimpleServiceOperation
+    service_klass Entities::AncestorCalculator
   end
 end

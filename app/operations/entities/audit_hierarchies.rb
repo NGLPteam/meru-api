@@ -8,33 +8,23 @@ module Entities
 
     # Check polymorphic associations for removed entities.
     CLEANUP = <<~SQL
+    WITH sources AS (
+      SELECT 'Community' AS type, id FROM communities
+      UNION ALL
+      SELECT 'Collection' AS type, id FROM collections
+      UNION ALL
+      SELECT 'EntityLink' AS type, id FROM entity_links
+      UNION ALL
+      SELECT 'Item' AS type, id FROM items
+    )
     DELETE
     FROM entity_hierarchies
     WHERE
-      CASE ancestor_type
-      WHEN 'Community' THEN ancestor_id NOT IN (SELECT id FROM communities)
-      WHEN 'Collection' THEN ancestor_id NOT IN (SELECT ID FROM collections)
-      WHEN 'Item' THEN ancestor_id NOT IN (SELECT id FROM items)
-      ELSE
-        FALSE
-      END
+      (ancestor_type, ancestor_id) NOT IN (SELECT type, id FROM sources)
       OR
-      CASE descendant_type
-      WHEN 'Community' THEN descendant_id NOT IN (SELECT id FROM communities)
-      WHEN 'Collection' THEN descendant_id NOT IN (SELECT id FROM collections)
-      WHEN 'EntityLink' THEN descendant_id NOT IN (SELECT id FROM entity_links)
-      WHEN 'Item' THEN descendant_id NOT IN (SELECT id FROM items)
-      ELSE
-        FALSE
-      END
+      (descendant_type, descendant_id) NOT IN (SELECT type, id FROM sources)
       OR
-      CASE hierarchical_type
-      WHEN 'Community' THEN hierarchical_id NOT IN (SELECT id FROM communities)
-      WHEN 'Collection' THEN hierarchical_id NOT IN (SELECT id FROM collections)
-      WHEN 'Item' THEN hierarchical_id NOT IN (SELECT id FROM items)
-      ELSE
-        FALSE
-      END
+      (hierarchical_type, hierarchical_id) NOT IN (SELECT type, id FROM sources)
     ;
     SQL
 

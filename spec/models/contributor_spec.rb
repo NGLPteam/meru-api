@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 
 RSpec.describe Contributor, type: :model, disable_ordering_refresh: true do
-  let!(:contributor) { FactoryBot.create :contributor, :person }
+  let_it_be(:contributor, refind: true) { FactoryBot.create :contributor, :person }
 
-  let(:collection_count) { 2 }
-  let(:item_count) { 2 }
+  let_it_be(:collection_count) { 2 }
+  let_it_be(:item_count) { 2 }
 
-  let!(:collection_contributions) { FactoryBot.create_list :collection_contribution, collection_count, contributor: }
-  let!(:item_contributions) { FactoryBot.create_list :item_contribution, item_count, contributor: }
+  let_it_be(:collection_contributions) { FactoryBot.create_list :collection_contribution, collection_count, contributor: }
+  let_it_be(:item_contributions) { FactoryBot.create_list :item_contribution, item_count, contributor: }
 
   describe "#attach!" do
     it "can attach a collection" do

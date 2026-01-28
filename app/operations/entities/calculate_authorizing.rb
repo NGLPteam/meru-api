@@ -15,7 +15,7 @@ module Entities
     # as well as a hierarchical reference to said entity.
     PREFIX = <<~SQL
     WITH calculated AS (
-      SELECT
+      SELECT DISTINCT ON (ent.auth_path, subent.id, subent.scope, subent.hierarchical_type, subent.hierarchical_id)
         ent.auth_path AS auth_path,
         subent.id AS entity_id,
         subent.scope,
@@ -28,7 +28,6 @@ module Entities
     # If a row already exists, ignore it. {AuthorizingEntity} has no
     # updatable columns.
     SUFFIX = <<~SQL
-      GROUP BY 1, 2, 3, 4, 5
     )
     INSERT INTO authorizing_entities
     (auth_path, entity_id, scope, hierarchical_type, hierarchical_id)

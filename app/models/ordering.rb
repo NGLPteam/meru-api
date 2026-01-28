@@ -28,6 +28,8 @@ class Ordering < ApplicationRecord
 
   has_one :schema_definition, through: :schema_version
 
+  has_one_readonly :ordering_date_range, inverse_of: :ordering
+
   has_one_readonly :ordering_entry_count, inverse_of: :ordering
 
   has_many :ordering_entries, inverse_of: :ordering, dependent: :delete_all
@@ -183,16 +185,27 @@ class Ordering < ApplicationRecord
     self.handled_schema_definition = definition.handled_schema_definition
   end
 
-  # @!group Variable Date Accessors
+  # @!group Stats
 
-  # @return [VariablePrecisionDate, nil]
-  def latest_published
-    named_variable_dates.for_latest.published.pick(:normalized)
+  # @see Schemas::Orderings::Stats::Calculate
+  # @see Schemas::Orderings::Stats::Calculator
+  # @return [Dry::Monads::Success(Ordering)]
+  monadic_operation! def calculate_stats(**options)
+    call_operation("schemas.orderings.stats.calculate", self, **options)
   end
 
-  # @return [VariablePrecisionDate, nil]
-  def oldest_published
-    named_variable_dates.for_oldest.published.pick(:normalized)
+  # @see Schemas::Orderings::Stats::CalculateDates
+  # @see Schemas::Orderings::Stats::DatesCalculator
+  # @return [Dry::Monads::Success(Ordering)]
+  monadic_operation! def calculate_dates(**options)
+    call_operation("schemas.orderings.stats.calculate_dates", self, **options)
+  end
+
+  # @see Schemas::Orderings::Stats::CountEntries
+  # @see Schemas::Orderings::Stats::EntriesCounter
+  # @return [Dry::Monads::Success(Ordering)]
+  monadic_operation! def count_entries(**options)
+    call_operation("schemas.orderings.stats.count_entries", self, **options)
   end
 
   # @!endgroup

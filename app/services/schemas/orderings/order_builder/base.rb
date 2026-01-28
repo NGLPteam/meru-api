@@ -8,7 +8,6 @@ module Schemas
         extend Dry::Initializer
 
         include Dry::Core::Memoizable
-        include Dry::Effects.Reader(:for_dynamic_ordering, default: false)
         include Dry::Effects.State(:joins)
         include Dry::Effects.State(:props)
         include Dry::Effects.Resolve(:encode_join)
@@ -40,11 +39,7 @@ module Schemas
         end
 
         memoize def entity_ancestors
-          if for_dynamic_ordering
-            EntityCachedAncestor.arel_table
-          else
-            EntityAncestor.arel_table
-          end
+          EntityAncestor.arel_table
         end
 
         memoize def named_variable_dates

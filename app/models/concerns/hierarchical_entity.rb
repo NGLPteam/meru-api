@@ -1,5 +1,18 @@
 # frozen_string_literal: true
 
+# The core interface for defining hierarchical entities
+#
+# Hierarchical entities are those that exist within a hierarchy,
+# such as {Community}, {Collection}, and {Item}.
+#
+# This concern provides the shared behavior for all hierarchical entities,
+# including ancestor/descendant relationships, contextual permissions,
+# entity linking, ordering, and templating.
+#
+# For historical reasons, some code may refer to a `SchemaInstance`, this
+# is synonymous with a `HierarchicalEntity`.
+#
+# @abstract
 module HierarchicalEntity
   extend ActiveSupport::Concern
   extend DefinesMonadicOperation
@@ -33,8 +46,8 @@ module HierarchicalEntity
     has_many :hierarchical_entity_entries, as: :hierarchical, dependent: :destroy,
       class_name: "Entity"
 
-    has_many_readonly :named_ancestors, -> { in_default_order.preload(:ancestor) }, class_name: "EntityAncestor", as: :entity
-    has_many_readonly :named_descendants, class_name: "EntityAncestor", as: :ancestor
+    has_many :named_ancestors, -> { in_default_order.preload(:ancestor) }, class_name: "EntityAncestor", as: :entity, inverse_of: :entity, dependent: :delete_all
+    has_many :named_descendants, class_name: "EntityAncestor", as: :ancestor, inverse_of: :ancestor, dependent: :delete_all
 
     has_many :entity_links, -> { preload(:target) }, as: :source, dependent: :destroy, inverse_of: :source
     has_many :incoming_links, -> { preload(:source) }, as: :target, class_name: "EntityLink", dependent: :destroy, inverse_of: :target
@@ -48,6 +61,9 @@ module HierarchicalEntity
 
     has_many_readonly :entity_breadcrumbs, -> { preload(:crumb).order(depth: :asc) }, as: :entity
     has_many_readonly :entity_breadcrumb_entries, class_name: "EntityBreadcrumb", as: :crumb
+
+    has_many_readonly :entity_derived_ancestors, -> { in_default_order.preload(:ancestor) }, as: :entity, inverse_of: :entity
+    has_many_readonly :entity_derived_descendants, as: :descendant, inverse_of: :descendant, class_name: "EntityDerivedAncestor"
 
     has_many_readonly :entity_descendants, as: :parent, inverse_of: :parent
 
