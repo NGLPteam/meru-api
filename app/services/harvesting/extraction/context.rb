@@ -80,6 +80,10 @@ module Harvesting
             # :nocov:
           end
         end
+
+        # :nocov:
+        raise Harvesting::Error, "Invalid extraction mapping template: #{@mapping_errors.join(', ')}" if @mapping.nil? && @mapping_errors.any?
+        # :nocov:
       end
     end
   end

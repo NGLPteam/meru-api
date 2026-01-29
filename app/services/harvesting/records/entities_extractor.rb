@@ -26,6 +26,8 @@ module Harvesting
 
       standard_execution!
 
+      define_model_callbacks :entities_extraction
+
       # @return [<String>]
       attr_reader :existing_contributor_ids
 
@@ -58,27 +60,31 @@ module Harvesting
 
       delegate :metadata_mappings, :use_metadata_mappings?, to: :extraction_context
 
-      around_execute :provide_harvest_configuration!
-      around_execute :provide_harvest_source!
-      around_execute :provide_harvest_mapping!
-      around_execute :provide_harvest_attempt!
-      around_execute :provide_harvest_record!
+      around_entities_extraction :provide_harvest_configuration!
+      around_entities_extraction :provide_harvest_source!
+      around_entities_extraction :provide_harvest_mapping!
+      around_entities_extraction :provide_harvest_attempt!
+      around_entities_extraction :provide_harvest_record!
+      around_entities_extraction :capture_harvest_errors!
+
       around_execute :provide_metadata_format!
 
       # @return [Dry::Monads::Success(HarvestRecord)]
       def call
-        yield set_up!
+        run_callbacks :entities_extraction do
+          yield set_up!
 
-        run_callbacks :execute do
-          yield prepare!
+          run_callbacks :execute do
+            yield prepare!
 
-          yield extract!
+            yield extract!
 
-          yield prune!
+            yield prune!
 
-          yield mark_active!
+            yield mark_active!
 
-          yield update_entity_count!
+            yield update_entity_count!
+          end
         end
 
         link.try(:transition_to, "extracted")
@@ -336,7 +342,7 @@ module Harvesting
 
         harvest_record.update_columns columns
 
-        harvest_record.harvest_entities.delete_all
+        harvest_record.harvest_entities.destroy_all
 
         harvest_record.reload
 
@@ -350,6 +356,15 @@ module Harvesting
         end
 
         track_skip!(result) if skipped
+      end
+
+      # @return [void]
+      def capture_harvest_errors!
+        yield
+      rescue Harvesting::Error => e
+        logger.fatal e.message, tag: %i[entity_extraction_failure], exception_klass: e.class.name, backtrace: e.backtrace
+
+        skip!(e.message, code: :entity_extraction_failure)
       end
     end
   end
