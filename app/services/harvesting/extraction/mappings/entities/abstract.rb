@@ -118,7 +118,7 @@ module Harvesting
               if respond_to?(:items)
                 structs.concat(items.map { _1.render_struct_for(render_context, parent:) })
               end
-            end
+            end.compact # remove any child structs whose requirements were not met
           end
 
           def requirements_met?(render_context)
