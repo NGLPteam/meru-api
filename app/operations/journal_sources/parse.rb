@@ -7,6 +7,7 @@ module JournalSources
 
     include MeruAPI::Deps[
       parse_full: "journal_sources.parsers.full",
+      parse_issue_only: "journal_sources.parsers.issue_only",
       parse_volume_only: "journal_sources.parsers.volume_only",
       parse_fallback: "journal_sources.parsers.fallback",
     ]
@@ -14,7 +15,9 @@ module JournalSources
     def call(*inputs)
       parse_full.(*inputs).or do
         parse_volume_only.(*inputs).or do
-          parse_fallback.(*inputs)
+          parse_issue_only.(*inputs).or do
+            parse_fallback.(*inputs)
+          end
         end
       end.value_or do
         JournalSources::Parsed::Unknown.new

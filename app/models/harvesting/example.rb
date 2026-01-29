@@ -110,6 +110,11 @@ module Harvesting
 
         base_scope.all
       end
+
+      # @return [String]
+      def template_for(id)
+        find(id).extraction_mapping_template
+      end
     end
   end
 end

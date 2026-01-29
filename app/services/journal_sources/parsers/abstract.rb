@@ -70,9 +70,11 @@ module JournalSources
 
       # @!attribute [r] parsed_klass
       # @return [Class]
-      def parsed_klass
-        self.class.parsed_klass
-      end
+      def parsed_klass = self.class.parsed_klass
+
+      delegate :mode, to: :parsed_klass
+
+      def issue_only? = mode == :issue_only
 
       # @!group Extraction Helpers
 
@@ -89,7 +91,7 @@ module JournalSources
         extract.year(input).value_or(nil)
       end
 
-      # @!endgroup
+      # @!endgroup Extraction Helpers
 
       # @!group AnyStyle parsing
 
@@ -145,7 +147,13 @@ module JournalSources
           in date: [String => date, *], title: [String => title, *]
             target[:volume] ||= ("%<date>s %<title>s" % { date:, title:, }).strip
           in title: [String => title, *]
+            # :nocov:
+            # Not sure any examples exist of this case alone,
+            # but it was something that existed in the original journal source parser.
             target[:volume] ||= ("%<title>s" % { title: }).strip
+            # :nocov:
+          in note: [/Issue/i => note, *] if looks_like_issue_only?(result, target)
+            target[:issue] = maybe_combine_for_issue_only(note, **result)
           else
             # Intentionally left blank
           end
@@ -166,7 +174,30 @@ module JournalSources
         end
       end
 
-      # @!endgroup
+      # @param [Hash] hash
+      def has_issue_or_volume?(hash)
+        hash[:issue].present? || hash[:volume].present?
+      end
+
+      # @param [Hash] result
+      # @param [Hash] target
+      def looks_like_issue_only?(result, target)
+        issue_only? && !has_issue_or_volume?(target) && !has_issue_or_volume?(result)
+      end
+
+      # @param [<String>] note
+      # @param [<String>, nil] publisher
+      # @param [<String>, nil] location
+      # @return [String]
+      def maybe_combine_for_issue_only(note, publisher: nil, location: nil, **)
+        n, p, l = [note, publisher, location].map { extract_first_string(_1) }
+
+        suffix = [p, l].compact.join(", ")
+
+        [n, suffix].compact_blank.join(" ").squish
+      end
+
+      # @!endgroup AnyStyle parsing
     end
   end
 end

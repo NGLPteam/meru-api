@@ -71,7 +71,9 @@ module Templates
         env.register_tag "copylink", Templates::Tags::Blocks::CopyLink
         env.register_tag "entitylink", Templates::Tags::Blocks::EntityLink
         env.register_tag "ifpresent", ::LiquidExt::Tags::IfPresent
+        env.register_tag "ifinteger", ::LiquidExt::Tags::IfInteger
 
+        env.register_filter LiquidExt::CommonFilters
         env.register_filter Templates::Filters::CommonFilters
 
         register_dot_list! env

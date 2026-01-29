@@ -29,51 +29,36 @@ module JournalSources
       attribute? :fpage, Types::OptionalInteger
       attribute? :lpage, Types::OptionalInteger
 
-      validates :volume, presence: true, comparison: { other_than: UNKNOWN }, if: :has_expected_volume?
+      validates :volume, presence: true, comparison: { other_than: UNKNOWN }, if: :has_required_volume?
 
-      validates :issue, presence: true, comparison: { other_than: UNKNOWN }, if: :has_expected_issue?
+      validates :issue, presence: true, comparison: { other_than: UNKNOWN }, if: :has_required_issue?
 
       # @return [JournalSources::Drop]
-      def to_liquid
-        JournalSources::Drop.new(self)
-      end
+      def to_liquid = JournalSources::Drop.new(self)
 
       # @return [Dry::Monads::Some(JournalSources::Parsed::Abstract), Dry::Monads::None]
-      def to_monad
-        valid? ? Some(self) : None()
-      end
+      def to_monad = valid? ? Some(self) : None()
 
       # @!group Mode Logic
 
-      def full?
-        mode == :full
-      end
+      def full? = mode == :full
 
-      def known?
-        !unknown? && valid?
-      end
+      def known? = !unknown? && valid?
 
-      def mode
-        self.class.mode
-      end
+      def has_required_issue? = full? || issue_only?
 
-      def has_expected_volume?
-        full? || volume_only?
-      end
+      def has_required_volume? = full? || volume_only?
 
-      def has_expected_issue?
-        full?
-      end
+      def issue_only? = mode == :issue_only
 
-      def unknown?
-        mode == :unknown || invalid?
-      end
+      # @return [JournalSources::Types::Mode]
+      def mode = self.class.mode
 
-      def volume_only?
-        mode == :volume_only
-      end
+      def unknown? = mode == :unknown || invalid?
 
-      # @!endgroup
+      def volume_only? = mode == :volume_only
+
+      # @!endgroup Mode Logic
     end
   end
 end

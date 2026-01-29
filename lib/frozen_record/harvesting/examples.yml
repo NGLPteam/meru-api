@@ -63,6 +63,19 @@
     the liquid environment. These are available on the following
     assigns in any OAIDC environment: `journal`, `creators`, `contributors`,
     and `pdf`.
+- id: oaidc_journal_special_issues
+  name: OAIDC Journal Article (Special Issues)
+  default: false
+  protocol_name: "oai"
+  metadata_format_name: "oaidc"
+  description: >
+    When fetching an OAIDC source that represents a journal article
+    contained within special issues (i.e., issues that do not have
+    volume/issue numbers, but rather special issue names),
+    the data needs to be parsed using special helpers we provide in
+    the liquid environment. These are available on the following
+    assigns in any OAIDC environment: `journal`, `creators`, `contributors`,
+    and `pdf`.
 - id: empty
   name: "Barebones Template"
   default: false
