@@ -10,7 +10,9 @@ module JournalSources
 
     KnowableString = String.default(UNKNOWN).fallback(UNKNOWN)
 
-    Mode = Symbol.enum(:unknown, :full, :volume_only)
+    Mode = Symbol.enum(:unknown, :full, :volume_only, :issue_only)
+
+    LiquidMode = Coercible::String.enum(*Mode.values.map(&:to_s)).fallback("unknown")
 
     OptionalInteger = Coercible::Integer.optional.fallback(nil)
 

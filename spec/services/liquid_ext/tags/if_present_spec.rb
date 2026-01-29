@@ -1,16 +1,10 @@
 # frozen_string_literal: true
 
 RSpec.describe LiquidExt::Tags::IfPresent do
-  let_it_be(:strict_environment) do
-    Liquid::Environment.build(error_mode: :strict) do |env|
-      env.register_tag "ifpresent", described_class
-    end
-  end
+  include_context "liquid tag testing"
 
-  let_it_be(:lax_environment) do
-    Liquid::Environment.build(error_mode: :lax) do |env|
-      env.register_tag "ifpresent", described_class
-    end
+  def augment_liquid_environment!(env)
+    env.register_tag "ifpresent", described_class
   end
 
   let_it_be(:root_drop) { LiquidTesting::Drops::RootDrop.new }
@@ -20,8 +14,6 @@ RSpec.describe LiquidExt::Tags::IfPresent do
       "root" => root_drop,
     }
   end
-
-  let(:environment) { strict_environment }
 
   let(:template_body) do
     <<~LIQUID
@@ -41,16 +33,6 @@ RSpec.describe LiquidExt::Tags::IfPresent do
     ELSE BLOCK REACHED
     {% endifpresent %}
     LIQUID
-  end
-
-  let(:template) do
-    Liquid::Template.parse(template_body, environment:)
-  end
-
-  def expect_rendering_with(render_assigns)
-    result = template.render(render_assigns, strict_variables: true).strip
-
-    expect(result)
   end
 
   shared_examples_for "rendering tests" do

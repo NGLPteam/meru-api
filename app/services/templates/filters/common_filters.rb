@@ -2,6 +2,7 @@
 
 module Templates
   module Filters
+    # @see LiquidExt::CommonFilters
     module CommonFilters
       CC_LICENSE_URL_MAPPING = {
         "CC BY" => "https://creativecommons.org/licenses/by/2.5/",

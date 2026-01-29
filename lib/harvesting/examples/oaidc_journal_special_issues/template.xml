@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mapping>
+  <assigns>
+    <assign name="journal_volume">{{journal.volume | default: "special"}}</assign>
+    <assign name="journal_volume_identifier">
+      {% if journal.volume %}
+      volume-{{journal.volume}}
+      {% else %}
+      special-issues
+      {% endif %}
+    </assign>
+    <assign name="journal_volume_sortable_number">
+      {% if journal.volume %}
+      {{journal.volume}}
+      {% else %}
+      100
+      {% endif %}
+    </assign>
+    <assign name="journal_volume_title">
+      {% if journal.volume %}
+      Volume {{journal.volume}}
+      {% else %}
+      Special Issues
+      {% endif %}
+    </assign>
+    <assign name="journal_issue">
+      {% ifinteger journal.issue %}
+      {{journal.issue}}
+      {% else %}
+      {{journal.issue | parameterize}}
+      {% endifinteger %}
+    </assign>
+    <assign name="journal_issue_title">
+      {% ifinteger journal.issue %}
+      Issue {{journal.issue}}
+      {% else %}
+      {{journal.issue}}
+      {% endifinteger %}
+    </assign>
+    <assign name="journal_issue_sortable_number">
+      {% ifinteger journal.issue %}
+      {{journal.issue}}
+      {% else %}
+      100
+      {% endifinteger %}
+    </assign>
+  </assigns>
+  <entities>
+    <collection schema="nglp:journal_volume">
+      <requires>
+        <expr reason="must have a volume">{{journal_volume}}</expr>
+      </requires>
+      <identifier>{{journal_volume_identifier}}</identifier>
+      <title>{{journal_volume_title}}</title>
+      <properties>
+        <string path="id">{{journal_volume}}</string>
+        <integer path="sortable_number">{{journal_volume_sortable_number}}</integer>
+      </properties>
+      <collection schema="nglp:journal_issue">
+        <requires>
+          <expr reason="must have an issue">{{journal_issue}}</expr>
+        </requires>
+        <identifier>issue-{{journal_issue}}</identifier>
+        <title>{{journal_issue_title}}</title>
+        <properties>
+          <string path="id">{{journal_issue}}</string>
+          <integer path="sortable_number">{{journal_issue_sortable_number}}</integer>
+        </properties>
+        <item schema="nglp:journal_article">
+          <identifier>{{record.identifier}}</identifier>
+          <title>{{oaidc.title | first}}</title>
+          <doi>{{doi}}</doi>
+          <contributions>
+            {% for creator in creators %}
+            {% contribution role: "aut" %}
+            {% person %}
+            {% given_name creator.given %}
+            {% family_name creator.family %}
+            {% endperson %}
+            {% endcontribution %}
+            {% endfor %}
+            {% for contributor in contributors %}
+            {% contribution role: "ctb" %}
+            {% person %}
+            {% given_name contributor.given %}
+            {% family_name contributor.family %}
+            {% endperson %}
+            {% endcontribution %}
+            {% endfor %}
+          </contributions>
+          <properties>
+            <tags path="keywords">
+              {% for subject in oaidc.subject %}
+              {% tag %}{{subject}}{% endtag %}
+              {% endfor %}
+            </tags>
+            <asset path="pdf_version">
+              <kind>pdf</kind>
+              <mime-type>application/pdf</mime-type>
+              <name>PDF Version</name>
+              <url>
+                {% if pdf.url contains "article/view" %}
+                {{ pdf.url | replace_first: "article/view", "article/download" }}
+                {% else %}
+                {{ pdf.url }}
+                {% endif %}
+              </url>
+            </asset>
+          </properties>
+        </item>
+      </collection>
+    </collection>
+  </entities>
+</mapping>

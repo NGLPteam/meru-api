@@ -13,10 +13,21 @@ module JournalSources
         /\A.+?, vol (?<volume>\d+), iss (?<issue>\d+)\z/,
       ].freeze
 
-      def try_parsing!(input)
-        try_parsing_with_patterns!(input)
+      ENDS_WITH_SINGLE_PAGE = /; \d+\z/
 
-        try_anystyle!(input)
+      def try_parsing!(input)
+        if ENDS_WITH_SINGLE_PAGE.match?(input)
+          try_parsing_with_patterns!(input)
+
+          # :nocov:
+          # A fallback for inputs that do not match any of the patterns
+          try_anystyle!(input)
+          # :nocov:
+        else
+          try_anystyle!(input)
+
+          try_parsing_with_patterns!(input)
+        end
       end
 
       # @param [String] input

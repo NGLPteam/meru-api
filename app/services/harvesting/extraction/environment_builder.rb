@@ -36,6 +36,7 @@ module Harvesting
       # @return [Liquid::Environment]
       def build_liquid_environment
         Liquid::Environment.build(error_mode: :strict) do |env|
+          env.register_filter LiquidExt::CommonFilters
           env.register_filter Harvesting::Extraction::CommonFilters
 
           env.file_system = Harvesting::Extraction::FileSystem.new
@@ -56,6 +57,7 @@ module Harvesting
       # @return [void]
       def configure_common_tags!(env)
         env.register_tag "ifpresent", ::LiquidExt::Tags::IfPresent
+        env.register_tag "ifinteger", ::LiquidExt::Tags::IfInteger
       end
 
       # @param [Liquid::Environment] env
