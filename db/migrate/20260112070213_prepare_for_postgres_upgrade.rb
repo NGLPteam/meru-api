@@ -16,7 +16,7 @@ class PrepareForPostgresUpgrade < ActiveRecord::Migration[7.2]
       t.virtual :document, type: :tsvector,
         as: "public.meru_tsvector(dictionary, text_content, weight)",
         stored: true,
-        null: false
+        null: true
 
       t.index :document, using: :gin
     end
@@ -35,10 +35,9 @@ class PrepareForPostgresUpgrade < ActiveRecord::Migration[7.2]
 
     change_table :schematic_texts do |t|
       t.virtual :document, type: :tsvector,
-        as: "public.meru_tsvector(text_content)",
-        as: %[setweight(to_tsvector('simple', text_content), (weight)::"char")],
+        as: %[setweight(to_tsvector('simple', COALESCE(text_content, '')), (weight)::"char")],
         stored: true,
-        null: false
+        null: true
 
       t.index :document, using: :gin
     end

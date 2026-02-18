@@ -19130,7 +19130,7 @@
   table_name: schematic_texts
   name: document
   type: tsvector
-  'null': false
+  'null': true
   sql_type_metadata:
     sql_type: tsvector
     type: tsvector

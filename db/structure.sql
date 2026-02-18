@@ -7012,7 +7012,7 @@ CREATE TABLE public.schematic_texts (
     created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     schema_version_property_id uuid,
-    document tsvector GENERATED ALWAYS AS (public.meru_tsvector(dictionary, text_content, weight)) STORED NOT NULL
+    document tsvector GENERATED ALWAYS AS (public.meru_tsvector(dictionary, text_content, weight)) STORED
 );
 
 
