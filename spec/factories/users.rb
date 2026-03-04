@@ -6,6 +6,8 @@ FactoryBot.define do
       acl { false }
       manager_on { nil }
       editor_on { nil }
+      reviewer_on { nil }
+      depositor_on { nil }
       reader_on { nil }
       register_in_keycloak { true }
     end
@@ -60,6 +62,14 @@ FactoryBot.define do
 
       if evaluator.editor_on.present?
         MeruAPI::Container["access.grant"].call(Role.fetch(:editor), on: evaluator.editor_on, to: user)
+      end
+
+      if evaluator.reviewer_on.present?
+        MeruAPI::Container["access.grant"].call(Role.fetch(:reviewer), on: evaluator.reviewer_on, to: user)
+      end
+
+      if evaluator.depositor_on.present?
+        MeruAPI::Container["access.grant"].call(Role.fetch(:depositor), on: evaluator.depositor_on, to: user)
       end
 
       if evaluator.reader_on.present?

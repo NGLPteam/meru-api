@@ -15,8 +15,6 @@ module AccessGrantSubject
     has_one_readonly :primary_role, through: :primary_role_assignment, source: :role
 
     has_many_readonly :assignable_roles, through: :primary_role
-
-    scope :with_granted_asset_creation, -> { where(id: unscoped.joins(:access_grants).merge(AccessGrant.with_asset_creation)) }
   end
 
   # @see Access::AssignGlobalPermissions

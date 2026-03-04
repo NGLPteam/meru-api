@@ -13,17 +13,6 @@ RSpec.describe "Query.roles", type: :request do
           node {
             id
             name
-
-            effectiveAccess {
-              allowedActions
-              availableActions
-              permissions {
-                allowed
-                name
-                path
-                scope
-              }
-            }
           }
         }
       }
@@ -35,6 +24,8 @@ RSpec.describe "Query.roles", type: :request do
     let_it_be(:role_admin, refind: true) { Role.fetch(:admin) }
     let_it_be(:role_manager, refind: true) { Role.fetch(:manager) }
     let_it_be(:role_editor, refind: true) { Role.fetch(:editor) }
+    let_it_be(:role_reviewer, refind: true) { Role.fetch(:reviewer) }
+    let_it_be(:role_depositor, refind: true) { Role.fetch(:depositor) }
     let_it_be(:role_reader, refind: true) { Role.fetch(:reader) }
 
     let_it_be(:role_a3, refind: true) do
@@ -60,6 +51,8 @@ RSpec.describe "Query.roles", type: :request do
         admin: role_admin,
         manager: role_manager,
         editor: role_editor,
+        reviewer: role_reviewer,
+        depositor: role_depositor,
         reader: role_reader,
         a3: role_a3,
         m1: role_m1,

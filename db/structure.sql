@@ -739,6 +739,8 @@ CREATE TYPE public.role_identifier AS ENUM (
     'admin',
     'manager',
     'editor',
+    'reviewer',
+    'depositor',
     'reader'
 );
 
@@ -1158,6 +1160,8 @@ SELECT CASE $1
 WHEN 'admin' THEN 40000
 WHEN 'manager' THEN 20000
 WHEN 'editor' THEN -20000
+WHEN 'reviewer' THEN -30000
+WHEN 'depositor' THEN -35000
 WHEN 'reader' THEN -40000
 END;
 $_$;
@@ -15336,6 +15340,8 @@ ALTER TABLE ONLY public.templates_ordering_instances
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20260227180402'),
+('20260227180325'),
 ('20260112070213'),
 ('20260112070114'),
 ('20260111065455'),

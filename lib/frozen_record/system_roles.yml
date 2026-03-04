@@ -5,7 +5,9 @@
       :create: true
       :update: true
       :delete: true
+      :deposit: true
       :manage_access: true
+      :review: true
       :assets:
         :read: true
         :create: true
@@ -16,7 +18,9 @@
       :create: true
       :update: true
       :delete: true
+      :deposit: true
       :manage_access: true
+      :review: true
       :assets:
         :read: true
         :create: true
@@ -27,7 +31,9 @@
       :create: true
       :update: true
       :delete: true
+      :deposit: true
       :manage_access: true
+      :review: true
       :assets:
         :read: true
         :create: true
@@ -41,7 +47,9 @@
       :create: true
       :update: true
       :delete: true
+      :deposit: true
       :manage_access: true
+      :review: true
       :assets:
         :read: true
         :create: true
@@ -72,7 +80,9 @@
       :create: true
       :update: true
       :delete: false
+      :deposit: true
       :manage_access: true
+      :review: true
       :assets:
         :read: true
         :create: true
@@ -83,7 +93,9 @@
       :create: true
       :update: true
       :delete: true
+      :deposit: true
       :manage_access: true
+      :review: true
       :assets:
         :read: true
         :create: true
@@ -94,7 +106,9 @@
       :create: true
       :update: true
       :delete: true
+      :deposit: true
       :manage_access: true
+      :review: true
       :assets:
         :read: true
         :create: true
@@ -140,10 +154,61 @@
       :read: true
       :create: true
       :update: true
+      :delete: false
     :roles:
       :read: true
   identifier: editor
   name: Editor
+- access_control_list:
+    :self:
+      :read: true
+      :review: true
+      :assets:
+        :read: true
+    :collections:
+      :read: true
+      :review: true
+      :assets:
+        :read: true
+    :items:
+      :read: true
+      :review: true
+      :assets:
+        :read: true
+  global_access_control_list:
+    :admin:
+      :access: true
+    :contributors:
+      :read: true
+    :roles:
+      :read: true
+  identifier: reviewer
+  name: Reviewer
+- access_control_list:
+    :self:
+      :read: true
+      :deposit: true
+      :assets:
+        :read: true
+    :collections:
+      :read: true
+      :deposit: true
+      :assets:
+        :read: true
+    :items:
+      :read: true
+      :deposit: true
+      :assets:
+        :read: true
+  global_access_control_list:
+    :admin:
+      :access: true
+    :contributors:
+      :read: true
+    :roles:
+      :read: true
+  identifier: depositor
+  name: Depositor
 - access_control_list:
     :self:
       :read: true

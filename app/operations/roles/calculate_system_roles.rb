@@ -19,7 +19,7 @@ module Roles
             acl.deny! "self.delete"
           end
 
-          r.gacl "admin.access", "contributors.*", "users.read", "roles.read"
+          r.gacl "admin.access", "contributors.*", "roles.read", "users.read"
         end
 
         m.role! :editor do |r|
@@ -34,8 +34,39 @@ module Roles
 
           r.gacl "admin.access", "contributors.read", "contributors.create", "contributors.update" do |gacl|
             gacl.deny! "contributors.delete"
+
             gacl.allow! "roles.read"
           end
+        end
+
+        m.role! :reviewer do |r|
+          r.acl do |acl|
+            # A reviewer can read anything under its assigned hierarchy
+            acl.allow! "*.read"
+
+            # A reviewer can review any assigned entity as well as its subcollections and items
+            acl.allow! "self.review", "collections.review", "items.review"
+
+            # A reviewer can read any assets under its assigned hierarchy
+            acl.allow! "*.assets.read"
+          end
+
+          r.gacl "admin.access", "contributors.read", "roles.read"
+        end
+
+        m.role! :depositor do |r|
+          r.acl do |acl|
+            # A depositor can read anything under its assigned hierarchy
+            acl.allow! "*.read"
+
+            # A depositor can deposit to any assigned entity as well as its subcollections and items
+            acl.allow! "self.deposit", "collections.deposit", "items.deposit"
+
+            # A depositor can read any assets under its assigned hierarchy
+            acl.allow! "*.assets.read"
+          end
+
+          r.gacl "admin.access", "contributors.read", "roles.read"
         end
 
         m.role! :reader do |r|

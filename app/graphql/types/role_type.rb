@@ -3,9 +3,7 @@
 module Types
   # @see Role
   class RoleType < Types::AbstractModel
-    implements Types::ExposesEffectiveAccessType
-
-    description "A named role in the WDP API"
+    description "A named role in the Meru API"
 
     field :identifier, Types::RoleSystemIdentifierType, null: true do
       description <<~TEXT
