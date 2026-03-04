@@ -7,7 +7,7 @@ module Patches
     def structure_dump(filename, extra_flags)
       super
     ensure
-      ::Support::System["column_cache.write"].call.value!
+      # ::Support::System["column_cache.write"].call.value!
     end
   end
 end

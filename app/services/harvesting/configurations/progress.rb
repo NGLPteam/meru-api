@@ -10,8 +10,7 @@ module Harvesting
         param :configuration, Harvesting::Types::Configuration
       end
 
-      # Get rid of annoying nag about keys.
-      self.redis_legacy_naming = true
+      self.redis_prefix = "harvesting__configurations__progress"
 
       delegate :max_record_count, to: :configuration
 

@@ -65,6 +65,8 @@ COPY Gemfile.lock /srv/app/Gemfile.lock
 
 RUN bundle install -j 2
 
+RUN bundle config set default_cli_command install --global
+
 COPY . /srv/app
 
 RUN bundle exec bootsnap precompile --gemfile app/ lib/ config/

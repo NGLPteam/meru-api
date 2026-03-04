@@ -40,14 +40,6 @@ module Support
         add! plural_key, plural_type
       end
 
-      def add_all_defined_models!(...)
-        StaticCachedColumn.model_klasses(...).each do |klass|
-          next if klass == ::User
-
-          add_model! klass
-        end
-      end
-
       def add_model!(klass, as_type: klass.graphql_node_type_name, single_key: klass.model_name.singular, plural_key: klass.model_name.plural)
         single_type = Types.Instance(klass).gql_loads(as_type).gql_description(<<~TEXT)
         Filter by a single #{klass}.
