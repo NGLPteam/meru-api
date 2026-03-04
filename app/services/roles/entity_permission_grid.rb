@@ -2,7 +2,7 @@
 
 module Roles
   class EntityPermissionGrid < PermissionGrid
-    permission :manage_access
+    permission :deposit, :manage_access, :review
 
     grid :assets, default: false
   end

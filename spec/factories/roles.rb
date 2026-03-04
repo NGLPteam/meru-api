@@ -10,7 +10,7 @@ FactoryBot.define do
 
     custom_priority { Faker::Number.unique.rand(-19_999...20_000) }
 
-    %i[admin manager editor reader].each do |key|
+    %i[admin manager editor reviewer depositor reader].each do |key|
       system_role = SystemRole.find key.to_s
 
       trait key do

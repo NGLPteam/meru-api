@@ -33,6 +33,11 @@
   inheritance:
   - collections
   - communities
+- path: collections.deposit
+  kind: contextual
+  inheritance:
+  - collections
+  - communities
 - path: collections.manage_access
   kind: contextual
   inheritance:
@@ -45,6 +50,16 @@
   - collections.linked.collections
   - collections.linked.items
   - communities
+- path: collections.review
+  kind: contextual
+  inheritance:
+  - collections
+  - communities
+- path: collections.update
+  kind: contextual
+  inheritance:
+  - collections
+  - communities
 - path: communities.read
   kind: global
 - path: communities.create
@@ -53,7 +68,11 @@
   kind: global
 - path: communities.delete
   kind: global
+- path: communities.deposit
+  kind: global
 - path: communities.manage_access
+  kind: global
+- path: communities.review
   kind: global
 - path: communities.assets.create
   kind: global
@@ -89,12 +108,44 @@
   kind: global
 - path: settings.update
   kind: global
-- path: collections.update
+- path: items.assets.create
   kind: contextual
   inheritance:
   - collections
   - communities
-- path: items.assets.create
+  - items
+- path: items.assets.read
+  kind: contextual
+  inheritance:
+  - collections
+  - communities
+  - items
+  - items.linked.items
+- path: items.assets.update
+  kind: contextual
+  inheritance:
+  - collections
+  - communities
+  - items
+- path: items.assets.delete
+  kind: contextual
+  inheritance:
+  - collections
+  - communities
+  - items
+- path: items.create
+  kind: contextual
+  inheritance:
+  - collections
+  - communities
+  - items
+- path: items.delete
+  kind: contextual
+  inheritance:
+  - collections
+  - communities
+  - items
+- path: items.deposit
   kind: contextual
   inheritance:
   - collections
@@ -113,6 +164,12 @@
   - communities
   - items
   - items.linked.items
+- path: items.review
+  kind: contextual
+  inheritance:
+  - collections
+  - communities
+  - items
 - path: items.update
   kind: contextual
   inheritance:
@@ -128,6 +185,12 @@
   - communities
   - items
   - items.linked.items
+- path: self.review
+  kind: contextual
+  inheritance:
+  - collections
+  - communities
+  - items
 - path: self.create
   kind: contextual
   inheritance:
@@ -141,6 +204,12 @@
   - communities
   - items
 - path: self.delete
+  kind: contextual
+  inheritance:
+  - collections
+  - communities
+  - items
+- path: self.deposit
   kind: contextual
   inheritance:
   - collections
@@ -174,37 +243,6 @@
   - communities
   - items
 - path: self.assets.delete
-  kind: contextual
-  inheritance:
-  - collections
-  - communities
-  - items
-- path: items.assets.delete
-  kind: contextual
-  inheritance:
-  - collections
-  - communities
-  - items
-- path: items.assets.read
-  kind: contextual
-  inheritance:
-  - collections
-  - communities
-  - items
-  - items.linked.items
-- path: items.assets.update
-  kind: contextual
-  inheritance:
-  - collections
-  - communities
-  - items
-- path: items.create
-  kind: contextual
-  inheritance:
-  - collections
-  - communities
-  - items
-- path: items.delete
   kind: contextual
   inheritance:
   - collections

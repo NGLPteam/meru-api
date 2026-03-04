@@ -5,19 +5,7 @@
 # @abstract
 class ApplicationPolicy
   extend Dry::Core::ClassAttributes
-
-  defines :always_readable, :readable_in_dev, type: Roles::Types::Bool
-
-  always_readable false
-
-  readable_in_dev false
-
-  # @!scope class
-  # @!attribute [rw] effective_permission_map
-  # @return [Roles::Types::EffectivePermissionMap]
-  defines :effective_permission_map, type: Roles::Types::EffectivePermissionMap
-
-  effective_permission_map({})
+  include PolicyReadability
 
   # @return [ApplicationRecord]
   attr_reader :record
@@ -32,14 +20,6 @@ class ApplicationPolicy
     @record = record
   end
 
-  def always_readable?
-    self.class.always_readable
-  end
-
-  def readable_in_dev?
-    self.class.readable_in_dev && Rails.env.development?
-  end
-
   # This permission determines whether a given {#user}
   # has been granted read-access to the {#record}.
   #
@@ -47,12 +27,9 @@ class ApplicationPolicy
   # of the record, as opposed to simply being able to {#show? view it}
   # in the frontend.
   #
-  #
   # @abstract
   # @see #show?
-  def read?
-    always_readable? || readable_in_dev? || admin_or_owns_resource?
-  end
+  def read? = always_readable? || readable_in_dev? || admin_or_owns_resource?
 
   # Sometimes we need to allow read access specifically for use with mutation arguments
   # in a way that differs from normal read access. This happens in other projects, but
@@ -60,54 +37,43 @@ class ApplicationPolicy
   #
   # For the sake of mutations, assume arguments provided can always be read and worry
   # about authorizing within the context of the mutation.
-  def read_for_mutation?
-    true
-  end
+  def read_for_mutation? = true
 
-  def index?
-    # :nocov:
-    always_readable? || show?
-    # :nocov:
-  end
+  # Whether the user can see a list of the provided records
+  def index? = always_readable? || show?
 
   # This determines whether an individual record can
   # appear to a given {#user}.
   #
   # @abstract
   # @see #read?
-  def show?
-    always_readable? || read?
-  end
+  def show? = always_readable? || read?
 
-  def create?
-    false
-  end
+  # Whether the user can create a new instance of the record type.
+  # @note False by default.
+  # @abstract
+  def create? = false
 
-  def new?
-    # :nocov:
-    create?
-    # :nocov:
-  end
+  def update? = admin_or_owns_resource?
 
-  def update?
-    admin_or_owns_resource?
-  end
+  def destroy? = admin_or_owns_resource?
 
-  def edit?
-    # :nocov:
-    update?
-    # :nocov:
-  end
+  def manage_access? = has_admin?
 
-  def destroy?
-    admin_or_owns_resource?
-  end
+  # @!group Hierarchical Permissions
 
-  def manage_access?
-    # :nocov:
-    user.has_global_admin_access?
-    # :nocov:
-  end
+  # @abstract
+  def create_assets? = false
+
+  # @abstract
+  def create_collections? = false
+
+  # @abstract
+  def create_items? = false
+
+  # @!endgroup Hierarchical Permissions
+
+  # @!group Auth Helpers
 
   def admin_or_owns_resource?
     return false if user.anonymous?
@@ -127,61 +93,22 @@ class ApplicationPolicy
     # :nocov:
   end
 
-  # @!group Effective Permission Grids
-
-  # @return [Roles::AnonymousGrid]
-  def effective_access
-    Roles::PermissionGridDefiner.new(self.class.effective_available_actions).call do |acl|
-      self.class.effective_permission_map.each do |path, predicate|
-        allowed = public_send(predicate)
-
-        allowed ? acl.allow!(path) : acl.deny!(path)
-      end
-    end
-  end
-
-  # @!endgroup
-
-  # @!group Hierarchical permissions
-
-  # @abstract
-  def create_assets?
-    # :nocov:
-    false
-    # :nocov:
-  end
-
-  # @abstract
-  def create_collections?
-    # :nocov:
-    false
-    # :nocov:
-  end
-
-  # @abstract
-  def create_items?
-    # :nocov:
-    false
-    # :nocov:
-  end
-
-  # @!endgroup
-
   def has_any_access_management_permissions?
     user.can_manage_access_globally? || user.can_manage_access_contextually?
   end
 
-  def has_admin?
-    user.has_global_admin_access?
-  end
+  # Whether the user has global admin access
+  def has_admin? = user.has_global_admin_access?
 
-  def has_allowed_action?(action_name)
-    action_name.in? user.allowed_actions
-  end
+  # @param [String] action_name
+  # @return [Boolean] whether the user has been granted the specified action
+  def has_allowed_action?(action_name) = action_name.to_s.in?(user.allowed_actions)
 
-  def has_admin_or_allowed_action?(action_name)
-    has_admin? || has_allowed_action?(action_name)
-  end
+  # Whether the user has been granted the specified action, or is a global admin
+  # @param [String] action_name
+  def has_admin_or_allowed_action?(action_name) = has_admin? || has_allowed_action?(action_name)
+
+  # @!endgroup Auth Helpers
 
   # @param [ApplicationRecord] record
   # @param [Symbol] query
@@ -212,44 +139,6 @@ class ApplicationPolicy
   # @return [{ (ApplicationRecord, User) => ApplicationPolicy }]
   def subpolicies
     @subpolicies ||= {}
-  end
-
-  class << self
-    # @return [void]
-    def always_readable!
-      always_readable true
-    end
-
-    # @return [<String>]
-    def effective_available_actions
-      effective_permission_map.keys
-    end
-
-    # @param [Roles::Types::PermissionName] path
-    # @param [Roles::Types::PolicyPredicate] predicate
-    # @return [void]
-    def effective_permission!(path, predicate)
-      merged = effective_permission_map.merge(path => predicate)
-
-      effective_permission_map merged
-    end
-
-    def effective_crud_permissions!(scope: "self", read: :read?, create: :create?, update: :update?, delete: :destroy?)
-      scopify = ->(name) do
-        [scope.presence, name].compact.join(".")
-      end
-
-      actions = {}.tap do |h|
-        h[scopify["read"]] = read
-        h[scopify["create"]] = create
-        h[scopify["update"]] = update
-        h[scopify["delete"]] = delete
-      end.transform_values(&:presence).compact
-
-      actions.each do |path, predicate|
-        effective_permission! path, predicate
-      end
-    end
   end
 
   # @abstract
