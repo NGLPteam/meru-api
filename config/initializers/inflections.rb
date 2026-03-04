@@ -42,6 +42,7 @@ ActiveSupport::Inflector.inflections(:en) do |inflect|
   inflect.acronym "URL"
   inflect.acronym "APISchema"
   inflect.acronym "MeruAPI"
+  inflect.acronym "VOG"
   inflect.acronym "XML"
   inflect.acronym "XPath"
 
