@@ -3,51 +3,21 @@
 # @abstract Policies that inherit from this have most of their permissions
 #   dictated from the `:update` permission on a parent `entity` association.
 class EntityChildRecordPolicy < ApplicationPolicy
-  # @return [HierarchicalEntity]
-  attr_reader :entity
+  include PubliclyScopedPolicy
 
-  # @return [HierarchicalEntityPolicy]
-  attr_reader :entity_policy
+  delegate :entity, to: :record
 
-  # @param [User, AnonymousUser] user
-  # @param [#entity] record
-  def initialize(user, record)
-    super
+  def show? = allowed_to?(:show?, entity)
 
-    @entity = record.entity
+  alias_rule :index?, to: :show?
 
-    @entity_policy = policy_for @entity
-  end
+  def read? = allowed_to?(:read?, entity)
 
-  def show?
-    entity_policy.show?
-  end
+  def create? = allowed_to?(:update?, entity)
 
-  alias index? show?
+  def update? = allowed_to?(:update?, entity)
 
-  def read?
-    entity_policy.read?
-  end
+  def destroy? = allowed_to?(:update?, entity)
 
-  def create?
-    entity_policy.update?
-  end
-
-  def update?
-    entity_policy.update?
-  end
-
-  def destroy?
-    entity_policy.update?
-  end
-
-  def manage_access?
-    entity_policy.manage_access?
-  end
-
-  class Scope < Scope
-    def resolve
-      scope.all
-    end
-  end
+  def manage_access? = allowed_to?(:manage_access?, entity)
 end

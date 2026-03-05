@@ -4,23 +4,15 @@ module Resolvers
   # A resolver for a {ContributorAttribution}.
   #
   # @see ContributorAttribution
-  # @see Types::ContributorAttributionType
+  # @see ::Types::ContributorAttributionType
   class ContributorAttributionResolver < AbstractResolver
-    include Resolvers::Enhancements::AppliesPolicyScope
     include Resolvers::Enhancements::PageBasedPagination
     include Resolvers::OrderedAsContributorAttribution
 
-    type Types::ContributorAttributionType.connection_type, null: false
+    applies_policy_scope!
 
-    scope do
-      case object
-      when ::Contributor
-        object.contributor_attributions
-      else
-        # :nocov:
-        ContributorAttribution.none
-        # :nocov:
-      end
-    end
+    type ::Types::ContributorAttributionType.connection_type, null: false
+
+    resolves_model! ::ContributorAttribution, must_have_object: true
   end
 end

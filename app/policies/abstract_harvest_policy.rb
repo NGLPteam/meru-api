@@ -2,19 +2,7 @@
 
 # @abstract
 class AbstractHarvestPolicy < ApplicationPolicy
-  readable_in_dev true
+  readable_in_dev!
 
-  def prune_entities?
-    has_admin?
-  end
-
-  class Scope < Scope
-    def resolve
-      if has_global_admin_access? || Rails.env.development?
-        scope.all
-      else
-        scope.none
-      end
-    end
-  end
+  def prune_entities? = has_admin?
 end

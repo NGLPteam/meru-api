@@ -24,7 +24,7 @@ RSpec.describe Entities::Reparent, type: :operation, grants_access: true do
       end
     end.to change { collection.reload.community_id }.from(community.id).to(other_community.id)
       .and change { collection.reload.hierarchical_parent }.from(community).to(other_community)
-      .and change { Pundit.policy(user, collection.reload).update? }.from(true).to(false)
-      .and change { Pundit.policy(user, item.reload).update? }.from(true).to(false)
+      .and change { CollectionPolicy.new(collection.reload, user:).update? }.from(true).to(false)
+      .and change { ItemPolicy.new(item.reload, user:).update? }.from(true).to(false)
   end
 end

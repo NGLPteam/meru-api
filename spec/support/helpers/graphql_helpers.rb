@@ -5,6 +5,34 @@ require "test_prof/ext/active_record_refind"
 using TestProf::Ext::ActiveRecordRefind
 
 module TestHelpers
+  module GQL
+    AUTH_RESULT_FRAGMENT = <<~GRAPHQL
+    fragment AuthorizationResultFragment on AuthorizationResult {
+      value
+      message
+      reasons {
+        details
+        fullMessages
+      }
+    }
+    GRAPHQL
+
+    ERROR_FRAGMENT = <<~GRAPHQL
+    fragment ErrorFragment on StandardMutationPayload {
+      attributeErrors {
+        messages
+        path
+        type
+      }
+
+      globalErrors {
+        message
+        type
+      }
+    }
+    GRAPHQL
+  end
+
   module GraphQLRequest
     module ExampleHelpers
       QUERIES_ROOT = Rails.root.join("spec", "data", "queries")
@@ -136,6 +164,27 @@ module TestHelpers
     end
 
     module SpecHelpers
+      # @param [String] raw_query
+      # @param [Boolean] auth_result whether to include the authorization result fragment in the query
+      # @param [Boolean] error whether to include the error fragment in the query
+      # @return [void] defines a let variable `query` with the wrapped query
+      def graphql_query!(raw_query, **options)
+        wrapped_query = wrap_graphql_query(raw_query, **options)
+
+        let_it_be(:query) { wrapped_query }
+      end
+
+      # @param [String] raw_query
+      # @param [Boolean] auth_result whether to include the authorization result fragment in the query
+      # @param [Boolean] error whether to include the error fragment in the query
+      # @return [String] the wrapped query
+      def wrap_graphql_query(raw_query, auth_result: "AuthorizationResultFragment".in?(raw_query), error: false)
+        wrapped_query = [raw_query].tap do |a|
+          a << GQL::AUTH_RESULT_FRAGMENT if auth_result
+          a << GQL::ERROR_FRAGMENT if error
+        end.join("\n\n")
+      end
+
       def as_an_admin_user(&)
         context "as an admin" do
           let(:current_user) { admin_user }

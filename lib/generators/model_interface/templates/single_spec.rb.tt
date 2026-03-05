@@ -6,26 +6,59 @@
 RSpec.describe "Query.<%= graphql_single_field_name %>", type: :request do
   let(:query) do
     <<~GRAPHQL
+    <%- if has_unique_identifier? -%>
+    query get<%= model_name %>($with: <%= selector_input_graphql_name %>!) {
+      <%= graphql_single_field_name %>(with: $with) {
+    <%- else -%>
     query get<%= model_name %>($slug: Slug!) {
       <%= graphql_single_field_name %>(slug: $slug) {
+    <%- end -%>
         id
         slug
-        <%- if has_title? -%>
-        title
+        <%- if has_unique_identifier? -%>
+        identifier
         <%- end -%>
+        <%- if has_name? -%>
+        name
+        <%- end -%>
+
+        canUpdate {
+          ... AuthorizationResultFragment
+        }
+
+        canDestroy {
+          ... AuthorizationResultFragment
+        }
+      }
+    }
+
+    fragment AuthorizationResultFragment on AuthorizationResult {
+      value
+      message
+      reasons {
+        details
+        fullMessages
       }
     }
     GRAPHQL
   end
 
+  let(:can_update) { false }
+  let(:can_destroy) { false }
+
   let(:found_shape) do
     gql.query do |q|
       q.prop <%= field_single_name.inspect %> do |m|
-        m[:id] = be_an_encoded_id.of_an_existing_model
-        m[:slug] = be_an_encoded_slug
-        <%- if has_title? -%>
-        m[:title] = existing_model.title
+        m[:id] = existing_model.to_encoded_id
+        m[:slug] = existing_model.system_slug
+        <%- if has_unique_identifier? -%>
+        m[:identifier] = existing_model.identifier
         <%- end -%>
+        <%- if has_name? -%>
+        m[:name] = existing_model.name
+        <%- end -%>
+
+        m.auth_results(can_update:, can_destroy:)
       end
     end
   end
@@ -36,13 +69,31 @@ RSpec.describe "Query.<%= graphql_single_field_name %>", type: :request do
     end
   end
 
-  let!(:existing_model) { FactoryBot.create <%= model_factory.inspect %> }
+  let_it_be(:existing_model, refind: true) { FactoryBot.create <%= model_factory.inspect %> }
 
+  <%- if has_unique_identifier? -%>
+  let(:with) { { slug: existing_model.system_slug } }
+  <%- else -%>
   let(:slug) { existing_model.system_slug }
+  <%- end -%>
 
   let(:graphql_variables) do
+    <%- if has_unique_identifier? -%>
+    { with:, }
+    <%- else -%>
     { slug:, }
+    <%- end -%>
   end
+  <%- if has_unique_identifier? -%>
+
+  shared_examples "an invalid selector" do
+    it "does not find the record" do
+      expect_request! do |req|
+        req.invalid_one_of! <%= selector_input_graphql_name.to_s.inspect %>
+      end
+    end
+  end
+  <%- end -%>
 
   shared_examples "a found record" do
     it "finds the <%= model_name %>" do
@@ -60,27 +111,73 @@ RSpec.describe "Query.<%= graphql_single_field_name %>", type: :request do
     end
   end
 
-  as_a_regular_user do
-    context "when looking for an existing model" do
+  shared_examples "an existing model lookup" do
+    context "when looking for an existing model by slug" do
       include_examples "a found record"
     end
+    <%- if has_unique_identifier? -%>
 
-    context "when looking for an unknown model" do
+    context "when looking for an existing model by identifier" do
+      let(:with) { { identifier: existing_model.identifier } }
+
+      include_examples "a found record"
+    end
+    <%- end -%>
+  end
+
+  shared_examples "an authorized lookup" do
+    include_examples "an existing model lookup"
+
+    context "when looking for an unknown model by slug" do
+      <%- if has_unique_identifier? -%>
+      let(:with) { { slug: random_slug } }
+      <%- else -%>
       let(:slug) { random_slug }
+      <%- end -%>
 
       include_examples "a not found record"
     end
+    <%- if has_unique_identifier? -%>
+
+    context "when looking for an unknown model by identifier" do
+      let(:with) { { identifier: "does-not-exist-at-all--guaranteed" } }
+
+      include_examples "a not found record"
+    end
+
+    context "when not providing proper values to the selector" do
+      let(:with) { {} }
+
+      include_examples "an invalid selector"
+    end
+    <%- end -%>
+  end
+
+  as_a_super_admin_user do
+    let(:can_update) { true }
+    let(:can_destroy) { true }
+
+    include_examples "an authorized lookup"
+  end
+
+  as_an_admin_user do
+    let(:can_update) { true }
+    let(:can_destroy) { true }
+
+    include_examples "an authorized lookup"
+  end
+
+  as_a_regular_user do
+    let(:can_update) { false }
+    let(:can_destroy) { false }
+
+    include_examples "an authorized lookup"
   end
 
   as_an_anonymous_user do
-    context "when looking for an existing model" do
-      include_examples "a found record"
-    end
+    let(:can_update) { false }
+    let(:can_destroy) { false }
 
-    context "when looking for an unknown model" do
-      let(:slug) { random_slug }
-
-      include_examples "a not found record"
-    end
+    include_examples "an authorized lookup"
   end
 end

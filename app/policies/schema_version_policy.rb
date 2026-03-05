@@ -1,11 +1,6 @@
 # frozen_string_literal: true
 
+# @see SchemaVersion
 class SchemaVersionPolicy < ApplicationPolicy
   always_readable!
-
-  class Scope < Scope
-    def resolve
-      scope.all
-    end
-  end
 end

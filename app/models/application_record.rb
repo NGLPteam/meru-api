@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# @abstract The base model for Meru-API.
+# @abstract The base model for the Meru API.
 class ApplicationRecord < ActiveRecord::Base
   self.abstract_class = true
 
@@ -9,18 +9,17 @@ class ApplicationRecord < ActiveRecord::Base
   include AssociationHelpers
   include CountFromSubquery
   include DistinctOnOrderValues
+  include Filterable
   include GraphQLModelSupport
   include LazyOrdering
   include LimitToOne
+  include LookupHelpers
   include ModelMutationSupport
   include PostgresEnums
   include StoreModelIntrospection
+  include ::Support::CallsCommonOperation
   include WhereMatches
   include WithAdvisoryLock::Concern
-
-  def call_operation(name, ...)
-    MeruAPI::Container[name].call(...)
-  end
 
   # Quote the model's primary key if it is persisted and a single string.
   #

@@ -5,7 +5,7 @@ module Resolvers
     extend ActiveSupport::Concern
 
     included do
-      option :order, type: Types::ContributorOrderType, default: "NAME_ASCENDING"
+      option :order, type: ::Types::ContributorOrderType, default: "NAME_ASCENDING"
     end
 
     def apply_order_with_recent(scope)

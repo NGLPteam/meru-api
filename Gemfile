@@ -74,6 +74,8 @@ gem "niso-jats", github: "scryptmouse/niso-jats", require: false
 
 # Misc
 gem "absolute_time", "~> 1.0"
+gem "action_policy", "~> 0.7"
+gem "action_policy-graphql", "~> 0.6"
 gem "acts_as_list", "~> 1.2.6"
 gem "addressable", "~> 2.8"
 gem "ahoy_matey", "~> 5.4.1"
@@ -106,7 +108,6 @@ gem "oai", "~> 1.3.0"
 gem "oj", "~> 3.16"
 gem "openid_connect", "~> 2.3.0"
 gem "ox", "~> 2.14.18"
-gem "pundit", "~> 2.5.0"
 gem "redcarpet", "~> 3.6.0"
 gem "reverse_markdown", "~> 3.0"
 gem "ruby-limiter", "~> 2.3.0"
@@ -167,7 +168,6 @@ end
 group :test do
   gem "database_cleaner-active_record", "~> 2.2.2"
   gem "database_cleaner-redis", "~> 2.0.0"
-  gem "pundit-matchers", "~> 4.0.0"
   gem "rspec-collection_matchers", "~> 1.2.0"
   gem "rspec-json_expectations", "~> 2.2.0"
   gem "simplecov", "~> 0.22.0", require: false

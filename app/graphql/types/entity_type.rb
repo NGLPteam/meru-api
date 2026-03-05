@@ -4,19 +4,17 @@ module Types
   module EntityType
     include Types::BaseInterface
 
-    implements Types::AccessibleType
-    implements Types::EntityBaseType
-    implements Types::ExposesPermissionsType
-    implements Types::HasEntityBreadcrumbs
-    implements Types::HasSchemaPropertiesType
-    implements Types::SearchableType
+    implements ::Types::AccessibleType
+    implements ::Types::EntityBaseType
+    implements ::Types::EntityContextualPermissionsType
+    implements ::Types::EntityPermissionsType
+    implements ::Types::ExposesPermissionsType
+    implements ::Types::HasEntityBreadcrumbs
+    implements ::Types::HasSchemaPropertiesType
+    implements ::Types::SearchableType
     implements ::Types::SluggableType
 
     description "An entity that exists in the hierarchy."
-
-    field :access_control_list, Types::AccessControlListType, null: true do
-      description "Derived access control list"
-    end
 
     field :announcement, Types::AnnouncementType, null: true do
       description "Look up an announcement for this entity by slug"
@@ -24,24 +22,28 @@ module Types
       argument :slug, SlugType, required: true
     end
 
-    field :announcements, resolver: Resolvers::AnnouncementResolver
-
-    field :applicable_roles, [Types::RoleType, { null: false }], null: false do
-      description "The role(s) that gave the permissions to access this resource, if any."
-    end
-
-    field :assignable_roles, [Types::RoleType, { null: false }], null: false do
-      description "The role(s) that the current user could assign to other users on this entity, if applicable."
+    field :announcements, resolver: Resolvers::AnnouncementResolver do
+      description <<~TEXT
+      A list of announcements associated with this entity.
+      TEXT
     end
 
     field :assigned_users, resolver: Resolvers::ContextualPermissionResolver do
       description "Retrieve a list of user & role assignments for this entity"
     end
 
-    field :descendants, resolver: Resolvers::EntityDescendantResolver
+    field :descendants, resolver: Resolvers::EntityDescendantResolver do
+      description <<~TEXT
+      All descendants of this entity, regardless of type.
+
+      Communities and collections can both contain collections and items. Items will only contain items.
+      TEXT
+    end
 
     field :hierarchical_depth, Int, null: false do
-      description "The depth of the hierarchical entity, taking into account any parent types"
+      description <<~TEXT
+      The depth of the hierarchical entity, taking into account any parent types.
+      TEXT
     end
 
     field :layouts, ::Types::EntityLayoutsType, null: false do
@@ -50,10 +52,17 @@ module Types
       TEXT
     end
 
-    field :links, resolver: Resolvers::EntityLinkResolver
+    field :links, resolver: Resolvers::EntityLinkResolver do
+      description <<~TEXT
+      Links from this entity to other entities, along with metadata about those links.
+      TEXT
+    end
 
-    field :link_target_candidates, resolver: Resolvers::LinkTargetCandidateResolver,
-      description: "Available link targets for this entity"
+    field :link_target_candidates, resolver: Resolvers::LinkTargetCandidateResolver do
+      description <<~TEXT
+      Available link targets for this entity.
+      TEXT
+    end
 
     field :marked_for_purge, Boolean, null: false do
       description <<~TEXT
@@ -75,7 +84,11 @@ module Types
       end
     end
 
-    field :orderings, resolver: Resolvers::OrderingResolver
+    field :orderings, resolver: Resolvers::OrderingResolver do
+      description <<~TEXT
+      A list of orderings associated with this entity.
+      TEXT
+    end
 
     field :page, Types::PageType, null: true do
       description "Look up a page for this entity by slug"
@@ -89,13 +102,30 @@ module Types
       end
     end
 
-    field :pages, resolver: Resolvers::PageResolver
+    field :pages, resolver: Resolvers::PageResolver do
+      description <<~TEXT
+      A list of pages associated with this entity.
+      TEXT
+    end
 
-    field :schema_ranks, [Types::HierarchicalSchemaRankType, { null: false }], null: false
+    field :schema_ranks, [Types::HierarchicalSchemaRankType, { null: false }], null: false do
+      description <<~TEXT
+      The hierarchical schema ranks for this entity, which compute the overall structure
+      of its descendants by schema definition.
+      TEXT
+    end
 
-    field :schema_definition, Types::SchemaDefinitionType, null: false
+    field :schema_definition, Types::SchemaDefinitionType, null: false do
+      description <<~TEXT
+      The schema definition that this entity conforms to.
+      TEXT
+    end
 
-    field :schema_version, Types::SchemaVersionType, null: false
+    field :schema_version, Types::SchemaVersionType, null: false do
+      description <<~TEXT
+      The schema version that this entity conforms to.
+      TEXT
+    end
 
     image_attachment_field :hero_image,
       description: "A hero image for the entity, suitable for displaying in page headers"
@@ -107,51 +137,9 @@ module Types
 
     load_association! :hierarchical_schema_ranks, as: :schema_ranks
 
-    # @!group Contextual Permission Support
+    load_association! :schema_definition
 
-    # @return [ContextualPermission]
-    def contextual_permission
-      if MeruConfig.experimental_dataloader?
-        dataloader.with(Sources::ContextualPermission, context[:current_user]).load(object)
-      else
-        Loaders::ContextualPermissionLoader.for(context[:current_user]).load(object)
-      end
-    end
-
-    # This surfaces the `access_control_list` from the associated {#contextual_permission}.
-    #
-    # @see ContextualPermission#access_control_list
-    # @return [Roles::AccessControlList]
-    def access_control_list
-      contextual_permission.then do |permission|
-        permission.access_control_list
-      end
-    end
-
-    # This surfaces the `allowed_actions` from the associated {#contextual_permission}.
-    #
-    # @see ContextualPermission#allowed_actions
-    # @return [String]
-    def allowed_actions
-      contextual_permission.then(&:allowed_actions)
-    end
-
-    # @return [Role]
-    def assignable_roles
-      contextual_permission.then(&:assignable_roles)
-    end
-
-    # @return [<Role>]
-    def applicable_roles
-      contextual_permission.then(&:roles)
-    end
-
-    # @return [<Permissions::Grant>]
-    def permissions
-      contextual_permission.then(&:permissions)
-    end
-
-    # @!endgroup
+    load_association! :schema_version
 
     # @see Entities::CheckLayouts
     # @see Entities::LayoutsChecker

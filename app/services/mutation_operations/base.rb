@@ -25,8 +25,8 @@ module MutationOperations
   module Base
     extend ActiveSupport::Concern
 
-    include Support::GraphQLAPI::PunditHelpers
     include MutationOperations::AttributeExtraction
+    include MutationOperations::Authorization
     include MutationOperations::Contracts
     include MutationOperations::Edges
 
@@ -77,7 +77,7 @@ module MutationOperations
       end
 
       run_callbacks :authorization do
-        authorize!
+        authorize_mutation!
       end
 
       run_callbacks :edges do
@@ -195,7 +195,7 @@ module MutationOperations
     #
     # Runs after prepare, but before validation.
     # @return [void]
-    def authorize!; end
+    def authorize_mutation!; end
 
     # @abstract
     # @return [void]
@@ -208,21 +208,7 @@ module MutationOperations
       unset_arg_for_execution!(*transient_arguments)
     end
 
-    # @!group Authorization logic
-
-    def authorize(*)
-      super
-    rescue Pundit::NotAuthorizedError => e
-      throw_unauthorized e
-    end
-
-    def pundit_user
-      current_user
-    end
-
-    # @!endgroup
-
-    # @!group model persistence
+    # @!group Model Persistence
 
     def persist_model!(model, attach_to: nil)
       if model.save
@@ -311,7 +297,7 @@ module MutationOperations
       # :nocov:
     end
 
-    # @!endgroup
+    # @!endgroup Model Persistence
 
     # @!group Utility methods
 

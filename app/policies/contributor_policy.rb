@@ -1,27 +1,23 @@
 # frozen_string_literal: true
 
 class ContributorPolicy < ApplicationPolicy
-  def show?
-    true
+  pre_check :allow_any_admin!
+
+  def show? = true
+
+  def create? = has_allowed_action?("contributors.create")
+
+  def update? = has_allowed_action?("contributors.update")
+
+  def destroy? = has_allowed_action?("contributors.delete")
+
+  private
+
+  def resolve_scope_for_authenticated(relation)
+    relation.all
   end
 
-  def create?
-    has_admin_or_allowed_action? "contributors.create"
-  end
-
-  def update?
-    has_admin_or_allowed_action?("contributors.update") || super
-  end
-
-  def destroy?
-    has_admin_or_allowed_action?("contributors.delete") || super
-  end
-
-  class Scope < Scope
-    def resolve
-      return scope.none if user.anonymous?
-
-      scope.all
-    end
+  def resolve_scope_for_anonymous(relation)
+    relation.none
   end
 end

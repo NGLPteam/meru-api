@@ -1,28 +1,20 @@
 # frozen_string_literal: true
 
+# Policy logic largely depends on the link's {HierarchicalEntity source entity}.
+#
+# @see EntityLink
 class EntityLinkPolicy < ApplicationPolicy
-  def initialize(user, record)
-    super
+  include PubliclyScopedPolicy
 
-    @source_policy = policy_for record.source
-  end
+  def read? = allowed_to?(:read?, record.source)
 
-  # @return [HierarchicalChildPolicy]
-  attr_reader :source_policy
+  def index? = allowed_to?(:index?, record.source)
 
-  delegate :read?, :index?, :show?, :update?, to: :source_policy
+  def show? = allowed_to?(:show?, record.source)
 
-  def create?
-    source_policy.update?
-  end
+  def create? = allowed_to?(:update?, record.source)
 
-  def destroy?
-    source_policy.update?
-  end
+  def update? = allowed_to?(:update?, record.source)
 
-  class Scope < Scope
-    def resolve
-      scope.all
-    end
-  end
+  def destroy? = allowed_to?(:update?, record.source)
 end

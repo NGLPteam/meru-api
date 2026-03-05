@@ -17,9 +17,9 @@ module Mutations
       # @param [User] user
       # @param [HierarchicalEntity] entity
       # @return [void]
-      def call(role:, user:, entity:, provisional_access_grant:)
+      def call(role:, user:, entity:, provisional:)
         # Fallback _after_ validation to sanity-check the grant.
-        authorize provisional_access_grant, :create?
+        authorize provisional, :create?
 
         attempt = grant_access.call role, on: entity, to: user
 
@@ -31,9 +31,9 @@ module Mutations
 
       # @return [void]
       before_prepare def prepare_provisional_access_grant!
-        args => { role:, user: subject, entity: accessible, }
+        args => { role:, user:, entity:, }
 
-        args[:provisional_access_grant] = AccessGrant.new(role:, subject:, accessible:)
+        args[:provisional] = Access::Provisional.new(current_user:, entity:, role:, user:)
       end
     end
   end

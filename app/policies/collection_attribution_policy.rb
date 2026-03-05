@@ -2,13 +2,7 @@
 
 # @see CollectionAttribution
 class CollectionAttributionPolicy < ApplicationPolicy
-  def show?
-    authorized? record.collection, :show?
-  end
+  include PubliclyScopedPolicy
 
-  class Scope < Scope
-    def resolve
-      scope.all
-    end
-  end
+  def show? = allowed_to?(:show?, record.collection)
 end

@@ -2,25 +2,11 @@
 
 # @see ControlledVocabularySource
 class ControlledVocabularySourcePolicy < ApplicationPolicy
-  def read?
-    true
-  end
+  always_readable!
 
-  def create?
-    false
-  end
+  def create? = false
 
-  def update?
-    user.has_global_admin_access?
-  end
+  def update? = has_admin?
 
-  def destroy?
-    false
-  end
-
-  class Scope < Scope
-    def resolve
-      scope.all
-    end
-  end
+  def destroy? = false
 end

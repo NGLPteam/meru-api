@@ -5,7 +5,7 @@ module Resolvers
     extend ActiveSupport::Concern
 
     included do
-      option :entity, type: Types::AccessGrantEntityFilterType, default: "ALL"
+      option :entity, type: ::Types::AccessGrantEntityFilterType, default: "ALL"
     end
 
     def apply_entity_with_all(scope)

@@ -1,0 +1,18 @@
+# frozen_string_literal: true
+
+module Types
+  # A connection type for {<%= class_name %>}-typed records.
+  #
+  # @see <%= class_name %>
+  # @see <%= full_edge_type_name %>
+  # @see <%= full_node_type_name %>
+  class <%= connection_type_name %> < Types::BaseConnection
+    graphql_name "<%= class_name %>Connection"
+
+    description <<~TEXT
+    A connection type for `<%= class_name %>`.
+    TEXT
+
+    edge_type <%= full_edge_type_name %>
+  end
+end

@@ -1,172 +1,20 @@
 # frozen_string_literal: true
 
-# Instance methods for {AnonymousUser}.
+# Project-specific methods for {AnonymousUser}.
+#
+# @see Support::Users::AnonymousInterface
 module AnonymousInterface
   extend ActiveSupport::Concern
 
-  include ActiveSupport::Configurable
-  include GlobalID::Identification
-  include ImageUploader::Attachment.new(:avatar)
-
-  # @see {#allowed_actions}
-  ALLOWED_ACTIONS = [].freeze
-
-  ID = "ANONYMOUS"
-
-  def access_management
-    "forbidden"
-  end
-
-  # @note For anonymous users, this is always an empty array.
-  # @see User#allowed_actions
-  # @return [<String>]
-  def allowed_actions
-    ALLOWED_ACTIONS
-  end
+  def access_management = "forbidden"
 
   # @see User#assignable_roles
   # @return [ActiveRecord::Relation<Role>]
-  def assignable_roles
-    Role.none
-  end
+  def assignable_roles = Role.none
 
-  # @note Always true for an {AnonymousUser}.
-  # @see User#anonymous?
-  def anonymous?
-    true
-  end
+  def can_manage_access_contextually? = false
 
-  alias anonymous anonymous?
+  def can_manage_access_globally? = false
 
-  # @see User#authenticated?
-  def authenticated?
-    false
-  end
-
-  def avatar_data
-    nil
-  end
-
-  def avatar_data=(*); end
-
-  def can_manage_access_contextually?
-    false
-  end
-
-  def can_manage_access_globally?
-    false
-  end
-
-  # @!attribute [r] created_at
-  # @note An anonymous user's created time is always at the time of the request.
-  # @return [ActiveSupport::TimeWithZone]
-  def created_at
-    Time.current
-  end
-
-  def email
-    nil
-  end
-
-  # @!attribute [r] email_verified
-  # An anonymous user's email is never verified.
-  # @return [false]
-  def email_verified
-    false
-  end
-
-  alias email_verified? email_verified
-
-  def forbidden_access_management?
-    true
-  end
-
-  # @return [Class(Types::UserType)]
-  def graphql_node_type
-    ::Types::UserType
-  end
-
-  # @see User#has_global_admin_access?
-  def has_global_admin_access?
-    false
-  end
-
-  # @see User#has_any_upload_access?
-  def has_any_upload_access?
-    false
-  end
-
-  # @!attribute [r] id
-  # A static ID to allow {AnonymousUser} to be encoded as a GlobalID.
-  # @return ["ANONYMOUS"]
-  def id
-    ID
-  end
-
-  alias system_slug_id id
-  alias system_slug id
-
-  # @!attribute [r] name
-  # @see User#name
-  # @return [String]
-  def name
-    "Anonymous User"
-  end
-
-  def policy_class
-    ::UserPolicy
-  end
-
-  # {AnonymousUser Anonymous users} are non-blank for purposes of object presence.
-  #
-  # @note Because of Naught's treatment of predicates, this would return `false`
-  #   unless subsequently overridden.
-  def present?
-    true
-  end
-
-  def respond_to_missing?(method_name, include_private = false)
-    AnonymousUser.empty_user.respond_to?(method_name, include_private) || super
-  end
-
-  # @see RelayNode::IdFromObject
-  # @return [String, nil]
-  def to_encoded_id
-    Support::System["relay_node.id_from_object"].(self).value!
-  end
-
-  # @see IdentitiesController#show
-  # @return [Hash]
-  def to_whoami
-    {
-      anonymous: true
-    }
-  end
-
-  # @!attribute [r] updated_at
-  # @note An anonymous user's last updated time is always at the time of the request.
-  # @return [ActiveSupport::TimeWithZone]
-  def updated_at
-    Time.current
-  end
-
-  # Class methods for {AnonymousUser}.
-  module ClassMethods
-    # A simulation of `ApplicationRecord.find` to allow {AnonymousUser} to be decoded from a GlobalID.
-    #
-    # In effect, `AnonymousUser.find any_id` is equivalent to calling `AnonymousUser.new`.
-    #
-    # @return [AnonymousUser]
-    def find(*)
-      new
-    end
-
-    def empty_user
-      @empty_user ||= User.new
-    end
-
-    def policy_class
-      ::UserPolicy
-    end
-  end
+  def forbidden_access_management? = true
 end

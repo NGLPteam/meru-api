@@ -1,17 +1,13 @@
 # frozen_string_literal: true
 
 RSpec.describe AccessGrantPolicy, type: :policy do
-  let_it_be(:community, refind: true) { FactoryBot.create :community }
+  include_context "policy setup"
 
-  let_it_be(:admin, refind: true) { FactoryBot.create :user, :admin }
+  let_it_be(:community, refind: true) { FactoryBot.create :community }
 
   let_it_be(:manager, refind: true) { FactoryBot.create :user, manager_on: [community] }
 
   let_it_be(:editor, refind: true) { FactoryBot.create :user, editor_on: [community] }
-
-  let_it_be(:regular_user, refind: true) { FactoryBot.create :user }
-
-  let_it_be(:anonymous_user) { AnonymousUser.new }
 
   let_it_be(:admin_access_grant, refind: true) { admin.access_grants.where(accessible: community, role: Role.fetch(:admin)).first! }
 
@@ -21,157 +17,237 @@ RSpec.describe AccessGrantPolicy, type: :policy do
 
   let_it_be(:other_access_grant, refind: true) { FactoryBot.create :access_grant }
 
-  let(:access_grant) { editor_access_grant }
+  let(:record) { editor_access_grant }
 
-  let(:user) { regular_user }
-
-  let!(:scope) { described_class::Scope.new(user, AccessGrant.all) }
-
-  subject { described_class }
-
-  shared_examples_for "forbidden for all grants" do
-    it "is forbidden on all admin access grants" do
-      is_expected.not_to permit(user, editor_access_grant)
+  describe_rule :read? do
+    succeed "as an admin on manager grants" do
+      let(:user) { admin }
+      let(:record) { manager_access_grant }
     end
 
-    it "is forbidden on all manager access grants" do
-      is_expected.not_to permit(user, editor_access_grant)
+    succeed "as an admin on editor grants" do
+      let(:user) { admin }
+      let(:record) { editor_access_grant }
     end
 
-    it "is forbidden on all editor access grants" do
-      is_expected.not_to permit(user, editor_access_grant)
-    end
-  end
-
-  shared_examples_for "not updatable" do
-    permissions :update?, :manage_access? do
-      include_examples "forbidden for all grants"
-    end
-  end
-
-  shared_examples_for "inaccessible" do
-    permissions :read?, :show?, :create?, :update?, :destroy?, :manage_access? do
-      include_examples "forbidden for all grants"
+    succeed "as a manager on own grants" do
+      let(:user) { manager }
+      let(:record) { manager_access_grant }
     end
 
-    permissions :destroy? do
-      it "is forbidden on admin access grants" do
-        is_expected.not_to permit(user, admin_access_grant)
-      end
+    succeed "as a manager on editor grants" do
+      let(:user) { manager }
+      let(:record) { editor_access_grant }
     end
 
-    permissions ".scope" do
-      subject { scope.resolve }
+    failed "as an editor" do
+      let(:user) { editor }
+      let(:record) { editor_access_grant }
+    end
 
-      it "contains nothing" do
-        is_expected.to be_blank
-      end
+    failed "as a regular user" do
+      let(:user) { regular_user }
+    end
+
+    failed "as an anonymous user" do
+      let(:user) { anonymous_user }
     end
   end
 
-  context "as a user with admin access" do
-    let!(:user) { admin }
+  describe_rule :show? do
+    succeed "as an admin on manager grants" do
+      let(:user) { admin }
+      let(:record) { manager_access_grant }
+    end
 
-    include_examples "not updatable"
+    succeed "as an admin on editor grants" do
+      let(:user) { admin }
+      let(:record) { editor_access_grant }
+    end
 
-    permissions :read?, :show? do
-      it "is allowed on manager grants" do
-        is_expected.to permit(user, manager_access_grant)
+    succeed "as a manager on own grants" do
+      let(:user) { manager }
+      let(:record) { manager_access_grant }
+    end
+
+    succeed "as a manager on editor grants" do
+      let(:user) { manager }
+      let(:record) { editor_access_grant }
+    end
+
+    failed "as an editor" do
+      let(:user) { editor }
+      let(:record) { editor_access_grant }
+    end
+
+    failed "as a regular user" do
+      let(:user) { regular_user }
+    end
+
+    failed "as an anonymous user" do
+      let(:user) { anonymous_user }
+    end
+  end
+
+  describe_rule :create? do
+    context "as an admin" do
+      let(:user) { admin }
+
+      failed "on admin access grants" do
+        let(:record) { admin_access_grant }
       end
 
-      it "is allowed on editor grants" do
-        is_expected.to permit(user, editor_access_grant)
+      succeed "on manager grants" do
+        let(:record) { manager_access_grant }
+      end
+
+      succeed "on editor grants" do
+        let(:record) { editor_access_grant }
       end
     end
 
-    permissions :create? do
-      it "is forbidden on admin access grants" do
-        is_expected.not_to permit(user, admin_access_grant)
+    context "as a manager" do
+      let(:user) { manager }
+
+      failed "on admin access grants" do
+        let(:record) { admin_access_grant }
       end
 
-      it "is allowed for manager grants" do
-        is_expected.to permit(user, manager_access_grant)
+      failed "on self grants" do
+        let(:record) { manager_access_grant }
       end
 
-      it "is allowed on editor grants" do
-        is_expected.to permit(user, editor_access_grant)
-      end
-    end
-
-    permissions :destroy? do
-      it "is forbidden on admin access grants" do
-        is_expected.not_to permit(user, admin_access_grant)
-      end
-
-      it "is allowed on manager grants" do
-        is_expected.to permit(user, manager_access_grant)
-      end
-
-      it "is allowed on editor grants" do
-        is_expected.to permit(user, editor_access_grant)
+      succeed "on editor grants" do
+        let(:record) { editor_access_grant }
       end
     end
 
-    permissions ".scope" do
-      subject { scope.resolve }
+    failed "as an editor" do
+      let(:user) { editor }
+      let(:record) { editor_access_grant }
+    end
 
-      it "contains everything" do
+    failed "as a regular user" do
+      let(:user) { regular_user }
+    end
+
+    failed "as an anonymous user" do
+      let(:user) { anonymous_user }
+    end
+  end
+
+  describe_rule :update? do
+    failed "as an admin" do
+      let(:user) { admin }
+    end
+
+    failed "as a manager" do
+      let(:user) { manager }
+    end
+
+    failed "as an editor" do
+      let(:user) { editor }
+    end
+
+    failed "as a regular user" do
+      let(:user) { regular_user }
+    end
+
+    failed "as an anonymous user" do
+      let(:user) { anonymous_user }
+    end
+  end
+
+  describe_rule :manage_access? do
+    failed "as an admin" do
+      let(:user) { admin }
+    end
+
+    failed "as a manager" do
+      let(:user) { manager }
+    end
+
+    failed "as an editor" do
+      let(:user) { editor }
+    end
+
+    failed "as a regular user" do
+      let(:user) { regular_user }
+    end
+
+    failed "as an anonymous user" do
+      let(:user) { anonymous_user }
+    end
+  end
+
+  describe_rule :destroy? do
+    context "as an admin" do
+      let(:user) { admin }
+
+      failed "on admin access grants" do
+        let(:record) { admin_access_grant }
+      end
+
+      succeed "on manager grants" do
+        let(:record) { manager_access_grant }
+      end
+
+      succeed "on editor grants" do
+        let(:record) { editor_access_grant }
+      end
+    end
+
+    context "as a manager" do
+      let(:user) { manager }
+
+      failed "on admin access grants" do
+        let(:record) { admin_access_grant }
+      end
+
+      failed "on own manager role" do
+        let(:record) { manager_access_grant }
+      end
+
+      succeed "on editor grants" do
+        let(:record) { editor_access_grant }
+      end
+    end
+
+    failed "as an editor" do
+      let(:user) { editor }
+      let(:record) { editor_access_grant }
+    end
+
+    failed "as a regular user" do
+      let(:user) { regular_user }
+    end
+
+    failed "as an anonymous user" do
+      let(:user) { anonymous_user }
+    end
+  end
+
+  describe "relation scope" do
+    let(:target) { AccessGrant.all }
+
+    subject { policy.apply_scope(target, type: :active_record_relation) }
+
+    context "as an admin" do
+      let(:user) { admin }
+
+      it "includes all grants" do
         is_expected.to match_array AccessGrant.all.to_a
       end
     end
-  end
 
-  context "as a user with manager access" do
-    let!(:user) { manager }
+    context "as a manager" do
+      let(:user) { manager }
 
-    include_examples "not updatable"
-
-    permissions :read?, :show? do
-      it "is allowed on manager grants" do
-        is_expected.to permit(user, manager_access_grant)
-      end
-
-      it "is allowed on editor grants" do
-        is_expected.to permit(user, editor_access_grant)
-      end
-    end
-
-    permissions :create? do
-      it "is forbidden on admin access grants" do
-        is_expected.not_to permit(user, admin_access_grant)
-      end
-
-      it "is forbidden for self grants" do
-        is_expected.not_to permit(user, manager_access_grant)
-      end
-
-      it "is allowed on editor grants" do
-        is_expected.to permit(user, editor_access_grant)
-      end
-    end
-
-    permissions :destroy? do
-      it "is forbidden on admin access grants" do
-        is_expected.not_to permit(user, admin_access_grant)
-      end
-
-      it "is forbidden for one's own manager role" do
-        is_expected.not_to permit(user, manager_access_grant)
-      end
-
-      it "is allowed on editor grants" do
-        is_expected.to permit(user, editor_access_grant)
-      end
-    end
-
-    permissions ".scope" do
-      subject { scope.resolve }
-
-      it "includes its own grant" do
+      it "includes own grant" do
         is_expected.to include manager_access_grant
       end
 
-      it "includes an editor grant" do
+      it "includes editor grant" do
         is_expected.to include editor_access_grant
       end
 
@@ -179,23 +255,29 @@ RSpec.describe AccessGrantPolicy, type: :policy do
         is_expected.to exclude other_access_grant
       end
     end
-  end
 
-  context "as a user with editor access" do
-    let!(:user) { editor }
+    context "as an editor" do
+      let(:user) { editor }
 
-    include_examples "inaccessible"
-  end
+      it "is empty" do
+        is_expected.to be_blank
+      end
+    end
 
-  context "as a user with no special access" do
-    let!(:user) { regular_user }
+    context "as a regular user" do
+      let(:user) { regular_user }
 
-    include_examples "inaccessible"
-  end
+      it "is empty" do
+        is_expected.to be_blank
+      end
+    end
 
-  context "as an anonymous user" do
-    let!(:user) { anonymous_user }
+    context "as an anonymous user" do
+      let(:user) { anonymous_user }
 
-    include_examples "inaccessible"
+      it "is empty" do
+        is_expected.to be_blank
+      end
+    end
   end
 end

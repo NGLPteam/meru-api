@@ -6,7 +6,7 @@ module Resolvers
     extend ActiveSupport::Concern
 
     included do
-      option :order, type: Types::OrderingOrderType, default: "DETERMINISTIC"
+      option :order, type: ::Types::OrderingOrderType, default: "DETERMINISTIC"
     end
 
     def apply_order_with_deterministic(scope)

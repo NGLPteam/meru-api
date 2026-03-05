@@ -22,6 +22,13 @@ SimpleCov.start "rails" do
     "app/services/harvesting",
     "app/services/pilot_harvesting",
   ]
+
+  add_group "Mutations", [
+    "app/graphql/mutations",
+    "app/operations/mutations",
+    "app/services/mutation_operations",
+  ]
+
   add_group "Operations", "app/operations"
   add_group "Policies", "app/policies"
   add_group "Services", "app/services"
@@ -53,8 +60,10 @@ abort("The Rails environment is running in production mode!") if Rails.env.produ
 require "rspec/rails"
 require "rspec/json_expectations"
 require "test_prof/recipes/rspec/let_it_be"
+require "test_prof/recipes/rspec/sample"
 require "dry/container/stub"
-require "pundit/rspec"
+require "action_policy/rspec"
+require "action_policy/rspec/dsl"
 # NOTE: We specifically do not use webmock/rspec because we want
 # control over how stubbed stuff gets reset.
 require "webmock"
@@ -71,6 +80,17 @@ ActiveJob::Base.queue_adapter = :test
 Shrine.logger = Logger.new(File::NULL)
 
 Dry::Effects.load_extensions :rspec
+
+TestProf.configure do |config|
+  # the directory to put artifacts (reports) in ('tmp/test_prof' by default)
+  config.output_dir = "spec/profiles"
+
+  # use unique filenames for reports (by simply appending current timestamp)
+  config.timestamps = true
+
+  # color output
+  config.color = true
+end
 
 require_relative "system/test_container"
 

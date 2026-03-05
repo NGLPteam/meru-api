@@ -4,10 +4,15 @@ module Types
   module Settings
     # @see Settings::Institution
     class InstitutionSettingsInputType < Types::HashInputObject
-      description "An object for updating the site's configuration"
+      description <<~TEXT
+      An object for updating the site's configuration.
+      TEXT
 
-      argument :name, String, required: false, attribute: true,
-        description: "The name of the institution."
+      argument :name, String, required: false do
+        description <<~TEXT
+        The name of the institution.
+        TEXT
+      end
     end
   end
 end

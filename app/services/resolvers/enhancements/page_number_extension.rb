@@ -21,7 +21,7 @@ module Resolvers
           validates numericality: { allow_blank: true, greater_than_or_equal_to: 1 }
         end
 
-        field.argument :page_direction, Types::PageDirectionType, required: false, default_value: :forwards, replace_null_with_default: true do
+        field.argument :page_direction, ::Types::PageDirectionType, required: false, default_value: :forwards, replace_null_with_default: true do
           description "The direction in which pages advance (to traverse pages backwards)"
         end
 

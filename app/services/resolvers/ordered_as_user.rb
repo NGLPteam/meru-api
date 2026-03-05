@@ -1,15 +1,14 @@
 # frozen_string_literal: true
 
 module Resolvers
-  # A concern for resolvers that order {User} types with {Types::UserOrderType}.
+  # A concern for resolvers that order {User} ::Types with {Types::UserOrderType}.
   module OrderedAsUser
     extend ActiveSupport::Concern
 
     include ::Resolvers::AbstractOrdering
-    include ScopeUtilities
 
     included do
-      orders_with! Types::UserOrderType, default: "RECENT"
+      orders_with! ::Types::UserOrderType, default: "RECENT"
     end
 
     order_pair! :email

@@ -2,17 +2,18 @@
 
 module Resolvers
   class ContributorResolver < AbstractResolver
-    include Resolvers::Enhancements::AppliesPolicyScope
     include Resolvers::OrderedAsContributor
     include Resolvers::Enhancements::PageBasedPagination
 
-    type Types::AnyContributorType.connection_type, null: false
+    applies_policy_scope!
+
+    type ::Types::AnyContributorType.connection_type, null: false
 
     max_page_size 1000
 
-    scope { object.present? ? object.contributors : Contributor.all }
+    resolves_model! ::Contributor
 
-    option :kind, type: Types::ContributorFilterKindType, default: "ALL"
+    option :kind, type: ::Types::ContributorFilterKindType, default: "ALL"
 
     PREFIX_DESC = <<~TEXT
     Search for contributors with names that start with the provided text.

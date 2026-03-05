@@ -26,35 +26,41 @@ RSpec.describe Mutations::CreateOrganizationContributor, type: :request, graphql
   }
   GRAPHQL
 
-  context "as an admin" do
-    let(:token) { token_helper.build_token has_global_admin: true }
+  let_mutation_input!(:url) { Faker::Internet.url }
+  let_mutation_input!(:bio) { Faker::Lorem.paragraphs(number: 4).join("\n") }
 
-    let_mutation_input!(:url) { Faker::Internet.url }
-    let_mutation_input!(:bio) { Faker::Lorem.paragraphs(number: 4).join("\n") }
+  let_mutation_input!(:links) do
+    2.times.map do
+      { title: Faker::Lorem.sentence, url: Faker::Internet.url }
+    end
+  end
 
-    let_mutation_input!(:links) do
-      2.times.map do
-        { title: Faker::Lorem.sentence, url: Faker::Internet.url }
+  # organization-specific properties
+  let_mutation_input!(:legal_name) { Faker::Company.name }
+  let_mutation_input!(:location) { Faker::Address.full_address }
+  let_mutation_input!(:image) { nil }
+
+  let!(:valid_mutation_shape) do
+    gql.mutation :create_organization_contributor do |m|
+      m.prop :contributor do |c|
+        c[:kind] = "organization"
       end
     end
+  end
 
-    # organization-specific properties
-    let_mutation_input!(:legal_name) { Faker::Company.name }
-    let_mutation_input!(:location) { Faker::Address.full_address }
-    let_mutation_input!(:image) { nil }
+  let(:empty_mutation_shape) do
+    gql.empty_mutation :create_organization_contributor
+  end
 
-    let!(:expected_shape) do
-      gql.mutation :create_organization_contributor do |m|
-        m.prop :contributor do |c|
-          c[:kind] = "organization"
-        end
-      end
-    end
+  shared_examples_for "an authorized mutation" do
+    let(:expected_shape) { valid_mutation_shape }
 
     it "creates an organization contributor" do
-      expect_the_default_request.to change(Contributor, :count).by(1)
+      expect_request! do |req|
+        req.effect! change(Contributor, :count).by(1)
 
-      expect_graphql_data expected_shape
+        req.data! expected_shape
+      end
     end
 
     context "with an invalid link" do
@@ -73,9 +79,11 @@ RSpec.describe Mutations::CreateOrganizationContributor, type: :request, graphql
       end
 
       it "does not create the contributor" do
-        expect_the_default_request.to keep_the_same(Contributor, :count)
+        expect_request! do |req|
+          req.effect! keep_the_same(Contributor, :count)
 
-        expect_graphql_data expected_shape
+          req.data! expected_shape
+        end
       end
     end
 
@@ -108,9 +116,11 @@ RSpec.describe Mutations::CreateOrganizationContributor, type: :request, graphql
       end
 
       it "creates an organization contributor with an image" do
-        expect_the_default_request.to change(Contributor, :count).by(1)
+        expect_request! do |req|
+          req.effect! change(Contributor, :count).by(1)
 
-        expect_graphql_data expected_shape
+          req.data! expected_shape
+        end
       end
     end
 
@@ -132,10 +142,38 @@ RSpec.describe Mutations::CreateOrganizationContributor, type: :request, graphql
       end
 
       it "does not create the contributor" do
-        expect_the_default_request.to keep_the_same(Contributor, :count)
+        expect_request! do |req|
+          req.effect! keep_the_same(Contributor, :count)
 
-        expect_graphql_data expected_shape
+          req.data! expected_shape
+        end
       end
     end
+  end
+
+  shared_examples_for "an unauthorized mutation" do
+    let(:expected_shape) { empty_mutation_shape }
+
+    it "is not authorized" do
+      expect_request! do |req|
+        req.effect! execute_safely
+
+        req.unauthorized!
+
+        req.data! expected_shape
+      end
+    end
+  end
+
+  as_an_admin_user do
+    include_examples "an authorized mutation"
+  end
+
+  as_a_regular_user do
+    include_examples "an unauthorized mutation"
+  end
+
+  as_an_anonymous_user do
+    include_examples "an unauthorized mutation"
   end
 end

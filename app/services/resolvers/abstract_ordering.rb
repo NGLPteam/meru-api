@@ -109,28 +109,7 @@ module Resolvers
 
     order_pair! :title
 
-    # @!group Utility Methods
-
-    # Check if the provided `scope` is wrapping models matching `model`.
-    #
-    # @param [ActiveRecord::Relation] scope
-    # @param [Class<ActiveRecord::Base>] model
-    def scope_wraps?(scope, model)
-      case scope
-      when ActiveRecord::Relation
-        model == scope.model
-      # :nocov:
-      when model
-        true
-      else
-        false
-      end
-      # :nocov:
-    end
-
-    # @!endgroup
-
-    class_methods do
+    module ClassMethods
       include BuildsOrderPair
 
       # @param [Class<Types::BaseEnum>] enum_klass

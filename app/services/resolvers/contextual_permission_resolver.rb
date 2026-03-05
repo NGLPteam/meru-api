@@ -4,16 +4,11 @@ module Resolvers
   class ContextualPermissionResolver < AbstractResolver
     include Resolvers::Enhancements::PageBasedPagination
 
-    type Types::ContextualPermissionType.connection_type, null: false
+    type ::Types::ContextualPermissionType.connection_type, null: false
 
-    scope do
-      object.contextual_permissions.preload(
-        :roles, :user,
-        access_grants: %i[user accessible subject item community collection role]
-      )
-    end
+    resolves_model! ::ContextualPermission, must_have_object: true
 
-    option :order, type: Types::ContextualPermissionOrderType, default: "USER_NAME_ASC"
+    option :order, type: ::Types::ContextualPermissionOrderType, default: "USER_NAME_ASC"
 
     def apply_order_with_recent(scope)
       scope.order(created_at: :desc)
@@ -29,6 +24,13 @@ module Resolvers
 
     def apply_order_with_user_name_desc(scope)
       scope.joins(:user).order(User.arel_table[:name].desc)
+    end
+
+    def resolve_default_scope
+      super.preload(
+        :roles, :user,
+        access_grants: %i[user accessible subject item community collection role]
+      )
     end
   end
 end

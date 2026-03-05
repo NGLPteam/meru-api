@@ -5,7 +5,7 @@ module Harvesting
     # @api private
     class List
       include StoreModel::Model
-      include Shared::EnhancedStoreModel
+      include Support::EnhancedStoreModel
     end
   end
 end

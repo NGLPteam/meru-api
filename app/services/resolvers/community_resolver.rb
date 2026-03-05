@@ -2,13 +2,14 @@
 
 module Resolvers
   class CommunityResolver < AbstractResolver
-    include Resolvers::Enhancements::AppliesPolicyScope
     include Resolvers::Enhancements::PageBasedPagination
     include Resolvers::FiltersByEntityPermission
     include Resolvers::OrderedAsEntity
 
-    type Types::CommunityType.connection_type, null: false
+    applies_policy_scope!
 
-    scope { Community.all }
+    type ::Types::CommunityType.connection_type, null: false
+
+    resolves_model! ::Community, from_object: false
   end
 end

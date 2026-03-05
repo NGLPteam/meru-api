@@ -5,8 +5,8 @@ module Resolvers
     include Resolvers::Enhancements::PageBasedPagination
     include Resolvers::SimplyOrdered
 
-    type Types::EntityLinkType.connection_type, null: false
+    type ::Types::EntityLinkType.connection_type, null: false
 
-    scope { object.entity_links }
+    resolves_model! ::EntityLink, must_have_object: true
   end
 end

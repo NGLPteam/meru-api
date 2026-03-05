@@ -3,7 +3,7 @@
 module Types
   class MutationType < Types::BaseObject
     description <<~TEXT
-    The entry point for making changes to the data within the WDP API.
+    The entry point for making changes to the data within the Meru API.
     TEXT
 
     field :alter_schema_version, mutation: Mutations::AlterSchemaVersion
@@ -100,6 +100,8 @@ module Types
 
     field :revoke_access, mutation: Mutations::RevokeAccess
 
+    field :submission_target_configure, mutation: Mutations::SubmissionTargetConfigure
+
     field :update_announcement, mutation: Mutations::UpdateAnnouncement
 
     field :update_asset, mutation: Mutations::UpdateAsset
@@ -139,5 +141,13 @@ module Types
     field :permalink_destroy, mutation: Mutations::PermalinkDestroy
 
     field :permalink_update, mutation: Mutations::PermalinkUpdate
+
+    field :submission_target_reviewer_create, mutation: Mutations::SubmissionTargetReviewerCreate
+
+    field :submission_target_reviewer_destroy, mutation: Mutations::SubmissionTargetReviewerDestroy
+
+    field :submission_change_state, mutation: Mutations::SubmissionChangeState
+
+    field :submission_create, mutation: Mutations::SubmissionCreate
   end
 end

@@ -2,22 +2,15 @@
 
 module Resolvers
   class CollectionResolver < AbstractResolver
-    include Resolvers::Enhancements::AppliesPolicyScope
     include Resolvers::Enhancements::PageBasedPagination
     include Resolvers::FiltersByEntityPermission
     include Resolvers::OrderedAsEntity
     include Resolvers::Treelike
 
-    type Types::CollectionConnectionType, null: false
+    applies_policy_scope!
 
-    scope do
-      if object.present? && object.kind_of?(Collection)
-        object.children
-      elsif object.present? && object.respond_to?(:collections)
-        object.collections
-      else
-        Collection.all
-      end
-    end
+    type ::Types::CollectionConnectionType, null: false
+
+    resolves_model! ::Collection
   end
 end

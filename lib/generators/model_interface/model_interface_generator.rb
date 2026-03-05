@@ -8,6 +8,9 @@ class ModelInterfaceGenerator < Rails::Generators::NamedBase
 
   source_root File.expand_path("templates", __dir__)
 
+  class_option :filters, type: :boolean, default: false,
+    description: "Whether to create a filter scope"
+
   class_option :default_order, type: :boolean, default: true
   class_option :order_enum, type: :boolean, default: true
   class_option :simply_ordered, type: :boolean, default: true
@@ -25,10 +28,22 @@ class ModelInterfaceGenerator < Rails::Generators::NamedBase
     template "order_concern.rb", Rails.root.join("app/services/resolvers", "#{order_concern_file}.rb")
   end
 
+  def create_filter_scope!
+    return unless using_filters?
+
+    template "filter_scope.rb", Rails.root.join("app/services/filtering/scopes", "#{filter_scope_name.underscore}.rb")
+  end
+
   def create_resolver!
     return if skip_resolver?
 
     template "resolver.rb", Rails.root.join("app/services/resolvers", "#{resolver_file}.rb")
+  end
+
+  def create_selector_input!
+    return unless has_unique_identifier?
+
+    template "selector_input.rb", Rails.root.join("app/graphql/types", "#{selector_input_file}.rb")
   end
 
   def create_query_interface!
@@ -58,6 +73,10 @@ class ModelInterfaceGenerator < Rails::Generators::NamedBase
 
   def field_single_name
     model_key_singular
+  end
+
+  def filter_scope_name
+    @filter_scope_name ||= model_name.pluralize
   end
 
   def graphql_collection_field_name
@@ -100,11 +119,45 @@ class ModelInterfaceGenerator < Rails::Generators::NamedBase
     "app/graphql/types/query_type.rb"
   end
 
-  def inject_query!(text)
-    return unless target_query.present?
+  def using_filters?
+    options[:filters]
+  end
 
-    inject_into_file target_query, before: "    # Generator End" do
-      text.indent(4)
+  def inject_query!(text)
+    query_path = Rails.root.join(target_query)
+    query_content = File.read(query_path)
+
+    # Extract existing implementations between the group markers
+    implementations_match = query_content.match(/# @!group Query Implementations\n(.*?)# @!endgroup Query Implementations/m)
+
+    unless implementations_match
+      # Fallback to old behavior if markers not found
+      inject_into_file target_query, before: "    # @!endgroup Query Implementations\n" do
+        text.indent(4)
+      end
+      return
+    end
+
+    implementations_section = implementations_match[1]
+    existing_implementations = implementations_section.scan(/implements (Types::Queries\w+)/).flatten
+
+    # Get the new interface name and determine insertion point
+    new_interface = query_interface_klass
+    all_implementations = (existing_implementations + [new_interface]).sort
+    insert_index = all_implementations.index(new_interface)
+
+    # Determine what to insert before
+    if insert_index == all_implementations.length - 1
+      # Insert at the end, before the endgroup comment
+      inject_into_file target_query, before: "\n    # @!endgroup Query Implementations" do
+        text.indent(4)
+      end
+    else
+      # Insert before the next implementation in alphabetical order
+      next_implementation = all_implementations[insert_index + 1]
+      inject_into_file target_query, before: "    implements #{next_implementation}\n" do
+        text.indent(4)
+      end
     end
   end
 
@@ -166,6 +219,22 @@ class ModelInterfaceGenerator < Rails::Generators::NamedBase
 
   def query_interface_name
     "Queries#{model_name}"
+  end
+
+  def selector_input_file
+    selector_input_name.underscore
+  end
+
+  def selector_input_graphql_name
+    "#{model_name}SelectorInput"
+  end
+
+  def selector_input_klass
+    "Types::#{selector_input_name}"
+  end
+
+  def selector_input_name
+    "#{model_name}SelectorInputType"
   end
 
   def skip_resolver?

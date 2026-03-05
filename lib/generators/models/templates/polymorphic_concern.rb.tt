@@ -1,9 +1,0 @@
-# frozen_string_literal: true
-
-module <%= reference.concern_class_name %>
-  extend ActiveSupport::Concern
-
-  included do
-    has_many :<%= reference.source_model.plural_name %>, as: :<%= reference.name %>, dependent: :<%= reference.dependent %>
-  end
-end

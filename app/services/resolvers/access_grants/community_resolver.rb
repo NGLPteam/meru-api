@@ -3,19 +3,12 @@
 module Resolvers
   module AccessGrants
     class CommunityResolver < AbstractResolver
+      include AbstractAccessGrantResolver::ForCommunities
       include Resolvers::FiltersByAccessGrantSubject
       include Resolvers::Enhancements::PageBasedPagination
       include Resolvers::SimplyOrdered
 
-      type Types::AnyCommunityAccessGrantType.connection_type, null: false
-
-      scope do
-        if object.respond_to?(:access_grants)
-          object.access_grants.with_preloads.for_communities
-        else
-          AccessGrant.none
-        end
-      end
+      type ::Types::AnyCommunityAccessGrantType.connection_type, null: false
     end
   end
 end

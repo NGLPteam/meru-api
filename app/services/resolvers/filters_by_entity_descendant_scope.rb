@@ -4,12 +4,12 @@ module Resolvers
   # This module exposes an option on a resolver for an {EntityDescendant} that
   # allows it to filter by specific type(s), based on the `scope`.
   #
-  # @see Types::EntityDescendantScopeFilterType
+  # @see ::Types::EntityDescendantScopeFilterType
   module FiltersByEntityDescendantScope
     extend ActiveSupport::Concern
 
     included do
-      option :scope, type: Types::EntityDescendantScopeFilterType, default: "ALL"
+      option :scope, type: ::Types::EntityDescendantScopeFilterType, default: "ALL"
     end
 
     def apply_scope_with_all(scope)

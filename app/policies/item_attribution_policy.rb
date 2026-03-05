@@ -2,13 +2,5 @@
 
 # @see ItemAttribution
 class ItemAttributionPolicy < ApplicationPolicy
-  def show?
-    authorized? record.item, :show?
-  end
-
-  class Scope < Scope
-    def resolve
-      scope.all
-    end
-  end
+  def show? = allowed_to?(:show?, record.item)
 end

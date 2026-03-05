@@ -5,7 +5,7 @@ module Resolvers
     extend ActiveSupport::Concern
 
     included do
-      option :kind, type: Types::SchemaKindType, default: "item"
+      option :kind, type: ::Types::SchemaKindType, default: "item"
     end
 
     def apply_kind_with_community(scope)

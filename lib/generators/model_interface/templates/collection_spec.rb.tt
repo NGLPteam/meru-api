@@ -13,9 +13,20 @@ RSpec.describe "Query.<%= graphql_collection_field_name %>", type: :request do
             node {
               id
               slug
-              <%- if has_title? -%>
-              title
+              <%- if has_unique_identifier? -%>
+              identifier
               <%- end -%>
+              <%- if has_name? -%>
+              name
+              <%- end -%>
+
+              canUpdate {
+                ... AuthorizationResultFragment
+              }
+
+              canDestroy {
+                ... AuthorizationResultFragment
+              }
             }
           }
 
@@ -25,8 +36,20 @@ RSpec.describe "Query.<%= graphql_collection_field_name %>", type: :request do
           }
         }
       }
+
+      fragment AuthorizationResultFragment on AuthorizationResult {
+        value
+        message
+        reasons {
+          details
+          fullMessages
+        }
+      }
       GRAPHQL
     end
+
+    let(:can_update) { false }
+    let(:can_destroy) { false }
 
     let(:expected_shape) do
       gql.query do |q|
@@ -37,9 +60,14 @@ RSpec.describe "Query.<%= graphql_collection_field_name %>", type: :request do
                 edge.prop :node do |n|
                   n[:id] = r.to_encoded_id
                   n[:slug] = r.system_slug
-                  <%- if has_title? -%>
-                  n[:title] = r.title
+                  <%- if has_unique_identifier? -%>
+                  n[:identifier] = r.identifier
                   <%- end -%>
+                  <%- if has_name? -%>
+                  n[:name] = r.name
+                  <%- end -%>
+
+                  n.auth_results(can_update:, can_destroy:)
                 end
               end
             end
@@ -59,12 +87,12 @@ RSpec.describe "Query.<%= graphql_collection_field_name %>", type: :request do
 
     let(:order) { "RECENT" }
 
-    let_it_be(:records) do
+    let_it_be(:records, refind: true) do
       1.upto(4).map do |n|
         attrs = {
           _at: n.days.ago,
-          <%- if has_title? -%>
-          title: Faker::Lorem.unique.sentence,
+          <%- if has_name? -%>
+          name: Faker::Lorem.unique.sentence,
           <%- end -%>
         }
 
@@ -82,13 +110,17 @@ RSpec.describe "Query.<%= graphql_collection_field_name %>", type: :request do
 
     def order_records(records, order: "RECENT")
       case order
+      <%- if has_default_order? -%>
+      when "DEFAULT"
+        raise "must specify how default orders"
+      <%- end -%>
       when "OLDEST"
         records.sort_by(&:created_at)
-      <%- if has_title? -%>
-      when "TITLE_ASCENDING"
-        records.sort_by(&:title)
-      when "TITLE_DESCENDING"
-        order_records(records, order: "TITLE_ASCENDING").reverse!
+      <%- if has_name? -%>
+      when "NAME_ASCENDING"
+        records.sort_by(&:sort_name)
+      when "NAME_DESCENDING"
+        order_records(records, order: "NAME_ASCENDING").reverse!
       <%- end -%>
       else
         order_records(records, order: "OLDEST").reverse!
@@ -101,6 +133,74 @@ RSpec.describe "Query.<%= graphql_collection_field_name %>", type: :request do
           req.data! expected_shape
         end
       end
+    end
+
+    shared_examples_for "ordering by each option" do
+      <%- if has_default_order? -%>
+      context "when ordering DEFAULT" do
+        let(:order) { "DEFAULT" }
+
+        include_examples "a properly-ordered collection"
+      end
+
+      <%- end -%>
+      context "when ordering RECENT" do
+        let(:order) { "RECENT" }
+
+        include_examples "a properly-ordered collection"
+      end
+
+      context "when ordering OLDEST" do
+        let(:order) { "OLDEST" }
+
+        include_examples "a properly-ordered collection"
+      end
+      <%- if has_name? -%>
+
+      context "when ordering NAME_ASCENDING" do
+        let(:order) { "NAME_ASCENDING" }
+
+        include_examples "a properly-ordered collection"
+      end
+
+      context "when ordering NAME_DESCENDING" do
+        let(:order) { "NAME_DESCENDING" }
+
+        include_examples "a properly-ordered collection"
+      end
+      <%- end -%>
+    end
+
+    as_a_super_admin_user do
+      let(:can_update) { true }
+      let(:can_destroy) { true }
+
+      include_examples "ordering by each option"
+    end
+
+    as_an_admin_user do
+      let(:can_update) { true }
+      let(:can_destroy) { true }
+
+      include_examples "ordering by each option"
+    end
+
+    as_a_regular_user do
+      let(:can_update) { false }
+      let(:can_destroy) { false }
+
+      let(:sorted_records) { [] }
+
+      include_examples "ordering by each option"
+    end
+
+    as_an_anonymous_user do
+      let(:can_update) { false }
+      let(:can_destroy) { false }
+
+      let(:sorted_records) { [] }
+
+      include_examples "ordering by each option"
     end
   end
 end

@@ -12,6 +12,12 @@ GEM
   remote: https://rubygems.org/
   specs:
     absolute_time (1.0.0)
+    action_policy (0.7.6)
+      ruby-next-core (>= 1.0)
+    action_policy-graphql (0.6.0)
+      action_policy (~> 0.7)
+      graphql (>= 1.9.3)
+      ruby-next-core (~> 1.0)
     actioncable (7.2.3)
       actionpack (= 7.2.3)
       activesupport (= 7.2.3)
@@ -573,13 +579,6 @@ GEM
       date
       stringio
     public_suffix (7.0.5)
-    pundit (2.5.2)
-      activesupport (>= 3.0.0)
-    pundit-matchers (4.0.0)
-      rspec-core (~> 3.12)
-      rspec-expectations (~> 3.12)
-      rspec-mocks (~> 3.12)
-      rspec-support (~> 3.12)
     raabro (1.4.0)
     racc (1.8.1)
     rack (3.2.5)
@@ -859,6 +858,8 @@ PLATFORMS
 
 DEPENDENCIES
   absolute_time (~> 1.0)
+  action_policy (~> 0.7)
+  action_policy-graphql (~> 0.6)
   active_record_distinct_on (= 1.9.0)
   activerecord (~> 7.2)
   activerecord-cte (~> 0.4.0)
@@ -947,8 +948,6 @@ DEPENDENCIES
   pitchfork (~> 0.18.1)
   pry (~> 0.16)
   pry-rails (~> 0.3.11)
-  pundit (~> 2.5.0)
-  pundit-matchers (~> 4.0.0)
   rack (~> 3.2.4)
   rack-cors (~> 3.0.0)
   rails (= 7.2.3)

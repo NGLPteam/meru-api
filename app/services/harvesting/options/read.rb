@@ -5,7 +5,7 @@ module Harvesting
     # @api private
     class Read
       include StoreModel::Model
-      include Shared::EnhancedStoreModel
+      include Support::EnhancedStoreModel
 
       attribute :max_records, :integer, default: Harvesting::ABSOLUTE_MAX_RECORD_COUNT
 

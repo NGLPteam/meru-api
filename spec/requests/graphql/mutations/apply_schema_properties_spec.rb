@@ -18,7 +18,7 @@ RSpec.describe Mutations::ApplySchemaProperties, type: :request, simple_v1_hiera
         metadata
       }
 
-      ...ErrorFragment
+      ... ErrorFragment
     }
   }
   GRAPHQL

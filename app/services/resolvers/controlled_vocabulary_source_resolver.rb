@@ -4,15 +4,16 @@ module Resolvers
   # A resolver for a {ControlledVocabularySource}.
   #
   # @see ControlledVocabularySource
-  # @see Types::ControlledVocabularySourceType
+  # @see ::Types::ControlledVocabularySourceType
   class ControlledVocabularySourceResolver < AbstractResolver
-    include Resolvers::Enhancements::AppliesPolicyScope
     include Resolvers::Enhancements::PageBasedPagination
     include Resolvers::OrderedAsControlledVocabularySource
 
-    type Types::ControlledVocabularySourceType.connection_type, null: false
+    applies_policy_scope!
 
-    scope { ::ControlledVocabularySource.all }
+    type ::Types::ControlledVocabularySourceType.connection_type, null: false
+
+    resolves_model! ::ControlledVocabularySource, from_object: false
 
     filters_with! Filtering::Scopes::ControlledVocabularySources
   end

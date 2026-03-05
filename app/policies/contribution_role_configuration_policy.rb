@@ -2,20 +2,9 @@
 
 # @see ContributionRoleConfiguration
 class ContributionRoleConfigurationPolicy < ApplicationPolicy
-  def read?
-    true
-  end
+  always_readable!
 
-  def upsert?
-    user.has_global_admin_access?
-  end
+  def upsert? = has_admin?
 
-  alias create? upsert?
-  alias update? upsert?
-
-  class Scope < Scope
-    def resolve
-      scope.all
-    end
-  end
+  alias_rule :create?, :update?, to: :upsert?
 end

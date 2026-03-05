@@ -4,10 +4,8 @@ module Resolvers
   module OrderedAsEntity
     extend ActiveSupport::Concern
 
-    include ScopeUtilities
-
     included do
-      option :order, type: Types::EntityOrderType, default: "PUBLISHED_DESCENDING"
+      option :order, type: ::Types::EntityOrderType, default: "PUBLISHED_DESCENDING"
     end
 
     def apply_order_with_recent(scope)

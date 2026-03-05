@@ -11,8 +11,8 @@ module Support
             base.include Support::GraphQLAPI::AssociationHelpers
             base.include Support::GraphQLAPI::DirectConnectionAndEdgeSupport
             base.include Support::GraphQLAPI::ImageAttachmentSupport
-            base.include Support::GraphQLAPI::PunditHelpers
             base.extend Support::GraphQLAPI::Enhancements::Interface::Composable
+            base.extend Support::GraphQLAPI::ExposeAuthorization
           end
         end
 
@@ -20,9 +20,13 @@ module Support
           def included(base)
             super if defined?(super)
 
+            base.include ActionPolicy::Behaviour
+            base.include ActionPolicy::GraphQL::Fields
+
             base.extend Support::GraphQLAPI::AssociationHelpers::ClassMethods
             base.extend Support::GraphQLAPI::DirectConnectionAndEdgeSupport::ClassMethods
             base.extend Support::GraphQLAPI::ImageAttachmentSupport::ClassMethods
+            base.extend Support::GraphQLAPI::ExposeAuthorization
           end
         end
       end

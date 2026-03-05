@@ -2,25 +2,13 @@
 
 # @see ContributorAttribution
 class ContributorAttributionPolicy < ApplicationPolicy
-  def show?
-    true
-  end
+  always_readable!
 
-  def create?
-    false
-  end
+  def show? = true
 
-  def update?
-    false
-  end
+  def create? = false
 
-  def destroy?
-    false
-  end
+  def update? = false
 
-  class Scope < Scope
-    def resolve
-      scope.all
-    end
-  end
+  def destroy? = false
 end

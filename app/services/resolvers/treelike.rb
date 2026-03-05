@@ -8,7 +8,7 @@ module Resolvers
 
     included do
       option :node_filter,
-        type: Types::TreeNodeFilterType,
+        type: ::Types::TreeNodeFilterType,
         description: "Select the classification of nodes to retrieve: see TreeNodeFilter for a more thorough explanation",
         default: "ROOTS_ONLY"
     end

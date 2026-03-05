@@ -30,47 +30,53 @@ RSpec.describe Mutations::CreateCommunity, type: :request, graphql: :mutation do
   }
   GRAPHQL
 
-  context "as an admin" do
-    let(:token) { token_helper.build_token has_global_admin: true }
+  let(:alt_text) { "Some Alt Text" }
 
-    let(:alt_text) { "Some Alt Text" }
+  let_mutation_input!(:title) { Faker::Lorem.sentence }
+  let_mutation_input!(:subtitle) { Faker::Lorem.sentence }
+  let_mutation_input!(:hero_image_layout) { "ONE_COLUMN" }
+  let_mutation_input!(:hero_image) do
+    graphql_upload_from "spec", "data", "lorempixel.jpg", alt: alt_text
+  end
+  let_mutation_input!(:logo) do
+    graphql_upload_from "spec", "data", "lorempixel.jpg", alt: alt_text
+  end
 
-    let_mutation_input!(:title) { Faker::Lorem.sentence }
-    let_mutation_input!(:subtitle) { Faker::Lorem.sentence }
-    let_mutation_input!(:hero_image_layout) { "ONE_COLUMN" }
-    let_mutation_input!(:hero_image) do
-      graphql_upload_from "spec", "data", "lorempixel.jpg", alt: alt_text
-    end
-    let_mutation_input!(:logo) do
-      graphql_upload_from "spec", "data", "lorempixel.jpg", alt: alt_text
-    end
+  let!(:valid_mutation_shape) do
+    gql.mutation(:create_community) do |m|
+      m.prop :community do |c|
+        c[:title] = title
+        c[:subtitle] = subtitle
+        c[:hero_image_layout] = hero_image_layout
 
-    let!(:expected_shape) do
-      gql.mutation(:create_community) do |m|
-        m.prop :community do |c|
-          c[:title] = title
-          c[:subtitle] = subtitle
-          c[:hero_image_layout] = hero_image_layout
+        c.prop :hero_image do |hi|
+          hi[:alt] = alt_text
+          hi[:original_filename] = "lorempixel.jpg"
+          hi[:purpose] = "HERO_IMAGE"
+        end
 
-          c.prop :hero_image do |hi|
-            hi[:alt] = alt_text
-            hi[:original_filename] = "lorempixel.jpg"
-            hi[:purpose] = "HERO_IMAGE"
-          end
-
-          c.prop :logo do |l|
-            l[:alt] = alt_text
-            l[:original_filename] = "lorempixel.jpg"
-            l[:purpose] = "LOGO"
-          end
+        c.prop :logo do |l|
+          l[:alt] = alt_text
+          l[:original_filename] = "lorempixel.jpg"
+          l[:purpose] = "LOGO"
         end
       end
     end
+  end
+
+  let(:empty_mutation_shape) do
+    gql.empty_mutation :create_community
+  end
+
+  shared_examples_for "an authorized mutation" do
+    let(:expected_shape) { valid_mutation_shape }
 
     it "creates a community" do
-      expect_the_default_request.to change(Community, :count).by(1)
+      expect_request! do |req|
+        req.effect! change(Community, :count).by(1)
 
-      expect_graphql_data expected_shape
+        req.data! expected_shape
+      end
     end
 
     context "with a blank title" do
@@ -87,10 +93,38 @@ RSpec.describe Mutations::CreateCommunity, type: :request, graphql: :mutation do
       end
 
       it "fails to create a community" do
-        expect_the_default_request.to keep_the_same(Community, :count)
+        expect_request! do |req|
+          req.effect! keep_the_same(Community, :count)
 
-        expect_graphql_data expected_shape
+          req.data! expected_shape
+        end
       end
     end
+  end
+
+  shared_examples_for "an unauthorized mutation" do
+    let(:expected_shape) { empty_mutation_shape }
+
+    it "is not authorized" do
+      expect_request! do |req|
+        req.effect! execute_safely
+
+        req.unauthorized!
+
+        req.data! expected_shape
+      end
+    end
+  end
+
+  as_an_admin_user do
+    include_examples "an authorized mutation"
+  end
+
+  as_a_regular_user do
+    include_examples "an unauthorized mutation"
+  end
+
+  as_an_anonymous_user do
+    include_examples "an unauthorized mutation"
   end
 end

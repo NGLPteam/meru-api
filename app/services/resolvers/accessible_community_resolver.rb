@@ -7,8 +7,8 @@ module Resolvers
     include Resolvers::OrderedAsEntity
     include Resolvers::Treelike
 
-    type Types::CommunityType.connection_type, null: false
+    type ::Types::CommunityType.connection_type, null: false
 
-    scope { Community.all }
+    resolves_model! ::Community, from_object: false
   end
 end

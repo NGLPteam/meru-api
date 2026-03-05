@@ -6,36 +6,16 @@
 # permissions, and care must be taken to ensure we're checking this policy when
 # mutating or assigning roles.
 class RolePolicy < ApplicationPolicy
-  effective_crud_permissions! create: false
+  always_readable!
 
-  effective_permission! "roles.assign", :assign?
+  pre_check :deny_anonymous!, except: %i[read? show? index?]
+  pre_check :deny_system!, except: %i[read? show? index?]
 
-  def read?
-    has_allowed_action? "roles.read"
-  end
+  def create? = has_allowed_action? "roles.create"
 
-  # Roles can always be read in GQL.
-  def show?
-    true
-  end
+  def update? = has_allowed_action? "roles.update"
 
-  def create?
-    return false if record.for_system?
-
-    has_allowed_action? "roles.create"
-  end
-
-  def update?
-    return false if record.for_system?
-
-    has_allowed_action? "roles.update"
-  end
-
-  def destroy?
-    return false if record.for_system?
-
-    has_allowed_action? "roles.delete"
-  end
+  def destroy? = has_allowed_action? "roles.delete"
 
   # Whether the current role can be assigned by the current user.
   def assign?
@@ -45,9 +25,12 @@ class RolePolicy < ApplicationPolicy
     record.in? user.assignable_roles
   end
 
-  class Scope < Scope
-    def resolve
-      scope.all
-    end
+  private
+
+  # @return [void]
+  def deny_system!
+    deny! if record.for_system?
   end
+
+  def reserved_assignment? = record.identified_as_admin?
 end

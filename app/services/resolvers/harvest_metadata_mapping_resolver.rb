@@ -4,21 +4,16 @@ module Resolvers
   # A resolver for a {HarvestMetadataMapping}.
   #
   # @see HarvestMetadataMapping
-  # @see Types::HarvestMetadataMappingType
+  # @see ::Types::HarvestMetadataMappingType
   class HarvestMetadataMappingResolver < AbstractResolver
-    include Resolvers::Enhancements::AppliesPolicyScope
     include Resolvers::Enhancements::PageBasedPagination
     include Resolvers::OrderedAsHarvestMetadataMapping
 
-    type Types::HarvestMetadataMappingType.connection_type, null: false
+    applies_policy_scope!
 
-    scope do
-      if object.present?
-        object.try(:harvest_metadata_mappings) || ::HarvestMetadataMapping.none
-      else
-        ::HarvestMetadataMapping.all
-      end
-    end
+    type ::Types::HarvestMetadataMappingType.connection_type, null: false
+
+    resolves_model! ::HarvestMetadataMapping
 
     # filters_with! Filtering::Scopes::HarvestMetadataMappings
   end

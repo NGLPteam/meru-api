@@ -6,17 +6,15 @@ module Support
       module AbstractObject
         extend ActiveSupport::Concern
 
+        include Support::GraphQLAPI::AuthHelpers
         include Support::GraphQLAPI::AssociationHelpers
         include Support::GraphQLAPI::DirectConnectionAndEdgeSupport
         include Support::GraphQLAPI::ImageAttachmentSupport
-        include Support::GraphQLAPI::PunditHelpers
 
         CACHEABLE = Support::Types.Interface(:cache_key)
 
         # @abstract
-        def current_user_privileged?
-          false
-        end
+        def current_user_privileged? = false
 
         # @api private
         # @return [Object]

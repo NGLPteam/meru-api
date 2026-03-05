@@ -5,7 +5,7 @@ module Harvesting
     # @api private
     class Mapping
       include StoreModel::Model
-      include Shared::EnhancedStoreModel
+      include Support::EnhancedStoreModel
 
       attribute :auto_create_volumes_and_issues, :boolean, default: false
       attribute :link_identifiers_globally, :boolean, default: false

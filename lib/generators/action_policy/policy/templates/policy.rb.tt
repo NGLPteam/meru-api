@@ -1,0 +1,10 @@
+# frozen_string_literal: true
+
+<% module_namespacing do -%>
+# @see <%= class_name %>
+class <%= class_name %>Policy < <%= parent_class_name.classify %>
+  relation_scope do |relation|
+    resolve_default_scope_for(relation)
+  end
+end
+<% end -%>

@@ -86,8 +86,7 @@ RSpec.describe Mutations::CreatePersonContributor, type: :request, graphql: :mut
     end
   end
 
-  context "as an admin" do
-    let(:token) { token_helper.build_token has_global_admin: true }
+  as_an_admin_user do
 
     context "with valid inputs" do
       it_behaves_like "a successful creation"
@@ -136,5 +135,31 @@ RSpec.describe Mutations::CreatePersonContributor, type: :request, graphql: :mut
 
       it_behaves_like "a failed creation"
     end
+  end
+
+  let(:empty_mutation_shape) do
+    gql.empty_mutation :create_person_contributor
+  end
+
+  shared_examples_for "an unauthorized mutation" do
+    let(:expected_shape) { empty_mutation_shape }
+
+    it "is not authorized" do
+      expect_request! do |req|
+        req.effect! execute_safely
+
+        req.unauthorized!
+
+        req.data! expected_shape
+      end
+    end
+  end
+
+  as_a_regular_user do
+    include_examples "an unauthorized mutation"
+  end
+
+  as_an_anonymous_user do
+    include_examples "an unauthorized mutation"
   end
 end

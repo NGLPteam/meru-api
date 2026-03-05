@@ -9,7 +9,7 @@ module Resolvers
 
     included do
       option :node_filter,
-        type: Types::SubtreeNodeFilterType,
+        type: ::Types::SubtreeNodeFilterType,
         description: "Describe the depth of entities to retrieve",
         default: "CHILDREN"
     end

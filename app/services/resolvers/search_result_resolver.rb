@@ -2,15 +2,19 @@
 
 module Resolvers
   class SearchResultResolver < AbstractResolver
-    include Resolvers::Enhancements::AppliesPolicyScope
     include Resolvers::FiltersByEntityDescendantScope
     include Resolvers::FiltersByEntityPermission
     include Resolvers::FiltersBySchemaName
-    include Resolvers::FinalizesResults
     include Resolvers::OrderedAsEntity
+    include Resolvers::Enhancements::FinalizesResults
     include Resolvers::Enhancements::PageBasedPagination
 
+    applies_policy_scope!
+
     type ::Types::SearchResultType.connection_type, null: false
+
+    # The object is a {Searching::Scope}
+    resolves_model! ::Entity, association_name: :base_relation, must_have_object: true
 
     description <<~TEXT
     The results of a search.
@@ -25,15 +29,11 @@ module Resolvers
     If _none_ of these are set, the search will be considered empty, and return 0 results.
     TEXT
 
-    scope do
-      object.base_relation.all
-    end
-
     PREDICATES_DESC = <<~TEXT
     The predicates to search for, if any.
     TEXT
 
-    option :predicates, type: [Types::SearchPredicateInputType, { null: false }], default: [], description: PREDICATES_DESC do |scope, predicates|
+    option :predicates, type: [::Types::SearchPredicateInputType, { null: false }], default: [], description: PREDICATES_DESC do |scope, predicates|
       scope.apply_search_predicates predicates.flatten
     end
 
@@ -57,8 +57,6 @@ module Resolvers
       scope.apply_query value
     end
 
-    hashes_args! :query, :prefix, :predicates
-
     def finalize(scope)
       # If no search options are provided, we return an empty set.
       return scope.none if predicates.blank? && query.blank? && prefix.blank? && schema.blank?
@@ -66,8 +64,6 @@ module Resolvers
       scope.apply_order_to_exclude_duplicate_links
     end
 
-    def unfiltered_scope
-      super.apply_order_to_exclude_duplicate_links
-    end
+    def unfiltered_scope = super.apply_order_to_exclude_duplicate_links
   end
 end

@@ -23,14 +23,14 @@ module Types
     value "OLDEST" do
       description "Sort <%= human_models %> by oldest created date."
     end
-    <%- if has_title? -%>
+    <%- if has_name? -%>
 
-    value "TITLE_ASCENDING" do
-      description "Sort <%= human_models %> by their title A-Z."
+    value "NAME_ASCENDING" do
+      description "Sort <%= human_models %> by their name A-Z."
     end
 
-    value "TITLE_DESCENDING" do
-      description "Sort <%= human_models %> by their title Z-A."
+    value "NAME_DESCENDING" do
+      description "Sort <%= human_models %> by their name Z-A."
     end
     <%- end -%>
   end

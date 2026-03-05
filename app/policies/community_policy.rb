@@ -2,27 +2,17 @@
 
 # @see Community
 class CommunityPolicy < HierarchicalEntityPolicy
-  def read?
-    has_admin_or_allowed_action?("communities.read") || super
-  end
+  include PubliclyScopedPolicy
 
-  def create?
-    has_admin_or_allowed_action? "communities.create"
-  end
+  def read? = has_allowed_action?("communities.read") || super
 
-  def update?
-    has_admin_or_allowed_action?("communities.update") || super
-  end
+  def create? = has_allowed_action?("communities.create")
 
-  def destroy?
-    has_admin_or_allowed_action?("communities.delete") || super
-  end
+  def update? = has_allowed_action?("communities.update") || super
 
-  class Scope < Scope
-    def resolve
-      return scope.all if admin_or_has_allowed_action?("communities.read")
+  def destroy? = has_allowed_action?("communities.delete") || super
 
-      super
-    end
-  end
+  private
+
+  def show_full_entity_scope? = has_allowed_action?("communities.read") || super
 end
