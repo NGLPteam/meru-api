@@ -5,9 +5,4 @@
 #
 # @see Page
 class PagePolicy < EntityChildRecordPolicy
-  class Scope < Scope
-    def resolve
-      scope.all
-    end
-  end
 end

@@ -3,14 +3,12 @@
 module Resolvers
   # A concern for resolvers that order {Role} models with {Types::RoleOrderType}.
   #
-  # @see Types::RoleOrderType
+  # @see ::Types::RoleOrderType
   module OrderedAsRole
     extend ActiveSupport::Concern
 
-    include ScopeUtilities
-
     included do
-      option :order, type: Types::RoleOrderType, default: "DEFAULT"
+      option :order, type: ::Types::RoleOrderType, default: "DEFAULT"
     end
 
     def apply_order_with_default(scope)

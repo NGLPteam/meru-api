@@ -9,23 +9,27 @@ module Types
     include GraphQL::Types::Relay::HasNodeField
     include GraphQL::Types::Relay::HasNodesField
 
-    implements Types::QueriesAccessAndRoles
-    implements Types::QueriesContrib
-    implements Types::QueriesControlledVocabulary
-    implements Types::QueriesControlledVocabularySource
-    implements Types::QueriesEntities
-    implements Types::QueriesHarvestAttempt
-    implements Types::QueriesHarvestExample
-    implements Types::QueriesHarvestMapping
-    implements Types::QueriesHarvestMessage
-    implements Types::QueriesHarvestRecord
-    implements Types::QueriesHarvestSet
-    implements Types::QueriesHarvestSource
-    implements Types::QueriesPermalink
-    implements Types::QueriesSchemas
-    implements Types::QueriesSystem
-    implements Types::QueriesUser
-    implements Types::SearchableType
+    implements ::Types::QueriesAccessAndRoles
+    implements ::Types::QueriesContrib
+    implements ::Types::QueriesControlledVocabulary
+    implements ::Types::QueriesControlledVocabularySource
+    implements ::Types::QueriesDepositorRequest
+    implements ::Types::QueriesEntities
+    implements ::Types::QueriesHarvestAttempt
+    implements ::Types::QueriesHarvestExample
+    implements ::Types::QueriesHarvestMapping
+    implements ::Types::QueriesHarvestMessage
+    implements ::Types::QueriesHarvestRecord
+    implements ::Types::QueriesHarvestSet
+    implements ::Types::QueriesHarvestSource
+    implements ::Types::QueriesPermalink
+    implements ::Types::QueriesSchemas
+    implements ::Types::QueriesSystem
+    implements ::Types::QueriesSubmissionComment
+    implements ::Types::QueriesSubmission
+    implements ::Types::QueriesSubmissionTarget
+    implements ::Types::QueriesUser
+    implements ::Types::SearchableType
 
     def search_origin
       :global

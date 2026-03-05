@@ -23,42 +23,46 @@ RSpec.describe Mutations::CreateCollection, type: :request, graphql: :mutation d
   }
   GRAPHQL
 
-  context "as an admin" do
-    let(:token) { token_helper.build_token has_global_admin: true }
+  let_it_be(:community, refind: true) { FactoryBot.create :community }
+  let_it_be(:parent_collection, refind: true) { FactoryBot.create :collection, community: }
 
-    let_it_be(:community, refind: true) { FactoryBot.create :community }
-    let_it_be(:parent_collection, refind: true) { FactoryBot.create :collection, community: }
+  let!(:parent) { community }
 
-    let!(:parent) { community }
+  let(:alt_text) { "Some Alt Text" }
 
-    let(:alt_text) { "Some Alt Text" }
+  let_mutation_input!(:parent_id) { parent.to_encoded_id }
+  let_mutation_input!(:title) { Faker::Lorem.sentence }
+  let_mutation_input!(:visibility) { "VISIBLE" }
+  let_mutation_input!(:thumbnail) do
+    graphql_upload_from "spec", "data", "lorempixel.jpg", alt: alt_text
+  end
 
-    let_mutation_input!(:parent_id) { parent.to_encoded_id }
-    let_mutation_input!(:title) { Faker::Lorem.sentence }
-    let_mutation_input!(:visibility) { "VISIBLE" }
-    let_mutation_input!(:thumbnail) do
-      graphql_upload_from "spec", "data", "lorempixel.jpg", alt: alt_text
-    end
+  let!(:valid_mutation_shape) do
+    gql.mutation(:create_collection) do |m|
+      m.prop :collection do |c|
+        c[:title] = title
+        c[:visibility] = visibility
+        c.prop :parent do |p|
+          p[:id] = parent_id
+        end
 
-    let!(:expected_shape) do
-      gql.mutation(:create_collection) do |m|
-        m.prop :collection do |c|
-          c[:title] = title
-          c[:visibility] = visibility
-          c.prop :parent do |p|
-            p[:id] = parent_id
-          end
+        c.prop :community do |com|
+          com[:id] = community.to_encoded_id
+        end
 
-          c.prop :community do |com|
-            com[:id] = community.to_encoded_id
-          end
-
-          c.prop :thumbnail do |tn|
-            tn[:alt] = alt_text
-          end
+        c.prop :thumbnail do |tn|
+          tn[:alt] = alt_text
         end
       end
     end
+  end
+
+  let(:empty_mutation_shape) do
+    gql.empty_mutation :create_collection
+  end
+
+  shared_examples_for "an authorized mutation" do
+    let(:expected_shape) { valid_mutation_shape }
 
     context "with a community as a parent" do
       let(:parent) { community }
@@ -135,5 +139,31 @@ RSpec.describe Mutations::CreateCollection, type: :request, graphql: :mutation d
         end
       end
     end
+  end
+
+  shared_examples_for "an unauthorized mutation" do
+    let(:expected_shape) { empty_mutation_shape }
+
+    it "is not authorized" do
+      expect_request! do |req|
+        req.effect! execute_safely
+
+        req.unauthorized!
+
+        req.data! expected_shape
+      end
+    end
+  end
+
+  as_an_admin_user do
+    include_examples "an authorized mutation"
+  end
+
+  as_a_regular_user do
+    include_examples "an unauthorized mutation"
+  end
+
+  as_an_anonymous_user do
+    include_examples "an unauthorized mutation"
   end
 end

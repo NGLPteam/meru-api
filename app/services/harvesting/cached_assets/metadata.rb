@@ -3,7 +3,7 @@
 module Harvesting
   module CachedAssets
     class Metadata
-      include ::Shared::EnhancedStoreModel
+      include ::Support::EnhancedStoreModel
 
       attribute :not_found, :boolean, default: false
     end

@@ -5,8 +5,8 @@ module Resolvers
   class RoleResolver < AbstractResolver
     include Resolvers::OrderedAsRole
 
-    type Types::RoleType.connection_type, null: false
+    type ::Types::RoleType.connection_type, null: false
 
-    scope { Role.all }
+    resolves_model! ::Role
   end
 end

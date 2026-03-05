@@ -11,6 +11,8 @@ module Mutations
 
       attachment! :avatar, image: true
 
+      authorizes! :user, with: :update?
+
       def call(user:, profile: {}, **args)
         updated = update_profile.call user, **profile
 

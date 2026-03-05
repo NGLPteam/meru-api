@@ -11,7 +11,7 @@ module Mutations
       description "Though a global configuration always exists, this will be null if it fails to apply for some reason."
     end
 
-    argument :contribution_roles, Types::ContributionRoleConfigurationInputType, required: false, attribute: true do
+    argument :contribution_roles, Types::ContributionRoleConfigurationInputType, required: false do
       description <<~TEXT
       Optional settings for configuring contribution roles globally.
 
@@ -19,11 +19,15 @@ module Mutations
       TEXT
     end
 
-    argument :entities, Types::Settings::EntitiesSettingsInputType, required: false, attribute: true do
+    argument :depositing, Types::Settings::DepositingSettingsInputType, required: false do
+      description "Possible new settings for depositing behavior"
+    end
+
+    argument :entities, Types::Settings::EntitiesSettingsInputType, required: false do
       description "Possible new settings for entity behavior"
     end
 
-    argument :institution, Types::Settings::InstitutionSettingsInputType, required: false, attribute: true do
+    argument :institution, Types::Settings::InstitutionSettingsInputType, required: false do
       description "Possible new settings for the institution"
     end
 
@@ -31,11 +35,11 @@ module Mutations
 
     clearable_attachment! :logo
 
-    argument :site, Types::Settings::SiteSettingsInputType, required: false, attribute: true do
+    argument :site, Types::Settings::SiteSettingsInputType, required: false do
       description "Possible new settings for the site"
     end
 
-    argument :theme, Types::Settings::ThemeSettingsInputType, required: false, attribute: true do
+    argument :theme, Types::Settings::ThemeSettingsInputType, required: false do
       description "Possible new settings for the theme"
     end
 

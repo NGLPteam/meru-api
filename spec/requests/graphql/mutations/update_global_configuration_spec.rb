@@ -19,6 +19,10 @@ RSpec.describe Mutations::UpdateGlobalConfiguration, type: :request, graphql: :m
           }
         }
 
+        depositing {
+          agreement
+        }
+
         entities {
           suppressExternalLinks
         }
@@ -100,73 +104,94 @@ RSpec.describe Mutations::UpdateGlobalConfiguration, type: :request, graphql: :m
   }
   GRAPHQL
 
-  as_an_admin_user do
-    let!(:color) { "blue" }
-    let!(:font) { "style2" }
-    let!(:institution_name) { "Some Institution Name" }
-    let(:site_logo_mode) { "NONE" }
-    let!(:provider_name) { "Some Provider Name" }
-    let!(:installation_name) { "Some Installation Name" }
-    let!(:installation_home_page_copy) { "Some installation copy that appears on the home page." }
-    let!(:footer_copyright_statement) { "Some Copyright Statement" }
-    let!(:footer_description) { "Some Footer Description" }
-    let!(:footer) do
-      {
-        copyright_statement: footer_copyright_statement,
-        description: footer_description,
-      }
+  let!(:color) { "blue" }
+  let!(:font) { "style2" }
+  let!(:institution_name) { "Some Institution Name" }
+  let(:site_logo_mode) { "NONE" }
+  let(:deposit_agreement) { "Some deposit agreement text that users must agree to when depositing." }
+  let!(:provider_name) { "Some Provider Name" }
+  let!(:installation_name) { "Some Installation Name" }
+  let!(:installation_home_page_copy) { "Some installation copy that appears on the home page." }
+  let!(:footer_copyright_statement) { "Some Copyright Statement" }
+  let!(:footer_description) { "Some Footer Description" }
+  let!(:footer) do
+    {
+      copyright_statement: footer_copyright_statement,
+      description: footer_description,
+    }
+  end
+
+  let(:suppress_external_links) { false }
+
+  let_mutation_input!(:clear_logo) { false }
+
+  let_mutation_input!(:depositing) do
+    { agreement: deposit_agreement }
+  end
+
+  let_mutation_input!(:entities) { { suppress_external_links:, } }
+
+  let_mutation_input!(:institution) { { name: institution_name } }
+
+  let_mutation_input!(:logo) { nil }
+  let_mutation_input!(:logo_metadata) { { alt: "some text" } }
+
+  let_mutation_input!(:site) do
+    {
+      installation_name:,
+      installation_home_page_copy:,
+      logo_mode: site_logo_mode,
+      provider_name:,
+      footer:,
+    }
+  end
+
+  let_mutation_input!(:theme) do
+    { color:, font: }
+  end
+
+  let!(:expected_depositing) { depositing }
+  let!(:expected_entities) { entities }
+  let!(:expected_footer) { footer }
+  let(:expected_institution) { institution }
+  let(:expected_site) { site.merge(footer: expected_footer) }
+  let(:expected_theme) { theme }
+  let(:expected_global_configuration) do
+    {
+      depositing: expected_depositing,
+      entities: expected_entities,
+      institution: expected_institution,
+      site: expected_site,
+      theme: expected_theme,
+    }
+  end
+
+  let(:expected_errors) { be_blank }
+
+  let(:has_errors) { false }
+
+  let(:expected_shape) do
+    gql.mutation :update_global_configuration, no_errors: !has_errors do |m|
+      m[:global_configuration] = expected_global_configuration
+      m[:attribute_errors] = expected_errors
     end
+  end
 
-    let(:suppress_external_links) { false }
+  let(:empty_mutation_shape) do
+    gql.empty_mutation :update_global_configuration
+  end
 
-    let_mutation_input!(:clear_logo) { false }
+  shared_examples_for "an unauthorized mutation" do
+    let(:expected_shape) { empty_mutation_shape }
 
-    let_mutation_input!(:entities) { { suppress_external_links:, } }
-
-    let_mutation_input!(:institution) { { name: institution_name } }
-
-    let_mutation_input!(:logo) { nil }
-    let_mutation_input!(:logo_metadata) { { alt: "some text" } }
-
-    let_mutation_input!(:site) do
-      {
-        installation_name:,
-        installation_home_page_copy:,
-        logo_mode: site_logo_mode,
-        provider_name:,
-        footer:,
-      }
-    end
-
-    let_mutation_input!(:theme) do
-      { color:, font: }
-    end
-
-    let!(:expected_entities) { entities }
-    let!(:expected_footer) { footer }
-    let(:expected_institution) { institution }
-    let(:expected_site) { site.merge(footer: expected_footer) }
-    let(:expected_theme) { theme }
-    let(:expected_global_configuration) do
-      {
-        entities: expected_entities,
-        institution: expected_institution,
-        site: expected_site,
-        theme: expected_theme,
-      }
-    end
-
-    let(:expected_errors) { be_blank }
-
-    let(:has_errors) { false }
-
-    let(:expected_shape) do
-      gql.mutation :update_global_configuration, no_errors: !has_errors do |m|
-        m[:global_configuration] = expected_global_configuration
-        m[:attribute_errors] = expected_errors
+    it "is not authorized" do
+      expect_request! do |req|
+        req.effect! keep_the_same { GlobalConfiguration.fetch.updated_at }
       end
     end
+  end
 
+  shared_examples_for "an authorized mutation" do
     it "updates the config" do
       expect_request! do |req|
         req.effect! keep_the_same { GlobalConfiguration.fetch.logo }
@@ -431,5 +456,17 @@ RSpec.describe Mutations::UpdateGlobalConfiguration, type: :request, graphql: :m
         end
       end
     end
+  end
+
+  as_an_admin_user do
+    include_examples "an authorized mutation"
+  end
+
+  as_a_regular_user do
+    include_examples "an unauthorized mutation"
+  end
+
+  as_an_anonymous_user do
+    include_examples "an unauthorized mutation"
   end
 end

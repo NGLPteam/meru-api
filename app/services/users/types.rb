@@ -16,14 +16,14 @@ module Users
     # A type matching an {AnonymousUser}
     Anonymous = Instance(::AnonymousUser)
 
+    # A proc that returns a default {AnonymousUser}
+    DEFAULT = proc { AnonymousUser.new }
+
     # This is a type that will ensure a {User} is populated, and if not provided,
     # nil, or otherwise invalid, it will fall back to an {AnonymousUser}.
     Current = (Authenticated | Anonymous).fallback do
       ::AnonymousUser.new
-    end
-
-    # A proc that returns a default {AnonymousUser}
-    DEFAULT = proc { AnonymousUser.new }
+    end.default(&DEFAULT)
 
     # An enum switching on the state of a user's authentication.
     State = Symbol.enum(:anonymous, :authenticated).constructor do |value|

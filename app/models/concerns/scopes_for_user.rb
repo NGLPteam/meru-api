@@ -3,7 +3,7 @@
 module ScopesForUser
   extend ActiveSupport::Concern
 
-  class_methods do
+  module ClassMethods
     # @param [User, AnonymousUser, <User>, ActiveRecord::Relation<User>, nil] user
     # @return [ActiveRecord::Relation]
     def for_user(user)
@@ -19,11 +19,12 @@ module ScopesForUser
 
     # @param [User, AnonymousUser, <User>, ActiveRecord::Relation<User>, String, nil] user
     def recognized_user?(user)
+      return false if user.try(:anonymous?)
       return user.model == ::User if user.kind_of?(ActiveRecord::Relation)
       return user.all? { |u| u.kind_of?(::User) } if user.kind_of?(Array)
-      return User.exists?(user) if Support::GlobalTypes::UUID.valid?(user)
+      return true if Support::GlobalTypes::UUID.valid?(user)
 
-      user.present? && !user.anonymous?
+      user.present?
     end
   end
 end

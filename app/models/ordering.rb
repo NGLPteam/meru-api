@@ -229,6 +229,7 @@ class Ordering < ApplicationRecord
       by_handled_schema_definition(slug).first
     end
 
+    # @see HierarchicalEntity#self_and_referring_entities
     # @param [HierarchicalEntity] entity
     # @return [ActiveRecord::Relation<Ordering>]
     def owned_by_or_ordering(entity)

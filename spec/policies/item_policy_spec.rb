@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 RSpec.describe ItemPolicy, type: :policy do
-  let_it_be(:user, refind: true) { FactoryBot.create :user }
+  include_context "policy setup"
 
   let_it_be(:item, refind: true) { FactoryBot.create :item, title: "Item" }
 
@@ -11,158 +11,182 @@ RSpec.describe ItemPolicy, type: :policy do
 
   let_it_be(:contextual_role) { FactoryBot.create :role, :all_contextual }
 
-  let!(:scope) { described_class::Scope.new(user, Item.all) }
+  let(:record) { item }
 
-  subject { described_class }
+  describe_rule :show? do
+    succeed "as an admin" do
+      let(:user) { admin }
+    end
 
-  context "as an admin" do
-    let_it_be(:user) { FactoryBot.create :user, :admin }
+    context "as a user with all contextual permissions" do
+      before { grant_access! contextual_role, on: item, to: user }
 
-    permissions ".scope" do
-      subject { scope.resolve }
+      succeed "on an item"
+      succeed "on a subitem" do
+        let(:record) { subitem }
+      end
+    end
+
+    succeed "as a random user with no permissions"
+
+    succeed "as an anonymous user" do
+      let(:user) { anonymous_user }
+    end
+
+    context "when the item is hidden" do
+      let(:record) { FactoryBot.create :item, :hidden }
+
+      failed "as a random user" do
+        let(:user) { regular_user }
+      end
+
+      failed "as an anonymous user" do
+        let(:user) { anonymous_user }
+      end
+    end
+  end
+
+  describe_rule :create? do
+    succeed "as an admin" do
+      let(:user) { admin }
+    end
+
+    context "as a user with all contextual permissions" do
+      before { grant_access! contextual_role, on: item, to: user }
+
+      succeed "on an item"
+      succeed "on a subitem" do
+        let(:record) { subitem }
+      end
+    end
+
+    failed "as a random user with no permissions"
+
+    failed "as an anonymous user" do
+      let(:user) { anonymous_user }
+    end
+  end
+
+  describe_rule :update? do
+    succeed "as an admin" do
+      let(:user) { admin }
+    end
+
+    context "as a user with all contextual permissions" do
+      before { grant_access! contextual_role, on: item, to: user }
+
+      succeed "on an item"
+      succeed "on a subitem" do
+        let(:record) { subitem }
+      end
+    end
+
+    failed "as a random user with no permissions"
+
+    failed "as an anonymous user" do
+      let(:user) { anonymous_user }
+    end
+  end
+
+  describe_rule :destroy? do
+    succeed "as an admin" do
+      let(:user) { admin }
+    end
+
+    context "as a user with all contextual permissions" do
+      before { grant_access! contextual_role, on: item, to: user }
+
+      succeed "on an item"
+      succeed "on a subitem" do
+        let(:record) { subitem }
+      end
+    end
+
+    failed "as a random user with no permissions"
+
+    failed "as an anonymous user" do
+      let(:user) { anonymous_user }
+    end
+  end
+
+  describe_rule :create_items? do
+    succeed "as an admin" do
+      let(:user) { admin }
+    end
+
+    context "as a user with all contextual permissions" do
+      before { grant_access! contextual_role, on: item, to: user }
+
+      succeed "on an item"
+      succeed "on a subitem" do
+        let(:record) { subitem }
+      end
+    end
+
+    failed "as a random user with no permissions"
+
+    failed "as an anonymous user" do
+      let(:user) { anonymous_user }
+    end
+  end
+
+  describe_rule :manage_access? do
+    succeed "as an admin" do
+      let(:user) { admin }
+    end
+
+    context "as a user with all contextual permissions" do
+      before { grant_access! contextual_role, on: item, to: user }
+
+      failed "on the item"
+    end
+
+    failed "as a random user with no permissions"
+
+    failed "as an anonymous user" do
+      let(:user) { anonymous_user }
+    end
+  end
+
+  describe "relation scope" do
+    let(:target) { Item.all }
+
+    subject { policy.apply_scope(target, type: :active_record_relation) }
+
+    context "as an admin" do
+      let(:user) { admin }
 
       it "includes everything" do
         is_expected.to include item, subitem, other_item
       end
     end
 
-    permissions :show?, :create?, :update?, :destroy? do
-      it "is allowed on an item" do
-        is_expected.to permit(user, item)
-      end
-
-      it "is allowed on a subitem" do
-        is_expected.to permit(user, subitem)
-      end
-    end
-
-    permissions :create_items?, :create_items? do
-      it "is allowed on an item" do
-        is_expected.to permit(user, item)
-      end
-
-      it "is allowed on a subitem" do
-        is_expected.to permit(user, subitem)
-      end
-    end
-  end
-
-  context "as a user with all contextual permissions" do
-    before do
-      grant_access! contextual_role, on: item, to: user
-    end
-
-    permissions ".scope" do
+    context "as a user with all contextual permissions" do
       before do
+        grant_access! contextual_role, on: item, to: user
         other_item.update!(visibility: :hidden)
       end
-
-      subject { scope.resolve }
 
       it "excludes hidden records" do
         is_expected.to exclude(other_item).and include(item, subitem)
       end
     end
 
-    permissions :show?, :create?, :update?, :destroy? do
-      it "is allowed on an item" do
-        is_expected.to permit(user, item)
-      end
-
-      it "is allowed on a subitem" do
-        is_expected.to permit(user, subitem)
-      end
-    end
-
-    permissions :manage_access? do
-      it "is not allowed" do
-        is_expected.not_to permit(user, item)
-      end
-    end
-
-    permissions :create_items? do
-      it "is allowed on an item" do
-        is_expected.to permit(user, item)
-      end
-
-      it "is allowed on a subitem" do
-        is_expected.to permit(user, subitem)
-      end
-    end
-  end
-
-  context "as a random user with no permissions" do
-    let_it_be(:user) { FactoryBot.create :user }
-
-    permissions ".scope" do
-      before do
-        other_item.update!(visibility: :hidden)
-      end
-
-      subject { scope.resolve }
+    context "as a random user" do
+      before { other_item.update!(visibility: :hidden) }
 
       it "excludes hidden records" do
         is_expected.to exclude(other_item).and include(item, subitem)
       end
     end
 
-    permissions :show? do
-      it "is allowed" do
-        is_expected.to permit(user, item)
-      end
-    end
+    context "as an anonymous user" do
+      let(:user) { anonymous_user }
 
-    permissions :create?, :update?, :destroy? do
-      it "is not allowed" do
-        is_expected.not_to permit(user, item)
-      end
-    end
-
-    context "when the item is hidden" do
-      let(:item) { FactoryBot.create :item, :hidden }
-
-      permissions :show? do
-        it "is disallowed" do
-          is_expected.not_to permit user, item
-        end
-      end
-    end
-  end
-
-  context "as an anonymous user" do
-    let_it_be(:user) { AnonymousUser.new }
-
-    permissions ".scope" do
-      before do
-        other_item.update!(visibility: :hidden)
-      end
-
-      subject { scope.resolve }
+      before { other_item.update!(visibility: :hidden) }
 
       it "excludes hidden records" do
         is_expected.to exclude(other_item).and include(item, subitem)
-      end
-    end
-
-    permissions :show? do
-      it "is allowed" do
-        is_expected.to permit(user, item)
-      end
-    end
-
-    permissions :read?, :create?, :update?, :destroy? do
-      it "is not allowed" do
-        is_expected.not_to permit(user, item)
-      end
-    end
-
-    context "when the item is hidden" do
-      let(:item) { FactoryBot.create :item, :hidden }
-
-      permissions :show? do
-        it "is disallowed" do
-          is_expected.not_to permit user, item
-        end
       end
     end
   end

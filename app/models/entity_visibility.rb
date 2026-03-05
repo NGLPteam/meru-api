@@ -16,6 +16,8 @@
 class EntityVisibility < ApplicationRecord
   include TimestampScopes
 
+  belongs_to :entity, polymorphic: true, inverse_of: :entity_visibility
+
   # When scoping, it only makes sense to scope by `hidden`
   # or `visible` for the specified time.
   ScopableVisibility = Support::GlobalTypes::Coercible::Symbol.enum(:hidden, :visible)

@@ -4,21 +4,16 @@ module Resolvers
   # A resolver for a {Permalink}.
   #
   # @see Permalink
-  # @see Types::PermalinkType
+  # @see ::Types::PermalinkType
   class PermalinkResolver < AbstractResolver
-    include Resolvers::Enhancements::AppliesPolicyScope
     include Resolvers::Enhancements::PageBasedPagination
     include Resolvers::OrderedAsPermalink
 
-    type Types::PermalinkType.connection_type, null: false
+    applies_policy_scope!
 
-    scope do
-      if object.present?
-        object.try(:permalinks) || ::Permalink.none
-      else
-        ::Permalink.all
-      end
-    end
+    type ::Types::PermalinkType.connection_type, null: false
+
+    resolves_model! ::Permalink
 
     # filters_with! Filtering::Scopes::Permalinks
   end

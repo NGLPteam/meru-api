@@ -37,6 +37,9 @@ class Collection < ApplicationRecord
   validates :identifier, :title, presence: true
   validates :identifier, uniqueness: { scope: %i[community_id parent_id] }
 
+  # @return [ActiveRecord::Relation<Collection>] the child collections of this collection
+  def collections = children
+
   # @return [:collection]
   def entity_kind
     :collection

@@ -4,20 +4,15 @@ module Resolvers
   # A resolver for a {HarvestAttempt}.
   #
   # @see HarvestAttempt
-  # @see Types::HarvestAttemptType
+  # @see ::Types::HarvestAttemptType
   class HarvestAttemptResolver < AbstractResolver
-    include Resolvers::Enhancements::AppliesPolicyScope
     include Resolvers::Enhancements::PageBasedPagination
     include Resolvers::OrderedAsHarvestAttempt
 
-    type Types::HarvestAttemptType.connection_type, null: false
+    applies_policy_scope!
 
-    scope do
-      if object.present?
-        object.try(:harvest_attempts) || HarvestAttempt.none
-      else
-        HarvestAttempt.all
-      end
-    end
+    type ::Types::HarvestAttemptType.connection_type, null: false
+
+    resolves_model! ::HarvestAttempt
   end
 end

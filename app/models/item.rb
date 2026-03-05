@@ -45,6 +45,9 @@ class Item < ApplicationRecord
     collection
   end
 
+  # @return [ActiveRecord::Relation<Item>] the child items of this item
+  def items = children
+
   # @see Items::Purge
   # @see Items::Purger
   # @return [Dry::Monads::Success(void)]

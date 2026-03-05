@@ -3,30 +3,30 @@
 module Resolvers
   # A resolver for getting the first-matching {Item} below a {Item}.
   class SingleSubitemResolver < AbstractResolver
-    include Resolvers::Enhancements::AppliesPolicyScope
     include Resolvers::Enhancements::FirstMatching
     include Resolvers::OrderedAsEntity
     include Resolvers::Subtreelike
 
+    applies_policy_scope!
+
     description "Retrieve the first matching item beneath this item."
 
-    type "Types::ItemType", null: true
+    type "::Types::ItemType", null: true
+
+    resolves_model! ::Item, must_have_object: true
 
     graphql_name "Item"
 
-    scope do
-      case object
-      when Collection
-        object.items.reorder(nil)
-      when Community
-        object.items.reorder(nil)
-      when Item
-        object.descendants.reorder(nil)
+    def default_object_association_name
+      if kind_of?(Item)
+        :descendants
       else
-        # :nocov:
-        Item.none
-        # :nocov:
+        super
       end
+    end
+
+    def resolve_default_scope
+      super.reorder(nil)
     end
   end
 end

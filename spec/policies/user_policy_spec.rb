@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 RSpec.describe UserPolicy, type: :policy do
-  let_it_be(:community, refind: true) { FactoryBot.create :community }
+  include_context "policy setup"
 
-  let_it_be(:admin, refind: true) { FactoryBot.create :user, :admin }
+  let_it_be(:community, refind: true) { FactoryBot.create :community }
 
   let_it_be(:manager, refind: true) { FactoryBot.create :user, manager_on: [community] }
 
@@ -11,281 +11,311 @@ RSpec.describe UserPolicy, type: :policy do
 
   let_it_be(:reader, refind: true) { FactoryBot.create :user, reader_on: [community] }
 
-  let_it_be(:regular_user, refind: true) { FactoryBot.create :user }
-
-  let_it_be(:anonymous_user) { AnonymousUser.new }
-
   let_it_be(:other_users, refind: true) { FactoryBot.create_list :user, 2 }
 
   let_it_be(:other_user, refind: true) { other_users.first }
 
-  let(:user) { regular_user }
+  let(:record) { other_user }
 
-  let!(:scope) { described_class::Scope.new(user, User.all) }
+  describe_rule :read? do
+    succeed "as an admin on another user" do
+      let(:user) { admin }
+    end
 
-  subject { described_class }
+    succeed "as an admin on self" do
+      let(:user) { admin }
+      let(:record) { admin }
+    end
 
-  shared_examples "allowed generally" do
-    it "is allowed generally" do
-      is_expected.to permit user, other_user
+    succeed "as a manager on another user" do
+      let(:user) { manager }
+    end
+
+    succeed "as a manager on self" do
+      let(:user) { manager }
+      let(:record) { manager }
+    end
+
+    failed "as an editor on another user" do
+      let(:user) { editor }
+    end
+
+    succeed "as an editor on self" do
+      let(:user) { editor }
+      let(:record) { editor }
+    end
+
+    failed "as a reader on another user" do
+      let(:user) { reader }
+    end
+
+    succeed "as a reader on self" do
+      let(:user) { reader }
+      let(:record) { reader }
+    end
+
+    failed "as a regular user on another user"
+
+    succeed "as a regular user on self" do
+      let(:record) { regular_user }
+    end
+
+    failed "as an anonymous user on another user" do
+      let(:user) { anonymous_user }
+    end
+
+    succeed "as an anonymous user on self" do
+      let(:user) { anonymous_user }
+      let(:record) { anonymous_user }
     end
   end
 
-  shared_examples "allowed on the self" do
-    it "is allowed on the self" do
-      is_expected.to permit(user, user)
+  describe_rule :show? do
+    succeed "as an admin on another user" do
+      let(:user) { admin }
+    end
+
+    succeed "as an admin on self" do
+      let(:user) { admin }
+      let(:record) { admin }
+    end
+
+    succeed "as a manager on another user" do
+      let(:user) { manager }
+    end
+
+    succeed "as a manager on self" do
+      let(:user) { manager }
+      let(:record) { manager }
+    end
+
+    failed "as an editor on another user" do
+      let(:user) { editor }
+    end
+
+    succeed "as an editor on self" do
+      let(:user) { editor }
+      let(:record) { editor }
+    end
+
+    failed "as a reader on another user" do
+      let(:user) { reader }
+    end
+
+    succeed "as a reader on self" do
+      let(:user) { reader }
+      let(:record) { reader }
+    end
+
+    failed "as a regular user on another user"
+
+    succeed "as a regular user on self" do
+      let(:record) { regular_user }
+    end
+
+    failed "as an anonymous user on another user" do
+      let(:user) { anonymous_user }
+    end
+
+    succeed "as an anonymous user on self" do
+      let(:user) { anonymous_user }
+      let(:record) { anonymous_user }
     end
   end
 
-  shared_examples "forbidden generally" do
-    it "is forbidden generally" do
-      is_expected.not_to permit user, other_user
+  describe_rule :create? do
+    failed "as an admin" do
+      let(:user) { admin }
+    end
+
+    failed "as a manager" do
+      let(:user) { manager }
+    end
+
+    failed "as an editor" do
+      let(:user) { editor }
+    end
+
+    failed "as a reader" do
+      let(:user) { reader }
+    end
+
+    failed "as a regular user"
+
+    failed "as an anonymous user" do
+      let(:user) { anonymous_user }
     end
   end
 
-  shared_examples "forbidden on the self" do
-    it "is forbidden on the self" do
-      is_expected.not_to permit(user, user)
+  describe_rule :update? do
+    succeed "as an admin on another user" do
+      let(:user) { admin }
+    end
+
+    succeed "as an admin on self" do
+      let(:user) { admin }
+      let(:record) { admin }
+    end
+
+    failed "as a manager on another user" do
+      let(:user) { manager }
+    end
+
+    succeed "as a manager on self" do
+      let(:user) { manager }
+      let(:record) { manager }
+    end
+
+    failed "as an editor on another user" do
+      let(:user) { editor }
+    end
+
+    succeed "as an editor on self" do
+      let(:user) { editor }
+      let(:record) { editor }
+    end
+
+    failed "as a reader on another user" do
+      let(:user) { reader }
+    end
+
+    succeed "as a reader on self" do
+      let(:user) { reader }
+      let(:record) { reader }
+    end
+
+    failed "as a regular user on another user"
+
+    succeed "as a regular user on self" do
+      let(:record) { regular_user }
+    end
+
+    failed "as an anonymous user" do
+      let(:user) { anonymous_user }
     end
   end
 
-  shared_examples_for "a full-access scope" do
-    permissions ".scope" do
-      subject { scope.resolve }
+  describe_rule :destroy? do
+    failed "as an admin" do
+      let(:user) { admin }
+    end
+
+    failed "as a manager" do
+      let(:user) { manager }
+    end
+
+    failed "as an editor" do
+      let(:user) { editor }
+    end
+
+    failed "as a reader" do
+      let(:user) { reader }
+    end
+
+    failed "as a regular user"
+
+    failed "as an anonymous user" do
+      let(:user) { anonymous_user }
+    end
+  end
+
+  describe_rule :reset_password? do
+    succeed "as an admin on another user" do
+      let(:user) { admin }
+    end
+
+    succeed "as an admin on self" do
+      let(:user) { admin }
+      let(:record) { admin }
+    end
+
+    failed "as a manager on another user" do
+      let(:user) { manager }
+    end
+
+    succeed "as a manager on self" do
+      let(:user) { manager }
+      let(:record) { manager }
+    end
+
+    failed "as an editor on another user" do
+      let(:user) { editor }
+    end
+
+    succeed "as an editor on self" do
+      let(:user) { editor }
+      let(:record) { editor }
+    end
+
+    failed "as a reader on another user" do
+      let(:user) { reader }
+    end
+
+    succeed "as a reader on self" do
+      let(:user) { reader }
+      let(:record) { reader }
+    end
+
+    failed "as a regular user on another user"
+
+    succeed "as a regular user on self" do
+      let(:record) { regular_user }
+    end
+
+    failed "as an anonymous user" do
+      let(:user) { anonymous_user }
+    end
+  end
+
+  describe "relation scope" do
+    let(:target) { User.all }
+
+    subject { policy.apply_scope(target, type: :active_record_relation) }
+
+    context "as an admin" do
+      let(:user) { admin }
 
       it "includes everything" do
-        is_expected.to include user, *other_users
+        is_expected.to include admin, *other_users
       end
     end
-  end
 
-  shared_examples_for "a self-only scope" do
-    permissions ".scope" do
-      subject { scope.resolve }
+    context "as a manager" do
+      let(:user) { manager }
+
+      it "includes everything" do
+        is_expected.to include manager, *other_users
+      end
+    end
+
+    context "as an editor" do
+      let(:user) { editor }
 
       it "includes only the user" do
-        is_expected.to contain_exactly user
+        is_expected.to contain_exactly editor
       end
     end
-  end
 
-  context "as a user with admin access" do
-    let!(:user) { admin }
+    context "as a reader" do
+      let(:user) { reader }
 
-    permissions :read?, :show? do
-      include_examples "allowed generally"
-
-      include_examples "allowed on the self"
+      it "includes only the user" do
+        is_expected.to contain_exactly reader
+      end
     end
 
-    permissions :create? do
-      include_examples "forbidden generally"
-
-      include_examples "forbidden on the self"
+    context "as a regular user" do
+      it "includes only the user" do
+        is_expected.to contain_exactly regular_user
+      end
     end
 
-    permissions :update? do
-      include_examples "allowed generally"
-
-      include_examples "allowed on the self"
-    end
-
-    permissions :destroy? do
-      include_examples "forbidden generally"
-
-      include_examples "forbidden on the self"
-    end
-
-    permissions :reset_password? do
-      include_examples "allowed generally"
-
-      include_examples "allowed on the self"
-    end
-
-    include_examples "a full-access scope"
-  end
-
-  context "as a user with manager access" do
-    let!(:user) { manager }
-
-    permissions :read?, :show? do
-      include_examples "allowed generally"
-
-      include_examples "allowed on the self"
-    end
-
-    permissions :create? do
-      include_examples "forbidden generally"
-
-      include_examples "forbidden on the self"
-    end
-
-    permissions :update? do
-      include_examples "forbidden generally"
-
-      include_examples "allowed on the self"
-    end
-
-    permissions :destroy? do
-      include_examples "forbidden generally"
-
-      include_examples "forbidden on the self"
-    end
-
-    permissions :reset_password? do
-      include_examples "forbidden generally"
-
-      include_examples "allowed on the self"
-    end
-
-    include_examples "a full-access scope"
-  end
-
-  context "as a user with editor access" do
-    let!(:user) { editor }
-
-    permissions :read?, :show? do
-      include_examples "forbidden generally"
-
-      include_examples "allowed on the self"
-    end
-
-    permissions :create? do
-      include_examples "forbidden generally"
-
-      include_examples "forbidden on the self"
-    end
-
-    permissions :update? do
-      include_examples "forbidden generally"
-
-      include_examples "allowed on the self"
-    end
-
-    permissions :destroy? do
-      include_examples "forbidden generally"
-
-      include_examples "forbidden on the self"
-    end
-
-    permissions :reset_password? do
-      include_examples "forbidden generally"
-
-      include_examples "allowed on the self"
-    end
-
-    include_examples "a self-only scope"
-  end
-
-  context "as a user with reader access" do
-    let!(:user) { reader }
-
-    permissions :read?, :show? do
-      include_examples "forbidden generally"
-
-      include_examples "allowed on the self"
-    end
-
-    permissions :create? do
-      include_examples "forbidden generally"
-
-      include_examples "forbidden on the self"
-    end
-
-    permissions :update? do
-      include_examples "forbidden generally"
-
-      include_examples "allowed on the self"
-    end
-
-    permissions :destroy? do
-      include_examples "forbidden generally"
-
-      include_examples "forbidden on the self"
-    end
-
-    permissions :reset_password? do
-      include_examples "forbidden generally"
-
-      include_examples "allowed on the self"
-    end
-
-    include_examples "a self-only scope"
-  end
-
-  context "as a user with no special access" do
-    let!(:user) { regular_user }
-
-    permissions :read?, :show? do
-      include_examples "forbidden generally"
-
-      include_examples "allowed on the self"
-    end
-
-    permissions :create? do
-      include_examples "forbidden generally"
-
-      include_examples "forbidden on the self"
-    end
-
-    permissions :update? do
-      include_examples "forbidden generally"
-
-      include_examples "allowed on the self"
-    end
-
-    permissions :destroy? do
-      include_examples "forbidden generally"
-
-      include_examples "forbidden on the self"
-    end
-
-    permissions :reset_password? do
-      include_examples "forbidden generally"
-
-      include_examples "allowed on the self"
-    end
-
-    include_examples "a self-only scope"
-  end
-
-  context "as an anonymous user" do
-    let!(:user) { anonymous_user }
-
-    permissions :read?, :show? do
-      include_examples "forbidden generally"
-
-      include_examples "allowed on the self"
-    end
-
-    permissions :create? do
-      include_examples "forbidden generally"
-
-      include_examples "forbidden on the self"
-    end
-
-    permissions :update? do
-      include_examples "forbidden generally"
-
-      include_examples "forbidden on the self"
-    end
-
-    permissions :destroy? do
-      include_examples "forbidden generally"
-
-      include_examples "forbidden on the self"
-    end
-
-    permissions :reset_password? do
-      include_examples "forbidden generally"
-
-      include_examples "forbidden on the self"
-    end
-
-    permissions ".scope" do
-      subject { scope.resolve }
-
-      it { is_expected.to be_blank }
+    context "as an anonymous user" do
+      let(:user) { anonymous_user }
+
+      it "is empty" do
+        is_expected.to be_blank
+      end
     end
   end
 end

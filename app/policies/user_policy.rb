@@ -3,43 +3,38 @@
 # Presently, user creation and destruction is managed in Keycloak
 # and cannot be handled directly in Meru. Permissions reflect this.
 class UserPolicy < ApplicationPolicy
-  def read?
-    return true if record.anonymous? || record == user || has_allowed_action?("users.read") || has_any_access_management_permissions?
+  pre_check :allow_any_admin!, except: %i[create? destroy?]
+  pre_check :deny_anonymous!, only: %i[update? reset_password? revalidate_instance?]
+  pre_check :allow_authenticated_self_action!, only: %i[read? update? reset_password?]
 
-    super
-  end
+  def read? = record.anonymous? || has_allowed_action?("users.read") || has_any_access_management_permissions?
 
-  def update?
-    return true if authenticated_self_action?
+  def update? = has_allowed_action?("users.update")
 
-    has_admin_or_allowed_action?("users.update") || super
-  end
+  def reset_password? = has_allowed_action?("users.update")
 
-  def reset_password?
-    return true if authenticated_self_action?
-
-    has_admin_or_allowed_action?("users.update")
-  end
-
-  def revalidate_instance? = user.has_global_admin_access?
+  def revalidate_instance? = has_admin?
 
   def destroy? = false
 
   private
 
-  def authenticated_self_action?
-    return false if record.anonymous? || user.anonymous?
-
-    record == user
+  # @return [void]
+  def allow_authenticated_self_action!
+    allow! if authenticated_self_action?
   end
 
-  class Scope < Scope
-    def resolve
-      return scope.all if admin_or_has_allowed_action?("users.read")
+  def authenticated_self_action? = record == user
 
-      return scope.none if user.anonymous?
-
-      scope.where(id: user.id)
+  def resolve_scope_for_authenticated(relation)
+    if has_allowed_action?("users.read")
+      relation.all
+    else
+      relation.where(id: user_id)
     end
+  end
+
+  def resolve_scope_for_anonymous(relation)
+    relation.none
   end
 end

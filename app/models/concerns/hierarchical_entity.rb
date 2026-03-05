@@ -29,6 +29,7 @@ module HierarchicalEntity
   include ManualListTarget
   include ModifiedByAdmin
   include Renderable
+  include Submittable
   include SyncsEntities
   include TimestampScopes
   include ScopesForEntityComposedText
@@ -89,6 +90,7 @@ module HierarchicalEntity
     has_many :pages, -> { in_default_order }, as: :entity, dependent: :destroy, inverse_of: :entity
 
     scope :by_title, ->(title) { where(title:) }
+
     scope :sans_thumbnail, -> { where(arel_json_get(:thumbnail_data, :storage).eq(nil)) }
 
     scope :filtered_by_schema_version, ->(schemas) { where(schema_version: SchemaVersion.filtered_by(schemas)) }
@@ -135,9 +137,14 @@ module HierarchicalEntity
     named_ancestors.by_name(ancestor_name).first&.ancestor
   end
 
-  def has_known_ancestor?(name)
-    schema_version.has_ancestor?(name)
-  end
+  # @param [HierarchicalEntity] crumb
+  def hierarchical_descendant_of?(crumb) = !kind_of?(Community) && entity_breadcrumbs.exists?(crumb:)
+
+  # @param [HierarchicalEntity] crumb
+  def self_or_descendant_of?(crumb) = self == crumb || hierarchical_descendant_of?(crumb)
+
+  # @param [String] name
+  def has_known_ancestor?(name) = schema_version.has_ancestor?(name)
 
   # @param [String] schema_name
   # @return [HierarchicalEntity]
@@ -146,22 +153,16 @@ module HierarchicalEntity
   end
 
   # @return [String]
-  def breadcrumb_label
-    title
-  end
+  def breadcrumb_label = title
 
   # @param [String] identifier
   # @return [Collection, nil]
-  def descendant_collection_by(identifier)
-    descendant_collections_by(identifier).first
-  end
+  def descendant_collection_by(identifier) = descendant_collections_by(identifier).first
 
   # @param [String] identifier
   # @raise [ActiveRecord::RecordNotFound]
   # @return [Collection]
-  def descendant_collection_by!(identifier)
-    descendant_collections_by(identifier).first!
-  end
+  def descendant_collection_by!(identifier) = descendant_collections_by(identifier).first!
 
   # @param [String] identifier
   # @return [ActiveRecord::Relation<Collection>]
@@ -178,9 +179,7 @@ module HierarchicalEntity
   # For communities, it's always nil.
   #
   # @return [HierarchicalEntity, nil]
-  def contextual_parent
-    root? ? hierarchical_parent : parent
-  end
+  def contextual_parent = root? ? hierarchical_parent : parent
 
   # @return [Symbol, nil]
   def contextual_parent_foreign_key
@@ -198,9 +197,7 @@ module HierarchicalEntity
   end
 
   # @param [HierarchicalEntity] entity
-  def has_descendant?(entity)
-    entity_descendants.exists?(descendant: entity)
-  end
+  def has_descendant?(entity) = entity_descendants.exists?(descendant: entity)
 
   # @return [<HierarchicalEntity>]
   def hierarchical_ancestors
@@ -231,13 +228,9 @@ module HierarchicalEntity
 
   # @abstract
   # @return [ActiveRecord::Relation<HierarchicalEntity>]
-  def hierarchical_children
-    self.class.none
-  end
+  def hierarchical_children = self.class.none
 
-  def hierarchical_child_association
-    model_name.singular.to_sym
-  end
+  def hierarchical_child_association = model_name.singular.to_sym
 
   # @abstract
   def hierarchical_parent
@@ -254,7 +247,7 @@ module HierarchicalEntity
   # @param [HierarchicalEntity] source
   # @param [String] operator
   # @return [Dry::Monads::Result]
-  def link_from!(source, operator:)
+  monadic_operation! def link_from(source, operator:)
     call_operation("links.connect", source, self, operator)
   end
 
@@ -262,7 +255,7 @@ module HierarchicalEntity
   # @param [HierarchicalEntity] target
   # @param [String] operator
   # @return [Dry::Monads::Result]
-  def link_to!(target, operator:)
+  monadic_operation! def link_to(target, operator:)
     call_operation("links.connect", self, target, operator)
   end
 
@@ -309,12 +302,12 @@ module HierarchicalEntity
 
   # @param [String] schema a selector to prune
   # @see Entities::PruneUnharvested
-  def prune_unharvested(schema)
+  monadic_operation! def prune_unharvested(schema)
     call_operation("entities.prune_unharvested", source: self)
   end
 
   # @see Entities::PruneUnharvestedJournals
-  def prune_unharvested_journals
+  monadic_operation! def prune_unharvested_journals
     call_operation("entities.prune_unharvested_journals", source: self)
   end
 
@@ -364,20 +357,14 @@ module HierarchicalEntity
     call_operation("schemas.instances.write_core_texts", self)
   end
 
+  # @see Ordering.owned_by_or_ordering
   # @return [<HierarchicalEntity>]
-  def self_and_referring_entities
-    [self, *entity_breadcrumbs.map(&:crumb), *linking_entities]
-  end
+  def self_and_referring_entities = [self, *entity_breadcrumbs.map(&:crumb), *linking_entities]
 
-  def top_level?
-    kind_of?(Community) || (respond_to?(:root?) && root?)
-  end
-
-  def has_permitted_actions_for?(user, *actions)
-    return false unless persisted?
-
-    contextual_single_permissions.with_permitted_actions_for(user, *actions).exists?
-  end
+  # Whether this entity is a top-level entity in the hierarchy.
+  # * For {Item}s and {Collection}s, this is true if they have no parent collection or community, respectively.
+  # * For {Community Communities}, it's always true.
+  def top_level? = kind_of?(Community) || (respond_to?(:root?) && root?)
 
   # If a parent collection changes its community, we need its children to to also inherit that update.
   #
@@ -395,12 +382,6 @@ module HierarchicalEntity
     writer = :"#{inherited_hierarchical_parent.hierarchical_child_association}="
 
     public_send writer, inherited_hierarchical_parent
-  end
-
-  # @see Loaders::ContextualPermissionLoader
-  # @return [String]
-  def loader_cache_key
-    "#{hierarchical_type}:#{hierarchical_id}"
   end
 
   # @!scope private
@@ -429,13 +410,9 @@ module HierarchicalEntity
     )
   end
 
-  def saved_change_to_contextual_parent?
-    saved_change_to_attribute? contextual_parent_foreign_key
-  end
+  def saved_change_to_contextual_parent? = saved_change_to_attribute? contextual_parent_foreign_key
 
-  def saved_change_to_hierarchical_parent?
-    saved_change_to_attribute? hierarchical_parent_foreign_key
-  end
+  def saved_change_to_hierarchical_parent? = saved_change_to_attribute? hierarchical_parent_foreign_key
 
   def should_update_hierarchical_children_after_save?
     saved_change_to_contextual_parent? || saved_change_to_hierarchical_parent? || saved_change_to_auth_path?

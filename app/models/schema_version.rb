@@ -63,6 +63,14 @@ class SchemaVersion < ApplicationRecord
 
   has_many :harvest_entities, inverse_of: :schema_version, dependent: :restrict_with_error
 
+  has_many :submission_deposit_targets, inverse_of: :schema_version, dependent: :restrict_with_error
+
+  has_many :submission_target_schema_versions, inverse_of: :schema_version, dependent: :restrict_with_error
+
+  has_many :submission_targets, inverse_of: :schema_version, dependent: :restrict_with_error
+
+  has_many :submissions, inverse_of: :schema_version, dependent: :restrict_with_error
+
   # @!attribute [r] number
   # @return [Semantic::Version]
   attribute :number, :semantic_version

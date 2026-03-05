@@ -29,15 +29,13 @@ class APISchema < GraphQL::Schema
     # :nocov:
   end
 
-  rescue_from(Pundit::NotAuthorizedError) do |_|
-    # :nocov:
+  rescue_from(ActionPolicy::Unauthorized) do |_|
     GraphQL::ExecutionError.new(
       I18n.t("server_messages.auth.forbidden"),
       extensions: {
         code: "FORBIDDEN"
       }
     )
-    # :nocov:
   end
 
   extra_types(
@@ -73,6 +71,7 @@ class APISchema < GraphQL::Schema
     Types::Schematic::URLPropertyType,
     Types::Schematic::VariableDatePropertyType,
     Types::AnyChildEntityType,
+    Types::AnyConfigurableSubmissionTargetType,
     Types::AnyContributableType,
     Types::AnyContributionType,
     Types::AnyContributorAttributionType,

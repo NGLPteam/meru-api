@@ -7,8 +7,8 @@ module Resolvers
     include Resolvers::OrderedAsEntity
     include Resolvers::Treelike
 
-    type Types::ItemConnectionType, null: false
+    type ::Types::ItemConnectionType, null: false
 
-    scope { Item.all }
+    resolves_model! ::Item, from_object: false
   end
 end

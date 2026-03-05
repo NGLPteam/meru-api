@@ -1,25 +1,16 @@
 # frozen_string_literal: true
 
+# @see CollectionContribution
 class CollectionContributionPolicy < ApplicationPolicy
-  def show?
-    authorized? record.collection, :show?
-  end
+  include PubliclyScopedPolicy
 
-  def create?
-    authorized? record.collection, :update?
-  end
+  def read? = allowed_to?(:update?, record.collection)
 
-  def update?
-    authorized? record.collection, :update?
-  end
+  def show? = allowed_to?(:show?, record.collection)
 
-  def destroy?
-    authorized? record.collection, :update?
-  end
+  def create? = allowed_to?(:update?, record.collection)
 
-  class Scope < Scope
-    def resolve
-      scope.all
-    end
-  end
+  def update? = allowed_to?(:update?, record.collection)
+
+  def destroy? = allowed_to?(:update?, record.collection)
 end

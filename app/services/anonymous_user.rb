@@ -14,6 +14,7 @@
 #     extend AnonymousInterface::ClassMethods
 #   end
 AnonymousUser = Naught.build do |config|
+  include ::Support::Users::AnonymousInterface
   include AnonymousInterface
 
   config.mimic User
@@ -21,4 +22,4 @@ AnonymousUser = Naught.build do |config|
   config.predicates_return false
 end
 
-AnonymousUser.extend AnonymousInterface::ClassMethods
+AnonymousUser.extend ::Support::Users::AnonymousInterface::ClassMethods

@@ -20,6 +20,22 @@ class User < ApplicationRecord
 
   has_many :user_groups, through: :user_group_memberships
 
+  has_many :depositor_requests, inverse_of: :user, dependent: :restrict_with_error
+
+  has_many :depositor_request_transitions, dependent: :nullify, inverse_of: :user
+
+  has_many :submission_comments, inverse_of: :user, dependent: :restrict_with_error
+
+  has_many :submission_reviews, inverse_of: :user, dependent: :restrict_with_error
+
+  has_many :submission_review_transitions, inverse_of: :user, dependent: :nullify
+
+  has_many :submission_target_reviewers, inverse_of: :user, dependent: :restrict_with_error
+
+  has_many :submission_target_transitions, dependent: :nullify, inverse_of: :user
+
+  has_many :submission_transitions, dependent: :nullify, inverse_of: :user
+
   validates :keycloak_id, presence: true
 
   attribute :global_access_control_list, Roles::GlobalAccessControlList.to_type
@@ -37,39 +53,23 @@ class User < ApplicationRecord
 
   delegate :permissions, to: :global_access_control_list
 
-  def anonymous?
-    false
-  end
+  def anonymous? = false
 
-  def authenticated?
-    true
-  end
+  def authenticated? = true
 
   # @param [HierarchicalEntity] entity
   # @return [ContextualPermission, nil]
-  def contextual_permissions_for(entity)
-    ContextualPermission.fetch(self, entity)
-  end
+  def contextual_permissions_for(entity) = ContextualPermission.fetch(self, entity)
 
-  def has_allowed_action?(name)
-    name.to_s.in?(allowed_actions)
-  end
+  def has_allowed_action?(name) = name.to_s.in?(allowed_actions)
 
-  def has_role?(name)
-    name.to_s.in? roles
-  end
+  def has_role?(name) = name.to_s.in? roles
 
-  def has_global_admin_access?
-    has_role? :global_admin
-  end
+  def has_global_admin_access? = has_role? :global_admin
 
-  def has_any_upload_access?
-    has_global_admin_access? || has_granted_asset_creation?
-  end
+  def has_any_upload_access? = has_global_admin_access? || has_granted_asset_creation?
 
-  def system_slug_id
-    keycloak_id
-  end
+  def system_slug_id = keycloak_id
 
   # @!scope private
   # @return [void]
@@ -81,9 +81,7 @@ class User < ApplicationRecord
     call_operation("users.synchronize_access_info", self)
   end
 
-  def testing?
-    /@example\./.match?(email) || metadata["testing"]
-  end
+  def testing? = /@example\./.match?(email) || metadata["testing"]
 
   def to_whoami
     {
@@ -107,9 +105,7 @@ class User < ApplicationRecord
 
   # @see UserAccessInfo
   # @return [Users::AccessInfo]
-  def wrapped_access_info
-    Users::AccessInfo.wrap(self)
-  end
+  def wrapped_access_info = Users::AccessInfo.wrap(self)
 
   class << self
     # @param [String] input

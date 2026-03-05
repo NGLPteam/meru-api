@@ -1,8 +1,11 @@
 # frozen_string_literal: true
 
 module Settings
+  # @see GlobalConfiguration
+  # @see ::Types::Settings::InstitutionSettingsInputType
+  # @see ::Types::Settings::InstitutionSettingsType
   class Institution
-    include Shared::EnhancedStoreModel
+    include Support::EnhancedStoreModel
 
     strip_attributes collapse_spaces: true
 

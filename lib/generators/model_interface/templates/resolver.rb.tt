@@ -9,7 +9,6 @@ module Resolvers
   # @see <%= model_name %>
   # @see <%= graphql_model_klass %>
   class <%= resolver_name %> < AbstractResolver
-    include Resolvers::Enhancements::AppliesPolicyScope
     include Resolvers::Enhancements::PageBasedPagination
     <%- if use_custom_enum? -%>
     include <%= order_concern_klass %>
@@ -17,16 +16,16 @@ module Resolvers
     include Resolvers::Defaults::SimplyOrdered
     <%- end -%>
 
-    type <%= graphql_model_klass %>.connection_type, null: false
+    applies_policy_scope!
 
-    scope do
-      if object.present?
-        object.try(<%= model_key_plural.inspect %>) || ::<%= model_name %>.none
-      else
-        ::<%= model_name %>.all
-      end
-    end
+    type ::<%= graphql_model_klass %>.connection_type, null: false
 
-    # filters_with! Filtering::Scopes::<%= model_name.pluralize %>
+    resolves_model! ::<%= model_name %>
+
+    <%- if using_filters? -%>
+    filters_with! ::Filtering::Scopes::<%= filter_scope_name %>
+    <%- else -%>
+    # filters_with! ::Filtering::Scopes::<%= filter_scope_name %>
+    <%- end -%>
   end
 end

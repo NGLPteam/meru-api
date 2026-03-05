@@ -15,6 +15,10 @@ module Types
       TEXT
     end
 
+    field :depositing, Types::Settings::DepositingSettingsType, null: false do
+      description "Settings specific to depositing to this installation."
+    end
+
     field :entities, Types::Settings::EntitiesSettingsType, null: false do
       description "Settings specific to how entities should behave on this installation."
     end

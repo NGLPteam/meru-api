@@ -3,18 +3,27 @@
 # @abstract
 # @see HierarchicalEntity
 class HierarchicalEntityPolicy < ApplicationPolicy
+  pre_check :deny_anonymous!, except: %i[index? show? read_assets?]
+  pre_check :deny_submission_drafts!, only: %i[reparent? alter_schema_version?]
+  pre_check :allow_any_admin!
+
+  cache :show?
+
   # @return [ContextualPermission, nil]
   attr_reader :contextual_permission
 
-  def initialize(user, record)
+  # @return [Roles::EntityPermissionGrid]
+  attr_reader :grid
+
+  def initialize(...)
     super
 
-    @grid = grid_for user, record
+    @contextual_permission = ContextualPermission.fetch user, record
+
+    @grid = @contextual_permission.try(:grid) || Roles::EntityPermissionGrid.new
   end
 
-  def read?
-    has_admin_or_permission? :read
-  end
+  def read? = has_permission?(:read)
 
   def show?
     return true if read?
@@ -24,78 +33,47 @@ class HierarchicalEntityPolicy < ApplicationPolicy
     record.currently_visible?
   end
 
-  alias index? show?
+  alias_rule :index?, to: :show?
 
-  def create?
-    has_admin_or_permission? :create
-  end
+  def create? = has_permission?(:create)
 
-  def update?
-    has_admin_or_permission? :update
-  end
+  def update? = has_permission?(:update)
 
-  def revalidate?
-    update?
-  end
+  def revalidate? = update?
 
-  def destroy?
-    has_admin_or_permission? :delete
-  end
+  def destroy? = has_permission?(:delete)
 
-  def manage_access?
-    has_admin_or_permission? :manage_access
-  end
+  def manage_access? = has_permission?(:manage_access)
 
-  def read_assets?
-    has_admin_or_asset_permission?(:read)
-  end
+  def read_assets? = has_asset_permission?(:read)
 
-  def create_assets?
-    has_admin_or_asset_permission?(:create)
-  end
+  def create_assets? = has_asset_permission?(:create)
 
-  def update_assets?
-    has_admin_or_asset_permission?(:update)
-  end
+  def update_assets? = has_asset_permission?(:update)
 
-  def destroy_assets?
-    has_admin_or_asset_permission?(:delete)
-  end
+  def destroy_assets? = has_asset_permission?(:delete)
 
-  def purge?
-    user.has_global_admin_access?
-  end
+  def purge? = has_admin?
 
-  def create_collections?
-    return true if user.has_global_admin_access?
+  def alter_schema_version? = has_permission?(:update)
 
-    has_hierarchical_scoped_permission? :collections, :create
-  end
+  def reparent? = has_permission?(:update)
 
-  def create_items?
-    return true if user.has_global_admin_access?
+  def create_collections? = has_hierarchical_scoped_permission?(:collections, :create)
 
-    has_hierarchical_scoped_permission? :items, :create
-  end
+  def create_items? = has_hierarchical_scoped_permission?(:items, :create)
 
-  # @param [Role] role
-  def can_assign_role?(role)
-    contextual_permission.try(:can_assign_role?, role)
-  end
+  private
 
   # @api private
   # @param [#to_s] name
   # @see Roles::PermissionGrid#[]
-  def has_grid?(name)
-    @grid[name]
-  end
+  def has_permission?(name) = @grid[name]
 
   # @api private
   # @param [#to_s] name
   # @see Roles::PermissionGrid#[]
-  def has_asset_grid?(name)
-    @grid.assets[name]
-  end
+  def has_asset_permission?(name) = @grid.assets[name]
 
   # @api private
   # @param [#to_s] scope_name e.g. "collections", "items"
@@ -106,35 +84,17 @@ class HierarchicalEntityPolicy < ApplicationPolicy
     AccessGrant.for_user(user).with_allowed_action?(name: action_name, entity: record)
   end
 
-  private
+  def show_full_entity_scope? = has_allowed_action?("admin.access")
 
-  def has_admin_or_permission?(name)
-    return false if user.anonymous?
-
-    return true if has_admin?
-
-    has_grid? name
-  end
-
-  def has_admin_or_asset_permission?(name)
-    return false if user.anonymous?
-
-    return true if has_admin?
-
-    has_asset_grid? name
-  end
-
-  def grid_for(user, record)
-    @contextual_permission = ContextualPermission.fetch user, record
-
-    @contextual_permission&.grid || Roles::EntityPermissionGrid.new
-  end
-
-  class Scope < Scope
-    def resolve
-      return scope.all if admin_or_has_allowed_action?("admin.access")
-
-      scope.currently_visible
+  def resolve_scope_for_authenticated(relation)
+    if show_full_entity_scope?
+      relation.all
+    else
+      relation.currently_visible
     end
+  end
+
+  def resolve_scope_for_anonymous(relation)
+    relation.currently_visible
   end
 end

@@ -40,26 +40,19 @@ class ContextualPermission < ApplicationRecord
 
   delegate :permissions, to: :access_control_list
 
-  # @param [Role] role
-  def can_assign_role?(role)
-    assignable_roles.exists? id: role.try(:id)
-  end
-
-  # @see Loaders::ContextualPermissionLoader
-  # @return [String]
-  def loader_cache_key
-    "#{hierarchical_type}:#{hierarchical_id}"
-  end
-
   class << self
     # If a match cannot be found for the provided combination,
     # {#empty_permission_for an empty result} will be provided.
     #
     # @param [User] user
-    # @param [HierarchicalEntity] entity
+    # @param [HierarchicalEntity, ActiveRecord::Relation<HierarchicalEntity>] entity
     # @return [ContextualPermission]
     def fetch(user, entity)
-      scope_to(user, entity).first || empty_permission_for(user, entity)
+      if entity.kind_of?(HierarchicalEntity)
+        scope_to(user, entity).first || empty_permission_for(user, entity)
+      else
+        empty_permission_for(user, entity)
+      end
     end
 
     # @param [User, AnonymousUser, ActiveRecord::Relation<User>] user
@@ -88,15 +81,13 @@ class ContextualPermission < ApplicationRecord
     # Calculate an empty permission set for a given user / entity combination.
     #
     # @param [User] user
-    # @param [HierarchicalEntity] entity
+    # @param [HierarchicalEntity, ActiveRecord::Relation<HierarchicalEntity>] entity
     # @return [ContextualPermission]
     def empty_permission_for(user, entity)
-      attrs = DEFAULT_ATTRIBUTES.merge(
-        hierarchical: entity,
-        user:
-      )
+      attrs = DEFAULT_ATTRIBUTES.dup
 
-      attrs.delete(:user) unless user.kind_of?(User)
+      attrs[:hierarchical] = entity if entity.kind_of?(HierarchicalEntity)
+      attrs[:user] = user if user.kind_of?(User)
 
       ContextualPermission.new(attrs)
     end

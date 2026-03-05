@@ -3,8 +3,8 @@
 module Resolvers
   # A resolver of {Ordering orderings} for a {SchemaInstance}.
   #
-  # @see Types::EntityType
-  # @see Types::OrderingType
+  # @see ::Types::EntityType
+  # @see ::Types::OrderingType
   class OrderingResolver < AbstractResolver
     include Resolvers::Enhancements::PageBasedPagination
     include Resolvers::OrderedAsOrdering
@@ -13,14 +13,14 @@ module Resolvers
     Retrieve a connection of orderings for the parent object.
     TEXT
 
-    type Types::OrderingType.connection_type, null: false
+    type ::Types::OrderingType.connection_type, null: false
 
-    scope { object.orderings }
+    resolves_model! ::Ordering, must_have_object: true
 
-    option :availability, type: Types::OrderingAvailabilityFilterType, default: "ALL",
+    option :availability, type: ::Types::OrderingAvailabilityFilterType, default: "ALL",
       description: "Optionally filter orderings by whether they are enabled or disabled."
 
-    option :visibility, type: Types::OrderingVisibilityFilterType, default: "ALL",
+    option :visibility, type: ::Types::OrderingVisibilityFilterType, default: "ALL",
       description: "Optionally filter orderings by whether they are visible or hidden."
 
     # @!group Availability Handlers

@@ -9,6 +9,8 @@ RSpec.describe Mutations::Contracts::GrantAccess, type: :mutation_contract do
 
   let_contract_param!(:user) { FactoryBot.create :user }
 
+  let_contract_param!(:provisional) { Access::Provisional.new(current_user:, entity:, role:, user:) }
+
   context "when the user is the same" do
     let_contract_param!(:user) { current_user }
 

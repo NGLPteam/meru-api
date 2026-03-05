@@ -62,6 +62,12 @@ class Role < ApplicationRecord
     AssignableRoleTarget.refresh!
   end
 
+  # Reserved roles cannot be directly assigned. Instead, they get assigned by other actions.
+  #
+  # * Admins are assigned based on Keycloak roles.
+  # * Reviewers are assigned based on being added as a {SubmissionTargetReviewer} for a {SubmissionTarget}.
+  def reserved? = for_system? && (identified_as_admin? || identified_as_reviewer?)
+
   def to_upsert
     attrs = slice(:identifier, :name, :custom_priority, :access_control_list, :global_access_control_list).symbolize_keys
 

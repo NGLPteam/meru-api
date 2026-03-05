@@ -2,16 +2,17 @@
 
 module Resolvers
   class UserResolver < AbstractResolver
-    include Resolvers::Enhancements::AppliesPolicyScope
     include Resolvers::Enhancements::PageBasedPagination
     include Resolvers::OrderedAsUser
 
-    type Types::UserType.connection_type, null: false
+    applies_policy_scope!
+
+    type ::Types::UserType.connection_type, null: false
 
     option :prefix, type: String, description: option_description_for(:prefix) do |scope, value|
       scope.apply_prefix value
     end
 
-    scope { User.all }
+    resolves_model! ::User
   end
 end

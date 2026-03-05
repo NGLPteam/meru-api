@@ -2,15 +2,23 @@
 
 module Types
   module Settings
-    # @see Settings::SiteFooter
+    # @see ::Settings::SiteFooter
     class SiteFooterType < Types::BaseObject
-      description "A value for updating the site's configuration"
+      description <<~TEXT
+      A value for updating the site's configuration.
+      TEXT
 
-      field :description, String, null: false,
-        description: "A description that lives in the site's footer."
+      field :description, String, null: false do
+        description <<~TEXT
+        A description that lives in the site's footer.
+        TEXT
+      end
 
-      field :copyright_statement, String, null: false,
-        description: "A copyright statement that lives in the site's footer."
+      field :copyright_statement, String, null: false do
+        description <<~TEXT
+        A copyright statement that lives in the site's footer.
+        TEXT
+      end
     end
   end
 end

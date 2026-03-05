@@ -29,14 +29,20 @@ RSpec.describe Mutations::UpdateCommunity, type: :request, graphql: :mutation do
   let_mutation_input!(:clear_logo) { false }
   let_mutation_input!(:clear_thumbnail) { false }
 
-  as_an_admin_user do
-    let!(:expected_shape) do
-      gql.mutation :update_community do |m|
-        m.prop :community do |c|
-          c[:title] = new_title
-        end
+  let!(:valid_mutation_shape) do
+    gql.mutation :update_community do |m|
+      m.prop :community do |c|
+        c[:title] = new_title
       end
     end
+  end
+
+  let(:empty_mutation_shape) do
+    gql.empty_mutation :update_community
+  end
+
+  shared_examples_for "an authorized mutation" do
+    let(:expected_shape) { valid_mutation_shape }
 
     it "updates a community" do
       expect_request! do |req|
@@ -136,5 +142,31 @@ RSpec.describe Mutations::UpdateCommunity, type: :request, graphql: :mutation do
         end
       end
     end
+  end
+
+  shared_examples_for "an unauthorized mutation" do
+    let(:expected_shape) { empty_mutation_shape }
+
+    it "is not authorized" do
+      expect_request! do |req|
+        req.effect! execute_safely
+
+        req.unauthorized!
+
+        req.data! expected_shape
+      end
+    end
+  end
+
+  as_an_admin_user do
+    include_examples "an authorized mutation"
+  end
+
+  as_a_regular_user do
+    include_examples "an unauthorized mutation"
+  end
+
+  as_an_anonymous_user do
+    include_examples "an unauthorized mutation"
   end
 end

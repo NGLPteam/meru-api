@@ -4,12 +4,16 @@ module Resolvers
   class SchemaVersionOptionResolver < AbstractResolver
     include Resolvers::BySchemaKind
 
-    type [Types::SchemaVersionOptionType, { null: false }], null: false
+    type [::Types::SchemaVersionOptionType, { null: false }], null: false
 
-    scope { SchemaVersion.in_default_order.preload(:schema_definition) }
+    resolves_model! ::SchemaVersion, from_object: false
 
     option :namespace, type: String do |scope, value|
       scope.by_namespace(value) if value.present?
+    end
+
+    def resolve_default_scope
+      super.in_default_order.preload(:schema_definition)
     end
 
     def apply_order_with_latest(scope)

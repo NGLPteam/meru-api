@@ -3,8 +3,6 @@
 module Mutations
   # @abstract
   class BaseMutation < GraphQL::Schema::RelayClassicMutation
-    include Support::GraphQLAPI::PunditHelpers
-
     argument_class Types::BaseArgument
     field_class Types::BaseField
     input_object_class Types::BaseInputObject
@@ -16,9 +14,7 @@ module Mutations
 
     delegate :attribute_names, :error_compiler, :transient_arguments, to: :class
 
-    def app_container
-      Common::Container
-    end
+    def app_container = Common::Container
 
     def resolve_container_value(...)
       app_container.resolve(...)

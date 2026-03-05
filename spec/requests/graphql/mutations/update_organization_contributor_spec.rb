@@ -13,31 +13,35 @@ RSpec.describe Mutations::UpdateOrganizationContributor, type: :request, graphql
   }
   GRAPHQL
 
-  context "as an admin" do
-    let(:token) { token_helper.build_token has_global_admin: true }
+  let_it_be(:old_value) { Faker::Lorem.unique.sentence }
 
-    let!(:contributor) { FactoryBot.create :contributor, :organization, legal_name: old_value }
+  let_it_be(:new_value) { Faker::Lorem.unique.sentence }
 
-    let!(:old_value) { Faker::Lorem.unique.sentence }
+  let_it_be(:contributor, refind: true) { FactoryBot.create :contributor, :organization, legal_name: old_value }
 
-    let!(:new_value) { Faker::Lorem.unique.sentence }
+  let_mutation_input!(:contributor_id) { contributor.to_encoded_id }
+  let_mutation_input!(:legal_name) { new_value }
+  let_mutation_input!(:clear_image) { false }
 
-    let_mutation_input!(:contributor_id) { contributor.to_encoded_id }
-    let_mutation_input!(:legal_name) { new_value }
-    let_mutation_input!(:clear_image) { false }
-
-    let!(:expected_shape) do
-      gql.mutation :update_organization_contributor do |m|
-        m.prop :contributor do |c|
-          c[:legal_name] = new_value
-        end
+  let!(:expected_shape) do
+    gql.mutation :update_organization_contributor do |m|
+      m.prop :contributor do |c|
+        c[:legal_name] = new_value
       end
     end
+  end
 
+  let(:empty_mutation_shape) do
+    gql.empty_mutation :update_organization_contributor
+  end
+
+  shared_examples_for "an authorized mutation" do
     it "updates a contributor" do
-      expect_the_default_request.to change { contributor.reload.properties.organization.legal_name }.from(old_value).to(new_value)
+      expect_request! do |req|
+        req.effect! change { contributor.reload.properties.organization.legal_name }.from(old_value).to(new_value)
 
-      expect_graphql_data expected_shape
+        req.data! expected_shape
+      end
     end
 
     context "when clearing and uploading an image at the same time" do
@@ -60,10 +64,38 @@ RSpec.describe Mutations::UpdateOrganizationContributor, type: :request, graphql
       end
 
       it "does nothing" do
-        expect_the_default_request.to keep_the_same { contributor.image.id }
+        expect_request! do |req|
+          req.effect! keep_the_same { contributor.reload.image.id }
 
-        expect_graphql_data expected_shape
+          req.data! expected_shape
+        end
       end
     end
+  end
+
+  shared_examples_for "an unauthorized mutation" do
+    let(:expected_shape) { empty_mutation_shape }
+
+    it "is not authorized" do
+      expect_request! do |req|
+        req.effect! execute_safely
+
+        req.unauthorized!
+
+        req.data! expected_shape
+      end
+    end
+  end
+
+  as_an_admin_user do
+    include_examples "an authorized mutation"
+  end
+
+  as_a_regular_user do
+    include_examples "an unauthorized mutation"
+  end
+
+  as_an_anonymous_user do
+    include_examples "an unauthorized mutation"
   end
 end

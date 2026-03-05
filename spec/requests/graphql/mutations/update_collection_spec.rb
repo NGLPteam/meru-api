@@ -116,9 +116,11 @@ RSpec.describe Mutations::UpdateCollection, type: :request, graphql: :mutation d
       end
 
       it "fails to update the collection" do
-        expect_the_default_request.to keep_the_same { collection.reload.title }
+        expect_request! do |req|
+          req.effect! keep_the_same { collection.reload.title }
 
-        expect_graphql_data expected_shape
+          req.data! expected_shape
+        end
       end
     end
 

@@ -2,6 +2,7 @@
 
 # Global configurations for the entire Meru-API installation.
 #
+# @see Settings::Depositing
 # @see Settings::Entities
 # @see Settings::Institution
 # @see Settings::Site
@@ -12,6 +13,7 @@ class GlobalConfiguration < ApplicationRecord
   include SiteLogoUploader::Attachment.new(:logo)
   include TimestampScopes
 
+  attribute :depositing, Settings::Depositing.to_type
   attribute :entities, Settings::Entities.to_type
   attribute :institution, Settings::Institution.to_type
   attribute :site, Settings::Site.to_type
@@ -33,6 +35,8 @@ class GlobalConfiguration < ApplicationRecord
   # @return [void]
   def reset!
     contribution_role_configuration.try(:reset!)
+
+    depositing.reset!
 
     entities.reset!
 

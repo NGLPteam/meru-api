@@ -20,12 +20,14 @@ RSpec.describe Mutations::ReparentEntity, type: :request, graphql: :mutation, di
         }
       }
 
-      ...ErrorFragment
+      ... ErrorFragment
     }
   }
   GRAPHQL
 
   stub_operation! "frontend.cache.revalidate_entity", as: :revalidate_entity_operation, auto_succeed: true
+
+  let_it_be(:community, refind: true) { FactoryBot.create :community }
 
   let_it_be(:new_parent, refind: true) { nil }
   let_it_be(:child, refind: true) { nil }
@@ -33,19 +35,41 @@ RSpec.describe Mutations::ReparentEntity, type: :request, graphql: :mutation, di
   let_mutation_input!(:child_id) { child&.to_encoded_id }
   let_mutation_input!(:parent_id) { new_parent&.to_encoded_id }
 
-  as_an_admin_user do
-    let_it_be(:community) { FactoryBot.create :community }
-
-    let!(:expected_shape) do
-      gql.mutation :reparent_entity, no_errors: true do |m|
-        m.prop :child do |c|
-          c.prop :parent do |p|
-            p[:id] = new_parent.to_encoded_id
-          end
+  let!(:expected_shape) do
+    gql.mutation :reparent_entity, no_errors: true do |m|
+      m.prop :child do |c|
+        c.prop :parent do |p|
+          p[:id] = new_parent.to_encoded_id
         end
       end
     end
+  end
 
+  let(:empty_mutation_shape) do
+    gql.empty_mutation :reparent_entity
+  end
+
+  shared_examples_for "an unauthorized mutation" do
+    let_it_be(:old_parent) { FactoryBot.create :collection, community: }
+
+    let_it_be(:child, refind: true) { FactoryBot.create :collection, parent: old_parent }
+
+    let_it_be(:new_parent, refind: true) { FactoryBot.create :collection, community: }
+
+    let(:expected_shape) { empty_mutation_shape }
+
+    it "is not authorized" do
+      expect_request! do |req|
+        req.effect! keep_the_same { child.reload.parent_id }
+
+        req.unauthorized!
+
+        req.data! expected_shape
+      end
+    end
+  end
+
+  shared_examples_for "an authorized mutation" do
     shared_examples_for "a valid mutation" do
       it "changes the contextual parent" do
         expect_request! do |req|
@@ -222,5 +246,17 @@ RSpec.describe Mutations::ReparentEntity, type: :request, graphql: :mutation, di
         end
       end
     end
+  end
+
+  as_an_admin_user do
+    include_examples "an authorized mutation"
+  end
+
+  as_a_regular_user do
+    include_examples "an unauthorized mutation"
+  end
+
+  as_an_anonymous_user do
+    include_examples "an unauthorized mutation"
   end
 end

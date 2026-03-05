@@ -18,6 +18,8 @@ class Entity < ApplicationRecord
   include ScopesForEntityComposedText
   include TimestampScopes
 
+  pg_enum! :submission_status, as: :entity_submission_status, allow_blank: false, default: "unsubmitted"
+
   belongs_to :entity, polymorphic: true
   belongs_to :hierarchical, polymorphic: true
   belongs_to :schema_version, inverse_of: :entities

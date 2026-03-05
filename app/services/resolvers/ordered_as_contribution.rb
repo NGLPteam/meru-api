@@ -6,7 +6,7 @@ module Resolvers
     extend ActiveSupport::Concern
 
     included do
-      option :order, type: Types::ContributionOrderType, default: "TARGET_TITLE_ASCENDING"
+      option :order, type: ::Types::ContributionOrderType, default: "TARGET_TITLE_ASCENDING"
     end
 
     def apply_order_with_recent(scope)

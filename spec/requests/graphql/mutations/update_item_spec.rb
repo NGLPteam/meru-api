@@ -24,39 +24,43 @@ RSpec.describe Mutations::UpdateItem, type: :request, graphql: :mutation do
   }
   GRAPHQL
 
-  context "as an admin" do
-    let(:token) { token_helper.build_token has_global_admin: true }
+  let_it_be(:old_title) { Faker::Lorem.unique.sentence }
 
-    let_it_be(:old_title) { Faker::Lorem.unique.sentence }
+  let_it_be(:item, refind: true) { FactoryBot.create :item, :with_thumbnail, title: old_title }
 
-    let_it_be(:item, refind: true) { FactoryBot.create :item, :with_thumbnail, title: old_title }
+  let!(:new_title) { Faker::Lorem.unique.sentence }
 
-    let!(:new_title) { Faker::Lorem.unique.sentence }
+  let(:old_visibility) { item.visibility.upcase }
+  let(:new_visibility) { old_visibility }
 
-    let(:old_visibility) { item.visibility.upcase }
-    let(:new_visibility) { old_visibility }
+  let(:new_thumbnail) { nil }
 
-    let(:new_thumbnail) { nil }
+  let_mutation_input!(:item_id) { item.to_encoded_id }
+  let_mutation_input!(:title) { new_title }
+  let_mutation_input!(:visibility) { new_visibility }
+  let_mutation_input!(:visible_after_at) { nil }
+  let_mutation_input!(:visible_until_at) { nil }
+  let_mutation_input!(:thumbnail) { new_thumbnail }
+  let_mutation_input!(:clear_thumbnail) { false }
+  let_mutation_input!(:maintain_pristine_status) { false }
 
-    let_mutation_input!(:item_id) { item.to_encoded_id }
-    let_mutation_input!(:title) { new_title }
-    let_mutation_input!(:visibility) { new_visibility }
-    let_mutation_input!(:visible_after_at) { nil }
-    let_mutation_input!(:visible_until_at) { nil }
-    let_mutation_input!(:thumbnail) { new_thumbnail }
-    let_mutation_input!(:clear_thumbnail) { false }
-    let_mutation_input!(:maintain_pristine_status) { false }
-
-    let!(:expected_shape) do
-      gql.mutation :update_item do |m|
-        m.prop :item do |i|
-          i[:title] = new_title
-          i[:visibility] = new_visibility.upcase
-          i[:visible_after_at] = visible_after_at
-          i[:visible_until_at] = visible_until_at
-        end
+  let!(:valid_mutation_shape) do
+    gql.mutation :update_item do |m|
+      m.prop :item do |i|
+        i[:title] = new_title
+        i[:visibility] = new_visibility.upcase
+        i[:visible_after_at] = visible_after_at
+        i[:visible_until_at] = visible_until_at
       end
     end
+  end
+
+  let(:empty_mutation_shape) do
+    gql.empty_mutation :update_item
+  end
+
+  shared_examples_for "an authorized mutation" do
+    let(:expected_shape) { valid_mutation_shape }
 
     it "updates an item" do
       expect_request! do |req|
@@ -283,5 +287,31 @@ RSpec.describe Mutations::UpdateItem, type: :request, graphql: :mutation do
         end
       end
     end
+  end
+
+  shared_examples_for "an unauthorized mutation" do
+    let(:expected_shape) { empty_mutation_shape }
+
+    it "is not authorized" do
+      expect_request! do |req|
+        req.effect! execute_safely
+
+        req.unauthorized!
+
+        req.data! expected_shape
+      end
+    end
+  end
+
+  as_an_admin_user do
+    include_examples "an authorized mutation"
+  end
+
+  as_a_regular_user do
+    include_examples "an unauthorized mutation"
+  end
+
+  as_an_anonymous_user do
+    include_examples "an unauthorized mutation"
   end
 end

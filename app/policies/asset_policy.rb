@@ -1,9 +1,5 @@
 # frozen_string_literal: true
 
+# @see Asset
 class AssetPolicy < EntityChildRecordPolicy
-  class Scope < Scope
-    def resolve
-      scope.all
-    end
-  end
 end

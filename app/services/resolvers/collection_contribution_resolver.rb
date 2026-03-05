@@ -5,18 +5,15 @@ module Resolvers
     include Resolvers::OrderedAsContribution
     include Resolvers::Enhancements::PageBasedPagination
 
-    type Types::CollectionContributionType.connection_type, null: false
+    type ::Types::CollectionContributionType.connection_type, null: false
 
-    scope do
-      case object
-      when Contributor
-        object.collection_contributions
-      when Collection
-        object.contributions
+    resolves_model! ::CollectionContribution, must_have_object: true
+
+    def default_object_association_name
+      if object.kind_of?(Contributor)
+        :collection_contributions
       else
-        # :nocov:
-        CollectionContribution.none
-        # :nocov:
+        super
       end
     end
   end

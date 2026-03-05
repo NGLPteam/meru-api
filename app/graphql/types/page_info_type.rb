@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 module Types
+  # An override of the default Relay PageInfo type to add additional fields
+  # for page-based pagination.
   class PageInfoType < Types::AbstractObjectType
     include GraphQL::Types::Relay::PageInfoBehaviors
 
@@ -31,7 +33,9 @@ module Types
 
     # @return [Integer, nil]
     def page_count
+      # :nocov:
       return nil if per_page.nil?
+      # :nocov:
 
       size = total_count
 
@@ -47,42 +51,34 @@ module Types
       from_info :per_page
     end
 
-    def arg_hash
-      object.context[:arg_hash] ||= calculate_arg_hash
-    end
-
     # @return [Integer]
     def total_count
-      maybe_cache_expensive(arg_hash:) do
-        from_connection_info(:total_count) do
-          object.items.count_from_subquery
-        end
+      from_connection_info(:total_count) do
+        object.items.count_from_subquery
       end
     end
 
     # @return [Integer]
     def total_unfiltered_count
-      maybe_cache_expensive depends_on_variables: false do
-        from_connection_info(:unfiltered_count) do
-          from_resolver(:unfiltered_count) { total_count }
-        end
+      from_connection_info(:unfiltered_count) do
+        from_resolver(:unfiltered_count) { total_count }
       end
     end
 
     private
 
-    def calculate_arg_hash
-      args = object.context[:resolver].try(:args_to_hash, object.arguments) || {}
-
-      args.hash
-    end
-
+    # @param [Symbol] key
+    # @return [Object]
     def from_connection_info(key)
       object.context[:connection_info].then do |cinfo|
+        # :nocov:
         cinfo&.__send__(key) || yield
+        # :nocov:
       end
     end
 
+    # @param [Symbol] key
+    # @return [Object]
     def from_info(key)
       object.context[:pagination].then do |pagination|
         if pagination.kind_of?(Hash)
@@ -95,15 +91,11 @@ module Types
       end
     end
 
+    # @param [Symbol] method_name
+    # @return [Object]
     def from_resolver(method_name, &)
       object.context[:resolver].try(method_name).then do |value|
-        if value.present?
-          value
-        elsif block_given?
-          # :nocov:
-          yield
-          # :nocov:
-        end
+        value.presence || yield
       end
     end
   end

@@ -19,53 +19,44 @@ module SyncsEntities
   # The `auth_path` to use for the entity.
   # @see Entities#auth_path
   # @return [String]
-  def entity_auth_path
-    auth_path
-  end
+  def entity_auth_path = auth_path
 
   # @!attribute [r] id_for_entity
   # @see Entities#entity
   # @note This is not named `entity_id` so as not to conflict with the
   #   Rails association generated method from `entity`.
   # @return [String]
-  def id_for_entity
-    id
-  end
+  def id_for_entity = id
 
   # @!attribute [r] entity_scope
   # @see Entities#scope
   # @return [String]
-  def entity_scope
-    model_name.collection
-  end
+  def entity_scope = model_name.collection
 
   # @!attribute [r] entity_slug
   # @see Entities#system_slug
   # @return [String]
-  def entity_slug
-    system_slug
-  end
+  def entity_slug = system_slug
+
+  # @!attribute [r] entity_submission_status
+  # @see HiearchicalEntity#submission_status
+  # @return [Entities::Types::EntitySubmissionStatus]
+  def entity_submission_status = try(:submission_status) || "unsubmitted"
 
   # @!attribute [r] entity_type
   # @see Entities#entity
   # @return [String]
-  def entity_type
-    model_name.to_s
-  end
+  def entity_type = model_name.to_s
 
   # @!attribute [r] hierarchical_id
   # @see Entity#hierarchical
   # @return [String]
-  def hierarchical_id
-    id
-  end
+  def hierarchical_id = id
 
   # @!attribute hierarchical_type
   # @see Entity#hierarchical
   # @return [String]
-  def hierarchical_type
-    model_name.to_s
-  end
+  def hierarchical_type = model_name.to_s
 
   # @!endgroup
 

@@ -4,15 +4,15 @@ module Resolvers
   class SchemaVersionResolver < AbstractResolver
     include Resolvers::Enhancements::PageBasedPagination
 
-    type Types::SchemaVersionType.connection_type, null: false
+    type ::Types::SchemaVersionType.connection_type, null: false
 
-    scope { object.present? ? object.schema_versions : SchemaVersion.all }
+    resolves_model! ::SchemaVersion
 
     option :namespace, type: String do |scope, value|
       scope.by_namespace(value) if value.present?
     end
 
-    option :order, type: Types::SchemaVersionOrderType, default: "LATEST"
+    option :order, type: ::Types::SchemaVersionOrderType, default: "LATEST"
 
     def apply_order_with_latest(scope)
       scope.order(number: :desc)

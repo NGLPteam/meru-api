@@ -4,8 +4,10 @@ module Settings
   # Settings related to the site as a whole.
   #
   # @see GlobalConfiguration
+  # @see ::Types::Settings::SiteSettingsInputType
+  # @see ::Types::Settings::SiteSettingsType
   class Site
-    include Shared::EnhancedStoreModel
+    include Support::EnhancedStoreModel
 
     strip_attributes collapse_spaces: true
 

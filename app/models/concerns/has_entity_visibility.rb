@@ -11,7 +11,7 @@ module HasEntityVisibility
   include ReferencesEntityVisibility
 
   included do
-    has_one :entity_visibility, as: :entity, dependent: :destroy, autosave: true
+    has_one :entity_visibility, as: :entity, dependent: :destroy, autosave: true, inverse_of: :entity
   end
 
   writes_association_attribute! :entity_visibility,  :hidden_at

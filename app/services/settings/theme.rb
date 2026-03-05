@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 module Settings
+  # @see ::Types::Settings::ThemeSettingsInputType
+  # @see ::Types::Settings::ThemeSettingsType
   class Theme
     include StoreModel::Model
 

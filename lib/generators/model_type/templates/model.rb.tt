@@ -5,25 +5,23 @@
 
 module Types
   # @see <%= class_name %>
+  <%- if use_direct_connection_and_edge? -%>
+  # @see <%= full_connection_type_name %>
+  # @see <%= full_edge_type_name %>
+  <%- end -%>
   class <%= graphql_type_name %> < Types::AbstractModel
     description <<~TEXT
     A database-backed model.
     TEXT
-    <%- if has_title? -%>
+    <%- if use_direct_connection_and_edge? -%>
 
-    field :title, String, null: false do
-      description <<~TEXT
-      The title for the <%= model_name %>.<%= " Must be unique." if has_unique_title? %>
-      TEXT
-    end
+    use_direct_connection_and_edge!
     <%- end -%>
-    <%- if has_unique_identifier? -%>
+    <%- if has_interfaces? -%>
 
-    implements Types::UniquelyIdentifiedType
+    <%- interfaces.each do |interface| -%>
+    implements ::<%= interface %>
     <%- end -%>
-    <%- if has_optional_description? -%>
-
-    implements Types::OptionallyDescribedType
     <%- end -%>
     <%- if normalized_gql_fields.any? -%>
     <%- normalized_gql_fields.each do |nf| -%>

@@ -2,20 +2,19 @@
 
 module Resolvers
   class AccessGrantResolver < AbstractResolver
-    include Resolvers::Enhancements::AppliesPolicyScope
     include Resolvers::FiltersByAccessGrantEntity
     include Resolvers::FiltersByAccessGrantSubject
     include Resolvers::Enhancements::PageBasedPagination
     include Resolvers::SimplyOrdered
 
-    type Types::AnyAccessGrantType.connection_type, null: false
+    applies_policy_scope!
 
-    scope do
-      if object.respond_to?(:access_grants)
-        object.access_grants.with_preloads
-      else
-        AccessGrant.all
-      end
+    type ::Types::AnyAccessGrantType.connection_type, null: false
+
+    resolves_model! ::AccessGrant
+
+    def resolve_default_scope
+      super.with_preloads
     end
   end
 end

@@ -25,9 +25,7 @@ module ChildEntity
 
   # @param [HierarchicalEntity] parent
   # @return [void]
-  def asynchronously_reparent!(parent)
-    Entities::ReparentJob.perform_later parent, self
-  end
+  def asynchronously_reparent!(parent) = Entities::ReparentJob.perform_later parent, self
 
   def to_entity_properties
     super.tap do |props|

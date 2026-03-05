@@ -3,12 +3,12 @@
 module Resolvers
   # Methods for ordering a connection of {EntityDescendant}.
   #
-  # @see Types::EntityDescendantOrderType
+  # @see ::Types::EntityDescendantOrderType
   module OrderedAsEntityDescendant
     extend ActiveSupport::Concern
 
     included do
-      option :order, type: Types::EntityDescendantOrderType, default: "PUBLISHED_DESCENDING", required: true
+      option :order, type: ::Types::EntityDescendantOrderType, default: "PUBLISHED_DESCENDING", required: true
     end
 
     def apply_order_with_published_ascending(scope)

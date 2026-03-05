@@ -5,7 +5,7 @@ module Resolvers
     extend ActiveSupport::Concern
 
     included do
-      orders_with! Types::PositionDirectionType, default: "ASCENDING"
+      orders_with! ::Types::PositionDirectionType, default: "ASCENDING"
     end
 
     def apply_order_with_ascending(scope)

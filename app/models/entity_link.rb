@@ -76,25 +76,18 @@ class EntityLink < ApplicationRecord
     self.scope = calculate_scope
   end
 
-  def entity_scope
-    scope
-  end
+  def entity_scope = scope
 
-  def has_valid_source?
-    source.kind_of?(HierarchicalEntity)
-  end
+  # @return [Entities::Types::EntitySubmissionStatus]
+  def entity_submission_status = target.try(:submission_status) || super
 
-  def has_valid_target?
-    target.kind_of?(HierarchicalEntity)
-  end
+  def has_valid_source? = source.kind_of?(HierarchicalEntity)
 
-  def hierarchical_id
-    target_id
-  end
+  def has_valid_target? = target.kind_of?(HierarchicalEntity)
 
-  def hierarchical_type
-    target_type
-  end
+  def hierarchical_id = target_id
+
+  def hierarchical_type = target_type
 
   # @api private
   # @return [void]

@@ -5,11 +5,11 @@ module Resolvers
     include Resolvers::Enhancements::PageBasedPagination
     include Resolvers::SimplyOrdered
 
-    type Types::AssetType.connection_type, null: false
+    type ::Types::AssetType.connection_type, null: false
 
-    scope { object.present? ? object.assets : Asset.none }
+    resolves_model! ::Asset, must_have_object: true
 
-    option :kind, type: Types::AssetKindFilterType, default: "ALL"
+    option :kind, type: ::Types::AssetKindFilterType, default: "ALL"
 
     def apply_kind_with_all(scope)
       scope.all

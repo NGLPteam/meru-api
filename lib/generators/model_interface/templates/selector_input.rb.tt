@@ -1,0 +1,23 @@
+# frozen_string_literal: true
+
+module Types
+  # A selector input object for {<%= model_name %>} records that
+  # allows lookup by either `identifier` or `slug`.
+  #
+  # @see Queries<%= model_name %>
+  class <%= selector_input_name %> < Types::BaseInputObject
+    one_of
+
+    description <<~TEXT
+    An input object for looking up `<%= model_name %>` records by their unique identifier or slug.
+    TEXT
+
+    argument :identifier, String, required: false do
+      description "The unique identifier for the `<%= model_name %>`."
+    end
+
+    argument :slug, Types::SlugType, required: false do
+      description "The slug for the `<%= model_name %>`."
+    end
+  end
+end

@@ -2,12 +2,13 @@
 
 module Resolvers
   class UserGroupUserResolver < AbstractResolver
-    include Resolvers::Enhancements::AppliesPolicyScope
     include Resolvers::Enhancements::PageBasedPagination
     include Resolvers::OrderedAsUser
 
-    type Types::UserType.connection_type, null: false
+    applies_policy_scope!
 
-    scope { object.users }
+    type ::Types::UserType.connection_type, null: false
+
+    resolves_model! ::User, must_have_object: true
   end
 end

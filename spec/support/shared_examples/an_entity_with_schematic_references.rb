@@ -10,7 +10,7 @@ RSpec.shared_examples_for "an entity with schematic references" do |var_name|
       it "does not include an invalid reference" do
         expect(invalid_reference.referrer).to eq entity
 
-        expect(entity.schematic_collected_references).not_to include invalid_reference
+        expect(entity.schematic_collected_references).to exclude invalid_reference
       end
 
       it "has an empty reference map" do
@@ -26,7 +26,7 @@ RSpec.shared_examples_for "an entity with schematic references" do |var_name|
       it "does not include an invalid reference" do
         expect(invalid_reference.referrer).to eq entity
 
-        expect(entity.schematic_scalar_references).not_to include invalid_reference
+        expect(entity.schematic_scalar_references).to exclude invalid_reference
       end
 
       it "has an empty reference map" do
@@ -42,7 +42,7 @@ RSpec.shared_examples_for "an entity with schematic references" do |var_name|
       it "does not include an invalid text" do
         expect(invalid_text.entity).to eq entity
 
-        expect(entity.schematic_texts).not_to include invalid_text
+        expect(entity.schematic_texts).to exclude invalid_text
       end
 
       it "has an empty reference map" do
