@@ -2,13 +2,13 @@
 
 RSpec.describe SubmissionTargets::Description do
   let(:internal) { "Internal content" }
-  let(:prefix) { "Prefix content" }
+  let(:instructions) { "Prefix content" }
   let(:sections) { [] }
 
   let(:instance) do
     described_class.new(
       internal:,
-      prefix:,
+      instructions:,
       sections:
     )
   end

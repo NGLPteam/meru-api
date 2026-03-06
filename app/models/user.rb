@@ -24,6 +24,8 @@ class User < ApplicationRecord
 
   has_many :depositor_request_transitions, dependent: :nullify, inverse_of: :user
 
+  has_many :submissions, inverse_of: :user, dependent: :restrict_with_error
+
   has_many :submission_comments, inverse_of: :user, dependent: :restrict_with_error
 
   has_many :submission_reviews, inverse_of: :user, dependent: :restrict_with_error

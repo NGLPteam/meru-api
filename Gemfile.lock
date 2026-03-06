@@ -564,6 +564,9 @@ GEM
     pitchfork (0.18.2)
       logger
       rack (>= 2.0)
+    positioning (0.4.7)
+      activerecord (>= 6.1)
+      activesupport (>= 6.1)
     pp (0.6.3)
       prettyprint
     prettyprint (0.2.0)
@@ -946,6 +949,7 @@ DEPENDENCIES
   pg_search (~> 2.3.7)
   pghero (~> 3.7.0)
   pitchfork (~> 0.18.1)
+  positioning (~> 0.4)
   pry (~> 0.16)
   pry-rails (~> 0.3.11)
   rack (~> 3.2.4)

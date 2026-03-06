@@ -36,7 +36,7 @@ RSpec.describe SubmissionTargetPolicy, type: :policy do
   end
 
   describe_rule :create? do
-    succeed "as an admin" do
+    failed "as an admin" do
       let(:user) { admin }
     end
 
@@ -64,7 +64,7 @@ RSpec.describe SubmissionTargetPolicy, type: :policy do
   end
 
   describe_rule :destroy? do
-    succeed "as an admin" do
+    failed "as an admin" do
       let(:user) { admin }
     end
 

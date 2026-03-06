@@ -149,5 +149,23 @@ module Types
     field :submission_change_state, mutation: Mutations::SubmissionChangeState
 
     field :submission_create, mutation: Mutations::SubmissionCreate
+
+    field :submission_target_open, mutation: Mutations::SubmissionTargetOpen
+
+    field :submission_target_close, mutation: Mutations::SubmissionTargetClose
+
+    field :submission_comment_create, mutation: Mutations::SubmissionCommentCreate
+
+    field :submission_comment_destroy, mutation: Mutations::SubmissionCommentDestroy
+
+    field :submission_comment_update, mutation: Mutations::SubmissionCommentUpdate
+
+    field :depositor_request_create, mutation: Mutations::DepositorRequestCreate
+
+    field :depositor_request_change_state, mutation: Mutations::DepositorRequestChangeState
+
+    field :submission_request_review, mutation: Mutations::SubmissionRequestReview
+
+    field :submission_leave_review, mutation: Mutations::SubmissionLeaveReview
   end
 end

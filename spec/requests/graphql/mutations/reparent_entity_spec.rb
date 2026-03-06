@@ -25,8 +25,6 @@ RSpec.describe Mutations::ReparentEntity, type: :request, graphql: :mutation, di
   }
   GRAPHQL
 
-  stub_operation! "frontend.cache.revalidate_entity", as: :revalidate_entity_operation, auto_succeed: true
-
   let_it_be(:community, refind: true) { FactoryBot.create :community }
 
   let_it_be(:new_parent, refind: true) { nil }
@@ -47,6 +45,14 @@ RSpec.describe Mutations::ReparentEntity, type: :request, graphql: :mutation, di
 
   let(:empty_mutation_shape) do
     gql.empty_mutation :reparent_entity
+  end
+
+  let(:revalidation_url) do
+    URI.join(LocationsConfig.frontend_request, "/api/revalidate/entity")
+  end
+
+  before do
+    stub_request(:delete, revalidation_url).to_return(status: 204)
   end
 
   shared_examples_for "an unauthorized mutation" do

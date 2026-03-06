@@ -5,13 +5,12 @@ module MutationOperations
   module Authorization
     extend ActiveSupport::Concern
 
-    included do
-      include ActionPolicy::Behaviour
-      include ActionPolicy::Behaviours::ThreadMemoized
-      include ActionPolicy::Behaviours::Memoized
-
-      authorize :user, through: :current_user
+    # @return [MutationOperations::AuthContext]
+    def auth_context
+      graphql_context[:auth_context] || AuthContext.new(current_user:)
     end
+
+    delegate :authorize!, :policy_for, :allowed_to?, to: :auth_context
 
     # @see https://actionpolicy.evilmartians.io/#/behaviour
     # @return [void]

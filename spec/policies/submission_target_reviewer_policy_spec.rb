@@ -50,7 +50,7 @@ RSpec.describe SubmissionTargetReviewerPolicy, type: :policy do
   end
 
   describe_rule :update? do
-    succeed "as an admin" do
+    failed "as an admin" do
       let(:user) { admin }
     end
 

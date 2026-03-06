@@ -16,7 +16,7 @@ class MutationGenerator < Rails::Generators::NamedBase
   class_option :skip_contract, type: :boolean, default: false
   class_option :skip_operation, type: :boolean, default: false
   class_option :skip_spec, type: :boolean, default: false
-  class_option :skip_operation_implementation, type: :boolean, default: false
+  class_option :skip_implementation_logic, type: :boolean, default: false
   class_option :fields, type: :string
   class_option :required, type: :string
   class_option :rules, type: :string
@@ -178,6 +178,10 @@ class MutationGenerator < Rails::Generators::NamedBase
     naming[:verb]
   end
 
+  def auth_predicate
+    :"#{mutation_verb}?"
+  end
+
   # rubocop:disable Metrics/AbcSize, Metrics/PerceivedComplexity
   def naming
     @naming ||= {}.tap do |hsh|
@@ -239,8 +243,8 @@ class MutationGenerator < Rails::Generators::NamedBase
     class_name.camelize(:upper)
   end
 
-  def skip_operation_implementation?
-    options[:skip_operation_implementation]
+  def skip_implementation_logic?
+    options[:skip_implementation_logic]
   end
 
   def should_add_common_fields?
@@ -311,6 +315,10 @@ class MutationGenerator < Rails::Generators::NamedBase
 
   def updates_unique_title?
     update_mutation? && has_unique_title?
+  end
+
+  def implementation_accepts_existing_model?
+    create_mutation? || works_with_existing_model?
   end
 
   def works_with_existing_model?

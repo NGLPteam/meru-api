@@ -911,7 +911,7 @@ CREATE TYPE public.submission_deposit_mode AS ENUM (
 
 CREATE TYPE public.submission_review_state AS ENUM (
     'pending',
-    'accepted',
+    'approved',
     'rejected'
 );
 
@@ -7213,6 +7213,7 @@ CREATE TABLE public.submission_reviews (
     state public.submission_review_state DEFAULT 'pending'::public.submission_review_state NOT NULL,
     submission_id uuid NOT NULL,
     user_id uuid NOT NULL,
+    comment text,
     requested_at timestamp without time zone,
     created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
@@ -7324,6 +7325,7 @@ CREATE TABLE public.submissions (
     entity_id uuid,
     collection_id uuid,
     item_id uuid,
+    title public.citext NOT NULL,
     metadata jsonb DEFAULT '{}'::jsonb NOT NULL,
     created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL

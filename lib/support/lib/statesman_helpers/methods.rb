@@ -30,7 +30,8 @@ module Support
         def #{config.build_machine_name}
           ::#{config.machine_class}.new(
             self,
-            transition_class: ::#{config.transition_class}
+            transition_class: ::#{config.transition_class},
+            initial_transition: #{config.initial_transition?}
           )
         end
 

@@ -179,7 +179,7 @@ module TestHelpers
       # @param [Boolean] error whether to include the error fragment in the query
       # @return [String] the wrapped query
       def wrap_graphql_query(raw_query, auth_result: "AuthorizationResultFragment".in?(raw_query), error: false)
-        wrapped_query = [raw_query].tap do |a|
+        [raw_query].tap do |a|
           a << GQL::AUTH_RESULT_FRAGMENT if auth_result
           a << GQL::ERROR_FRAGMENT if error
         end.join("\n\n")

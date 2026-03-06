@@ -12,6 +12,12 @@ module Types
 
     use_direct_connection_and_edge!
 
+    field :state, Types::SubmissionStateType, null: false do
+      description <<~TEXT
+      The current state of the submission.
+      TEXT
+    end
+
     field :entity, "::Types::EntityType", null: true do
       description <<~TEXT
       The actual entity record that will be published as part of this submission.
@@ -20,9 +26,30 @@ module Types
       TEXT
     end
 
+    field :submission_target, "::Types::SubmissionTargetType", null: true do
+      description <<~TEXT
+      The {SubmissionTarget} against which this submission is being made.
+
+      It can be null if the submission gets moved away later after publication.
+      TEXT
+    end
+
     field :user, "::Types::UserType", null: false do
       description <<~TEXT
       The user that created this submission.
+      TEXT
+    end
+
+    field :available_transitions, [::Types::SubmissionStatusType], null: false do
+      description <<~TEXT
+      The state transitions that are available for this submission,
+      based on its current state and the permissions of the current user.
+      TEXT
+    end
+
+    field :current_status, Types::SubmissionStatusType, null: false do
+      description <<~TEXT
+      The current status of the submission, similar to `state` but with metadata about mutability and locking.
       TEXT
     end
 
@@ -51,5 +78,11 @@ module Types
     expose_authorization_rule :review?, <<~TEXT
     Whether or not the current user can review this submission.
     TEXT
+
+    load_association! :entity
+
+    load_association! :submission_target
+
+    load_association! :user
   end
 end

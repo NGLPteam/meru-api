@@ -9,7 +9,7 @@ class RolePolicy < ApplicationPolicy
   always_readable!
 
   pre_check :deny_anonymous!, except: %i[read? show? index?]
-  pre_check :deny_system!, except: %i[read? show? index?]
+  pre_check :deny_system!, except: %i[read? show? index? read_for_mutation? assign?]
 
   def create? = has_allowed_action? "roles.create"
 
@@ -20,7 +20,7 @@ class RolePolicy < ApplicationPolicy
   # Whether the current role can be assigned by the current user.
   def assign?
     # Admin roles can never be assigned
-    return false if record.identified_as_admin?
+    return false if reserved_assignment?
 
     record.in? user.assignable_roles
   end
@@ -32,5 +32,5 @@ class RolePolicy < ApplicationPolicy
     deny! if record.for_system?
   end
 
-  def reserved_assignment? = record.identified_as_admin?
+  def reserved_assignment? = record.reserved?
 end

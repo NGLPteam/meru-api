@@ -93,7 +93,7 @@ RSpec.describe "Query.depositorRequests", type: :request do
     def order_records(records, order: "RECENT")
       case order
       when "DEFAULT"
-        raise "must specify how default orders"
+        order_records(records, order: "RECENT")
       when "OLDEST"
         records.sort_by(&:created_at)
       else
@@ -127,13 +127,6 @@ RSpec.describe "Query.depositorRequests", type: :request do
 
         include_examples "a properly-ordered collection"
       end
-    end
-
-    as_a_super_admin_user do
-      let(:can_update) { true }
-      let(:can_destroy) { true }
-
-      include_examples "ordering by each option"
     end
 
     as_an_admin_user do

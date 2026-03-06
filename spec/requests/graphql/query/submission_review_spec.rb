@@ -89,16 +89,9 @@ RSpec.describe "Query.submissionReview", type: :request do
     end
   end
 
-  as_a_super_admin_user do
-    let(:can_update) { true }
-    let(:can_destroy) { true }
-
-    include_examples "an authorized lookup"
-  end
-
   as_an_admin_user do
-    let(:can_update) { true }
-    let(:can_destroy) { true }
+    let(:can_update) { false }
+    let(:can_destroy) { false }
 
     include_examples "an authorized lookup"
   end
@@ -107,13 +100,13 @@ RSpec.describe "Query.submissionReview", type: :request do
     let(:can_update) { false }
     let(:can_destroy) { false }
 
-    include_examples "an authorized lookup"
+    include_examples "a not found record"
   end
 
   as_an_anonymous_user do
     let(:can_update) { false }
     let(:can_destroy) { false }
 
-    include_examples "an authorized lookup"
+    include_examples "a not found record"
   end
 end

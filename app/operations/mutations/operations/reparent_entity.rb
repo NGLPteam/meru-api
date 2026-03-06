@@ -15,6 +15,8 @@ module Mutations
 
       use_contract! :reparent_entity
 
+      authorizes! :child, with: :reparent?
+
       def call(parent:, child:)
         authorize parent, derived_edge.roles.create_children
 

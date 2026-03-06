@@ -15,6 +15,8 @@ class Submission < ApplicationRecord
 
   has_many :submission_comments, -> { in_default_order }, dependent: :destroy, inverse_of: :submission
 
+  has_many :submission_reviews, inverse_of: :submission, dependent: :destroy
+
   belongs_to :submission_target, inverse_of: :submissions, optional: true
 
   belongs_to :schema_version, inverse_of: :submissions
@@ -25,13 +27,31 @@ class Submission < ApplicationRecord
 
   belongs_to :entity, polymorphic: true, inverse_of: :submission, optional: true
 
+  scope :in_default_order, -> { order(created_at: :desc) }
+
   define_simple_lookups! :schema_version, :user, :parent_entity, :submission_target
+
+  strip_attributes only: %i[title]
 
   before_validation :derive_kind!
 
-  after_create :create_draft_entity!
+  after_create :construct_draft_entity!
 
   validates :entity_id, uniqueness: { scope: :entity_type, if: :entity_id? }
+
+  monadic_operation! def construct_draft_entity
+    call_operation("submissions.construct_draft_entity", self)
+  end
+
+  # @return [<Submissions::Status>]
+  def available_transitions
+    state_machine.allowed_transitions.map do |to_state|
+      Submissions::Status.new(self, to_state: to_state)
+    end
+  end
+
+  # @return [Submissions::Status]
+  def current_status = Submissions::Status.new(self)
 
   private
 
@@ -72,8 +92,8 @@ class Submission < ApplicationRecord
       return all if user.has_global_admin_access?
       # :nocov:
 
-      owned = arel_expr_in_query(:id, owned_by(user).select(:id))
-      reviewable = arel_expr_in_query(:id, reviewable_by(user).select(:id))
+      owned = arel_expr_in_query(arel_table[:id], owned_by(user).select(:id))
+      reviewable = arel_expr_in_query(arel_table[:id], reviewable_by(user).select(:id))
 
       where(owned.or(reviewable))
     end

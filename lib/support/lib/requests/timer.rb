@@ -57,6 +57,10 @@ module Support
 
       # @return [void]
       def log_request!
+        # :nocov:
+        return if request_query.blank?
+        # :nocov:
+
         milliseconds = (duration * 1000).round(2)
 
         Rails.logger.info("[graphql][#{request_query.kind}] Operation=#{request_query.operation_name || 'N/A'} Duration=#{milliseconds}ms")
@@ -73,6 +77,10 @@ module Support
 
       # @return [void]
       def store_steps!
+        # :nocov:
+        return if request_query.blank?
+        # :nocov:
+
         base_tuple = { request_query_id:, request_id:, created_at: Time.current, updated_at: Time.current }
 
         tuples = Support::Requests::Current.graphql_steps.map do |step|

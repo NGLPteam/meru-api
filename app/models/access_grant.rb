@@ -58,7 +58,7 @@ class AccessGrant < ApplicationRecord
 
   before_validation :sync_auth_path!
 
-  after_save :calculate_granted_permissions!
+  after_save_commit :calculate_granted_permissions!
 
   def has_manager?(user)
     case user

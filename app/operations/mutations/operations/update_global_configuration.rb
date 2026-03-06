@@ -11,10 +11,11 @@ module Mutations
 
       attachment! :logo, image: true
 
-      def call(contribution_roles: nil, entities: nil, institution: nil, site: nil, theme: nil, **args)
-        config = GlobalConfiguration.fetch
+      authorizes! :config, with: :update?
 
-        authorize config, :update?
+      # @param [GlobalConfiguration] config
+      def call(config:, contribution_roles: nil, depositing: nil, entities: nil, institution: nil, site: nil, theme: nil, **args)
+        config.depositing = depositing if depositing.present?
 
         config.entities = entities if entities.present?
 
@@ -37,6 +38,10 @@ module Mutations
         end
 
         persist_model! config, attach_to: :global_configuration
+      end
+
+      before_prepare def fetch_config!
+        args[:config] = GlobalConfiguration.fetch
       end
     end
   end

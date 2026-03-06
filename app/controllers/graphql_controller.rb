@@ -23,9 +23,14 @@ class GraphQLController < ApplicationController
       variables:,
     )
 
+    current_user = @current_user
+
+    auth_context = MutationOperations::AuthContext.new(current_user:)
+
     context = {
       ahoy:,
-      current_user: @current_user,
+      auth_context:,
+      current_user:,
       request_state:,
     }
 

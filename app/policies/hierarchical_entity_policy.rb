@@ -6,8 +6,7 @@ class HierarchicalEntityPolicy < ApplicationPolicy
   pre_check :deny_anonymous!, except: %i[index? show? read_assets?]
   pre_check :deny_submission_drafts!, only: %i[reparent? alter_schema_version?]
   pre_check :allow_any_admin!
-
-  cache :show?
+  pre_check :allow_if_depositor_on_draft!, only: %i[read? show? update?]
 
   # @return [ContextualPermission, nil]
   attr_reader :contextual_permission
@@ -43,6 +42,10 @@ class HierarchicalEntityPolicy < ApplicationPolicy
 
   def destroy? = has_permission?(:delete)
 
+  def deposit? = has_permission?(:deposit)
+
+  def review? = has_permission?(:review)
+
   def manage_access? = has_permission?(:manage_access)
 
   def read_assets? = has_asset_permission?(:read)
@@ -64,6 +67,16 @@ class HierarchicalEntityPolicy < ApplicationPolicy
   def create_items? = has_hierarchical_scoped_permission?(:items, :create)
 
   private
+
+  # @return [void]
+  def deny_submission_drafts!
+    deny! if record.try(:submission_draft?)
+  end
+
+  # @return [void]
+  def allow_if_depositor_on_draft!
+    allow! if record.try(:submission_draft?) && record.try(:submitter) == user
+  end
 
   # @api private
   # @param [#to_s] name

@@ -22,13 +22,15 @@ module Mutations
       TEXT
     end
 
-    argument :deposit_mode, Types::SubmissionDepositModeType, required: false, default_value: "direct", replace_null_with_default: true do
+    argument :deposit_mode, Types::SubmissionDepositModeType,
+      required: false, default_value: "direct", replace_null_with_default: true do
       description <<~TEXT
       The deposit mode for this submission target, which determines how submissions to this target are deposited.
       TEXT
     end
 
-    argument :deposit_target_ids, [ID, { null: false }], loads: Types::EntityType, required: false, default_value: Dry::Core::Constants::EMPTY_ARRAY, replace_null_with_default: true do
+    argument :deposit_target_ids, [ID, { null: false }],
+      loads: Types::EntityType, required: false, default_value: Dry::Core::Constants::EMPTY_ARRAY, replace_null_with_default: true do
       description <<~TEXT
       A list of deposit targets for this submission target.
 
@@ -37,7 +39,8 @@ module Mutations
       TEXT
     end
 
-    argument :schema_version_ids, [ID, { null: false }], loads: Types::SchemaVersionType, required: false, default_value: Dry::Core::Constants::EMPTY_ARRAY, replace_null_with_default: true do
+    argument :schema_version_ids, [ID, { null: false }],
+      loads: Types::SchemaVersionType, required: false, default_value: Dry::Core::Constants::EMPTY_ARRAY, replace_null_with_default: true do
       description <<~TEXT
       A list of schema versions that submissions to this submission target must conform to.
 

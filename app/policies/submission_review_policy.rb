@@ -10,11 +10,14 @@ class SubmissionReviewPolicy < ApplicationPolicy
 
   def review? = allowed_to?(:review?, record.submission)
 
-  def read? = deposit? || review?
+  def read? = deposit? || review? || admin_or_owns_resource?
 
-  alias_rule :index?, :show?, to: :read?
+  # @note `alias_rule` not working for some reason?
+  def show? = read?
 
-  def create? = false
+  def index? = read?
+
+  def create? = review?
 
   def update? = record_owned_by_current_user?
 

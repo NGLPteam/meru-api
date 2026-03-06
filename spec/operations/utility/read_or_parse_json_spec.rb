@@ -1,12 +1,6 @@
 # frozen_string_literal: true
 
 RSpec.describe Utility::ReadOrParseJSON, type: :operation do
-  around do |example|
-    MeruAPI::Container.stub(:filesystem, Dry::Files.new(memory: false)) do
-      example.run
-    end
-  end
-
   let(:valid_path) { Rails.root.join "spec", "data", "sample_import.json" }
   let(:invalid_path) { Rails.root.join("does", "not", "exist.json") }
 

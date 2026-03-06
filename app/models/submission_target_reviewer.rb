@@ -12,7 +12,7 @@ class SubmissionTargetReviewer < ApplicationRecord
   belongs_to :submission_target, inverse_of: :submission_target_reviewers, counter_cache: :reviewers_count
   belongs_to :user, inverse_of: :submission_target_reviewers
 
-  scope :in_default_order, -> { joins(:user)}
+  scope :in_default_order, -> { joins(:user) }
 
   after_create_commit :assign_reviewer_role!
 

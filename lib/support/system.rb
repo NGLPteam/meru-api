@@ -20,6 +20,7 @@ module Support
 
       config.component_dirs.add "operations" do |dir|
         dir.auto_register = true
+        dir.memoize = true
 
         dir.namespaces.add_root key: nil, const: "support"
       end

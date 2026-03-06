@@ -80,6 +80,8 @@ module Frontend
         end
 
         response = Frontend::Cache::RevalidationResponse.new(raw_response.body)
+      rescue Dry::Struct::Error
+        Failure[:invalid_response]
       rescue Faraday::ForbiddenError
         Failure[:invalid_secret]
       rescue Faraday::ConnectionFailed, Faraday::TimeoutError, Faraday::Error => e

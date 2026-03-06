@@ -16,6 +16,8 @@ module Submittable
       class_name: "Submission"
 
     has_one :submission, as: :entity, dependent: :nullify, inverse_of: :entity
+
+    has_one :submitter, through: :submission, source: :user
   end
 
   # @see SubmissionTargets::Configure

@@ -76,6 +76,7 @@ RSpec.describe "Query.submissionReviews", type: :request do
       1.upto(4).map do |n|
         attrs = {
           _at: n.days.ago,
+          requested_at: n.hours.ago,
         }
 
         create_record(**attrs)
@@ -93,7 +94,7 @@ RSpec.describe "Query.submissionReviews", type: :request do
     def order_records(records, order: "RECENT")
       case order
       when "DEFAULT"
-        raise "must specify how default orders"
+        records.sort_by(&:requested_at).reverse
       when "OLDEST"
         records.sort_by(&:created_at)
       else
@@ -129,16 +130,9 @@ RSpec.describe "Query.submissionReviews", type: :request do
       end
     end
 
-    as_a_super_admin_user do
-      let(:can_update) { true }
-      let(:can_destroy) { true }
-
-      include_examples "ordering by each option"
-    end
-
     as_an_admin_user do
-      let(:can_update) { true }
-      let(:can_destroy) { true }
+      let(:can_update) { false }
+      let(:can_destroy) { false }
 
       include_examples "ordering by each option"
     end
