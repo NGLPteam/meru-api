@@ -6,11 +6,13 @@ class SubmissionCommentPolicy < ApplicationPolicy
 
   pre_check :allow_any_admin!
 
-  def deposit? = allowed_to?(:deposit?, record.submission)
+  def read? = allowed_to?(:read?, record.submission)
 
-  def review? = allowed_to?(:review?, record.submission)
+  def show? = read?
 
-  def create? = deposit? || review?
+  def index? = read?
+
+  def create? = allowed_to?(:comment?, record.submission)
 
   def update? = record_owned_by_current_user?
 

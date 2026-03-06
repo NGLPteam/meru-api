@@ -34,5 +34,13 @@ module Types
       An optional message from the requester, which may be provided when making the depositor request and may be visible to management.
       TEXT
     end
+
+    expose_authorization_rule :transition?, <<~TEXT
+    Whether the current user can approve or reject the request.
+    TEXT
+
+    load_association! :submission_target
+
+    load_association! :user
   end
 end

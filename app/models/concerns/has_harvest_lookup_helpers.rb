@@ -22,13 +22,12 @@ module HasHarvestLookupHelpers
     end
   end
 
-  # @param [HarvestEntity] harvest_entity
+  # @param [Symbol] child_entity_kind
   # @return [ActiveRecord::Relation<Collection>]
   # @return [ActiveRecord::Relation<Item>]
-  def harvest_child_scope_for(harvest_entity)
+  def child_scope_for(child_entity_kind)
     parent_type = entity_kind.to_sym
-
-    child_type = harvest_entity.entity_kind.to_sym
+    child_type = child_entity_kind.to_sym
 
     case [parent_type, child_type]
     when [:community, :collection]
@@ -42,5 +41,12 @@ module HasHarvestLookupHelpers
       raise Harvesting::Error, "cannot create child of type #{child_type} under #{parent_type}"
       # :nocov:
     end
+  end
+
+  # @param [HarvestEntity] harvest_entity
+  # @return [ActiveRecord::Relation<Collection>]
+  # @return [ActiveRecord::Relation<Item>]
+  def harvest_child_scope_for(harvest_entity)
+    child_scope_for(harvest_entity.entity_kind)
   end
 end

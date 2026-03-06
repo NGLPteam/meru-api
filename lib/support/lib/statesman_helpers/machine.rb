@@ -2,10 +2,13 @@
 
 module Support
   module StatesmanHelpers
+    # An enhancement to Statesman::Machine that adds flexible transitions.
     module Machine
       extend ActiveSupport::Concern
 
-      include Statesman::Machine
+      included do
+        include Statesman::Machine
+      end
 
       module ClassMethods
         # Define transitions that allow any state to transition into any other state

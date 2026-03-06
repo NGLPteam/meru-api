@@ -51,6 +51,7 @@ module Entities
       tuple[:scope] = source.entity_scope
       tuple[:search_title] = prefix_sanitize.(tuple[:title])
       tuple[:system_slug] = source.entity_slug
+      tuple[:submission_status] = source.entity_submission_status
 
       validate_sync.call(tuple).to_monad.fmap(&:to_h)
     end

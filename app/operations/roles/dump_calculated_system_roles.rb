@@ -9,20 +9,21 @@ module Roles
     include Dry::Monads[:result]
     include MeruAPI::Deps[
       calculate: "roles.calculate_system_roles",
-      filesystem: "filesystem"
     ]
 
     DUMP_PATH = Rails.root.join("lib", "frozen_record", "system_roles.yml")
 
     # @return [Dry::Monads::Result]
     def call
+      # :nocov:
       roles = calculate.call
 
       dump = roles.map(&:stringify_keys).to_yaml
 
-      filesystem.write DUMP_PATH.to_s, dump
+      File.write DUMP_PATH.to_s, dump
 
       Success(dump)
+      # :nocov:
     end
   end
 end

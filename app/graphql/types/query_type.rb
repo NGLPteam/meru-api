@@ -27,6 +27,7 @@ module Types
     implements ::Types::QueriesSystem
     implements ::Types::QueriesSubmissionComment
     implements ::Types::QueriesSubmission
+    implements ::Types::QueriesSubmissionReview
     implements ::Types::QueriesSubmissionTarget
     implements ::Types::QueriesUser
     implements ::Types::SearchableType

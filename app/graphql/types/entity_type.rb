@@ -4,7 +4,9 @@ module Types
   module EntityType
     include Types::BaseInterface
 
+    implements ::GraphQL::Types::Relay::Node
     implements ::Types::AccessibleType
+    implements ::Types::CommonPermissionsType
     implements ::Types::EntityBaseType
     implements ::Types::EntityContextualPermissionsType
     implements ::Types::EntityPermissionsType

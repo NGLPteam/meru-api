@@ -28,7 +28,7 @@ module Types
       description <<~TEXT
       The deposit targets of this submission target, which are the entities that deposits to this submission target are deposited to.
       TEXT
-     end
+    end
 
     field :entity, "::Types::EntityType", null: false do
       description <<~TEXT

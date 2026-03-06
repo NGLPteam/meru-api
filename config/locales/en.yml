@@ -67,6 +67,7 @@ en:
       must_be_email: "must be an email"
       must_be_empty: "must be empty"
       must_be_entity: "must be an entity"
+      must_be_new_state: "must not be the current state"
       must_be_orcid: "must be a valid ORCID URL: https://orcid.org/xxxx-xxxx-xxxx-xxxx"
       must_be_ordering: "must be an ordering"
       must_be_slug: "must be a valid slug (all lowercase, no whitespace)"
@@ -94,6 +95,7 @@ en:
         revalidation_request_failed: "The revalidation request failed."
         revalidation_secret_invalid: "The revalidation request failed to authenticate."
         revalidation_timeout: "The revalidation request timed out."
+        unavailable_transition: "The record cannot currently transition to %{value}."
   frozen:
     static_property:
       title:

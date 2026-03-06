@@ -11,6 +11,10 @@ module Mutations
           optional(:other_item).value(:controlled_vocabulary_item)
         end
 
+        optional(:depositing).maybe(:hash) do
+          required(:agreement).value(:safe_string)
+        end
+
         optional(:entities).maybe(:hash) do
           required(:suppress_external_links).value(:bool)
         end

@@ -19,6 +19,8 @@ class SubmissionComment < ApplicationRecord
   # Newest comments to the top.
   scope :in_default_order, -> { order(position: :desc) }
 
+  before_validation :derive_role!
+
   strip_attributes only: %i[content]
 
   validates :content, presence: true

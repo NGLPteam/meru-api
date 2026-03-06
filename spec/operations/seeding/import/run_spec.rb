@@ -5,12 +5,6 @@ RSpec.describe Seeding::Import::Run, type: :operation, disable_ordering_refresh:
 
   let(:import_path) { Rails.root.join "spec", "data", "sample_import.json" }
 
-  around do |example|
-    MeruAPI::Container.stub(:filesystem, Dry::Files.new(memory: false)) do
-      example.run
-    end
-  end
-
   before do
     stub_request(:get, "http://www.sample.com/hero_image.jpg").
       to_return(

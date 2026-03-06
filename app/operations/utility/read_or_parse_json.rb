@@ -7,9 +7,6 @@ module Utility
   class ReadOrParseJSON
     include Dry::Core::Memoizable
     include Dry::Monads[:result, :do]
-    include MeruAPI::Deps[
-      filesystem: "filesystem",
-    ]
 
     LOOKS_LIKE_JSON = /\A\s*\{.*\}\s*\z/
 
@@ -38,7 +35,7 @@ module Utility
       ->(input) do
         case input
         when Pathname, String
-          filesystem.exist? input.to_s
+          File.exist? input.to_s
         else
           false
         end
@@ -58,8 +55,8 @@ module Utility
     # @param [Pathname, String] path
     # @return [Dry::Monads::Result]
     def read_json(path)
-      content = filesystem.read path.to_s
-    rescue Dry::Files::IOError => e
+      content = File.read path.to_s
+    rescue Errno::ENOENT => e
       Failure[:invalid_path, path, e]
     else
       parse_json content

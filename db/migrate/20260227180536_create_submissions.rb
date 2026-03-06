@@ -39,6 +39,8 @@ class CreateSubmissions < ActiveRecord::Migration[7.2]
 
       t.references :item, null: true, type: :uuid, foreign_key: { on_delete: :nullify }
 
+      t.citext :title, null: false
+
       t.jsonb :metadata, null: false, default: {}
 
       t.timestamps null: false, default: -> { "CURRENT_TIMESTAMP" }
@@ -65,13 +67,15 @@ class CreateSubmissions < ActiveRecord::Migration[7.2]
       t.index %i[submission_id position], unique: true, name: "idx_submission_comments_positioning"
     end
 
-    create_enum :submission_review_state, %w[pending accepted rejected]
+    create_enum :submission_review_state, %w[pending approved rejected]
 
     create_table :submission_reviews, id: :uuid do |t|
       t.enum :state, enum_type: :submission_review_state, null: false, default: "pending"
 
       t.references :submission, null: false, type: :uuid, foreign_key: { on_delete: :cascade }, index: false
       t.references :user, null: false, type: :uuid, foreign_key: { on_delete: :restrict }, index: false
+
+      t.text :comment, null: true
 
       t.timestamp :requested_at
 

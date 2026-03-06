@@ -199,6 +199,13 @@ module HierarchicalEntity
   # @param [HierarchicalEntity] entity
   def has_descendant?(entity) = entity_descendants.exists?(descendant: entity)
 
+  # @note Used in testing.
+  def has_permitted_actions_for?(user, *actions)
+    return false unless persisted?
+
+    contextual_single_permissions.with_permitted_actions_for(user, *actions).exists?
+  end
+
   # @return [<HierarchicalEntity>]
   def hierarchical_ancestors
     # :nocov:

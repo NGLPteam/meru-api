@@ -11,6 +11,10 @@ module Support
         include Support::GraphQLAPI::DirectConnectionAndEdgeSupport
         include Support::GraphQLAPI::ImageAttachmentSupport
 
+        included do
+          extend Support::GraphQLAPI::ExposeAuthorization
+        end
+
         CACHEABLE = Support::Types.Interface(:cache_key)
 
         # @abstract

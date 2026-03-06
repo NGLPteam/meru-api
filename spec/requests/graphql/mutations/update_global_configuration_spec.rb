@@ -21,6 +21,7 @@ RSpec.describe Mutations::UpdateGlobalConfiguration, type: :request, graphql: :m
 
         depositing {
           agreement
+          enabled
         }
 
         entities {
@@ -109,6 +110,7 @@ RSpec.describe Mutations::UpdateGlobalConfiguration, type: :request, graphql: :m
   let!(:institution_name) { "Some Institution Name" }
   let(:site_logo_mode) { "NONE" }
   let(:deposit_agreement) { "Some deposit agreement text that users must agree to when depositing." }
+  let(:depositing_enabled) { true }
   let!(:provider_name) { "Some Provider Name" }
   let!(:installation_name) { "Some Installation Name" }
   let!(:installation_home_page_copy) { "Some installation copy that appears on the home page." }
@@ -126,7 +128,7 @@ RSpec.describe Mutations::UpdateGlobalConfiguration, type: :request, graphql: :m
   let_mutation_input!(:clear_logo) { false }
 
   let_mutation_input!(:depositing) do
-    { agreement: deposit_agreement }
+    { agreement: deposit_agreement, enabled: depositing_enabled }
   end
 
   let_mutation_input!(:entities) { { suppress_external_links:, } }
@@ -187,6 +189,10 @@ RSpec.describe Mutations::UpdateGlobalConfiguration, type: :request, graphql: :m
     it "is not authorized" do
       expect_request! do |req|
         req.effect! keep_the_same { GlobalConfiguration.fetch.updated_at }
+
+        req.unauthorized!
+
+        req.data! expected_shape
       end
     end
   end
@@ -267,6 +273,8 @@ RSpec.describe Mutations::UpdateGlobalConfiguration, type: :request, graphql: :m
       let(:mutation_input) do
         { theme: }
       end
+
+      let(:expected_depositing) { GlobalConfiguration.fetch.depositing.as_json }
 
       let(:expected_institution) { GlobalConfiguration.fetch.institution.as_json }
 

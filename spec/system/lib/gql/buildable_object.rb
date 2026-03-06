@@ -13,6 +13,8 @@ module Testing
 
       UNSET = Object.new.freeze
 
+      DEFAULT_UNAUTHORIZED_MESSAGE_PATTERN = /not authorized/i
+
       def initialize(...)
         super if defined?(super)
       end
@@ -47,6 +49,24 @@ module Testing
         end
 
         return self
+      end
+
+      def auth_result(key, value, unauth_message_pattern: DEFAULT_UNAUTHORIZED_MESSAGE_PATTERN)
+        prop key do |ar|
+          ar[:value] = value
+
+          if value
+            ar[:message] = nil
+          else
+            ar[:message] = unauth_message_pattern
+          end
+        end
+      end
+
+      def auth_results(**pairs)
+        pairs.each do |key, value|
+          auth_result(key, value)
+        end
       end
 
       def object_at(key, &)

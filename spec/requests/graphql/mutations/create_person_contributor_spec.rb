@@ -87,7 +87,6 @@ RSpec.describe Mutations::CreatePersonContributor, type: :request, graphql: :mut
   end
 
   as_an_admin_user do
-
     context "with valid inputs" do
       it_behaves_like "a successful creation"
     end

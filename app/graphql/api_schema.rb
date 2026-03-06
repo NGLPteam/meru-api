@@ -29,11 +29,12 @@ class APISchema < GraphQL::Schema
     # :nocov:
   end
 
-  rescue_from(ActionPolicy::Unauthorized) do |_|
+  rescue_from(ActionPolicy::Unauthorized) do |e|
     GraphQL::ExecutionError.new(
       I18n.t("server_messages.auth.forbidden"),
       extensions: {
-        code: "FORBIDDEN"
+        code: "FORBIDDEN",
+        detailed_message: e.detailed_message
       }
     )
   end

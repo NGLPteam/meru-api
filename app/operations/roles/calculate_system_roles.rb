@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module Roles
+  # rubocop:disable Metrics/MethodLength
   class CalculateSystemRoles
     def call
       mapper = Roles::Mapper.new
@@ -79,4 +80,5 @@ module Roles
       return roles
     end
   end
+  # rubocop:enable Metrics/MethodLength
 end

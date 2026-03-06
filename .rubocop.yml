@@ -624,9 +624,11 @@ RSpec/DescribeClass:
 RSpec/DuplicatedMetadata:
   Enabled: true
 
+# Doesn't understand DSLs.
 RSpec/EmptyExampleGroup:
   Exclude:
     - spec/policies/**/*.rb
+    - spec/support/shared_examples/**/*.rb
 
 RSpec/EmptyLineAfterFinalLet:
   Enabled: false
@@ -703,7 +705,6 @@ RSpec/NoRequireRailsHelper:
 RSpec/PendingWithoutReason:
   Enabled: false
 
-
 RSpec/PredicateMatcher:
   Enabled: true
 
@@ -725,6 +726,10 @@ RSpec/ScatteredLet:
 
 # Before blocks are executed in order, they can't always be in one place
 RSpec/ScatteredSetup:
+  Enabled: false
+
+# Doesn't understand DSLs.
+RSpec/SharedContext:
   Enabled: false
 
 RSpec/SkipBlockInsideExample:

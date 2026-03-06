@@ -10,6 +10,7 @@ module Support
         option :association, Types::AssociationName
         option :prefix, Types::Coercible::Symbol.optional, optional: true
         option :machine_class, Types::MachineClass
+        option :initial_transition, Types::Bool, default: proc { true }
         option :transition_class, Types::TransitionClass
         option :inverse_of, Types::AssociationName, default: proc { klass.model_name.singular }
         option :machine_name, Types::AssociationName, default: proc { [prefix, "state_machine"].compact.join(?_).to_sym }
@@ -18,6 +19,8 @@ module Support
       end
 
       delegate :initial_state, to: :machine_class
+
+      alias initial_transition? initial_transition
 
       alias key association
 

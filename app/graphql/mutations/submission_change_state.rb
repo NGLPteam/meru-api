@@ -7,9 +7,15 @@ module Mutations
     A mutation to change the state of a `Submission`.
     TEXT
 
-    argument :submission_target_id, ID, loads: Types::SubmissionTargetType, required: true do
+    field :submission, ::Types::SubmissionType, null: true do
       description <<~TEXT
-      The ID of the {SubmissionTarget} against which the submission is being made.
+      The modified submission, if successful.
+      TEXT
+    end
+
+    argument :submission_id, ID, loads: Types::SubmissionType, required: true do
+      description <<~TEXT
+      The ID of the {Submission} to update.
       TEXT
     end
 

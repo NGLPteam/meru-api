@@ -12,11 +12,11 @@ RSpec.describe SubmissionReviewPolicy, type: :policy do
       let(:user) { admin }
     end
 
-    succeed "as a regular user" do
+    failed "as a regular user" do
       let(:user) { regular_user }
     end
 
-    succeed "as an anonymous user" do
+    failed "as an anonymous user" do
       let(:user) { anonymous_user }
     end
   end
@@ -26,11 +26,11 @@ RSpec.describe SubmissionReviewPolicy, type: :policy do
       let(:user) { admin }
     end
 
-    succeed "as a regular user" do
+    failed "as a regular user" do
       let(:user) { regular_user }
     end
 
-    succeed "as an anonymous user" do
+    failed "as an anonymous user" do
       let(:user) { anonymous_user }
     end
   end
@@ -50,8 +50,12 @@ RSpec.describe SubmissionReviewPolicy, type: :policy do
   end
 
   describe_rule :update? do
-    succeed "as an admin" do
+    failed "as an admin" do
       let(:user) { admin }
+    end
+
+    succeed "as the owner" do
+      let(:user) { submission_review.user }
     end
 
     failed "as a regular user" do
@@ -64,8 +68,12 @@ RSpec.describe SubmissionReviewPolicy, type: :policy do
   end
 
   describe_rule :destroy? do
-    succeed "as an admin" do
+    failed "as an admin" do
       let(:user) { admin }
+    end
+
+    succeed "as the owner" do
+      let(:user) { submission_review.user }
     end
 
     failed "as a regular user" do
@@ -92,7 +100,7 @@ RSpec.describe SubmissionReviewPolicy, type: :policy do
 
     context "as a regular user" do
       it "includes accessible records" do
-        is_expected.to include(record)
+        is_expected.to exclude(record)
       end
     end
 
@@ -100,7 +108,7 @@ RSpec.describe SubmissionReviewPolicy, type: :policy do
       let(:user) { anonymous_user }
 
       it "includes accessible records" do
-        is_expected.to include(record)
+        is_expected.to exclude(record)
       end
     end
   end

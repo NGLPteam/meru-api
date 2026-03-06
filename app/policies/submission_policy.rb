@@ -6,11 +6,17 @@ class SubmissionPolicy < ApplicationPolicy
 
   pre_check :allow_any_admin!, except: :destroy?
 
+  def read? = allowed_to?(:update?, record.submission_target) || deposit? || review? || record_owned_by_current_user?
+
+  def show? = read?
+
+  def index? = read?
+
   def review? = allowed_to?(:review?, record.submission_target)
 
   def alter_schema_version? = manage_target? && !published?
 
-  def comment? = deposit? || review?
+  def comment? = deposit? || review? || record_owned_by_current_user?
 
   def request_review? = deposit? || review?
 

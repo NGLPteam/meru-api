@@ -16,8 +16,10 @@ module Mutations
       <%- end -%>
       <%- end -%>
 
-      <%- unless skip_operation_implementation? -%>
-      <%- if update_mutation? || destroy_mutation? -%>
+      authorizes! <%= model_key.to_sym.inspect %>, with: <%= auth_predicate.to_sym.inspect %>
+
+      <%- unless skip_implementation_logic? -%>
+      <%- if implementation_accepts_existing_model? -%>
       # @param [<%= model_name %>] <%= model_key %>
       <%- end -%>
       <%- if create_mutation? || update_mutation? -%>
@@ -29,24 +31,22 @@ module Mutations
       <%- end -%>
       # @return [void]
       def call(<%= operation_call_signature %>)
-        <%- unless skip_operation_implementation? -%>
+        <%- unless skip_implementation_logic? -%>
         <%- if destroy_mutation? -%>
         destroy_model! <%= model_key %>, auth: true
         <%- elsif changes_model? -%>
-        <%- if create_mutation? -%>
-        <%= model_key %> = <%= model_name %>.new
-
-        authorize <%= model_key %>, :create?
-        <%- elsif update_mutation? -%>
-        authorize <%= model_key %>, :update?
-        <%- end -%>
-
         assign_attributes!(<%= model_key %>, **attrs)
 
         persist_model! <%= model_key %>, attach_to: <%= model_key.inspect %>
         <%- end -%>
         <%- end -%>
       end
+      <%- if create_mutation? -%>
+
+      before_prepare def initialize_<%= model_key %>!
+        args[<%= model_key.inspect %>] = <%= model_name %>.new
+      end
+      <%- end -%>
     end
   end
 end

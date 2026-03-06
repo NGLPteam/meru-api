@@ -9,7 +9,9 @@ end
 Dry::Rails.container do
   config.features = %i[application_contract safe_params controller_helpers]
 
-  config.component_dirs.add "app/operations"
+  config.component_dirs.add "app/operations" do |dir|
+    dir.memoize = true
+  end
 
   register :filesystem, memoize: !Rails.env.test? do
     Dry::Files.new memory: Rails.env.test?

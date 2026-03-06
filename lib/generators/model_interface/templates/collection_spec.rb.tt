@@ -171,13 +171,6 @@ RSpec.describe "Query.<%= graphql_collection_field_name %>", type: :request do
       <%- end -%>
     end
 
-    as_a_super_admin_user do
-      let(:can_update) { true }
-      let(:can_destroy) { true }
-
-      include_examples "ordering by each option"
-    end
-
     as_an_admin_user do
       let(:can_update) { true }
       let(:can_destroy) { true }

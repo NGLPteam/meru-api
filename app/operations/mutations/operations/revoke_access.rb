@@ -29,6 +29,8 @@ module Mutations
         attach! :revoked, revoked
       end
 
+      private
+
       # @return [void]
       before_prepare def prepare_provisional_access_grant!
         args => { role:, user:, entity:, }

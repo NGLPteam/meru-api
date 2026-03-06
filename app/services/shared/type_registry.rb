@@ -48,6 +48,7 @@ module Shared
     tc.add_enum! ::Types::HarvestProtocolType
     tc.add_enum! ::Types::SubmissionCommentRoleType
     tc.add_enum! ::Types::SubmissionDepositModeType
+    tc.add_enum! ::Types::SubmissionReviewStateType
     tc.add_enum! ::Types::SubmissionStateType
     tc.add_enum! ::Types::SubmissionTargetStateType
     tc.add_enum! ::Types::TemplateSlotKindType, single_key: "slot_kind", plural_key: "slot_kinds"

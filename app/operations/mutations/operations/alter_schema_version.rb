@@ -11,6 +11,7 @@ module Mutations
       include Mutations::Shared::RefreshesOrderingsAsynchronously
       include MeruAPI::Deps[alter: "schemas.instances.alter_version"]
 
+      authorizes! :entity, with: :alter_schema_version?
       authorizes! :entity, with: :update?
 
       use_contract! :alter_schema_version

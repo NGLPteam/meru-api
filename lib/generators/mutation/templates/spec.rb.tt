@@ -169,8 +169,8 @@ RSpec.describe <%= mutation_class_name %>, type: :request, graphql: :mutation do
     end
   end
 
-  as_an_admin_user do
-    it_behaves_like "a successful mutation"
+  shared_examples_for "an authorized mutation" do
+    include_examples "a successful mutation"
     <%- if changes_model? && has_unique_title? -%>
 
     context "when the title has already been taken" do
@@ -227,7 +227,15 @@ RSpec.describe <%= mutation_class_name %>, type: :request, graphql: :mutation do
     <%- end -%>
   end
 
+  as_an_admin_user do
+    include_examples "an authorized mutation"
+  end
+
+  as_a_regular_user do
+    include_examples "an unauthorized mutation"
+  end
+
   as_an_anonymous_user do
-    it_behaves_like "an unauthorized mutation"
+    include_examples "an unauthorized mutation"
   end
 end

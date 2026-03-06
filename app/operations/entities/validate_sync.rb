@@ -18,6 +18,7 @@ module Entities
       required(:schema_version_id).filled(:string, :uuid_v4?)
       required(:system_slug).filled(Entities::Types::Slug)
       required(:title).filled(:string)
+      required(:submission_status).value(:entity_submission_status)
 
       required(:created_at).value(:time)
       required(:updated_at).value(:time)

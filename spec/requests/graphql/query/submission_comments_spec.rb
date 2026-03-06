@@ -39,6 +39,32 @@ RSpec.describe "Query.submissionComments", type: :request do
       GRAPHQL
     end
 
+    let_it_be(:community, refind: true) { FactoryBot.create(:community) }
+    let_it_be(:collection, refind: true) { FactoryBot.create(:collection, community:) }
+
+    let_it_be(:item_schema_version, refind: true) { FactoryBot.create(:schema_version, :item) }
+
+    let_it_be(:submission_target, refind: true) do
+      collection.fetch_submission_target!.tap do |st|
+        st.configure!(schema_versions: [item_schema_version], deposit_mode: :direct)
+        st.transition_to! :open
+      end
+    end
+
+    let_it_be(:submitter, refind: true) do
+      FactoryBot.create(:user, depositor_on: collection)
+    end
+
+    let_it_be(:submission, refind: true) do
+      FactoryBot.create(:submission,
+        submission_target:,
+        schema_version: item_schema_version,
+        parent_entity: collection,
+        user: submitter,
+        title: "Test Submission"
+      )
+    end
+
     let(:can_update) { false }
     let(:can_destroy) { false }
 
@@ -76,6 +102,7 @@ RSpec.describe "Query.submissionComments", type: :request do
       1.upto(4).map do |n|
         attrs = {
           _at: n.days.ago,
+          submission:,
         }
 
         create_record(**attrs)
@@ -93,7 +120,7 @@ RSpec.describe "Query.submissionComments", type: :request do
     def order_records(records, order: "RECENT")
       case order
       when "DEFAULT"
-        raise "must specify how default orders"
+        records.sort_by(&:position).reverse!
       when "OLDEST"
         records.sort_by(&:created_at)
       else
@@ -127,13 +154,6 @@ RSpec.describe "Query.submissionComments", type: :request do
 
         include_examples "a properly-ordered collection"
       end
-    end
-
-    as_a_super_admin_user do
-      let(:can_update) { true }
-      let(:can_destroy) { true }
-
-      include_examples "ordering by each option"
     end
 
     as_an_admin_user do

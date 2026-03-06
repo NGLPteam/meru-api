@@ -69,7 +69,7 @@ module Support
         end
       end
 
-      # @!endgroup
+      # @!endgroup Derivation Helpers
 
       private
 

@@ -4,8 +4,14 @@ RSpec.describe Entities::RevalidateFrontendCache, type: :operation do
   let_it_be(:community) { FactoryBot.create(:community) }
   let_it_be(:collection) { FactoryBot.create(:collection, community:) }
 
+  let(:revalidation_url) do
+    URI.join(LocationsConfig.frontend_request, "/api/revalidate/entity")
+  end
+
   context "when revalidation is successful" do
-    stub_operation!("frontend.cache.revalidate_entity", as: :revalidate_actual, auto_succeed: true)
+    before do
+      stub_request(:delete, revalidation_url).to_return(status: 204, body: "{}")
+    end
 
     it "succeeds" do
       expect_calling_with(collection).to succeed
@@ -13,10 +19,8 @@ RSpec.describe Entities::RevalidateFrontendCache, type: :operation do
   end
 
   context "when revalidation fails for any reason" do
-    stub_operation!("frontend.cache.revalidate_entity", as: :revalidate_actual, auto_succeed: false)
-
     before do
-      allow(revalidate_actual).to receive(:call).and_return(Dry::Monads.Failure(:any_reason))
+      stub_request(:delete, revalidation_url).to_return(status: 500)
     end
 
     it "quietly swallows the failure" do

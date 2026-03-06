@@ -8,10 +8,12 @@ class SubmissionReview < ApplicationRecord
 
   has_state_machine!
 
-  belongs_to :submission, inverse_of: :submission_reviewers
-  belongs_to :user, inverse_of: :submission_reviewers
+  belongs_to :submission, inverse_of: :submission_reviews
+  belongs_to :user, inverse_of: :submission_reviews
 
-  scope :in_default_order, -> { order(requested_at: :desc) }
+  scope :in_default_order, -> { order(requested_at: :desc, created_at: :desc, id: :desc) }
+
+  define_simple_lookups! :submission, :user
 
   validates :user_id, uniqueness: { scope: :submission_id }
 

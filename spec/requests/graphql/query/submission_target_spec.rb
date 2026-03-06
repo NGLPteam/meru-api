@@ -89,16 +89,9 @@ RSpec.describe "Query.submissionTarget", type: :request do
     end
   end
 
-  as_a_super_admin_user do
-    let(:can_update) { true }
-    let(:can_destroy) { true }
-
-    include_examples "an authorized lookup"
-  end
-
   as_an_admin_user do
     let(:can_update) { true }
-    let(:can_destroy) { true }
+    let(:can_destroy) { false }
 
     include_examples "an authorized lookup"
   end

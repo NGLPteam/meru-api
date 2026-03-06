@@ -23,10 +23,20 @@ module Types
       TEXT
     end
 
+    field :role, Types::SubmissionCommentRoleType, null: false do
+      description <<~TEXT
+      The role of the comment, quickly delineating if it was from the submitter or a reviewer.
+      TEXT
+    end
+
     field :content, String, null: false do
       description <<~TEXT
       The content of the comment.
       TEXT
     end
+
+    load_association! :submission
+
+    load_association! :user
   end
 end

@@ -23,6 +23,8 @@ class SubmissionTarget < ApplicationRecord
 
   has_many_readonly :contextual_single_permissions, primary_key: %i[entity_type entity_id], foreign_key: %i[hierarchical_type hierarchical_id]
 
+  has_many :depositor_requests, dependent: :destroy, inverse_of: :submission_target
+
   has_many :submission_deposit_targets, -> { includes(:entity) }, dependent: :destroy, inverse_of: :submission_target, autosave: true
 
   has_many :submission_target_reviewers, -> { in_default_order }, dependent: :destroy, inverse_of: :submission_target
@@ -36,6 +38,8 @@ class SubmissionTarget < ApplicationRecord
   has_many :submissions, dependent: :nullify, inverse_of: :submission_target
 
   has_many :submission_reviews, through: :submissions
+
+  scope :in_default_order, -> { order(created_at: :desc) }
 
   assign_polymorphic_foreign_key! :entity, :community, :collection, :item
 

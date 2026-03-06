@@ -6,15 +6,12 @@ module Support
     # and other support in the context.
     #
     # @see Support::Requests::Current
-    # @see Support::Caching::Cache
     class State
       extend ActiveModel::Callbacks
 
-      define_model_callbacks :request, :connection
+      define_model_callbacks :request
 
       around_request :provide_current_state!
-
-      # around_request :provide_vog_cache!
 
       around_request :measure!
 
@@ -51,11 +48,6 @@ module Support
       def provide_current_state!(&)
         Support::Requests::Current.set(state: self, &)
       end
-
-      # @return [void]
-      # def provide_vog_cache!(&)
-      #   Support::Caching.with_vog_cache(&)
-      # end
     end
   end
 end

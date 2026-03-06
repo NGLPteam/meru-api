@@ -29,10 +29,26 @@ module Types
       TEXT
     end
 
+    field :requested_at, GraphQL::Types::ISO8601DateTime, null: true do
+      description <<~TEXT
+      The time that this submission review was last requested.
+      TEXT
+    end
+
+    field :comment, String, null: true do
+      description <<~TEXT
+      An optional note from the reviewer about this submission review.
+      TEXT
+    end
+
     field :transitions, resolver: ::Resolvers::SubmissionReviewTransitionResolver, null: false do
       description <<~TEXT
       The state transitions that this submission review has undergone.
       TEXT
     end
+
+    load_association! :submission
+
+    load_association! :user
   end
 end
