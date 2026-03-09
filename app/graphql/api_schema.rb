@@ -12,6 +12,7 @@ class APISchema < GraphQL::Schema
   end
 
   trace_with(GraphQL::Tracing::ActiveSupportNotificationsTrace)
+  trace_with(GraphQL::Tracing::NewRelicTrace)
 
   validate_timeout nil
 
