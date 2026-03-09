@@ -2,6 +2,7 @@
 
 # A calculated view that determines available candidates to link a source {Entity} to.
 class LinkTargetCandidate < ApplicationRecord
+  include GenericAccessible
   include TimestampScopes
   include View
 

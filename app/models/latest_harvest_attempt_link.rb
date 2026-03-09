@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class LatestHarvestAttemptLink < ApplicationRecord
+  include GenericInaccessible
   include View
 
   belongs_to_readonly :harvest_source, inverse_of: :latest_harvest_attempt_links

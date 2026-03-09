@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class SchematicCollectedReference < ApplicationRecord
+  include GenericAccessible
   include SchematicReference
   include TimestampScopes
 

@@ -2,6 +2,7 @@
 
 # A queryable, introspectable version of the various properties on a {SchemaVersion}.
 class SchemaVersionProperty < ApplicationRecord
+  include GenericAccessible
   include TimestampScopes
   include WrapsSchemaProperty
 

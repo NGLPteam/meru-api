@@ -2,6 +2,7 @@
 
 # A join model that connects an {AccessGrant} with a {User} that can manage it.
 class AccessGrantManagementLink < ApplicationRecord
+  include GenericInaccessible
   include ScopesForUser
   include View
 

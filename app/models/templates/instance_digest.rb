@@ -5,6 +5,7 @@ module Templates
   #
   # The original tables are more optimized and are the source of truth.
   class InstanceDigest < ApplicationRecord
+    include GenericAccessible
     include HasEphemeralSystemSlug
     include TimestampScopes
 

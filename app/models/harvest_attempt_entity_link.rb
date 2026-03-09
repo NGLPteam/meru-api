@@ -2,6 +2,7 @@
 
 # A connection between a {HarvestAttempt} and a {HarvestEntity}.
 class HarvestAttemptEntityLink < ApplicationRecord
+  include GenericInaccessible
   include TimestampScopes
   include UsesStatesman
 

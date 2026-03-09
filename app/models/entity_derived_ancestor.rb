@@ -2,6 +2,7 @@
 
 # A view that provides derived ancestor information for {EntityAncestor}.
 class EntityDerivedAncestor < ApplicationRecord
+  include GenericAccessible
   include View
 
   self.primary_key = %i[entity_type entity_id name].freeze

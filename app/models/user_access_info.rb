@@ -5,6 +5,7 @@
 #
 # @see Users::AccessInfo
 class UserAccessInfo < ApplicationRecord
+  include GenericAccessible
   include HasEphemeralSystemSlug
   include TimestampScopes
   include View

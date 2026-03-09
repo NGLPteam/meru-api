@@ -7,6 +7,7 @@
 #
 # @see Entities::RefreshAuthorContributionsJob
 class EntityAuthorContribution < ApplicationRecord
+  include GenericInaccessible
   include HasEphemeralSystemSlug
   include MaterializedView
   include TimestampScopes

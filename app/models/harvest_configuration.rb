@@ -12,6 +12,7 @@
 # knowledge of how records should be harvested, and maintaining ties to
 # specific {HarvestMapping} and {HarvestSet} records, where applicable.
 class HarvestConfiguration < ApplicationRecord
+  include GenericInaccessible
   include HasEphemeralSystemSlug
   include HasHarvestMetadataFormat
   include HasHarvestSource

@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class HierarchicalSchemaVersionRank < ApplicationRecord
+  include GenericAccessible
   include View
 
   self.primary_key = %i[entity_type entity_id schema_definition_id schema_version_id]

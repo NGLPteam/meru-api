@@ -5,6 +5,7 @@
 # It works similar to the closure tree `*_hierarchies` tables, but with
 # added metadata to support our polymorphic tree.
 class EntityHierarchy < ApplicationRecord
+  include GenericInaccessible
   include TimestampScopes
 
   self.primary_key = %i[ancestor_id descendant_id]

@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class CommunityMembership < ApplicationRecord
+  include GenericAccessible
   include TimestampScopes
 
   belongs_to :community, inverse_of: :community_memberships

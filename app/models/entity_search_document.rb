@@ -2,6 +2,7 @@
 
 class EntitySearchDocument < ApplicationRecord
   include EntityAdjacent
+  include GenericInaccessible
   include HasEphemeralSystemSlug
   include PgSearch::Model
   include TimestampScopes

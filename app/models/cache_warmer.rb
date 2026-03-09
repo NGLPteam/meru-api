@@ -2,6 +2,7 @@
 
 # @see CacheWarmable
 class CacheWarmer < ApplicationRecord
+  include GenericInaccessible
   include HasEphemeralSystemSlug
   include TimestampScopes
 

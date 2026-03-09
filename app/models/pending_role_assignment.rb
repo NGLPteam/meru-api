@@ -4,6 +4,7 @@
 #
 # At present, it only works to ensure that admin users have their roles available.
 class PendingRoleAssignment < ApplicationRecord
+  include GenericInaccessible
   include View
 
   self.primary_key = %i[accessible_type accessible_id role_id subject_type subject_id]

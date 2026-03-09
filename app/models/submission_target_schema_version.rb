@@ -2,6 +2,7 @@
 
 # A connection between a {SubmissionTarget} and a {SchemaVersion}, indicating that the schema version is valid for submissions to the target.
 class SubmissionTargetSchemaVersion < ApplicationRecord
+  include GenericAccessible
   include HasEphemeralSystemSlug
   include TimestampScopes
 

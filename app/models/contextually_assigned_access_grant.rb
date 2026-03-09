@@ -2,6 +2,7 @@
 
 # An inferred connection between a {ContextualPermission} and an {AccessGrant}.
 class ContextuallyAssignedAccessGrant < ApplicationRecord
+  include GenericInaccessible
   include ContextuallyDerivedConnection
 
   contextual_primary_key! :access_grant_id

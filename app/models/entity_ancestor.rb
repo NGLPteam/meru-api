@@ -8,6 +8,7 @@
 #
 # @see SchemaVersionAncestor
 class EntityAncestor < ApplicationRecord
+  include GenericAccessible
   include HasEphemeralSystemSlug
   include TimestampScopes
 

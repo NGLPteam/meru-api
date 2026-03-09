@@ -4,6 +4,7 @@ module Audits
   # An audited view where the schema version in {Entity} does not
   # correspond to the actual {HierarchicalEntity}.
   class MismatchedEntitySchema < ApplicationRecord
+    include GenericInaccessible
     include View
 
     self.primary_key = :synced_entity_id

@@ -2,6 +2,7 @@
 
 # @see HarvestAttemptEntityLink
 class HarvestAttemptEntityLinkTransition < ApplicationRecord
+  include GenericInaccessible
   include TimestampScopes
 
   belongs_to :harvest_attempt_entity_link, inverse_of: :harvest_attempt_entity_link_transitions

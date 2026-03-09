@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class CacheWarming < ApplicationRecord
+  include GenericInaccessible
   include HasEphemeralSystemSlug
   include TimestampScopes
 

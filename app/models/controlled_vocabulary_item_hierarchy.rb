@@ -2,4 +2,5 @@
 
 class ControlledVocabularyItemHierarchy < ApplicationRecord
   include ClosureTreeHierarchy
+  include GenericInaccessible
 end

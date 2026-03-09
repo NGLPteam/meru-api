@@ -5,6 +5,7 @@
 # @api private
 class UserGroup < ApplicationRecord
   include AccessGrantSubject
+  include GenericInaccessible
   include HasSystemSlug
   include TimestampScopes
 

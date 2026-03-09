@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class HarvestAttemptRecordStatus < ApplicationRecord
+  include GenericAccessible
   include HasEphemeralSystemSlug
 
   self.primary_key = :harvest_attempt_id

@@ -14,6 +14,7 @@
 #
 # A generated attribute, `visibility_range`, is used to handle checking for limited cases.
 class EntityVisibility < ApplicationRecord
+  include GenericAccessible
   include TimestampScopes
 
   belongs_to :entity, polymorphic: true, inverse_of: :entity_visibility

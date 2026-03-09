@@ -3,6 +3,7 @@
 # @api private
 module Ahoy
   class Event < ApplicationRecord
+    include GenericInaccessible
     include Ahoy::QueryMethods
 
     self.table_name = "ahoy_events"

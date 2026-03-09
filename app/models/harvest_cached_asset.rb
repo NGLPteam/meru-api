@@ -10,6 +10,7 @@
 # cache asset retrieval across harvesting attempts to speed up reharvesting.
 class HarvestCachedAsset < ApplicationRecord
   include CachedAssetUploader::Attachment.new(:asset)
+  include GenericInaccessible
   include HasEphemeralSystemSlug
   include TimestampScopes
 

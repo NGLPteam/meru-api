@@ -4,6 +4,7 @@
 #
 # @see Rendering::ProcessLayoutInvalidationsJob
 class LayoutInvalidation < ApplicationRecord
+  include GenericInaccessible
   include HasEphemeralSystemSlug
   include TimestampScopes
 

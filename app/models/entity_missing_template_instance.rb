@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class EntityMissingTemplateInstance < ApplicationRecord
+  include GenericAccessible
   include View
 
   self.primary_key = %i[entity_id layout_definition_id template_definition_id]

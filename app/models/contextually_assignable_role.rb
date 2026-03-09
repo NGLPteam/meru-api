@@ -2,6 +2,7 @@
 
 # @see AssignableRoleTarget
 class ContextuallyAssignableRole < ApplicationRecord
+  include GenericInaccessible
   include ContextuallyDerivedConnection
 
   contextual_primary_key! :role_id

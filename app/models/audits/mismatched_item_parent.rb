@@ -5,6 +5,7 @@ module Audits
   # for items that have had their ancestors reparented
   # and have invalid collection associations.
   class MismatchedItemParent < ApplicationRecord
+    include GenericInaccessible
     include View
 
     self.primary_key = :item_id

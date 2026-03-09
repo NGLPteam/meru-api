@@ -2,6 +2,7 @@
 
 module Layouts
   class InstanceDigest < ApplicationRecord
+    include GenericAccessible
     include HasEphemeralSystemSlug
     include TimestampScopes
 

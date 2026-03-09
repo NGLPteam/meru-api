@@ -2,6 +2,7 @@
 
 module Templates
   class DefinitionDigest < ApplicationRecord
+    include GenericAccessible
     include HasEphemeralSystemSlug
     include TimestampScopes
 

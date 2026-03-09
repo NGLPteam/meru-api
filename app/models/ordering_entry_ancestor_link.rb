@@ -3,6 +3,7 @@
 # A join model that connects a leaf {OrderingEntry} with 1+ parent entries
 # when its associated {Ordering} is a tree.
 class OrderingEntryAncestorLink < ApplicationRecord
+  include GenericInaccessible
   include TimestampScopes
 
   self.primary_key = %i[ordering_id id]
