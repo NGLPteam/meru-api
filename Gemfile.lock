@@ -496,6 +496,8 @@ GEM
     net-smtp (0.5.1)
       net-protocol
     netrc (0.11.0)
+    newrelic_rpm (10.2.0)
+      logger
     nio4r (2.7.5)
     nokogiri (1.19.1)
       mini_portile2 (~> 2.8.2)
@@ -937,6 +939,7 @@ DEPENDENCIES
   mods (~> 3.0)
   namae (~> 1.2.0)
   naught (~> 1.1.0)
+  newrelic_rpm (~> 10.0)
   niso-jats!
   nokogiri (~> 1.19)
   oai (~> 1.3.0)

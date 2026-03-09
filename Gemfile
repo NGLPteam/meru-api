@@ -142,6 +142,7 @@ gem "rack-cors", "~> 3.0.0"
 
 # Debugging / system-level things
 gem "bootsnap", ">= 1.19.0", require: false
+gem "newrelic_rpm", "~> 10.0"
 gem "pry-rails", "~> 0.3.11"
 gem "pry", "~> 0.16"
 gem "ruby-prof", "~> 2.0", require: false
