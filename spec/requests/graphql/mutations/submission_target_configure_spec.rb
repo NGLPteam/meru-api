@@ -25,6 +25,17 @@ RSpec.describe Mutations::SubmissionTargetConfigure, type: :request, graphql: :m
           }
         }
 
+        description {
+          internal
+          instructions
+          sections {
+            identifier
+            name
+            position
+            content
+          }
+        }
+
         schemaVersions {
           id
         }
@@ -63,7 +74,12 @@ RSpec.describe Mutations::SubmissionTargetConfigure, type: :request, graphql: :m
 
   let_mutation_input!(:description) do
     {
-      sections: [],
+      sections: [
+        {
+          name: "Section 1",
+          content: "Content for section 1."
+        }
+      ],
     }
   end
 
