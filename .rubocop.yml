@@ -677,7 +677,7 @@ RSpec/LetSetup:
   Enabled: false
 
 RSpec/MatchArray:
-  Enabled: true
+  Enabled: false
 
 RSpec/MetadataStyle:
   Enabled: false
