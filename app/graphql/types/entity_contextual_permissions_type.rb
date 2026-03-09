@@ -24,7 +24,7 @@ module Types
         return ContextualPermission.empty_permission_for(context[:current_user], object)
       end
 
-      load_record_with(::ContextualPermission, where: { user: context[:current_user] }).load(object)
+      load_record_with(::ContextualPermission, object.id, find_by: :hierarchical_id, where: { user: context[:current_user] })
     end
 
     # This surfaces the `allowed_actions` from the associated {#contextual_permission}.
