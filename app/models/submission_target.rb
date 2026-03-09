@@ -9,6 +9,8 @@ class SubmissionTarget < ApplicationRecord
   include TimestampScopes
   include UsesStatesman
 
+  attribute :description, SubmissionTargets::Description.to_type
+
   pg_enum! :state, as: :submission_target_state, allow_blank: false, default: "closed"
   pg_enum! :deposit_mode, as: :submission_deposit_mode, allow_blank: false, default: "direct", suffix: :deposit
 
@@ -54,6 +56,8 @@ class SubmissionTarget < ApplicationRecord
   after_save_commit :check_for_auto_close!, if: :open?
 
   after_touch :check_for_auto_close!
+
+  validates :description, store_model: true
 
   validate :must_have_deposit_targets!, on: :opening
 
