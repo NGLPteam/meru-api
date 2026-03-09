@@ -3,6 +3,7 @@
 # A denormalized view that's able to grab the prev & next entries for any given
 # {OrderingEntry}, if one exists.
 class OrderingEntrySiblingLink < ApplicationRecord
+  include GenericInaccessible
   include TimestampScopes
 
   self.primary_key = %i[ordering_id sibling_id]

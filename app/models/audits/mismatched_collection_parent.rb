@@ -5,6 +5,7 @@ module Audits
   # for collections that have had their ancestors reparented
   # and have invalid community associations.
   class MismatchedCollectionParent < ApplicationRecord
+    include GenericInaccessible
     include View
 
     self.primary_key = :collection_id

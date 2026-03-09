@@ -2,6 +2,7 @@
 
 # A connection between a {HarvestAttempt} and a {HarvestRecord}.
 class HarvestAttemptRecordLink < ApplicationRecord
+  include GenericAccessible
   include TimestampScopes
   include UsesStatesman
 

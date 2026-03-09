@@ -9,6 +9,7 @@
 # @see ReferencesNamedVariableDates
 # @see WritesNamedVariableDates
 class NamedVariableDate < ApplicationRecord
+  include GenericAccessible
   include TimestampScopes
 
   attr_readonly :actual_precision, :precision, :coverage, :normalized, :value

@@ -5,6 +5,7 @@
 # and {Community}.
 class EntityBreadcrumb < ApplicationRecord
   include FiltersBySchemaVersion
+  include GenericAccessible
   include ScopesForEntity
   include View
 

@@ -7,6 +7,7 @@
 # @see Schemas::Orderings::Refresh
 # rubocop:disable Metrics/AbcSize
 class OrderingEntryCandidate < ApplicationRecord
+  include GenericInaccessible
   include View
 
   include EntityAdjacent

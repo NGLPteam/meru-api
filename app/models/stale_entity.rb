@@ -10,6 +10,7 @@
 #
 # @see Rendering::ProcessStaleEntitiesJob
 class StaleEntity < ApplicationRecord
+  include GenericInaccessible
   include TimestampScopes
 
   self.primary_key = :id

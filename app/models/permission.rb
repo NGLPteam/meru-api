@@ -6,6 +6,7 @@
 #
 # @see Permissions::Sync
 class Permission < ApplicationRecord
+  include GenericAccessible
   include TimestampScopes
 
   pg_enum! :kind, as: "permission_kind"

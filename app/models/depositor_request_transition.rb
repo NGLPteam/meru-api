@@ -4,6 +4,7 @@
 class DepositorRequestTransition < ApplicationRecord
   include Support::StatesmanHelpers::Transition
   include CommonTransition
+  include GenericAccessible
   include HasEphemeralSystemSlug
   include TimestampScopes
 

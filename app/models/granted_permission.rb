@@ -11,6 +11,7 @@
 # and created via {Access::CalculateGrantedPermission} and its
 # related jobs.
 class GrantedPermission < ApplicationRecord
+  include GenericInaccessible
   include TimestampScopes
 
   belongs_to :access_grant, inverse_of: :granted_permissions

@@ -2,6 +2,7 @@
 
 # @see HarvestAttempt
 class HarvestAttemptTransition < ApplicationRecord
+  include GenericAccessible
   include TimestampScopes
 
   belongs_to :harvest_attempt, inverse_of: :harvest_attempt_transitions

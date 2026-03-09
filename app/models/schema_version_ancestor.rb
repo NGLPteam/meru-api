@@ -8,6 +8,7 @@
 # `journal_article` with each possible version of those so that entities can very easily
 # determine which ancestor in their hierarchy conforms to each schema.
 class SchemaVersionAncestor < ApplicationRecord
+  include GenericAccessible
   include TimestampScopes
 
   belongs_to :schema_version, inverse_of: :schema_version_ancestors

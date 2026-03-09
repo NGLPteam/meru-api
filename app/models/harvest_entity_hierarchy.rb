@@ -2,4 +2,5 @@
 
 class HarvestEntityHierarchy < ApplicationRecord
   include ClosureTreeHierarchy
+  include GenericInaccessible
 end

@@ -6,6 +6,7 @@
 # It is used to describe the available schema properties for ordering and other purposes in the system.
 class SchemaDefinitionProperty < ApplicationRecord
   include FiltersBySchemaDefinition
+  include GenericAccessible
   include WrapsSchemaProperty
   include MaterializedView
   include TimestampScopes

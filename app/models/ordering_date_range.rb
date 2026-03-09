@@ -3,6 +3,7 @@
 # A view used to calculate the published date range for an {Ordering}.
 # This data is denormalized onto the {Ordering} model.
 class OrderingDateRange < ApplicationRecord
+  include GenericAccessible
   include View
 
   self.primary_key = :ordering_id

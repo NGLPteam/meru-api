@@ -5,6 +5,7 @@ module Templates
   # existence of a `manual_list_name` being set under the right conditions on
   # a given {TemplateDefinition}.
   class ManualList < ApplicationRecord
+    include GenericAccessible
     include HasEphemeralSystemSlug
     include TimestampScopes
 

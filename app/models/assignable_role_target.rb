@@ -4,6 +4,7 @@
 # to assign. It requires that the `source_role` has some level of `*.manage_access` available, and will
 # be further filtered at the contextual level, if necessary.
 class AssignableRoleTarget < ApplicationRecord
+  include GenericInaccessible
   include MaterializedView
 
   # @return [Role]

@@ -2,6 +2,7 @@
 
 # A step in the processing of a GraphQL request, recorded for performance monitoring.
 class RequestStep < ApplicationRecord
+  include GenericInaccessible
   include HasEphemeralSystemSlug
   include TimestampScopes
 

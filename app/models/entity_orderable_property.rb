@@ -5,6 +5,7 @@
 # @see Schemas::Instances::ExtractOrderableProperties
 class EntityOrderableProperty < ApplicationRecord
   include DenormalizedProperty
+  include GenericAccessible
   include TimestampScopes
 
   # @api private

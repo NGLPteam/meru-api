@@ -7,6 +7,7 @@
 # 2. whether it has been modified
 # 3. whether the schema version for the ordering matches the entity
 class EntityInheritedOrdering < ApplicationRecord
+  include GenericAccessible
   include ScopesForIdentifier
   include View
 

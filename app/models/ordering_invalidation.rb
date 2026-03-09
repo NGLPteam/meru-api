@@ -6,6 +6,7 @@
 # @see OrderingInvalidations::Process
 # @see OrderingInvalidations::Processor
 class OrderingInvalidation < ApplicationRecord
+  include GenericInaccessible
   include HasEphemeralSystemSlug
   include TimestampScopes
 

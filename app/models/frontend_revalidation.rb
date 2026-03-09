@@ -6,6 +6,7 @@
 # @see Frontend::Cache::EntityRevalidator
 # @see Frontend::Cache::InstanceRevalidator
 class FrontendRevalidation < ApplicationRecord
+  include GenericInaccessible
   include HasEphemeralSystemSlug
   include TimestampScopes
 

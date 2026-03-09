@@ -2,4 +2,5 @@
 
 class CollectionHierarchy < ApplicationRecord
   include ClosureTreeHierarchy
+  include GenericInaccessible
 end

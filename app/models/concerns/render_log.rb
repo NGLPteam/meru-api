@@ -2,4 +2,6 @@
 
 module RenderLog
   extend ActiveSupport::Concern
+
+  include GenericInaccessible
 end

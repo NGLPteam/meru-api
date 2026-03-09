@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class EntityDerivedLayoutDefinition < ApplicationRecord
+  include GenericAccessible
   include HasEphemeralSystemSlug
   include TimestampScopes
 

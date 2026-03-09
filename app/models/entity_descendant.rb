@@ -8,6 +8,7 @@ class EntityDescendant < ApplicationRecord
   ENTITY_ADJACENT_PRIMARY_KEY = %i[descendant_type descendant_id].freeze
 
   include EntityAdjacent
+  include GenericAccessible
   include FiltersByEntityScope
   include FiltersBySchemaVersion
   include TimestampScopes

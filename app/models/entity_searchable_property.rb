@@ -5,6 +5,7 @@
 # @see Schemas::Instances::ExtractSearchableProperties
 class EntitySearchableProperty < ApplicationRecord
   include DenormalizedProperty
+  include GenericInaccessible
   include TimestampScopes
 
   # @api private

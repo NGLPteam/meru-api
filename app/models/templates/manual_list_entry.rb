@@ -3,6 +3,7 @@
 module Templates
   # An individual entry in a {Templates::ManualList} for a given {Entity}.
   class ManualListEntry < ApplicationRecord
+    include GenericAccessible
     include HasEphemeralSystemSlug
     include ReferencesEntityVisibility
     include TimestampScopes

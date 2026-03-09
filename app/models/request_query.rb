@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class RequestQuery < ApplicationRecord
+  include GenericInaccessible
   include HasEphemeralSystemSlug
   include TimestampScopes
 

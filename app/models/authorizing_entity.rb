@@ -7,6 +7,7 @@
 # @see Entities::AuditAuthorizing
 # @see Entities::CalculateAuthorizing
 class AuthorizingEntity < ApplicationRecord
+  include GenericInaccessible
   include TimestampScopes
 
   self.primary_key = %i[auth_path entity_id scope hierarchical_type hierarchical_id].freeze

@@ -2,6 +2,7 @@
 
 # A staged contribution that will generate a matching {Contribution} record.
 class HarvestContribution < ApplicationRecord
+  include GenericInaccessible
   include TimestampScopes
 
   belongs_to :harvest_contributor, inverse_of: :harvest_contributions

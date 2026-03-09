@@ -2,6 +2,7 @@
 
 # A staging ground to a {Contributor} from a {HarvestSource}.
 class HarvestContributor < ApplicationRecord
+  include GenericAccessible
   include ScopesForIdentifier
   include TimestampScopes
 

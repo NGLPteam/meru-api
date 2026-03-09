@@ -3,6 +3,7 @@
 module Templates
   # @api private
   class DerivedInstanceDigest < ApplicationRecord
+    include GenericAccessible
     include TimestampScopes
     include View
 

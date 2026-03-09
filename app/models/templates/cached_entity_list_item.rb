@@ -5,6 +5,7 @@ module Templates
   # @see Templates::EntityList
   # @see Templates::Instances::EntityListCacher
   class CachedEntityListItem < ApplicationRecord
+    include GenericAccessible
     include HasEphemeralSystemSlug
     include TimestampScopes
 

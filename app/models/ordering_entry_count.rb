@@ -3,6 +3,7 @@
 # A view used to calculate total and visible entry counts for an {Ordering}.
 # These counts are denormalized onto the {Ordering} model.
 class OrderingEntryCount < ApplicationRecord
+  include GenericInaccessible
   include View
 
   self.primary_key = :ordering_id

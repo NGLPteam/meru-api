@@ -2,6 +2,7 @@
 
 # An inferred connection between a {ContextualPermission} and a {Role}.
 class ContextuallyAssignedRole < ApplicationRecord
+  include GenericInaccessible
   include ContextuallyDerivedConnection
 
   contextual_primary_key! :role_id

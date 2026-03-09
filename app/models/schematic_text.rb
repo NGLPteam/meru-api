@@ -8,6 +8,7 @@
 # @see Schemas::Properties::Scalar::FullText
 # @see Types::Schematic::FullTextPropertyType
 class SchematicText < ApplicationRecord
+  include GenericAccessible
   include SchematicPathValidity
   include TimestampScopes
 
