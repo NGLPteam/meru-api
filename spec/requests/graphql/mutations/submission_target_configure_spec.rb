@@ -8,6 +8,7 @@ RSpec.describe Mutations::SubmissionTargetConfigure, type: :request, graphql: :m
         id
         slug
 
+        agreementRequired
         depositMode
         depositTargets {
           id
@@ -73,10 +74,20 @@ RSpec.describe Mutations::SubmissionTargetConfigure, type: :request, graphql: :m
         st[:slug] = be_an_encoded_slug
         st[:deposit_mode] = deposit_mode
 
-        if deposit_mode == "DESCENDANT"
-          st[:deposit_targets] = be_present
-        else
-          st.array(:deposit_targets) do |dts|
+        st[:agreement_required] = agreement_required
+
+        st.array(:deposit_targets) do |dts|
+          if deposit_mode == "DESCENDANT"
+            deposit_targets.each do |entity|
+              dts.item do |dt|
+                dt[:deposit_mode] = "DESCENDANT"
+
+                dt.prop :entity do |ent|
+                  ent[:id] = entity.to_encoded_id
+                end
+              end
+            end
+          else
             dts.item do |dt|
               dt[:deposit_mode] = "DIRECT"
 
@@ -137,8 +148,26 @@ RSpec.describe Mutations::SubmissionTargetConfigure, type: :request, graphql: :m
       end
     end
 
-    context "when deposit mode is DESCENDANT" do
+    context "when deposit mode is DESCENDANT & requires agreement" do
       let(:deposit_mode) { "DESCENDANT" }
+      let(:agreement_required) { true }
+      let(:agreement_content) { "Agreement content goes here." }
+
+      context "with valid targets provided" do
+        let(:deposit_targets) { [item, other_item] }
+
+        let_mutation_input!(:deposit_target_ids) do
+          deposit_targets.map(&:to_encoded_id)
+        end
+
+        it "configures the submission target with the provided deposit targets" do
+          expect_request! do |req|
+            req.effect! change(SubmissionDepositTarget, :count).by(2)
+
+            req.data! valid_mutation_shape
+          end
+        end
+      end
 
       context "with no targets provided" do
         let(:expected_shape) do

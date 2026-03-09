@@ -48,6 +48,8 @@ module SubmissionTargets
         description:,
       }
 
+      @submission_target.assign_attributes(@attrs)
+
       super
     end
 
@@ -55,7 +57,7 @@ module SubmissionTargets
       submission_target.save!
 
       deposit_targets.each do |entity|
-        submission_target.submission_deposit_targets.where(entity).first_or_create!
+        submission_target.submission_deposit_targets.where(entity:).first_or_create!
       end
 
       submission_target.submission_deposit_targets.where.not(entity: deposit_targets).destroy_all
