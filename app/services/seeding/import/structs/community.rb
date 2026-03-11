@@ -5,7 +5,7 @@ module Seeding
     module Structs
       # A struct for building a {::Community}.
       class Community < Base
-        include Shared::Typing
+        include ::Support::Typing
 
         attribute :identifier, Seeding::Types::String
         attribute :title, Seeding::Types::String

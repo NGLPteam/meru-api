@@ -5,7 +5,7 @@ module Seeding
     module Structs
       # The root struct for handling an import.
       class Import < Base
-        include Shared::Typing
+        include ::Support::Typing
 
         attribute :communities, Seeding::Import::Structs::Community.as_list
         attribute :version, Seeding::Types::ImportVersion

@@ -2,7 +2,7 @@
 
 module Analytics
   # @see Types::AnalyticsRegionCountSummaryType
-  class RegionCountSummary < Shared::FlexibleStruct
+  class RegionCountSummary < ::Support::FlexibleStruct
     attribute :results, Analytics::Types::Array.of(Analytics::RegionCountResult)
 
     attribute :unfiltered_total, Analytics::Types::Integer

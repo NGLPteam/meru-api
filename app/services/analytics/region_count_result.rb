@@ -2,7 +2,7 @@
 
 module Analytics
   # @see Types::AnalyticsRegionCountResultType
-  class RegionCountResult < Shared::FlexibleStruct
+  class RegionCountResult < ::Support::FlexibleStruct
     attribute? :country_code, Analytics::Types::String.default("$unknown$")
     attribute? :region_code, Analytics::Types::String.default("$unknown$")
     attribute? :count, Analytics::Types::Integer.default(0)

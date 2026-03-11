@@ -3,7 +3,7 @@
 module Schemas
   module Properties
     class TypeMapping
-      include Shared::Typing
+      include ::Support::Typing
       include Dry::Core::Equalizer.new(:paths)
 
       include Dry::Initializer[undefined: false].define -> do

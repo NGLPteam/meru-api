@@ -17,7 +17,7 @@ module Searching
 
     include ArelHelpers
 
-    include Shared::Typing
+    include ::Support::Typing
 
     define_model_callbacks :prepare, :compile
 

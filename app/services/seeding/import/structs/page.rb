@@ -5,7 +5,7 @@ module Seeding
     module Structs
       # A struct for building a {::Page}.
       class Page < Base
-        include Shared::Typing
+        include ::Support::Typing
 
         DefaultList = List.default { [] }
 

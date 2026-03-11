@@ -7,7 +7,7 @@ module ImageAttachments
   # @see ImageUploader
   # @see Types::ImageAttachmentType
   class ImageWrapper
-    include Shared::Typing
+    include ::Support::Typing
     include Dry::Core::Memoizable
     include Dry::Initializer[undefined: false].define -> do
       param :attacher, ImageAttachments::Types::Attacher

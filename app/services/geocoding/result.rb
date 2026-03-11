@@ -2,7 +2,7 @@
 
 module Geocoding
   # @see Geocoding::Lookup
-  class Result < Shared::FlexibleStruct
+  class Result < ::Support::FlexibleStruct
     attribute :country, Geocoding::Types::String
     attribute? :country_code, Geocoding::Types::String.optional
     attribute? :region, Geocoding::Types::String.optional

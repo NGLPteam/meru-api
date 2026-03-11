@@ -6,7 +6,7 @@ module Utility
     #
     # A substitution entry for a {Utility::StringCleaner}.
     class Substitution < Dry::Struct
-      include Shared::Typing
+      include ::Support::Typing
 
       Pattern = Support::GlobalTypes.Instance(::Regexp) | Dry::Types["string"]
 

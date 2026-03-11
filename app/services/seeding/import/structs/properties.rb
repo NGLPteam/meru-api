@@ -6,7 +6,7 @@ module Seeding
       # An abstract base properties struct.
       # @abstract
       class Properties < Base
-        include Shared::Typing
+        include ::Support::Typing
 
         class << self
           def with_default

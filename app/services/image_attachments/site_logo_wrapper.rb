@@ -13,7 +13,7 @@ module ImageAttachments
 
       option :purpose, ImageAttachments::Types::Purpose, default: proc { "site_logo" }
     end
-    include Shared::Typing
+    include ::Support::Typing
 
     delegate :file, to: :attacher, prefix: :original
     delegate :alt, :original_filename, to: :original_file, allow_nil: true

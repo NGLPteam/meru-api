@@ -3,7 +3,7 @@
 module Filtering
   module Inputs
     # @abstract
-    class ComparatorMatch < Shared::FlexibleStruct
+    class ComparatorMatch < ::Support::FlexibleStruct
       include Dry::Core::Memoizable
 
       BASE_TYPES = Support::DryGQL::TypeContainer.new

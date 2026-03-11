@@ -4,7 +4,7 @@ module Seeding
   module Import
     module Structs
       # @abstract
-      class Base < Shared::FlexibleStruct
+      class Base < ::Support::FlexibleStruct
         def slice(*keys)
           keys.flatten.index_with do |key|
             public_send key

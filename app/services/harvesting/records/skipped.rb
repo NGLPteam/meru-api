@@ -5,7 +5,7 @@ module Harvesting
     # Stores the reason a record was skipped (if any).
     class Skipped
       include StoreModel::Model
-      include Shared::Typing
+      include ::Support::Typing
 
       attribute :active, :boolean, default: false
       attribute :reason, :string

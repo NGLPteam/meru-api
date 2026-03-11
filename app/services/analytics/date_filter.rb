@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Analytics
-  class DateFilter < Shared::FlexibleStruct
+  class DateFilter < ::Support::FlexibleStruct
     include Dry::Core::Memoizable
 
     attribute? :start_date, Analytics::Types::Date.optional
