@@ -47,21 +47,13 @@ module EntityTemplatingSupport
     call_operation("entities.derive_layout_definitions", entity: self)
   end
 
-  def has_layout_invalidations?
-    layout_invalidations.exists?
-  end
+  def has_layout_invalidations? = layout_invalidations.exists?
 
-  def has_missing_layouts?
-    missing_layout_instances.exists?
-  end
+  def has_missing_layouts? = missing_layout_instances.exists?
 
-  def has_missing_templates?
-    missing_template_instances.exists?
-  end
+  def has_missing_templates? = missing_template_instances.exists?
 
-  def has_no_layout_definitions_derived?
-    !entity_derived_layout_definitions.exists?
-  end
+  def has_no_layout_definitions_derived? = !entity_derived_layout_definitions.exists?
 
   # @see #invalidate_layouts
   # @see #invalidate_related_layouts
@@ -87,19 +79,13 @@ module EntityTemplatingSupport
   # @see Layouts::Disabled
   # @see Layouts::Disabler
   # @return [void]
-  def layout_invalidation_currently_disabled?
-    Layouts::Disabled.currently?
-  end
+  def layout_invalidation_currently_disabled? = Layouts::Disabled.currently?
 
   # @see ModelMutationSupport#in_graphql_mutation?
-  def layout_invalidation_disabled?
-    in_graphql_mutation? || layout_invalidation_currently_disabled? || force_disable_layout_invalidation
-  end
+  def layout_invalidation_disabled? = in_graphql_mutation? || layout_invalidation_currently_disabled? || force_disable_layout_invalidation
 
   # @return [String]
-  def render_lock_key
-    "render_lock/#{id}"
-  end
+  def render_lock_key = "render_lock/#{id}"
 
   # @see Entities::RenderLayout
   # @see Entities::LayoutRenderer
@@ -131,9 +117,7 @@ module EntityTemplatingSupport
     call_operation("entities.reprocess_layouts", self)
   end
 
-  def stale?
-    has_layout_invalidations? || has_missing_layouts? || has_missing_templates? || has_no_layout_definitions_derived?
-  end
+  def stale? = has_layout_invalidations? || has_missing_layouts? || has_missing_templates? || has_no_layout_definitions_derived?
 
   module ClassMethods
     # @api private

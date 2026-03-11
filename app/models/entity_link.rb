@@ -48,7 +48,31 @@ class EntityLink < ApplicationRecord
   validates :scope, inclusion: { in: Links::Types::SCOPE_VALUES }
   validates :target_id, uniqueness: { scope: %i[source_type source_id target_type] }
 
-  after_save :refresh_source_orderings!
+  after_save :refresh_source_orderings!, unless: :maintenance_mode?
+
+  # We want to skip refreshing source orderings during link maintenance,
+  # since this will already happen as part of the entity's maintenance.
+  #
+  # @see #check!
+  # @see Links::Maintain
+  # @return [Boolean]
+  attr_accessor :maintenance_mode
+
+  alias maintenance_mode? maintenance_mode
+
+  # @see Links::Maintain
+  # @return [void]
+  def check!
+    self.maintenance_mode = true
+
+    if valid?
+      save!
+    else
+      destroy!
+    end
+  ensure
+    self.maintenance_mode = false
+  end
 
   # @api private
   # @return [String, nil]

@@ -42,7 +42,7 @@ module Templates
       # @abstract
       # @return [ActiveRecord::Relation<::Contribution>]
       def fetch_contributions
-        @entity.contributions
+        @entity.contributions.includes(:contributor)
       end
     end
   end
