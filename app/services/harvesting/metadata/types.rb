@@ -4,9 +4,7 @@ module Harvesting
   module Metadata
     module Types
       include Dry::Core::Constants
-      include Dry.Types
-
-      extend Support::EnhancedTypes
+      extend ::Support::Typespace
 
       ContributionProxy = ::Harvesting::Contributions::Proxy::Type
 

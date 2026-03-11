@@ -4,7 +4,7 @@ module Support
   module Params
     # @api private
     module Types
-      include Dry.Types
+      extend ::Support::Typespace
 
       Param = Coercible::String
 

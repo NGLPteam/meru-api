@@ -1,9 +1,7 @@
 # frozen_string_literal: true
 
 module AppTypes
-  include Dry.Types
-
-  extend Shared::EnhancedTypes
+  extend ::Support::Typespace
 
   ISSN_PATTERN = /\A\d{4}-\d{4}\z/
 

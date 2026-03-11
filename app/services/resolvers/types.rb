@@ -3,9 +3,7 @@
 module Resolvers
   # Types in support of the {Resolvers} subsystem.
   module Types
-    include Dry.Types
-
-    extend Support::EnhancedTypes
+    extend ::Support::Typespace
 
     # A filter scope for use in GraphQL resolvers.
     #

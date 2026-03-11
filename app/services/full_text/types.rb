@@ -6,7 +6,7 @@ module FullText
   # @see SchematicText
   # @see Schemas::Properties::Scalar::FullText
   module Types
-    include Dry.Types
+    extend ::Support::Typespace
 
     Kind = Coercible::String.enum("text", "markdown", "html").fallback("text").constructor do |value|
       value.to_s.underscore

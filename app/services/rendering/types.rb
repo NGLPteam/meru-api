@@ -3,9 +3,7 @@
 module Rendering
   # Types related to rendering {Layouts} / {Templates} for {Entities}.
   module Types
-    include Dry.Types
-
-    extend Support::EnhancedTypes
+    extend ::Support::Typespace
 
     Generation = String.constrained(uuid_v4: true)
   end

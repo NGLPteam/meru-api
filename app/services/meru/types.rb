@@ -2,9 +2,7 @@
 
 module Meru
   module Types
-    include Dry.Types
-
-    extend Support::EnhancedTypes
+    extend ::Support::Typespace
 
     ClientLocation = ::Types::ClientLocationType.dry_type
 

@@ -3,7 +3,7 @@
 module PilotHarvesting
   # Types related to pilot
   module Types
-    include Dry.Types
+    extend ::Support::Typespace
 
     SeedList = Types::Array.of(Types::String).default { [] }
 

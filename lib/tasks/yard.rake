@@ -21,7 +21,6 @@ begin
       "--name-tag", "subsystem:Subsystem",
       "--embed-mixin", "AnonymousInterface",
       "--embed-mixin", "ClassMethods",
-      "--embed-mixin", "Shared::EnhancedTypes",
       "--transitive-tag", "subsystem",
       "--private",
       "--protected",

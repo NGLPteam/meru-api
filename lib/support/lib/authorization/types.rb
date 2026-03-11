@@ -3,7 +3,7 @@
 module Support
   module Authorization
     module Types
-      include Dry.Types
+      extend ::Support::Typespace
 
       # An action
       ActionName = Coercible::Symbol.constrained(format: /\A[a-z]\w+[a-z]\z/)

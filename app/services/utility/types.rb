@@ -3,9 +3,7 @@
 module Utility
   module Types
     include Dry::Core::Constants
-    include Dry.Types
-
-    extend Support::EnhancedTypes
+    extend ::Support::Typespace
 
     Callable = Interface(:to_proc)
 

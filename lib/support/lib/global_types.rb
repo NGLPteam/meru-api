@@ -3,9 +3,7 @@
 module Support
   # Types that are shared between support code and application code.
   module GlobalTypes
-    include Dry.Types
-
-    extend Support::EnhancedTypes
+    extend ::Support::Typespace
 
     UUID_PATTERN = /\A[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\z/i
 

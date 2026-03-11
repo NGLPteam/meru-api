@@ -2,11 +2,9 @@
 
 module Layouts
   module Types
-    include Dry.Types
+    extend ::Support::Typespace
 
     include Dry::Core::Constants
-
-    extend Support::EnhancedTypes
 
     Association = Coercible::Symbol
 

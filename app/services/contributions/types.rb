@@ -2,9 +2,7 @@
 
 module Contributions
   module Types
-    include Dry.Types
-
-    extend Support::EnhancedTypes
+    extend ::Support::Typespace
 
     Contributable = ModelInstance("Collection") | ModelInstance("Item")
 

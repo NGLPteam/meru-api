@@ -3,9 +3,7 @@
 module ImageAttachments
   # Types related to working with image attachments of varying domains.
   module Types
-    include Dry.Types
-
-    extend Shared::EnhancedTypes
+    extend ::Support::Typespace
 
     extend Constants
 

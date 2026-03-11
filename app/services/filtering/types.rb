@@ -2,9 +2,7 @@
 
 module Filtering
   module Types
-    include Dry.Types
-
-    extend Shared::EnhancedTypes
+    extend ::Support::Typespace
 
     Filters = Instance(Filtering::FilterScope)
 

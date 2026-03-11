@@ -3,9 +3,7 @@
 module Support
   module Networking
     module Types
-      include Dry.Types
-
-      extend Support::EnhancedTypes
+      extend ::Support::Typespace
 
       RetryCount = Integer.constrained(gt: 0, lt: 11)
 

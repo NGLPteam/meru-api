@@ -3,9 +3,7 @@
 module Support
   module StatesmanHelpers
     module Types
-      include Dry.Types
-
-      extend Support::EnhancedTypes
+      extend ::Support::Typespace
 
       AssociationName = Coercible::Symbol
 

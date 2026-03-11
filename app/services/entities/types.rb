@@ -3,9 +3,7 @@
 module Entities
   # Types related to managing and synchronizing an {Entity}.
   module Types
-    include Dry.Types
-
-    extend Shared::EnhancedTypes
+    extend ::Support::Typespace
 
     # A pattern for matching an auth_path, composed of multiple slugs
     AUTH_PATH_FORMAT = /\A[a-z0-9]+(?:(?:\.[a-z0-9]+)|(?<!\._)\._(?!\z))*\z/i

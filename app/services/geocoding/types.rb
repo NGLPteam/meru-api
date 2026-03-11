@@ -2,6 +2,6 @@
 
 module Geocoding
   module Types
-    include Dry.Types
+    extend ::Support::Typespace
   end
 end

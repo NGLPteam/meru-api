@@ -2,9 +2,7 @@
 
 module Harvesting
   module Types
-    include Dry.Types
-
-    extend Support::EnhancedTypes
+    extend ::Support::Typespace
 
     VALID_NAME = /\A([a-z_][a-zA-Z_0-9]*)\z/
 

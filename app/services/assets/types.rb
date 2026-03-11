@@ -2,9 +2,7 @@
 
 module Assets
   module Types
-    include Dry.Types
-
-    extend Support::EnhancedTypes
+    extend ::Support::Typespace
 
     Kind = ApplicationRecord.dry_pg_enum(:asset_kind, default: "unknown").fallback("unknown")
   end

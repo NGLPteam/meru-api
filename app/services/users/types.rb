@@ -6,7 +6,7 @@ module Users
   # @see ::AnonymousUser
   # @see ::User
   module Types
-    include Dry.Types
+    extend ::Support::Typespace
 
     AccessManagement = ApplicationRecord.dry_pg_enum("access_management", default: "forbidden").fallback("forbidden")
 

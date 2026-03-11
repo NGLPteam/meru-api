@@ -3,9 +3,7 @@
 module Seeding
   # Types for handling seeding entities.
   module Types
-    include Dry.Types
-
-    extend Shared::EnhancedTypes
+    extend ::Support::Typespace
 
     Entity = Instance(::Community) | Instance(::Collection) | Instance(::Item)
 

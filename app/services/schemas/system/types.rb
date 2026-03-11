@@ -3,9 +3,7 @@
 module Schemas
   module System
     module Types
-      include Dry.Types
-
-      extend Support::EnhancedTypes
+      extend ::Support::Typespace
 
       # A logical grouping for the kind of property.
       #

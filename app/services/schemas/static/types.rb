@@ -3,9 +3,7 @@
 module Schemas
   module Static
     module Types
-      include Dry.Types
-
-      extend Support::EnhancedTypes
+      extend ::Support::Typespace
 
       Component = ::Schemas::Types::Component
 

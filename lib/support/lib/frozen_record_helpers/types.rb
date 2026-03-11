@@ -3,7 +3,7 @@
 module Support
   module FrozenRecordHelpers
     module Types
-      include Dry.Types
+      extend ::Support::Typespace
 
       CalculatedAttributes = Hash.map(Coercible::String, Interface(:call))
 

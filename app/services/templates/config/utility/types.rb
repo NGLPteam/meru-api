@@ -5,9 +5,7 @@ module Templates
     module Utility
       # Very specific utility types for the config namespace within the templating subsystem.
       module Types
-        include Dry.Types
-
-        extend Support::EnhancedTypes
+        extend ::Support::Typespace
 
         LayoutConfigKlass = Inherits(::Templates::Config::Utility::AbstractLayout)
 

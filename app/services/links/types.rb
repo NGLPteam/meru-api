@@ -3,7 +3,7 @@
 module Links
   # Types related to an {EntityLink}.
   module Types
-    include Dry.Types
+    extend ::Support::Typespace
 
     SOURCE_TYPES = %w[Community Collection Item].freeze
     TARGET_TYPES = SOURCE_TYPES.dup.freeze

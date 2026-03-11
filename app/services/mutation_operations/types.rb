@@ -3,7 +3,7 @@
 module MutationOperations
   # Types for working with mutation operations, contracts, etc.
   module Types
-    include Dry.Types
+    extend ::Support::Typespace
 
     ArgKey = Coercible::Symbol.constrained(format: /\A[a-z][a-z0-9_]+\z/)
 

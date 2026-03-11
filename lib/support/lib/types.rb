@@ -2,9 +2,7 @@
 
 module Support
   module Types
-    include Dry.Types
-
-    extend Support::EnhancedTypes
+    extend ::Support::Typespace
 
     # @api private
     module RelationHelper

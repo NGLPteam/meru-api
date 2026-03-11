@@ -2,9 +2,7 @@
 
 module LayoutInvalidations
   module Types
-    include Dry.Types
-
-    extend Support::EnhancedTypes
+    extend ::Support::Typespace
 
     LayoutInvalidation = ModelInstance("LayoutInvalidation")
   end

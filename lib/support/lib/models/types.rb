@@ -4,7 +4,7 @@ module Support
   module Models
     # Types specific to working with {ApplicationRecord models}.
     module Types
-      include Dry.Types
+      extend ::Support::Typespace
 
       # A Global ID instance or URI.
       GlobalID = Constructor(GlobalID, GlobalID.method(:parse)).constrained(global_id: true)

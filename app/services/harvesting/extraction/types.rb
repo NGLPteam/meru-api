@@ -3,9 +3,7 @@
 module Harvesting
   module Extraction
     module Types
-      include Dry.Types
-
-      extend Support::EnhancedTypes
+      extend ::Support::Typespace
 
       Assigns = Coercible::Hash.map(Coercible::String, Any)
 

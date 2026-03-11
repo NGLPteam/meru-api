@@ -4,9 +4,7 @@ module Harvesting
   module Frozen
     # Types for top-level harvesting frozen records..
     module Types
-      include Dry.Types
-
-      extend Support::EnhancedTypes
+      extend ::Support::Typespace
 
       Identifier = Coercible::String.constrained(filled: true)
 

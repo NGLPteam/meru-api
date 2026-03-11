@@ -2,9 +2,7 @@
 
 module Settings
   module Types
-    include Dry.Types
-
-    extend Shared::EnhancedTypes
+    extend ::Support::Typespace
 
     COLOR_SCHEMES = %w[cream blue gray].freeze
 

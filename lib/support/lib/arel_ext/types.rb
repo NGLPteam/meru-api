@@ -3,7 +3,7 @@
 module Support
   module ArelExt
     module Types
-      include Dry.Types
+      extend ::Support::Typespace
 
       ManyArray = Array.of(Any).constrained(min_size: 2)
 
