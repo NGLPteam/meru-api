@@ -2,9 +2,7 @@
 
 module StaleEntities
   module Types
-    include Dry.Types
-
-    extend Support::EnhancedTypes
+    extend ::Support::Typespace
 
     StaleEntity = ModelInstance("StaleEntity")
   end

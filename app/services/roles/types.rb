@@ -2,9 +2,7 @@
 
 module Roles
   module Types
-    include Dry.Types
-
-    extend Shared::EnhancedTypes
+    extend ::Support::Typespace
 
     PERMISSION_PART = /(?:[a-z]+?[a-z_]+[a-z]+)/
 

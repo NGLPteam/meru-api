@@ -2,7 +2,7 @@
 
 module NamedVariableDates
   module Types
-    include Dry.Types
+    extend ::Support::Typespace
 
     # These variable precision dates are shared across all {ChildEntity} types.
     SHARED = %i[published].freeze

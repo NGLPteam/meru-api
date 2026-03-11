@@ -5,7 +5,7 @@ module Schemas
     module References
       module Entities
         module Types
-          include Dry.Types
+          extend ::Support::Typespace
 
           # Parse the name for an ancestor origin.
           ANCESTOR = /\Aancestor\.(?<ancestor_name>[a-z][a-z0-9_]*[a-z])\z/

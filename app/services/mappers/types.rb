@@ -2,7 +2,7 @@
 
 module Mappers
   module Types
-    include Dry.Types
+    extend ::Support::Typespace
 
     include Support::EnhancedTypes
 

@@ -2,9 +2,7 @@
 
 module KeycloakAPI
   module Types
-    include Dry.Types
-
-    extend Support::EnhancedTypes
+    extend ::Support::Typespace
 
     ClientID = String
 

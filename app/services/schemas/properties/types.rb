@@ -4,7 +4,7 @@ module Schemas
   module Properties
     # Types specific to working with schema property classes.
     module Types
-      include Dry.Types
+      extend ::Support::Typespace
 
       # @api private
       #

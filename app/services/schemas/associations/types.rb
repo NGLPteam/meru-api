@@ -6,9 +6,7 @@ module Schemas
     #
     # @api private
     module Types
-      include Dry.Types
-
-      extend Shared::EnhancedTypes
+      extend ::Support::Typespace
 
       # An individual {Schemas::Associations::Association association}.
       Association = Instance(Schemas::Associations::Association)

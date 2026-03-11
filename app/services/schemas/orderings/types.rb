@@ -3,9 +3,7 @@
 module Schemas
   module Orderings
     module Types
-      include Dry.Types
-
-      extend Support::EnhancedTypes
+      extend ::Support::Typespace
 
       COMPONENT_FORMAT = /[a-z][a-z0-9_]*?[a-z0-9]/
 

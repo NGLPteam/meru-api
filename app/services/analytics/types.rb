@@ -3,7 +3,7 @@
 module Analytics
   # Types for working with analytics services
   module Types
-    include Dry.Types
+    extend ::Support::Typespace
 
     Entity = Entities::Types::Entity
 

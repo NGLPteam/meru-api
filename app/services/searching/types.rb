@@ -3,9 +3,7 @@
 module Searching
   # Types module for searching subsystem.
   module Types
-    include Dry.Types
-
-    extend Support::EnhancedTypes
+    extend ::Support::Typespace
 
     # @api private
     OPERATOR_NAMES = %w[

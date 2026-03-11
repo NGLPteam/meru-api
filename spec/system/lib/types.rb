@@ -2,7 +2,7 @@
 
 module Testing
   module Types
-    include Dry.Types
+    extend ::Support::Typespace
 
     AnyUser = ::Users::Types::Anonymous | ::Users::Types::Authenticated
 

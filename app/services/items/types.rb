@@ -2,9 +2,7 @@
 
 module Items
   module Types
-    include Dry.Types
-
-    extend Support::EnhancedTypes
+    extend ::Support::Typespace
 
     Item = ModelInstance("Item")
   end

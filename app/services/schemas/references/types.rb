@@ -4,9 +4,7 @@ module Schemas
   module References
     # Types tied to referencing models from within a schema.
     module Types
-      include Dry.Types
-
-      extend Shared::EnhancedTypes
+      extend ::Support::Typespace
 
       Collected = Any.constrained(schematic_collected_references: true).constructor ->(input, &block) do
         MeruAPI::Container["schemas.references.parse_collected"].call(input).value_or do

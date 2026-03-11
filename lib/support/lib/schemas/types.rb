@@ -3,7 +3,7 @@
 module Support
   module Schemas
     module Types
-      include Dry.Types
+      extend ::Support::Typespace
 
       EnumClass = Class.constrained(inherits: ::GraphQL::Schema::Enum)
 

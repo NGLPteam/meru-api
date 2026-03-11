@@ -3,9 +3,7 @@
 module SubmissionTargets
   # Types for working with {SubmissionTarget} operations and services.
   module Types
-    include Dry.Types
-
-    extend Support::EnhancedTypes
+    extend ::Support::Typespace
 
     DepositMode = ApplicationRecord.dry_pg_enum(:submission_deposit_mode, default: "direct").fallback("direct")
 

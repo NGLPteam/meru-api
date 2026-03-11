@@ -6,7 +6,7 @@ module Support
     #
     # @api private
     module Types
-      include Dry.Types
+      extend ::Support::Typespace
 
       ConstName = Coercible::Symbol.constrained(format: /\A[A-Z]\w+[a-zA-Z]\z/)
 

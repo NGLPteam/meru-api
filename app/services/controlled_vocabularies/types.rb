@@ -2,10 +2,8 @@
 
 module ControlledVocabularies
   module Types
-    include Dry.Types
+    extend ::Support::Typespace
     include Dry::Core::Constants
-
-    extend Support::EnhancedTypes
 
     NAMESPACE_PATTERN = /\A(?:[a-z]\w+[a-z0-9])(?:\.(?:[a-z]\w+[a-z0-9]))+\z/
     IDENTIFIER_PATTERN = /\A(?:[a-z](?:[_-]?[a-z0-9])+)\z/

@@ -2,9 +2,7 @@
 
 module Metadata
   module Types
-    include Dry.Types
-
-    extend Support::EnhancedTypes
+    extend ::Support::Typespace
 
     EnumeratedStringList = Coercible::Array.of(Coercible::String.constrained(filled: true))
 

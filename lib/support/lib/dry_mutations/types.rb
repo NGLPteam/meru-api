@@ -3,7 +3,7 @@
 module Support
   module DryMutations
     module Types
-      include Dry.Types
+      extend ::Support::Typespace
 
       AttributePath = Array.of(Integer | Coercible::String)
     end

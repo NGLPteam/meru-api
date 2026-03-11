@@ -4,9 +4,7 @@ module Harvesting
   module Testing
     # Types for testing harvesting infrastructure.
     module Types
-      include Dry.Types
-
-      extend Support::EnhancedTypes
+      extend ::Support::Typespace
 
       EsploroRecord = Instance(::EsploroSchema::Record)
 

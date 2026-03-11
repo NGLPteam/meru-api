@@ -2,9 +2,7 @@
 
 module Templates
   module Types
-    include Dry.Types
-
-    extend Support::EnhancedTypes
+    extend ::Support::Typespace
 
     Asset = ModelInstance("Asset")
 

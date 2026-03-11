@@ -3,9 +3,7 @@
 module Harvesting
   module MetadataMappings
     module Types
-      include Dry.Types
-
-      extend Support::EnhancedTypes
+      extend ::Support::Typespace
 
       Field = ::Types::HarvestMetadataMappingFieldType.dry_type
 

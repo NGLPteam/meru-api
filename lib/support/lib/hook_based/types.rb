@@ -3,7 +3,7 @@
 module Support
   module HookBased
     module Types
-      include Dry.Types
+      extend ::Support::Typespace
 
       Attribute = Coercible::Symbol.constrained(format: /\A[a-z]\w*[a-z]\z/).freeze
 

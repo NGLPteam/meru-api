@@ -3,9 +3,7 @@
 module Schemas
   # Types that are shared across the entire schema ecosystem.
   module Types
-    include Dry.Types
-
-    extend Support::EnhancedTypes
+    extend ::Support::Typespace
 
     # The supported format. Alphanumeric with underscores, all lowercase.
     #

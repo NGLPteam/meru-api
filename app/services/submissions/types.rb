@@ -3,9 +3,7 @@
 module Submissions
   # Types for working with {Submission} operations and services.
   module Types
-    include Dry.Types
-
-    extend Support::EnhancedTypes
+    extend ::Support::Typespace
 
     Submission = ModelInstance("Submission")
 

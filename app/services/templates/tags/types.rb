@@ -3,9 +3,7 @@
 module Templates
   module Tags
     module Types
-      include Dry.Types
-
-      extend Support::EnhancedTypes
+      extend ::Support::Typespace
 
       ArgName = Coercible::Symbol.constrained(filled: true)
 

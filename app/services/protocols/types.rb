@@ -2,9 +2,7 @@
 
 module Protocols
   module Types
-    include Dry.Types
-
-    extend Support::EnhancedTypes
+    extend ::Support::Typespace
 
     CurrentPage = Coercible::Integer.constrained(gt: 0).default(1).fallback(1)
 

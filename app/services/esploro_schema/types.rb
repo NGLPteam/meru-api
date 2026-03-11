@@ -2,7 +2,7 @@
 
 module EsploroSchema
   module Types
-    include Dry.Types
+    extend ::Support::Typespace
 
     ENUM_TYPE = ->(type) do
       return false unless type.kind_of?(::Dry::Types::Type)

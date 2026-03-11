@@ -2,9 +2,7 @@
 
 module CacheWarmers
   module Types
-    include Dry.Types
-
-    extend Support::EnhancedTypes
+    extend ::Support::Typespace
 
     CacheWarmer = ModelInstance("CacheWarmer")
   end
