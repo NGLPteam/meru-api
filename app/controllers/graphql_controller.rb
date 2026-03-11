@@ -32,6 +32,7 @@ class GraphQLController < ApplicationController
       auth_context:,
       current_user:,
       request_state:,
+      visibility_profile: :public,
     }
 
     json = request_state.wrap do

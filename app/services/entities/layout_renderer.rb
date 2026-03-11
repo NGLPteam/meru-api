@@ -6,6 +6,8 @@ module Entities
     include Dry::Initializer[undefined: false].define -> do
       param :entity, Layouts::Types::Entity
 
+      option :generation, Rendering::Types::Generation, default: proc { SecureRandom.uuid }
+
       option :layout_kind, Layouts::Types::Kind
     end
 
@@ -34,7 +36,7 @@ module Entities
     end
 
     wrapped_hook! def render_layout
-      yield layout_definition.render(entity)
+      yield layout_definition.render(entity, generation:)
 
       Success()
     end

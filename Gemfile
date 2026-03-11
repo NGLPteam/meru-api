@@ -149,13 +149,15 @@ gem "ruby-prof", "~> 2.0", require: false
 gem "stackprof", "~> 0.2.25", require: false
 
 group :development, :test do
+  gem "derailed_benchmarks", require: false
   gem "factory_bot_rails", "~> 6.5.0"
   gem "faker", "~> 3.6"
   gem "rspec", "~> 3.13.2"
   gem "rspec-rails", "~> 8.0"
-  gem "yard", "~> 0.9.34"
-  gem "yard-activerecord", "~> 0.0.16"
-  gem "yard-activesupport-concern", "~> 0.0.1"
+  gem "vernier", require: false
+  gem "yard", "~> 0.9.34", require: false
+  gem "yard-activerecord", "~> 0.0.16", require: false
+  gem "yard-activesupport-concern", "~> 0.0.1", require: false
 end
 
 group :development do

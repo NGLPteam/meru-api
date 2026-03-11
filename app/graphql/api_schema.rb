@@ -14,6 +14,8 @@ class APISchema < GraphQL::Schema
   trace_with(GraphQL::Tracing::ActiveSupportNotificationsTrace)
   trace_with(GraphQL::Tracing::NewRelicTrace)
 
+  introspection ::Support::GraphQLAPI::Introspection
+
   validate_timeout nil
 
   use GraphQL::FragmentCache
@@ -94,6 +96,7 @@ class APISchema < GraphQL::Schema
     Types::OrganizationContributorType,
     Types::PersonContributorType,
     Types::SearchResultType,
+    Types::SchemaPropertyFunctionType,
     Types::SchemaPropertyTypeType,
     Types::SchemaInstanceType,
     Types::TemplateContributionType
@@ -180,4 +183,10 @@ class APISchema < GraphQL::Schema
       end
     end
   end
+
+  # @note This has to be at the end of the file so that extra and orphan types
+  #   are properly registered.
+  use GraphQL::Schema::Visibility, dynamic: false, preload: true, profiles: {
+    public: { public: true },
+  }
 end
