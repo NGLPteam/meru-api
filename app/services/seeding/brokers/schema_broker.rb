@@ -15,7 +15,7 @@ module Seeding
         option :identifier, Seeding::Types::SchemaIdentifier, default: proc { declaration }
       end
 
-      include Shared::Typing
+      include ::Support::Typing
 
       map_type! key: Seeding::Types::SchemaDeclaration
 

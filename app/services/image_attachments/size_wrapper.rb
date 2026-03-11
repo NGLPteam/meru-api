@@ -6,7 +6,7 @@ module ImageAttachments
   #
   # @see Types::ImageSizeType
   class SizeWrapper
-    include Shared::Typing
+    include ::Support::Typing
     include Dry::Initializer[undefined: false].define -> do
       param :image_wrapper, AnyImageWrapper
       param :size, ImageAttachments::Size

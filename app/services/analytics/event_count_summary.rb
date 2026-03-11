@@ -2,7 +2,7 @@
 
 module Analytics
   # @see Types::AnalyticsEventCountSummaryType
-  class EventCountSummary < Shared::FlexibleStruct
+  class EventCountSummary < ::Support::FlexibleStruct
     attribute :min_date, Analytics::Types::Date.optional
 
     attribute :max_date, Analytics::Types::Date.optional
