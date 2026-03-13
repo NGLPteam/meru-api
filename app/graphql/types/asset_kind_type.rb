@@ -9,6 +9,7 @@ module Types
     value "audio"
     value "pdf"
     value "document"
+    value "archive"
     value "unknown"
   end
 end
