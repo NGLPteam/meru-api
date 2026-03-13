@@ -20,6 +20,8 @@ class SubmissionTargetPolicy < ApplicationPolicy
 
   def manage_reviewers? = update?
 
+  def publish? = update?
+
   def request_deposit_access? = open? && !deposit? && no_deposit_request_exists?
 
   def review? = allowed_to?(:review?, record.entity)

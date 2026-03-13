@@ -15,6 +15,8 @@ class Submission < ApplicationRecord
 
   has_many :submission_comments, -> { in_default_order }, dependent: :destroy, inverse_of: :submission
 
+  has_many :submission_publications, -> { in_recent_order }, inverse_of: :submission, dependent: :destroy
+
   has_many :submission_reviews, inverse_of: :submission, dependent: :destroy
 
   belongs_to :submission_target, inverse_of: :submissions, optional: true
@@ -39,6 +41,9 @@ class Submission < ApplicationRecord
 
   validates :entity_id, uniqueness: { scope: :entity_type, if: :entity_id? }
 
+  # @see Submissions::ConstructDraftEntity
+  # @see Submissions::DraftEntityConstructor
+  # @return [Dry::Monads::Result]
   monadic_operation! def construct_draft_entity
     call_operation("submissions.construct_draft_entity", self)
   end
@@ -46,12 +51,23 @@ class Submission < ApplicationRecord
   # @return [<Submissions::Status>]
   def available_transitions
     state_machine.allowed_transitions.map do |to_state|
-      Submissions::Status.new(self, to_state: to_state)
+      status_for(to_state)
     end
   end
 
   # @return [Submissions::Status]
   def current_status = Submissions::Status.new(self)
+
+  # @see Submissions::Publish
+  # @see Submissions::Publisher
+  # @return [Dry::Monads::Result]
+  monadic_operation! def publish(**options)
+    call_operation("submissions.publish", self, **options)
+  end
+
+  # @param [String] to_state
+  # @return [Submissions::Status]
+  def status_for(to_state) = Submissions::Status.new(self, to_state:)
 
   private
 

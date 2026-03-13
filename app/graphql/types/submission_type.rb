@@ -71,6 +71,10 @@ module Types
     Whether or not the current user can migrate this submission.
     TEXT
 
+    expose_authorization_rule :publish?, <<~TEXT
+    Whether or not the current user can publish this submission.
+    TEXT
+
     expose_authorization_rule :request_review?, <<~TEXT
     Whether or not the current user can request a review of this submission.
     TEXT

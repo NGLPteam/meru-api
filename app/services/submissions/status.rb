@@ -28,17 +28,41 @@ module Submissions
       published
     ].freeze
 
-    def mutable_state? = to_state.in?(MUTABLE_STATES)
+    # @return [Boolean]
+    attr_reader :any_published
 
-    alias mutable_state mutable_state?
+    alias any_published? any_published
 
-    def locked_state? = to_state.in?(LOCKED_STATES)
+    # @return [Boolean]
+    attr_reader :current
 
-    alias locked_state locked_state?
+    alias current? current
+
+    # @return [Boolean]
+    attr_reader :locked_state
+
+    alias locked_state? locked_state
+
+    # @return [Boolean]
+    attr_reader :mutable_state
+
+    alias mutable_state? mutable_state
+
+    def initialize(...)
+      super
+
+      @any_published = from_state == "published" || to_state == "published"
+
+      @current = from_state == to_state
+
+      @locked_state = to_state.in?(LOCKED_STATES)
+
+      @mutable_state = to_state.in?(MUTABLE_STATES)
+    end
 
     class << self
       # @return [Class]
-      def policy_class = SubmissionStatusPolicy
+      def policy_class = Submissions::StatusPolicy
     end
 
     # @return [Class]

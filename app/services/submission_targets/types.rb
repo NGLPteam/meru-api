@@ -19,8 +19,12 @@ module SubmissionTargets
 
     Submission = ModelInstance("Submission")
 
+    Submissions = Array.of(Submission)
+
     SubmissionTarget = ModelInstance("SubmissionTarget")
 
     Configurable = Entity | SubmissionTarget
+
+    User = ModelInstance("User")
   end
 end

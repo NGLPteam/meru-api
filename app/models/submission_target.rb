@@ -27,6 +27,8 @@ class SubmissionTarget < ApplicationRecord
 
   has_many :depositor_requests, dependent: :destroy, inverse_of: :submission_target
 
+  has_many :submission_batch_publications, dependent: :destroy, inverse_of: :submission_target
+
   has_many :submission_deposit_targets, -> { includes(:entity) }, dependent: :destroy, inverse_of: :submission_target, autosave: true
 
   has_many :submission_target_reviewers, -> { in_default_order }, dependent: :destroy, inverse_of: :submission_target
@@ -62,6 +64,14 @@ class SubmissionTarget < ApplicationRecord
   validate :must_have_deposit_targets!, on: :opening
 
   validate :must_have_schema_versions!, on: :opening
+
+  # @param [<Submission>] submissions
+  # @param [User, nil] user
+  # @see SubmissionTargets::BatchPublisher
+  # @return [Dry::Monads::Success(SubmissionBatchPublication)]
+  monadic_operation! def batch_publish(*submissions, user: nil)
+    call_operation("submission_targets.batch_publish", self, submissions.flatten, user:)
+  end
 
   monadic_operation! def configure(**options)
     call_operation("submission_targets.configure", self, **options)
@@ -143,10 +153,22 @@ class SubmissionTarget < ApplicationRecord
       with_contextual_action_for(user, "self.review")
     end
 
+    def visible_to(user)
+      # :nocov:
+      return none if user.blank? || user.anonymous?
+
+      return all if user.has_global_admin_access?
+      # :nocov:
+
+      actions = %w[self.read self.review self.deposit self.update]
+
+      with_contextual_action_for(user, actions)
+    end
+
     private
 
     # @param [User] user
-    # @param [String] action
+    # @param [String, <String>] action
     # @return [ActiveRecord::Relation<SubmissionTarget>]
     def with_contextual_action_for(user, action)
       search_scope = SubmissionTarget.joins(:contextual_single_permissions)

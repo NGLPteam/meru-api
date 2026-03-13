@@ -9,7 +9,7 @@ Rails.application.configure do
     "rendering:1",
     "+purging,hierarchies,entities,orderings,invalidations,layouts:2",
     "+harvest_pruning,extraction,harvesting,asset_fetching:2",
-    "default,mailers,ahoy,processing,cache_warming:2",
+    "default,mailers,ahoy,depositing,processing,cache_warming:2",
   ].join(?;)
 
   config.good_job.preserve_job_records = :on_unhandled_error

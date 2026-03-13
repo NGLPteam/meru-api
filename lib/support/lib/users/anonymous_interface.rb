@@ -28,6 +28,9 @@ module Support
       # @see User#authenticated?
       def authenticated? = false
 
+      # @return [nil]
+      def authenticated = nil
+
       def avatar_data = nil
 
       def avatar_data=(*); end

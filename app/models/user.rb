@@ -26,7 +26,15 @@ class User < ApplicationRecord
 
   has_many :submissions, inverse_of: :user, dependent: :restrict_with_error
 
+  has_many :submission_batch_publications, inverse_of: :user, dependent: :nullify
+
+  has_many :submission_batch_publication_transitions, inverse_of: :user, dependent: :nullify
+
   has_many :submission_comments, inverse_of: :user, dependent: :restrict_with_error
+
+  has_many :submission_publications, inverse_of: :user, dependent: :nullify
+
+  has_many :submission_publication_transitions, inverse_of: :user, dependent: :nullify
 
   has_many :submission_reviews, inverse_of: :user, dependent: :restrict_with_error
 
@@ -58,6 +66,9 @@ class User < ApplicationRecord
   def anonymous? = false
 
   def authenticated? = true
+
+  # @return [User]
+  def authenticated = self
 
   # @param [HierarchicalEntity] entity
   # @return [ContextualPermission, nil]

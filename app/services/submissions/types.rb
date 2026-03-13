@@ -7,8 +7,12 @@ module Submissions
 
     Submission = ModelInstance("Submission")
 
+    SubmissionPublication = ModelInstance("SubmissionPublication")
+
     SubmissionTarget = ModelInstance("SubmissionTarget")
 
     State = ApplicationRecord.dry_pg_enum("submission_state", default: "draft")
+
+    User = ModelInstance("User")
   end
 end
