@@ -20,6 +20,10 @@ class User < ApplicationRecord
 
   has_many :user_groups, through: :user_group_memberships
 
+  has_many :depositor_agreements, inverse_of: :user, dependent: :destroy
+
+  has_many :depositor_agreement_transitions, dependent: :nullify, inverse_of: :user
+
   has_many :depositor_requests, inverse_of: :user, dependent: :restrict_with_error
 
   has_many :depositor_request_transitions, dependent: :nullify, inverse_of: :user

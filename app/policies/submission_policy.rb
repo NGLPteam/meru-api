@@ -25,7 +25,7 @@ class SubmissionPolicy < ApplicationPolicy
 
   def review? = allowed_to?(:review?, record.submission_target)
 
-  def create? = deposit?
+  def create? = deposit? && has_accepted_agreement?
 
   def update? = record_owned_by_current_user?
 
@@ -35,6 +35,8 @@ class SubmissionPolicy < ApplicationPolicy
   private
 
   def deposit? = allowed_to?(:deposit?, record.submission_target)
+
+  def has_accepted_agreement? = authenticated? && record.submission_target.has_accepted_agreement?(user)
 
   def manage_target? = allowed_to?(:update?, record.submission_target)
 

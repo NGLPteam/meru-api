@@ -21,7 +21,9 @@ class DepositorRequest < ApplicationRecord
 
   # @see Access::Grant
   monadic_operation! def add_depositor
-    call_operation("access.grant", Role.fetch(:depositor), on: target_entity, to: user)
+    call_operation("access.grant", Role.fetch(:depositor), on: target_entity, to: user).bind do
+      submission_target.accept_agreement_for(user)
+    end
   end
 
   # @see Access::Revoke

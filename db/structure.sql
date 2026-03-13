@@ -267,6 +267,16 @@ CREATE TYPE public.date_precision AS ENUM (
 
 
 --
+-- Name: depositor_agreement_state; Type: TYPE; Schema: public; Owner: -
+--
+
+CREATE TYPE public.depositor_agreement_state AS ENUM (
+    'pending',
+    'accepted'
+);
+
+
+--
 -- Name: depositor_request_state; Type: TYPE; Schema: public; Owner: -
 --
 
@@ -4837,6 +4847,39 @@ CREATE TABLE public.controlled_vocabulary_sources (
 
 
 --
+-- Name: depositor_agreement_transitions; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.depositor_agreement_transitions (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    depositor_agreement_id uuid NOT NULL,
+    user_id uuid,
+    most_recent boolean NOT NULL,
+    sort_key integer NOT NULL,
+    from_state public.depositor_agreement_state,
+    to_state public.depositor_agreement_state NOT NULL,
+    metadata jsonb,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+
+--
+-- Name: depositor_agreements; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.depositor_agreements (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    submission_target_id uuid NOT NULL,
+    user_id uuid NOT NULL,
+    state public.depositor_agreement_state DEFAULT 'pending'::public.depositor_agreement_state NOT NULL,
+    last_accepted_at timestamp without time zone,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+
+--
 -- Name: depositor_request_transitions; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -8757,6 +8800,22 @@ ALTER TABLE ONLY public.controlled_vocabulary_sources
 
 
 --
+-- Name: depositor_agreement_transitions depositor_agreement_transitions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.depositor_agreement_transitions
+    ADD CONSTRAINT depositor_agreement_transitions_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: depositor_agreements depositor_agreements_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.depositor_agreements
+    ADD CONSTRAINT depositor_agreements_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: depositor_request_transitions depositor_request_transitions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -9988,6 +10047,27 @@ CREATE UNIQUE INDEX harvest_entity_anc_desc_idx ON public.harvest_entity_hierarc
 --
 
 CREATE INDEX harvest_entity_desc_idx ON public.harvest_entity_hierarchies USING btree (descendant_id);
+
+
+--
+-- Name: idx_depositor_agreement_transitions_parent_most_recent; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX idx_depositor_agreement_transitions_parent_most_recent ON public.depositor_agreement_transitions USING btree (depositor_agreement_id, most_recent) WHERE most_recent;
+
+
+--
+-- Name: idx_depositor_agreement_transitions_parent_sort; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX idx_depositor_agreement_transitions_parent_sort ON public.depositor_agreement_transitions USING btree (depositor_agreement_id, sort_key);
+
+
+--
+-- Name: idx_depositor_agreements_uniqueness; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX idx_depositor_agreements_uniqueness ON public.depositor_agreements USING btree (submission_target_id, user_id);
 
 
 --
@@ -11283,6 +11363,27 @@ CREATE INDEX index_controlled_vocabulary_sources_on_controlled_vocabulary_id ON 
 --
 
 CREATE UNIQUE INDEX index_controlled_vocabulary_sources_on_provides ON public.controlled_vocabulary_sources USING btree (provides);
+
+
+--
+-- Name: index_depositor_agreement_transitions_on_user_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_depositor_agreement_transitions_on_user_id ON public.depositor_agreement_transitions USING btree (user_id);
+
+
+--
+-- Name: index_depositor_agreements_on_submission_target_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_depositor_agreements_on_submission_target_id ON public.depositor_agreements USING btree (submission_target_id);
+
+
+--
+-- Name: index_depositor_agreements_on_user_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_depositor_agreements_on_user_id ON public.depositor_agreements USING btree (user_id);
 
 
 --
@@ -14731,6 +14832,14 @@ ALTER TABLE ONLY public.templates_navigation_instances
 
 
 --
+-- Name: depositor_agreement_transitions fk_rails_062db08035; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.depositor_agreement_transitions
+    ADD CONSTRAINT fk_rails_062db08035 FOREIGN KEY (depositor_agreement_id) REFERENCES public.depositor_agreements(id) ON DELETE CASCADE;
+
+
+--
 -- Name: harvest_configurations fk_rails_077935b75c; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -14792,6 +14901,14 @@ ALTER TABLE ONLY public.layouts_main_instances
 
 ALTER TABLE ONLY public.harvest_sets
     ADD CONSTRAINT fk_rails_0f046d2238 FOREIGN KEY (harvest_source_id) REFERENCES public.harvest_sources(id) ON DELETE CASCADE;
+
+
+--
+-- Name: depositor_agreements fk_rails_0fc89781d6; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.depositor_agreements
+    ADD CONSTRAINT fk_rails_0fc89781d6 FOREIGN KEY (submission_target_id) REFERENCES public.submission_targets(id) ON DELETE CASCADE;
 
 
 --
@@ -15200,6 +15317,14 @@ ALTER TABLE ONLY public.harvest_attempts
 
 ALTER TABLE ONLY public.submission_publications
     ADD CONSTRAINT fk_rails_40382ef9d0 FOREIGN KEY (submission_id) REFERENCES public.submissions(id) ON DELETE CASCADE;
+
+
+--
+-- Name: depositor_agreements fk_rails_4078cab068; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.depositor_agreements
+    ADD CONSTRAINT fk_rails_4078cab068 FOREIGN KEY (user_id) REFERENCES public.users(id) ON DELETE CASCADE;
 
 
 --
@@ -15896,6 +16021,14 @@ ALTER TABLE ONLY public.harvest_entities
 
 ALTER TABLE ONLY public.submissions
     ADD CONSTRAINT fk_rails_a1b7a594a4 FOREIGN KEY (schema_version_id) REFERENCES public.schema_versions(id) ON DELETE RESTRICT;
+
+
+--
+-- Name: depositor_agreement_transitions fk_rails_a2bd1ca49a; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.depositor_agreement_transitions
+    ADD CONSTRAINT fk_rails_a2bd1ca49a FOREIGN KEY (user_id) REFERENCES public.users(id) ON DELETE SET NULL;
 
 
 --
@@ -16625,6 +16758,7 @@ ALTER TABLE ONLY public.templates_ordering_instances
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20260312201100'),
 ('20260312195907'),
 ('20260312162710'),
 ('20260227180536'),
