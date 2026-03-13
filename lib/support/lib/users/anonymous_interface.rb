@@ -100,6 +100,10 @@ module Support
       # @return [ActiveSupport::TimeWithZone]
       def updated_at = NOW
 
+      # @!attribute [r] username
+      # @return [nil]
+      def username = nil
+
       module ClassMethods
         # A simulation of `ApplicationRecord.find` to allow {AnonymousUser} to be decoded from a GlobalID.
         #
