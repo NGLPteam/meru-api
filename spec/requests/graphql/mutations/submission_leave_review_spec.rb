@@ -27,6 +27,18 @@ RSpec.describe Mutations::SubmissionLeaveReview, type: :request, graphql: :mutat
         canDestroy {
           ... AuthorizationResultFragment
         }
+
+        transitions {
+          nodes {
+            id
+            fromState
+            toState
+
+            user {
+              id
+            }
+          }
+        }
       }
 
       ... ErrorFragment
@@ -73,7 +85,7 @@ RSpec.describe Mutations::SubmissionLeaveReview, type: :request, graphql: :mutat
       end
 
       m.prop :submission_review do |sr|
-        sr[:state] = "PENDING"
+        sr[:state] = to_state
 
         sr.auth_results(can_update: true, can_destroy: true)
 
@@ -83,6 +95,21 @@ RSpec.describe Mutations::SubmissionLeaveReview, type: :request, graphql: :mutat
 
         sr.prop :user do |u|
           u[:id] = current_user.to_encoded_id
+        end
+
+        sr.prop :transitions do |trs|
+          trs.array :nodes do |ns|
+            ns.item do |n|
+              n[:id] = be_an_encoded_id.of_an_existing_model
+
+              n[:from_state] = "PENDING"
+              n[:to_state] = to_state
+
+              n.prop :user do |u|
+                u[:id] = current_user.to_encoded_id
+              end
+            end
+          end
         end
       end
     end

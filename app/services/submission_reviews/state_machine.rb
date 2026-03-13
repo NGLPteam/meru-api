@@ -8,9 +8,14 @@ module SubmissionReviews
     include Support::StatesmanHelpers::Machine
 
     state :pending, initial: true
+    state :revision_requested
     state :approved
     state :rejected
 
     flexible_transitions!
+
+    after_transition do |submission_review, transition|
+      submission_review.update_column(:state, transition.to_state)
+    end
   end
 end
