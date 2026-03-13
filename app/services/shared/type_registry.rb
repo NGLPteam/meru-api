@@ -20,6 +20,7 @@ module Shared
     tc.add_model! "ControlledVocabulary"
     tc.add_model! "ControlledVocabularyItem"
     tc.add_model! "ControlledVocabularySource"
+    tc.add_model! "DepositorAgreement"
     tc.add_model! "DepositorRequest"
     tc.add_model! "HarvestAttempt"
     tc.add_model! "HarvestEntity"

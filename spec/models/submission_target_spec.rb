@@ -8,6 +8,22 @@ RSpec.describe SubmissionTarget, type: :model do
 
   let_it_be(:submission_target, refind: true) { collection.fetch_submission_target! }
 
+  describe "#has_accepted_agreement?" do
+    it "handles anonymous users" do
+      expect(submission_target).not_to have_accepted_agreement AnonymousUser.new
+    end
+
+    it "handles null users" do
+      expect(submission_target).not_to have_accepted_agreement nil
+    end
+
+    it "handles un-accepted users" do
+      user = FactoryBot.create(:user)
+
+      expect(submission_target).not_to have_accepted_agreement user
+    end
+  end
+
   context "when the submission target is descendant" do
     let!(:descendant_submission_target) do
       submission_target.update!(deposit_mode: :descendant)

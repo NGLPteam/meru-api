@@ -18,6 +18,12 @@ module Types
       TEXT
     end
 
+    field :depositor_agreement, "Types::DepositorAgreementType", null: true do
+      description <<~TEXT
+      The depositor agreement for this submission target and the current user, if one exists.
+      TEXT
+    end
+
     field :deposit_mode, Types::SubmissionDepositModeType, null: false do
       description <<~TEXT
       The deposit mode of this submission target, which determines how deposits to it are handled.
@@ -88,6 +94,10 @@ module Types
     Whether or not the current user can request access to deposit to this submission target.
     TEXT
 
+    expose_authorization_rule :reset_all_agreements?, <<~TEXT
+    Whether or not the current user can reset all agreements for this submission target.
+    TEXT
+
     expose_authorization_rule :review?, <<~TEXT
     Whether or not the current user can review this submission target.
     TEXT
@@ -97,5 +107,10 @@ module Types
     load_association! :schema_versions
 
     load_association! :submission_deposit_targets, as: :deposit_targets
+
+    # @return [DepositorAgreement, nil]
+    def depositor_agreement
+      load_record_with(::DepositorAgreement, object.id, find_by: :submission_target_id, where: { user: context[:current_user].authenticated })
+    end
   end
 end

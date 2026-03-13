@@ -10,6 +10,8 @@ module Mutations
 
       authorizes! :submission_target, with: :deposit?
 
+      authorizes! :submission, with: :create?
+
       # @param [Submission] submission
       # @param [Hash] attrs
       # @return [void]
@@ -22,9 +24,7 @@ module Mutations
       before_prepare def initialize_submission!
         args => { submission_target:, schema_version:, parent_entity: }
 
-        attrs = { submission_target:, schema_version:, parent_entity: }
-
-        attrs[:user] = current_user unless current_user.anonymous?
+        attrs = { submission_target:, schema_version:, parent_entity:, user: current_user.authenticated }
 
         args[:submission] = Submission.new(**attrs)
       end

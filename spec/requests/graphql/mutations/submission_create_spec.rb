@@ -126,7 +126,17 @@ RSpec.describe Mutations::SubmissionCreate, type: :request, graphql: :mutation, 
         grant_access!(depositor_role, on: collection, to: current_user)
       end
 
-      include_examples "an authorized mutation"
+      context "without an active depositor agreement" do
+        include_examples "an unauthorized mutation"
+      end
+
+      context "with an active depositor agreement" do
+        before do
+          submission_target.accept_agreement_for!(current_user)
+        end
+
+        include_examples "an authorized mutation"
+      end
     end
   end
 

@@ -35,6 +35,12 @@ module Types
       TEXT
     end
 
+    field :transitions, resolver: Resolvers::DepositorRequestTransitionResolver, null: false do
+      description <<~TEXT
+      The state transitions for this depositor request.
+      TEXT
+    end
+
     expose_authorization_rule :transition?, <<~TEXT
     Whether the current user can approve or reject the request.
     TEXT

@@ -8,6 +8,16 @@ RSpec.describe Mutations::DepositorRequestChangeState, type: :request, graphql: 
         id
         slug
         state
+
+        transitions {
+          nodes {
+            fromState
+            toState
+            user {
+              id
+            }
+          }
+        }
       }
       ... ErrorFragment
     }
@@ -43,12 +53,26 @@ RSpec.describe Mutations::DepositorRequestChangeState, type: :request, graphql: 
 
   let_mutation_input!(:to_state) { "APPROVED" }
 
+  let(:expected_from_state) { "PENDING" }
+
   let(:valid_mutation_shape) do
     gql.mutation(:depositor_request_change_state) do |m|
       m.prop(:depositor_request) do |dr|
         dr[:id] = be_an_encoded_id.of_an_existing_model
         dr[:slug] = be_an_encoded_slug
         dr[:state] = to_state
+
+        dr.prop :transitions do |ts|
+          ts.array :nodes do |ns|
+            ns.item do |n|
+              n[:from_state] = expected_from_state
+              n[:to_state] = to_state
+              n.prop :user do |u|
+                u[:id] = current_user.to_encoded_id
+              end
+            end
+          end
+        end
       end
     end
   end
@@ -64,6 +88,9 @@ RSpec.describe Mutations::DepositorRequestChangeState, type: :request, graphql: 
       expect_request! do |req|
         req.effect! change { existing_depositor_request.current_state(force_reload: true) }.from("pending").to(to_state.downcase)
         req.effect! change(AccessGrant, :count).by(1)
+        req.effect! change(DepositorAgreement, :count).by(1)
+        req.effect! change(DepositorAgreementTransition, :count).by(2)
+        req.effect! change { submission_target.reload.has_accepted_agreement?(requestor) }.from(false).to(true)
 
         req.data! expected_shape
       end
@@ -76,7 +103,14 @@ RSpec.describe Mutations::DepositorRequestChangeState, type: :request, graphql: 
         expect_request! do |req|
           req.effect! change { existing_depositor_request.current_state(force_reload: true) }.from("pending").to(to_state.downcase)
           req.effect! keep_the_same(AccessGrant, :count)
+          req.effect! keep_the_same(DepositorAgreement, :count)
+          req.effect! keep_the_same(DepositorAgreementTransition, :count)
+          req.effect! keep_the_same { submission_target.reload.has_accepted_agreement?(requestor) }
+
+          req.data! expected_shape
         end
+
+        expect(submission_target).not_to have_accepted_agreement(requestor)
       end
     end
 
@@ -85,13 +119,22 @@ RSpec.describe Mutations::DepositorRequestChangeState, type: :request, graphql: 
         existing_depositor_request.transition_to! :approved
       end
 
+      let(:expected_from_state) { "APPROVED" }
+
       let(:to_state) { "PENDING" }
 
-      it "revokes the access grant" do
+      it "revokes the access grant but maintains the agreement" do
         expect_request! do |req|
           req.effect! change { existing_depositor_request.current_state(force_reload: true) }.from("approved").to("pending")
           req.effect! change(AccessGrant, :count).by(-1)
+          req.effect! keep_the_same(DepositorAgreement, :count)
+          req.effect! keep_the_same(DepositorAgreementTransition, :count)
+          req.effect! keep_the_same { submission_target.reload.has_accepted_agreement?(requestor) }
+
+          req.data! expected_shape
         end
+
+        expect(submission_target).to have_accepted_agreement(requestor)
       end
     end
 

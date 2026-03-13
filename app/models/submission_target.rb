@@ -27,6 +27,8 @@ class SubmissionTarget < ApplicationRecord
 
   has_many :depositor_requests, dependent: :destroy, inverse_of: :submission_target
 
+  has_many :depositor_agreements, dependent: :destroy, inverse_of: :submission_target
+
   has_many :submission_batch_publications, dependent: :destroy, inverse_of: :submission_target
 
   has_many :submission_deposit_targets, -> { includes(:entity) }, dependent: :destroy, inverse_of: :submission_target, autosave: true
@@ -65,6 +67,20 @@ class SubmissionTarget < ApplicationRecord
 
   validate :must_have_schema_versions!, on: :opening
 
+  # @param [User] user
+  # @see DepositorAgreements::Accept
+  # @see DepositorAgreements::Accepter
+  # @return [Dry::Monads::Success(DepositorAgreement)]
+  monadic_operation! def accept_agreement_for(user)
+    call_operation("depositor_agreements.accept", submission_target: self, user:)
+  end
+
+  # @param [User] user
+  # @return [DepositorAgreement]
+  def agreement_for(user)
+    depositor_agreements.find_or_initialize_by(user:)
+  end
+
   # @param [<Submission>] submissions
   # @param [User, nil] user
   # @see SubmissionTargets::BatchPublisher
@@ -75,6 +91,11 @@ class SubmissionTarget < ApplicationRecord
 
   monadic_operation! def configure(**options)
     call_operation("submission_targets.configure", self, **options)
+  end
+
+  # @param [User] user
+  def has_accepted_agreement?(user)
+    depositor_agreements.accepted.exists?(user:) if user.present? && user.authenticated?
   end
 
   def missing_descendant_targets? = descendant_deposit? && !submission_deposit_targets.descendant_deposit.exists?

@@ -24,6 +24,8 @@ class SubmissionTargetPolicy < ApplicationPolicy
 
   def request_deposit_access? = open? && !deposit? && no_deposit_request_exists?
 
+  def reset_all_agreements? = update?
+
   def review? = allowed_to?(:review?, record.entity)
 
   relation_scope do |relation|

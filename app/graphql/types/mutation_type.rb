@@ -36,6 +36,16 @@ module Types
 
     field :create_role, mutation: Mutations::CreateRole
 
+    field :depositor_agreement_accept, mutation: Mutations::DepositorAgreementAccept
+
+    field :depositor_agreement_reset, mutation: Mutations::DepositorAgreementReset
+
+    field :depositor_agreement_reset_all, mutation: Mutations::DepositorAgreementResetAll
+
+    field :depositor_request_change_state, mutation: Mutations::DepositorRequestChangeState
+
+    field :depositor_request_create, mutation: Mutations::DepositorRequestCreate
+
     field :destroy_announcement, mutation: Mutations::DestroyAnnouncement
 
     field :destroy_asset, mutation: Mutations::DestroyAsset
@@ -167,9 +177,5 @@ module Types
     field :permalink_destroy, mutation: Mutations::PermalinkDestroy
 
     field :permalink_update, mutation: Mutations::PermalinkUpdate
-
-    field :depositor_request_create, mutation: Mutations::DepositorRequestCreate
-
-    field :depositor_request_change_state, mutation: Mutations::DepositorRequestChangeState
   end
 end

@@ -12,7 +12,59 @@ SimpleCov.start "rails" do
   groups.delete "Libraries"
   groups.delete "Mailers"
 
+  depositing_model_bases = %w[
+    depositor_agreement
+    depositor_agreement_transition
+    depositor_request
+    depositor_request_transition
+    submission_batch_publication_transition
+    submission_batch_publication
+    submission_comment
+    submission_deposit_target
+    submission_publication_transition
+    submission_publication
+    submission_review_transition
+    submission_review
+    submission_target_reviewer
+    submission_target_schema_version
+    submission_target_transition
+    submission_target
+    submission_transition
+    submission
+  ]
+
+  depositing_models = depositing_model_bases.flat_map do |base|
+    [
+      "app/models/#{base}.rb",
+      "app/policies/#{base}_policy.rb",
+    ]
+  end + [
+    "app/models/concerns/submittable.rb",
+    "app/graphql/types/submittable_type.rb",
+    %r[app/graphql/mutations/depositor[^/]*\.rb\z],
+    %r[app/graphql/types/depositor[^/]*\.rb\z],
+    %r[app/graphql/mutations/submission[^/]*\.rb\z],
+    %r[app/graphql/types/submission[^/]*\.rb\z],
+  ]
+
+  depositing_namespaces = depositing_model_bases.map { "#{_1}s" }
+
+  depositing_dirs = depositing_namespaces.flat_map do |namespace|
+    [
+      "app/jobs/#{namespace}",
+      "app/operations/#{namespace}",
+      "app/policies/#{namespace}",
+      "app/services/#{namespace}",
+    ]
+  end
+
+  add_group "Depositing", [
+    *depositing_models,
+    *depositing_dirs,
+  ]
+
   add_group "GraphQL", "app/graphql"
+
   add_group "Harvesting", [
     "app/jobs/harvesting",
     %r|app/models/harvest|,
