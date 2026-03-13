@@ -21,7 +21,7 @@ FactoryBot.define do
     end
     scope { "openid" }
 
-    email_verified { true }
+    email_verified { user.try(:email_verified) || false }
     given_name { user&.given_name.presence || Faker::Name.first_name }
     family_name { user&.family_name.presence || Faker::Name.last_name }
     name { user&.name || "#{given_name} #{family_name}" }

@@ -83,11 +83,24 @@ module Types
       description "All access grants for this user on an item"
     end
 
+    expose_authorization_rule :receive_review_requests?, <<~TEXT
+    Whether this user is a reviewer on **any** submission targets, and should see information about
+    potential review requests in the UI.
+
+    This is meant to be checked on the `Query.viewer`.
+    TEXT
+
+    expose_authorization_rule :reset_password?, <<~TEXT
+    Whether the current user has permission to reset this user's password.
+    TEXT
+
+    expose_authorization_rule :revalidate_instance?, <<~TEXT
+    Whether this user has permission to trigger revalidation of the entire frontend.
+    TEXT
+
     # @see AnonymousInterface#system_slug_id
     # @see User#system_slug_id
     # @return [String]
-    def slug
-      object.system_slug_id
-    end
+    def slug = object.system_slug_id
   end
 end
