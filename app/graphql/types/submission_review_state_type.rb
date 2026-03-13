@@ -12,6 +12,12 @@ module Types
       TEXT
     end
 
+    value "REVISION_REQUESTED", value: "revision_requested" do
+      description <<~TEXT
+      The reviewer has requested revisions to the submission.
+      TEXT
+    end
+
     value "APPROVED", value: "approved" do
       description <<~TEXT
       The reviewer has approved the submission.

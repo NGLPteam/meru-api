@@ -934,6 +934,7 @@ CREATE TYPE public.submission_publication_state AS ENUM (
 
 CREATE TYPE public.submission_review_state AS ENUM (
     'pending',
+    'revision_requested',
     'approved',
     'rejected'
 );
@@ -16625,6 +16626,7 @@ SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
 ('20260312195907'),
+('20260312162710'),
 ('20260227180536'),
 ('20260227180515'),
 ('20260227180402'),
