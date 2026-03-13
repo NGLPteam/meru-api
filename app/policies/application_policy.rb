@@ -95,6 +95,8 @@ class ApplicationPolicy < ActionPolicy::Base
 
   def anonymous? = user.anonymous?
 
+  def authenticated? = user.authenticated?
+
   def has_any_access_management_permissions? = user.can_manage_access_globally? || user.can_manage_access_contextually?
 
   # Whether the user has global admin access

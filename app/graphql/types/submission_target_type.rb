@@ -80,6 +80,10 @@ module Types
     Whether or not the current user can manage reviewers for this submission target.
     TEXT
 
+    expose_authorization_rule :publish?, <<~TEXT
+    Whether or not the current user can publish submissions to this submission target.
+    TEXT
+
     expose_authorization_rule :request_deposit_access?, <<~TEXT
     Whether or not the current user can request access to deposit to this submission target.
     TEXT

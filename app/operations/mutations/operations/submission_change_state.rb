@@ -22,7 +22,7 @@ module Mutations
       before_prepare def build_status!
         args => { submission:, to_state: }
 
-        args[:submission_status] = Submissions::Status.new(submission, to_state:)
+        args[:submission_status] = submission.status_for(to_state)
       end
     end
   end

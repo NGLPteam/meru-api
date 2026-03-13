@@ -14,9 +14,7 @@ module Mutations
       # @param [{ Symbol => Object }] attrs
       # @return [void]
       def call(configurable:, **attrs)
-        authorize configurable, :update?
-
-        result = call_operation("submission_targets.configure", configurable, **attrs)
+        result = configurable.configure_submission_target(**attrs)
 
         with_attached_result!(:submission_target, result)
       end

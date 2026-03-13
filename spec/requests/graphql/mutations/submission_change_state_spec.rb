@@ -184,6 +184,18 @@ RSpec.describe Mutations::SubmissionChangeState, type: :request, graphql: :mutat
 
       include_examples "a failed transition"
     end
+
+    context "when trying to publish outside of publish mutations" do
+      let(:to_state) { "PUBLISHED" }
+
+      before do
+        submission.transition_to! :submitted
+        submission.transition_to! :under_review
+        submission.transition_to! :approved
+      end
+
+      include_examples "an unauthorized mutation"
+    end
   end
 
   shared_examples_for "an unauthorized mutation" do

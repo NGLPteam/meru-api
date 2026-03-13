@@ -13,10 +13,12 @@ module Support
 
       around_request :provide_current_state!
 
-      around_request :measure!
+      around_request :measure!, if: :timer?
 
       # @return [Support::Requests::Timer, nil]
       attr_reader :timer
+
+      def timer? = timer.present?
 
       # @return [void]
       def set_up_timer!(...)
@@ -35,10 +37,6 @@ module Support
 
       # @return [void]
       def measure!
-        # :nocov:
-        return yield unless timer.present?
-        # :nocov:
-
         timer.measure! do
           yield
         end

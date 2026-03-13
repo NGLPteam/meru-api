@@ -22,6 +22,12 @@ module Types
       TEXT
     end
 
+    field :current, Boolean, null: false do
+      description <<~TEXT
+      Whether the submission is currently in this state.
+      TEXT
+    end
+
     field :locked_state, Boolean, null: false do
       description <<~TEXT
       Whether the submission will be in a locked state (i.e. not mutable by the depositor).

@@ -886,6 +886,17 @@ CREATE TYPE public.sibling_kind AS ENUM (
 
 
 --
+-- Name: submission_batch_publication_state; Type: TYPE; Schema: public; Owner: -
+--
+
+CREATE TYPE public.submission_batch_publication_state AS ENUM (
+    'pending',
+    'batched',
+    'finished'
+);
+
+
+--
 -- Name: submission_comment_role; Type: TYPE; Schema: public; Owner: -
 --
 
@@ -902,6 +913,18 @@ CREATE TYPE public.submission_comment_role AS ENUM (
 CREATE TYPE public.submission_deposit_mode AS ENUM (
     'direct',
     'descendant'
+);
+
+
+--
+-- Name: submission_publication_state; Type: TYPE; Schema: public; Owner: -
+--
+
+CREATE TYPE public.submission_publication_state AS ENUM (
+    'pending',
+    'batched',
+    'success',
+    'failure'
 );
 
 
@@ -7152,6 +7175,39 @@ CREATE VIEW public.stale_entities AS
 
 
 --
+-- Name: submission_batch_publication_transitions; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.submission_batch_publication_transitions (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    submission_batch_publication_id uuid NOT NULL,
+    user_id uuid,
+    most_recent boolean NOT NULL,
+    sort_key integer NOT NULL,
+    from_state public.submission_batch_publication_state,
+    to_state public.submission_batch_publication_state NOT NULL,
+    metadata jsonb,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+
+--
+-- Name: submission_batch_publications; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.submission_batch_publications (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    submission_target_id uuid NOT NULL,
+    user_id uuid,
+    state public.submission_batch_publication_state DEFAULT 'pending'::public.submission_batch_publication_state NOT NULL,
+    publications_count bigint DEFAULT 0 NOT NULL,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+
+--
 -- Name: submission_comments; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -7181,6 +7237,40 @@ CREATE TABLE public.submission_deposit_targets (
     community_id uuid,
     collection_id uuid,
     item_id uuid,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+
+--
+-- Name: submission_publication_transitions; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.submission_publication_transitions (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    submission_publication_id uuid NOT NULL,
+    user_id uuid,
+    most_recent boolean NOT NULL,
+    sort_key integer NOT NULL,
+    from_state public.submission_publication_state,
+    to_state public.submission_publication_state NOT NULL,
+    metadata jsonb,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+
+--
+-- Name: submission_publications; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.submission_publications (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    submission_id uuid NOT NULL,
+    user_id uuid,
+    submission_batch_publication_id uuid,
+    state public.submission_publication_state DEFAULT 'pending'::public.submission_publication_state NOT NULL,
+    batch_position bigint,
     created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
@@ -9410,6 +9500,22 @@ ALTER TABLE ONLY public.schematic_texts
 
 
 --
+-- Name: submission_batch_publication_transitions submission_batch_publication_transitions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.submission_batch_publication_transitions
+    ADD CONSTRAINT submission_batch_publication_transitions_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: submission_batch_publications submission_batch_publications_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.submission_batch_publications
+    ADD CONSTRAINT submission_batch_publications_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: submission_comments submission_comments_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -9423,6 +9529,22 @@ ALTER TABLE ONLY public.submission_comments
 
 ALTER TABLE ONLY public.submission_deposit_targets
     ADD CONSTRAINT submission_deposit_targets_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: submission_publication_transitions submission_publication_transitions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.submission_publication_transitions
+    ADD CONSTRAINT submission_publication_transitions_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: submission_publications submission_publications_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.submission_publications
+    ADD CONSTRAINT submission_publications_pkey PRIMARY KEY (id);
 
 
 --
@@ -9938,10 +10060,31 @@ CREATE INDEX idx_on_list_item_layout_instance_id_3e916a1bef ON public.templates_
 
 
 --
+-- Name: idx_on_submission_batch_publication_id_c91de0cb2b; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX idx_on_submission_batch_publication_id_c91de0cb2b ON public.submission_publications USING btree (submission_batch_publication_id);
+
+
+--
 -- Name: idx_on_submission_target_id_665af0c713; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX idx_on_submission_target_id_665af0c713 ON public.submission_target_schema_versions USING btree (submission_target_id);
+
+
+--
+-- Name: idx_submission_batch_publication_transitions_parent_most_recent; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX idx_submission_batch_publication_transitions_parent_most_recent ON public.submission_batch_publication_transitions USING btree (submission_batch_publication_id, most_recent) WHERE most_recent;
+
+
+--
+-- Name: idx_submission_batch_publication_transitions_parent_sort; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX idx_submission_batch_publication_transitions_parent_sort ON public.submission_batch_publication_transitions USING btree (submission_batch_publication_id, sort_key);
 
 
 --
@@ -9956,6 +10099,20 @@ CREATE UNIQUE INDEX idx_submission_comments_positioning ON public.submission_com
 --
 
 CREATE UNIQUE INDEX idx_submission_deposit_targets_uniqueness ON public.submission_deposit_targets USING btree (submission_target_id, entity_type, entity_id);
+
+
+--
+-- Name: idx_submission_publication_transitions_parent_most_recent; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX idx_submission_publication_transitions_parent_most_recent ON public.submission_publication_transitions USING btree (submission_publication_id, most_recent) WHERE most_recent;
+
+
+--
+-- Name: idx_submission_publication_transitions_parent_sort; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX idx_submission_publication_transitions_parent_sort ON public.submission_publication_transitions USING btree (submission_publication_id, sort_key);
 
 
 --
@@ -13466,6 +13623,27 @@ CREATE INDEX index_schematic_texts_on_schema_version_property_id ON public.schem
 
 
 --
+-- Name: index_submission_batch_publication_transitions_on_user_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_submission_batch_publication_transitions_on_user_id ON public.submission_batch_publication_transitions USING btree (user_id);
+
+
+--
+-- Name: index_submission_batch_publications_on_submission_target_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_submission_batch_publications_on_submission_target_id ON public.submission_batch_publications USING btree (submission_target_id);
+
+
+--
+-- Name: index_submission_batch_publications_on_user_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_submission_batch_publications_on_user_id ON public.submission_batch_publications USING btree (user_id);
+
+
+--
 -- Name: index_submission_comments_on_role; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -13526,6 +13704,27 @@ CREATE INDEX index_submission_deposit_targets_on_schema_version_id ON public.sub
 --
 
 CREATE INDEX index_submission_deposit_targets_on_submission_target_id ON public.submission_deposit_targets USING btree (submission_target_id);
+
+
+--
+-- Name: index_submission_publication_transitions_on_user_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_submission_publication_transitions_on_user_id ON public.submission_publication_transitions USING btree (user_id);
+
+
+--
+-- Name: index_submission_publications_on_submission_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_submission_publications_on_submission_id ON public.submission_publications USING btree (submission_id);
+
+
+--
+-- Name: index_submission_publications_on_user_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_submission_publications_on_user_id ON public.submission_publications USING btree (user_id);
 
 
 --
@@ -14675,6 +14874,14 @@ ALTER TABLE ONLY public.templates_link_list_definitions
 
 
 --
+-- Name: submission_batch_publication_transitions fk_rails_17b0640306; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.submission_batch_publication_transitions
+    ADD CONSTRAINT fk_rails_17b0640306 FOREIGN KEY (user_id) REFERENCES public.users(id) ON DELETE SET NULL;
+
+
+--
 -- Name: harvest_configurations fk_rails_18ac7e7431; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -14715,6 +14922,14 @@ ALTER TABLE ONLY public.submissions
 
 
 --
+-- Name: submission_publications fk_rails_1d70496f11; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.submission_publications
+    ADD CONSTRAINT fk_rails_1d70496f11 FOREIGN KEY (user_id) REFERENCES public.users(id) ON DELETE SET NULL;
+
+
+--
 -- Name: schema_version_properties fk_rails_1f31833d7c; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -14752,6 +14967,14 @@ ALTER TABLE ONLY public.templates_descendant_list_definitions
 
 ALTER TABLE ONLY public.harvest_attempt_entity_link_transitions
     ADD CONSTRAINT fk_rails_248d27a3f5 FOREIGN KEY (harvest_attempt_entity_link_id) REFERENCES public.harvest_attempt_entity_links(id) ON DELETE CASCADE;
+
+
+--
+-- Name: submission_publications fk_rails_24c0c2f7a9; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.submission_publications
+    ADD CONSTRAINT fk_rails_24c0c2f7a9 FOREIGN KEY (submission_batch_publication_id) REFERENCES public.submission_batch_publications(id) ON DELETE SET NULL;
 
 
 --
@@ -14968,6 +15191,14 @@ ALTER TABLE ONLY public.harvest_records
 
 ALTER TABLE ONLY public.harvest_attempts
     ADD CONSTRAINT fk_rails_3e309e8f30 FOREIGN KEY (harvest_mapping_id) REFERENCES public.harvest_mappings(id) ON DELETE CASCADE;
+
+
+--
+-- Name: submission_publications fk_rails_40382ef9d0; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.submission_publications
+    ADD CONSTRAINT fk_rails_40382ef9d0 FOREIGN KEY (submission_id) REFERENCES public.submissions(id) ON DELETE CASCADE;
 
 
 --
@@ -15208,6 +15439,14 @@ ALTER TABLE ONLY public.ordering_entry_ancestor_links
 
 ALTER TABLE ONLY public.harvest_mappings
     ADD CONSTRAINT fk_rails_648247aee2 FOREIGN KEY (harvest_source_id) REFERENCES public.harvest_sources(id) ON DELETE CASCADE;
+
+
+--
+-- Name: submission_batch_publication_transitions fk_rails_65cbd1e1a5; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.submission_batch_publication_transitions
+    ADD CONSTRAINT fk_rails_65cbd1e1a5 FOREIGN KEY (submission_batch_publication_id) REFERENCES public.submission_batch_publications(id) ON DELETE CASCADE;
 
 
 --
@@ -15467,6 +15706,14 @@ ALTER TABLE ONLY public.ordering_invalidations
 
 
 --
+-- Name: submission_publication_transitions fk_rails_8153002e02; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.submission_publication_transitions
+    ADD CONSTRAINT fk_rails_8153002e02 FOREIGN KEY (user_id) REFERENCES public.users(id) ON DELETE SET NULL;
+
+
+--
 -- Name: entity_links fk_rails_8181666751; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -15683,6 +15930,14 @@ ALTER TABLE ONLY public.submissions
 
 
 --
+-- Name: submission_publication_transitions fk_rails_a4b3b02764; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.submission_publication_transitions
+    ADD CONSTRAINT fk_rails_a4b3b02764 FOREIGN KEY (submission_publication_id) REFERENCES public.submission_publications(id) ON DELETE CASCADE;
+
+
+--
 -- Name: items fk_rails_a5b4e81110; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -15712,6 +15967,14 @@ ALTER TABLE ONLY public.harvest_records
 
 ALTER TABLE ONLY public.assets
     ADD CONSTRAINT fk_rails_a8a9ebb434 FOREIGN KEY (collection_id) REFERENCES public.collections(id) ON DELETE RESTRICT;
+
+
+--
+-- Name: submission_batch_publications fk_rails_a92bf6096d; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.submission_batch_publications
+    ADD CONSTRAINT fk_rails_a92bf6096d FOREIGN KEY (user_id) REFERENCES public.users(id) ON DELETE SET NULL;
 
 
 --
@@ -16131,6 +16394,14 @@ ALTER TABLE ONLY public.harvest_cached_asset_references
 
 
 --
+-- Name: submission_batch_publications fk_rails_e4fc877234; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.submission_batch_publications
+    ADD CONSTRAINT fk_rails_e4fc877234 FOREIGN KEY (submission_target_id) REFERENCES public.submission_targets(id) ON DELETE CASCADE;
+
+
+--
 -- Name: submission_comments fk_rails_e4ff9f0115; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -16353,6 +16624,7 @@ ALTER TABLE ONLY public.templates_ordering_instances
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20260312195907'),
 ('20260227180536'),
 ('20260227180515'),
 ('20260227180402'),

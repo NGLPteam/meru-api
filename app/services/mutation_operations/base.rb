@@ -431,43 +431,6 @@ module MutationOperations
       end
     end
 
-    # @!endgroup
-
-    module ClassMethods
-      # Declare that the mutation requires the permission described by `with`
-      # on a model instance stored in {#args} with the key `arg_key`.
-      #
-      # This can be called multiple times if a mutation requires multiple auth checks.
-      #
-      # @example Require update permissions for an account
-      #   authorizes! :account, with: :update?
-      # @param [Symbol] arg_key
-      # @param [Symbol] with the verb to authorize with
-      # @return [void]
-      def authorizes!(arg_key, with:)
-        key = MutationOperations::Types::ArgKey[arg_key]
-
-        predicate = MutationOperations::Types::AuthPredicate[with]
-
-        verb = predicate.to_s.chomp(??)
-
-        if arg_key == :current_user
-          class_eval <<~RUBY, __FILE__, __LINE__ + 1
-            before_authorization def authorize_current_user_to_#{verb}!
-              authorize current_user, #{predicate.inspect}
-            end
-          RUBY
-          return
-        end
-
-        class_eval <<~RUBY, __FILE__, __LINE__ + 1
-        before_authorization def authorize_#{arg_key}_to_#{verb}!
-          model = args.fetch(#{key.inspect})
-
-          authorize model, #{predicate.inspect}
-        end
-        RUBY
-      end
-    end
+    # @!endgroup Mutation State
   end
 end
