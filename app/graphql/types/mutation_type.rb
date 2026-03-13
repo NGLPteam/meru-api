@@ -74,9 +74,9 @@ module Types
 
     field :grant_access, mutation: Mutations::GrantAccess
 
-    field :harvest_attempt_from_source, mutation: Mutations::HarvestAttemptFromSource
-
     field :harvest_attempt_from_mapping, mutation: Mutations::HarvestAttemptFromMapping
+
+    field :harvest_attempt_from_source, mutation: Mutations::HarvestAttemptFromSource
 
     field :harvest_attempt_prune_entities, mutation: Mutations::HarvestAttemptPruneEntities
 
@@ -99,6 +99,12 @@ module Types
     field :harvest_source_update, mutation: Mutations::HarvestSourceUpdate
 
     field :link_entity, mutation: Mutations::LinkEntity
+
+    field :permalink_create, mutation: Mutations::PermalinkCreate
+
+    field :permalink_destroy, mutation: Mutations::PermalinkDestroy
+
+    field :permalink_update, mutation: Mutations::PermalinkUpdate
 
     field :preview_slot, mutation: Mutations::PreviewSlot
 
@@ -150,9 +156,9 @@ module Types
 
     field :update_contribution, mutation: Mutations::UpdateContribution
 
-    field :update_item, mutation: Mutations::UpdateItem
-
     field :update_global_configuration, mutation: Mutations::UpdateGlobalConfiguration
+
+    field :update_item, mutation: Mutations::UpdateItem
 
     field :update_ordering, mutation: Mutations::UpdateOrdering
 
@@ -171,11 +177,5 @@ module Types
     field :upsert_contribution, mutation: Mutations::UpsertContribution
 
     field :user_reset_password, mutation: Mutations::UserResetPassword
-
-    field :permalink_create, mutation: Mutations::PermalinkCreate
-
-    field :permalink_destroy, mutation: Mutations::PermalinkDestroy
-
-    field :permalink_update, mutation: Mutations::PermalinkUpdate
   end
 end
