@@ -10,8 +10,6 @@ module Harvesting
       # @param [HarvestAttempt] harvest_attempt
       # @return [Dry::Monads::Success(Integer)] the count of records harvested
       def call(harvest_attempt, cursor: nil)
-        harvest_attempt.clear_harvest_errors!
-
         protocol = harvest_attempt.build_protocol_context
 
         protocol.extract_records_for(harvest_attempt)

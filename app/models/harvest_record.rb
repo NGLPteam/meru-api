@@ -2,7 +2,6 @@
 
 class HarvestRecord < ApplicationRecord
   include HasEphemeralSystemSlug
-  include HasHarvestErrors
   include HasHarvestSource
   include ScopesForIdentifier
   include HasHarvestMetadataFormat
@@ -44,7 +43,6 @@ class HarvestRecord < ApplicationRecord
   scope :pending, -> { with_pending_status }
   scope :active, -> { with_active_status }
   scope :skipped, -> { with_skipped_status }
-  scope :upsertable, -> { active.sans_harvest_errors }
   scope :with_entities, -> { where(id: HarvestEntity.select(:harvest_record_id)) }
   scope :sans_entities, -> { where.not(id: HarvestEntity.select(:harvest_record_id)) }
 

@@ -67,18 +67,34 @@ SimpleCov.start "rails" do
 
   add_group "Harvesting", [
     "app/jobs/harvesting",
-    %r|app/models/harvest|,
+    %r|app/models/[^/]*harvest|,
     %r|app/models/concerns/[^/]*harvest|,
     "app/operations/harvesting",
-    "app/operations/pilot_harvesting",
+    "app/operations/metadata",
+    "app/operations/protocols",
     "app/services/harvesting",
-    "app/services/pilot_harvesting",
+    "app/services/metadata",
+    "app/services/protocols",
   ]
 
   add_group "Mutations", [
     "app/graphql/mutations",
     "app/operations/mutations",
     "app/services/mutation_operations",
+  ]
+
+  add_group "Rendering", [
+    %r|app/graphql/types/[^/]*layout|,
+    %r|app/graphql/types[^/]*template|,
+    %r|app/models/[^/]*layout|,
+    %r|app/models/[^/]*template|,
+    "app/models/rendering",
+    "app/operations/layouts",
+    "app/operations/rendering",
+    "app/operations/templates",
+    "app/services/layouts",
+    "app/services/rendering",
+    "app/services/templates",
   ]
 
   add_group "Operations", "app/operations"

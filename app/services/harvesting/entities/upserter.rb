@@ -87,8 +87,6 @@ module Harvesting
       end
 
       wrapped_hook! def prepare
-        harvest_entity.clear_harvest_errors!
-
         @actual_entity = nil
 
         @cancelled = false
