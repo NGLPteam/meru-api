@@ -2,7 +2,7 @@
 
 source "https://rubygems.org"
 
-ruby "3.4.7"
+ruby "3.4.9"
 
 # stdlib
 gem "csv", "~> 3.3.5"

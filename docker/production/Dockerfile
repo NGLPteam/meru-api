@@ -10,7 +10,7 @@ RUN --mount=type=secret,id=maxmind_account_id \
   GEOIPUPDATE_LICENSE_KEY_FILE=/run/secrets/maxmind_license_key \
   /usr/bin/geoipupdate
 
-FROM ruby:3.4.7-bookworm
+FROM ruby:3.4.9-bookworm
 
 RUN apt-get update -qq && apt-get install -y -qq --no-install-recommends \
     build-essential \
@@ -29,7 +29,7 @@ RUN apt-get update -qq && apt-get install -y -qq --no-install-recommends \
 
 RUN /usr/share/postgresql-common/pgdg/apt.postgresql.org.sh -y
 
-RUN apt-get update -qq && apt-get install -y -qq --no-install-recommends postgresql-client-15
+RUN apt-get update -qq && apt-get install -y -qq --no-install-recommends postgresql-client-18
 
 WORKDIR /srv/app
 
@@ -57,7 +57,7 @@ ENV RUBY_GC_HEAP_2_INIT_SLOTS=455808
 ENV RUBY_GC_HEAP_3_INIT_SLOTS=19968
 ENV RUBY_GC_HEAP_4_INIT_SLOTS=9265
 
-RUN gem update --system && gem install bundler:2.7.2
+RUN gem update --system && gem install bundler:4.0.7
 
 COPY Gemfile Gemfile.lock ./
 

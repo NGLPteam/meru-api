@@ -1,6 +1,6 @@
 services:
   db:
-    image: "postgres:15.5-alpine"
+    image: "pgautoupgrade/pgautoupgrade:18-alpine"
     command: postgres -c shared_preload_libraries=pg_stat_statements -c pg_stat_statements.track=all
     shm_size: 2g
     environment:
@@ -13,17 +13,14 @@ services:
         max-file: "10"
     restart: unless-stopped
     volumes:
-      - postgres-data:/var/lib/postgresql/data
+      - postgres-data:/var/lib/postgresql
     healthcheck:
       test: ["CMD-SHELL", "pg_isready", "-U", "postgres"]
       interval: 10s
       timeout: 5s
       retries: 5
   redis:
-    image: bitnami/redis:6.2.7-debian-10-r34
-    platform: linux/amd64
-    environment:
-      - "ALLOW_EMPTY_PASSWORD=yes"
+    image: valkey/valkey:8.0-alpine
     logging:
       driver: json-file
       options:
@@ -36,10 +33,7 @@ services:
       timeout: 5s
       retries: 5
   test-redis:
-    image: bitnami/redis:6.2.7-debian-10-r34
-    platform: linux/amd64
-    environment:
-      - "ALLOW_EMPTY_PASSWORD=yes"
+    image: valkey/valkey:8.0-alpine
     logging:
       driver: json-file
       options:

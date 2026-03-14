@@ -1,6 +1,7 @@
 SET statement_timeout = 0;
 SET lock_timeout = 0;
 SET idle_in_transaction_session_timeout = 0;
+SET transaction_timeout = 0;
 SET client_encoding = 'UTF8';
 SET standard_conforming_strings = on;
 SELECT pg_catalog.set_config('search_path', '', false);
@@ -1724,17 +1725,6 @@ $_$;
 
 
 --
--- Name: jsonb_bool_or_rec(jsonb, boolean, text[]); Type: FUNCTION; Schema: public; Owner: -
---
-
-CREATE FUNCTION public.jsonb_bool_or_rec(jsonb, boolean, text[]) RETURNS jsonb
-    LANGUAGE sql IMMUTABLE PARALLEL SAFE
-    AS $_$
-SELECT public.jsonb_set_rec($1, to_jsonb(public.jsonb_extract_boolean($1, $3) OR $2), $3);
-$_$;
-
-
---
 -- Name: jsonb_extract_boolean(jsonb, text[]); Type: FUNCTION; Schema: public; Owner: -
 --
 
@@ -2964,17 +2954,6 @@ CREATE AGGREGATE public.jsonb_auth_path(public.ltree, boolean) (
 
 
 --
--- Name: jsonb_bool_or(boolean, text[]); Type: AGGREGATE; Schema: public; Owner: -
---
-
-CREATE AGGREGATE public.jsonb_bool_or(boolean, text[]) (
-    SFUNC = public.jsonb_bool_or_rec,
-    STYPE = jsonb,
-    INITCOND = '{}'
-);
-
-
---
 -- Name: jsonb_set_agg(jsonb, text[]); Type: AGGREGATE; Schema: public; Owner: -
 --
 
@@ -2993,8 +2972,8 @@ CREATE OPERATOR public.> (
     FUNCTION = public.vpdate_gt,
     LEFTARG = public.variable_precision_date,
     RIGHTARG = public.variable_precision_date,
-    COMMUTATOR = OPERATOR(public.<=),
-    NEGATOR = OPERATOR(public.<),
+    COMMUTATOR = OPERATOR(public.<),
+    NEGATOR = OPERATOR(public.<=),
     RESTRICT = scalargtsel,
     JOIN = scalargtjoinsel
 );
@@ -3024,7 +3003,6 @@ CREATE OPERATOR public.< (
     FUNCTION = public.vpdate_lt,
     LEFTARG = public.variable_precision_date,
     RIGHTARG = public.variable_precision_date,
-    COMMUTATOR = OPERATOR(public.>),
     NEGATOR = OPERATOR(public.>=),
     RESTRICT = scalarltsel,
     JOIN = scalarltjoinsel
@@ -3206,7 +3184,6 @@ CREATE OPERATOR public.<= (
     LEFTARG = public.variable_precision_date,
     RIGHTARG = public.variable_precision_date,
     COMMUTATOR = OPERATOR(public.>=),
-    NEGATOR = OPERATOR(public.>),
     RESTRICT = scalarlesel,
     JOIN = scalarlejoinsel
 );
@@ -5653,8 +5630,8 @@ CREATE VIEW public.harvest_attempt_entity_statuses AS
          SELECT harvest_attempt_entity_links.harvest_attempt_id,
             count(DISTINCT harvest_attempt_entity_links.harvest_entity_id) AS total_entities,
             count(DISTINCT harvest_attempt_entity_links.harvest_entity_id) FILTER (WHERE harvest_attempt_entity_links.assets) AS total_entities_with_assets,
-            count(DISTINCT harvest_attempt_entity_links.harvest_entity_id) FILTER (WHERE ((deets.current_state)::text <> ALL ((ARRAY['success'::character varying, 'upserted'::character varying])::text[]))) AS total_entities_waiting_for_upsert,
-            count(DISTINCT harvest_attempt_entity_links.harvest_entity_id) FILTER (WHERE (harvest_attempt_entity_links.assets AND ((deets.current_state)::text <> ALL ((ARRAY['success'::character varying, 'assets_fetched'::character varying])::text[])))) AS total_entities_waiting_for_assets,
+            count(DISTINCT harvest_attempt_entity_links.harvest_entity_id) FILTER (WHERE ((deets.current_state)::text <> ALL (ARRAY[('success'::character varying)::text, ('upserted'::character varying)::text]))) AS total_entities_waiting_for_upsert,
+            count(DISTINCT harvest_attempt_entity_links.harvest_entity_id) FILTER (WHERE (harvest_attempt_entity_links.assets AND ((deets.current_state)::text <> ALL (ARRAY[('success'::character varying)::text, ('assets_fetched'::character varying)::text])))) AS total_entities_waiting_for_assets,
             count(DISTINCT harvest_attempt_entity_links.harvest_entity_id) FILTER (WHERE ((deets.current_state)::text = 'success'::text)) AS total_entities_success,
             jsonb_build_object('min', min(harvest_attempt_entity_links.upsert_duration) FILTER (WHERE (harvest_attempt_entity_links.upsert_duration <> 0.0)), 'max', max(harvest_attempt_entity_links.upsert_duration) FILTER (WHERE (harvest_attempt_entity_links.upsert_duration <> 0.0)), 'avg', avg(harvest_attempt_entity_links.upsert_duration) FILTER (WHERE (harvest_attempt_entity_links.upsert_duration <> 0.0)), 'stddev', stddev_samp(harvest_attempt_entity_links.upsert_duration) FILTER (WHERE (harvest_attempt_entity_links.upsert_duration <> 0.0)), 'sum', sum(harvest_attempt_entity_links.upsert_duration) FILTER (WHERE (harvest_attempt_entity_links.upsert_duration <> 0.0))) AS upsert_stats,
             jsonb_build_object('min', min(harvest_attempt_entity_links.assets_duration) FILTER (WHERE (harvest_attempt_entity_links.assets AND (harvest_attempt_entity_links.assets_duration <> 0.0))), 'max', max(harvest_attempt_entity_links.assets_duration) FILTER (WHERE (harvest_attempt_entity_links.assets AND (harvest_attempt_entity_links.assets_duration <> 0.0))), 'avg', avg(harvest_attempt_entity_links.assets_duration) FILTER (WHERE (harvest_attempt_entity_links.assets AND (harvest_attempt_entity_links.assets_duration <> 0.0))), 'stddev', stddev_samp(harvest_attempt_entity_links.assets_duration) FILTER (WHERE (harvest_attempt_entity_links.assets AND (harvest_attempt_entity_links.assets_duration <> 0.0))), 'sum', sum(harvest_attempt_entity_links.assets_duration) FILTER (WHERE (harvest_attempt_entity_links.assets AND (harvest_attempt_entity_links.assets_duration <> 0.0)))) AS assets_stats,
@@ -5737,8 +5714,8 @@ CREATE VIEW public.harvest_attempt_record_statuses AS
  WITH stats AS (
          SELECT harvest_attempt_record_links.harvest_attempt_id,
             count(DISTINCT harvest_attempt_record_links.harvest_record_id) AS total_records,
-            count(DISTINCT harvest_attempt_record_links.harvest_record_id) FILTER (WHERE ((deets.current_state)::text <> ALL ((ARRAY['success'::character varying, 'upserted'::character varying, 'extracted'::character varying])::text[]))) AS total_records_waiting_for_extraction,
-            count(DISTINCT harvest_attempt_record_links.harvest_record_id) FILTER (WHERE ((deets.current_state)::text <> ALL ((ARRAY['success'::character varying, 'upserted'::character varying])::text[]))) AS total_records_waiting_for_upsert,
+            count(DISTINCT harvest_attempt_record_links.harvest_record_id) FILTER (WHERE ((deets.current_state)::text <> ALL (ARRAY[('success'::character varying)::text, ('upserted'::character varying)::text, ('extracted'::character varying)::text]))) AS total_records_waiting_for_extraction,
+            count(DISTINCT harvest_attempt_record_links.harvest_record_id) FILTER (WHERE ((deets.current_state)::text <> ALL (ARRAY[('success'::character varying)::text, ('upserted'::character varying)::text]))) AS total_records_waiting_for_upsert,
             count(DISTINCT harvest_attempt_record_links.harvest_record_id) FILTER (WHERE ((deets.current_state)::text = 'success'::text)) AS total_records_success,
             jsonb_build_object('min', min(harvest_attempt_record_links.extraction_duration) FILTER (WHERE (harvest_attempt_record_links.extraction_duration <> 0.0)), 'max', max(harvest_attempt_record_links.extraction_duration) FILTER (WHERE (harvest_attempt_record_links.extraction_duration <> 0.0)), 'avg', avg(harvest_attempt_record_links.extraction_duration) FILTER (WHERE (harvest_attempt_record_links.extraction_duration <> 0.0)), 'stddev', stddev_samp(harvest_attempt_record_links.extraction_duration) FILTER (WHERE (harvest_attempt_record_links.extraction_duration <> 0.0)), 'sum', sum(harvest_attempt_record_links.extraction_duration) FILTER (WHERE (harvest_attempt_record_links.extraction_duration <> 0.0))) AS extraction_stats,
             stddev_samp(harvest_attempt_record_links.extraction_duration) FILTER (WHERE (harvest_attempt_record_links.extraction_duration <> 0.0)) AS extraction_duration_stddev,
@@ -16758,6 +16735,7 @@ ALTER TABLE ONLY public.templates_ordering_instances
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20260314094207'),
 ('20260312201100'),
 ('20260312195907'),
 ('20260312162710'),
