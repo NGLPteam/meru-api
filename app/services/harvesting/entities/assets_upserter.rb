@@ -17,15 +17,6 @@ module Harvesting
         param :harvest_entity, Harvesting::Types::Entity
       end
 
-      # Harvest error codes that are cleared by this operation.
-      CLEARABLE_CODES = %i[
-        asset_not_found
-        could_not_upsert_assets
-        failed_asset_upsert
-        failed_entity_upsert
-        invalid_entity_asset
-      ].freeze
-
       standard_execution!
 
       delegate :harvest_record, :has_assets?, :has_entity?, to: :harvest_entity
@@ -74,8 +65,6 @@ module Harvesting
       end
 
       wrapped_hook! def prepare
-        harvest_entity.clear_harvest_errors!(*CLEARABLE_CODES)
-
         @asset_properties = {}
 
         @entity = harvest_entity.entity

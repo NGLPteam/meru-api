@@ -3,7 +3,6 @@
 class HarvestAttempt < ApplicationRecord
   include HarvestConfigurable
   include HasEphemeralSystemSlug
-  include HasHarvestErrors
   include HasHarvestMetadataFormat
   include HasHarvestSource
   include TimestampScopes

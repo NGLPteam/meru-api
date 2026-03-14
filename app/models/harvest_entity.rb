@@ -3,7 +3,6 @@
 # A staging ground for an {Item} or a {Collection}, extracted
 # from metadata contained within a {HarvestRecord}.
 class HarvestEntity < ApplicationRecord
-  include HasHarvestErrors
   include ScopesForIdentifier
   include ReferencesCachedAssets
   include TimestampScopes
