@@ -14,7 +14,7 @@ RSpec.describe Entities::AuditAuthorizing, type: :operation do
       end.to change(AuthorizingEntity, :count).by(1)
 
       expect do
-        operation.call
+        expect_calling.to succeed
       end.to change(AuthorizingEntity, :count).by(-2)
     end
   end

@@ -51,12 +51,6 @@ class OrderingEntry < ApplicationRecord
   scope :by_entity, ->(entity) { where(entity:) }
 
   class << self
-    # @param [Ordering] ordering
-    # @return [Integer]
-    def delete_stale_for(ordering)
-      by_ordering(ordering).where.not(stale_at: nil).delete_all
-    end
-
     # @param [HierarchicalEntity] entity
     # @return [ActiveRecord::Relation<OrderingEntry>]
     def linking_to(entity)

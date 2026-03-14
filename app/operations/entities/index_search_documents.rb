@@ -1,11 +1,13 @@
 # frozen_string_literal: true
 
 module Entities
+  # Collate various text fields from an {Entity} as well as associated tables
+  # and put them together into a single search document for use in FTS.
   class IndexSearchDocuments
     include Dry::Monads[:result]
     include QueryOperation
 
-    PREFIX = <<~SQL.strip_heredoc.freeze
+    PREFIX = <<~SQL
     WITH all_documents AS (
       SELECT entity_id, entity_type, public.to_unaccented_weighted_tsv(title, 'A') AS document, 1 AS priority, 0 AS ranking FROM entities WHERE scope IN ('communities', 'items', 'collections')
       UNION ALL
@@ -63,39 +65,44 @@ module Entities
           scope IN ('communities', 'collections', 'items')
     SQL
 
-    SUFFIX = <<~SQL.strip_heredoc.freeze
+    SUFFIX = <<~SQL
     )
-    INSERT INTO entity_search_documents (
+    MERGE INTO entity_search_documents AS target
+    USING search_documents AS source
+    ON target.entity_id = source.entity_id AND target.entity_type = source.entity_type
+    WHEN MATCHED AND (
+      target.title <> source.title
+      OR target.author_names <> source.author_names
+      OR target.schematic_texts <> source.schematic_texts
+      OR target.document <> source.document
+      OR target.created_at <> source.created_at
+    ) THEN UPDATE SET
+      title = source.title,
+      author_names = source.author_names,
+      schematic_texts = source.schematic_texts,
+      document = source.document,
+      created_at = source.created_at,
+      updated_at = source.updated_at
+    WHEN NOT MATCHED THEN INSERT (
       entity_id, entity_type,
       community_id, collection_id, item_id,
       title, author_names, schematic_texts, document,
       created_at, updated_at
+    ) VALUES (
+      source.entity_id, source.entity_type,
+      source.community_id, source.collection_id, source.item_id,
+      source.title, source.author_names, source.schematic_texts, source.document,
+      source.created_at, source.updated_at
     )
-    SELECT
-      entity_id, entity_type,
-      community_id, collection_id, item_id,
-      title, author_names, schematic_texts, document,
-      created_at, updated_at
-    FROM search_documents
-    ON CONFLICT (entity_id, entity_type) DO UPDATE SET
-      community_id = EXCLUDED.community_id,
-      collection_id = EXCLUDED.collection_id,
-      item_id = EXCLUDED.item_id,
-      title = EXCLUDED.title,
-      author_names = EXCLUDED.author_names,
-      schematic_texts = EXCLUDED.schematic_texts,
-      document = EXCLUDED.document,
-      created_at = EXCLUDED.created_at,
-      updated_at = EXCLUDED.updated_at
     ;
     SQL
 
     # @param [HierarchicalEntity] entity
     # @return [Dry::Monads::Success(Integer)]
     def call(entity: nil)
-      updated = sql_update! PREFIX, generate_infix_for(entity:), SUFFIX
+      sql_insert! PREFIX, generate_infix_for(entity:), SUFFIX
 
-      Success(updated)
+      Success()
     end
 
     private
