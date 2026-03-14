@@ -5,7 +5,7 @@ module Roles
     include Dry::Monads[:result]
     include QueryOperation
 
-    PREFIX = <<~SQL.squish.strip_heredoc.squish.freeze
+    PREFIX = <<~SQL
     INSERT INTO role_permissions (permission_id, role_id, action, inferring_actions, inferring_scopes, inferred, updated_at)
     SELECT ip.id AS permission_id, r.id AS role_id, ip.path AS action,
       COALESCE(array_agg(DISTINCT p.path) FILTER (WHERE p.path <> ip.path), '{}') AS inferring_actions,
@@ -20,7 +20,7 @@ module Roles
     INNER JOIN permissions ip ON p.kind = ip.kind AND p.suffix = ip.suffix AND ip.head IN (p.head, 'self')
     SQL
 
-    SUFFIX = <<~SQL.squish.strip_heredoc.squish.freeze
+    SUFFIX = <<~SQL
     GROUP BY 1,2,3
     ON CONFLICT (role_id, permission_id) DO UPDATE SET
       action = EXCLUDED.action,
@@ -30,7 +30,7 @@ module Roles
       updated_at = EXCLUDED.updated_at
     SQL
 
-    CLEANUP = <<~SQL.squish.strip_heredoc.squish.freeze
+    CLEANUP = <<~SQL
     DELETE FROM role_permissions rp
     USING roles r
     WHERE

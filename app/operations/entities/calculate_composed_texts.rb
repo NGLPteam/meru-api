@@ -1,23 +1,30 @@
 # frozen_string_literal: true
 
 module Entities
+  # @see Schemas::Instances::ExtractComposedTexts
   class CalculateComposedTexts
     include Dry::Monads[:do, :result]
     include QueryOperation
 
     prepend TransactionalCall
 
-    PREFIX = <<~SQL.squish.strip_heredoc.squish.freeze
-    INSERT INTO entity_composed_texts (entity_type, entity_id, document)
-    SELECT entity_type, entity_id, tsvector_agg(document) AS document
-    FROM schematic_texts
+    PREFIX = <<~SQL
+    WITH aggregated_texts AS (
+      SELECT entity_type, entity_id, tsvector_agg(document) AS document
+      FROM schematic_texts
     SQL
 
-    SUFFIX = <<~SQL.squish.strip_heredoc.squish.freeze
-    GROUP BY 1, 2
-    ON CONFLICT (entity_type, entity_id) DO UPDATE SET
-      document = EXCLUDED.document,
-      updated_at = CASE WHEN EXCLUDED.document IS DISTINCT FROM entity_composed_texts.document THEN CURRENT_TIMESTAMP ELSE entity_composed_texts.updated_at END
+    SUFFIX = <<~SQL
+      GROUP BY 1, 2
+    )
+    MERGE INTO entity_composed_texts AS target
+    USING aggregated_texts AS source
+     ON target.entity_id = source.entity_id AND target.entity_type = source.entity_type
+     WHEN MATCHED AND target.document <> source.document THEN
+       UPDATE SET document = source.document, updated_at = CURRENT_TIMESTAMP
+     WHEN NOT MATCHED THEN
+       INSERT (entity_type, entity_id, document)
+       VALUES (source.entity_type, source.entity_id, source.document)
     ;
     SQL
 

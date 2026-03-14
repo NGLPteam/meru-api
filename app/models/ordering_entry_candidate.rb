@@ -211,9 +211,9 @@ class OrderingEntryCandidate < ApplicationRecord
         arel_table[:scope],
         relative_depth_expr.as("relative_depth"),
         order_props_expr.as("order_props"),
-        arel_quote(nil).as("tree_depth"),
-        arel_quote(nil).as("tree_parent_id"),
-        arel_quote(nil).as("tree_parent_type")
+        arel_literal(%[NULL::bigint]).as("tree_depth"),
+        arel_literal(%[NULL::uuid]).as("tree_parent_id"),
+        arel_literal(%[NULL::text]).as("tree_parent_type")
       ).distinct_on(:hierarchical_type, :hierarchical_id)
 
       query.joins!(*compiled.joins.values) if compiled.joins.any?

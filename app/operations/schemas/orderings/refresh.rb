@@ -23,104 +23,110 @@ module Schemas
       SQL
 
       PREFIX = <<~SQL.squish
-      INSERT INTO ordering_entries (ordering_id, entity_id, entity_type, position, inverse_position, link_operator, auth_path, scope, relative_depth, order_props, tree_depth, tree_parent_id, tree_parent_type)
+      WITH candidate_entries AS (
       SQL
 
       SUFFIX = <<~SQL.squish
-      ON CONFLICT (ordering_id, entity_type, entity_id) DO UPDATE SET
-        stale_at = NULL,
-        position = EXCLUDED.position,
-        inverse_position = EXCLUDED.inverse_position,
-        link_operator = EXCLUDED.link_operator,
-        auth_path = EXCLUDED.auth_path,
-        scope = EXCLUDED.scope,
-        relative_depth = EXCLUDED.relative_depth,
-        order_props = EXCLUDED.order_props,
-        tree_depth = EXCLUDED.tree_depth,
-        tree_parent_id = EXCLUDED.tree_parent_id,
-        tree_parent_type = EXCLUDED.tree_parent_type,
-        updated_at = CASE WHEN
-          ordering_entries.position IS DISTINCT FROM EXCLUDED.position
+      )
+      MERGE INTO ordering_entries AS target
+      USING candidate_entries
+        ON target.ordering_id = candidate_entries.ordering_id
+        AND target.entity_type = candidate_entries.entity_type
+        AND target.entity_id = candidate_entries.entity_id
+      WHEN MATCHED
+        AND (
+          target.position <> candidate_entries.position
           OR
-          ordering_entries.inverse_position IS DISTINCT FROM EXCLUDED.inverse_position
+          target.inverse_position <> candidate_entries.inverse_position
           OR
-          ordering_entries.link_operator IS DISTINCT FROM EXCLUDED.link_operator
+          target.link_operator IS DISTINCT FROM candidate_entries.link_operator
           OR
-          ordering_entries.auth_path IS DISTINCT FROM EXCLUDED.auth_path
+          target.auth_path <> candidate_entries.auth_path
           OR
-          ordering_entries.scope IS DISTINCT FROM EXCLUDED.scope
+          target.scope <> candidate_entries.scope
           OR
-          ordering_entries.relative_depth IS DISTINCT FROM EXCLUDED.relative_depth
+          target.relative_depth <> candidate_entries.relative_depth
           OR
-          ordering_entries.order_props IS DISTINCT FROM EXCLUDED.order_props
+          target.order_props <> candidate_entries.order_props
           OR
-          ordering_entries.tree_depth IS DISTINCT FROM EXCLUDED.tree_depth
+          target.tree_depth IS DISTINCT FROM candidate_entries.tree_depth
           OR
-          ordering_entries.tree_parent_id IS DISTINCT FROM EXCLUDED.tree_parent_id
+          target.tree_parent_id IS DISTINCT FROM candidate_entries.tree_parent_id
           OR
-          ordering_entries.tree_parent_type IS DISTINCT FROM EXCLUDED.tree_parent_type
-          THEN CURRENT_TIMESTAMP
-          ELSE
-          ordering_entries.updated_at
-          END
-      RETURNING ordering_entries.updated_at = CURRENT_TIMESTAMP AS updated
+          target.tree_parent_type IS DISTINCT FROM candidate_entries.tree_parent_type
+        )
+      THEN UPDATE SET
+        position = candidate_entries.position,
+        inverse_position = candidate_entries.inverse_position,
+        link_operator = candidate_entries.link_operator,
+        auth_path = candidate_entries.auth_path,
+        scope = candidate_entries.scope,
+        relative_depth = candidate_entries.relative_depth,
+        order_props = candidate_entries.order_props,
+        tree_depth = candidate_entries.tree_depth,
+        tree_parent_id = candidate_entries.tree_parent_id,
+        tree_parent_type = candidate_entries.tree_parent_type,
+        updated_at = CURRENT_TIMESTAMP
+      WHEN NOT MATCHED THEN INSERT
+        (ordering_id, entity_id, entity_type, position, inverse_position, link_operator, auth_path, scope, relative_depth, order_props, tree_depth, tree_parent_id, tree_parent_type)
+        VALUES (candidate_entries.ordering_id, candidate_entries.entity_id, candidate_entries.entity_type, candidate_entries.position, candidate_entries.inverse_position, candidate_entries.link_operator, candidate_entries.auth_path, candidate_entries.scope, candidate_entries.relative_depth, candidate_entries.order_props, candidate_entries.tree_depth, candidate_entries.tree_parent_id, candidate_entries.tree_parent_type)
+      WHEN NOT MATCHED BY SOURCE AND target.ordering_id = %1$s THEN DELETE
       SQL
 
       ANCESTOR_LINK_QUERY = <<~SQL
-      INSERT INTO ordering_entry_ancestor_links (ordering_id, child_id, ancestor_id, inverse_depth)
-      SELECT oe.ordering_id, oe.id AS child_id, anc.id AS ancestor_id, oe.tree_depth - anc.tree_depth AS inverse_depth
-      FROM ordering_entries oe
-      INNER JOIN ordering_entries anc ON oe.ordering_id = anc.ordering_id AND oe.auth_path <@ anc.auth_path AND anc.tree_depth < oe.tree_depth
-      WHERE oe.tree_depth > 1 AND oe.ordering_id = %s
-      ON CONFLICT (ordering_id, child_id, inverse_depth) DO UPDATE SET
-        ancestor_id = EXCLUDED.ancestor_id,
-        updated_at = CASE WHEN ordering_entry_ancestor_links.ancestor_id IS DISTINCT FROM EXCLUDED.ancestor_id THEN CURRENT_TIMESTAMP ELSE ordering_entry_ancestor_links.updated_at END
-      RETURNING ordering_entry_ancestor_links.updated_at = CURRENT_TIMESTAMP AS updated
+      WITH ancestor_entries AS (
+        SELECT oe.ordering_id, oe.id AS child_id, anc.id AS ancestor_id, oe.tree_depth - anc.tree_depth AS inverse_depth
+        FROM ordering_entries oe
+        INNER JOIN ordering_entries anc ON oe.ordering_id = anc.ordering_id AND oe.auth_path <@ anc.auth_path AND anc.tree_depth < oe.tree_depth
+        WHERE oe.tree_depth > 1 AND oe.ordering_id = %1$s
+      )
+      MERGE INTO ordering_entry_ancestor_links AS target
+      USING ancestor_entries AS source
+      ON target.ordering_id = source.ordering_id AND target.child_id = source.child_id AND target.inverse_depth = source.inverse_depth
+      WHEN MATCHED AND target.ancestor_id <> source.ancestor_id THEN
+        UPDATE SET ancestor_id = source.ancestor_id, updated_at = CURRENT_TIMESTAMP
+      WHEN NOT MATCHED THEN
+        INSERT (ordering_id, child_id, ancestor_id, inverse_depth)
+        VALUES (source.ordering_id, source.child_id, source.ancestor_id, source.inverse_depth)
+      WHEN NOT MATCHED BY SOURCE AND target.ordering_id = %1$s THEN DELETE
       SQL
 
       SIBLING_LINK_QUERY = <<~SQL
-      INSERT INTO ordering_entry_sibling_links (ordering_id, sibling_id, prev_id, next_id)
-      SELECT ordering_id, id AS sibling_id, lag(id) OVER w AS prev_id, lead(id) OVER w AS next_id
-      FROM ordering_entries
-      WHERE ordering_id = %s
-      WINDOW w AS (PARTITION BY ordering_id ORDER BY position ASC)
-      ON CONFLICT (ordering_id, sibling_id) DO UPDATE SET
-        prev_id = EXCLUDED.prev_id,
-        next_id = EXCLUDED.next_id,
-        updated_at = CASE WHEN
-          EXCLUDED.prev_id IS DISTINCT FROM ordering_entry_sibling_links.prev_id
-          OR
-          EXCLUDED.next_id IS DISTINCT FROM ordering_entry_sibling_links.next_id
-          THEN CURRENT_TIMESTAMP
-          ELSE ordering_entry_sibling_links.updated_at END
-      RETURNING ordering_entry_sibling_links.updated_at = CURRENT_TIMESTAMP AS updated
+      WITH sibling_entries AS (
+        SELECT ordering_id, id AS sibling_id, lag(id) OVER w AS prev_id, lead(id) OVER w AS next_id
+        FROM ordering_entries
+        WHERE ordering_id = %1$s
+        WINDOW w AS (PARTITION BY ordering_id ORDER BY position ASC)
+      )
+      MERGE INTO ordering_entry_sibling_links AS target
+      USING sibling_entries AS source
+      ON target.ordering_id = source.ordering_id AND target.sibling_id = source.sibling_id
+      WHEN MATCHED AND (
+        target.prev_id IS DISTINCT FROM source.prev_id
+        OR
+        target.next_id IS DISTINCT FROM source.next_id
+      ) THEN
+        UPDATE SET prev_id = source.prev_id, next_id = source.next_id, updated_at = CURRENT_TIMESTAMP
+      WHEN NOT MATCHED THEN
+        INSERT (ordering_id, sibling_id, prev_id, next_id)
+        VALUES (source.ordering_id, source.sibling_id, source.prev_id, source.next_id)
+      WHEN NOT MATCHED BY SOURCE AND target.ordering_id = %1$s THEN DELETE
       SQL
 
       # @param [Ordering] ordering
-      # @return [Dry::Monads::Result]
+      # @return [Dry::Monads::Success(void)]
       def call(ordering)
         yield lock! ordering
 
-        yield mark_stale! ordering
+        yield update! ordering
 
-        updated_count = yield update! ordering
+        yield update_ancestors! ordering
 
-        deleted_count = OrderingEntry.delete_stale_for(ordering)
-
-        updated_ancestor_count = yield update_ancestors! ordering
-
-        updated_sibling_count = yield update_siblings! ordering
-
-        response = {
-          deleted_count:,
-          updated_count:,
-          updated_ancestor_count:,
-          updated_sibling_count:,
-        }
+        yield update_siblings! ordering
 
         yield ordering.calculate_stats
 
-        Success response
+        Success()
       end
 
       private
@@ -139,52 +145,37 @@ module Schemas
 
       # @param [Ordering] ordering
       # @return [Dry::Monads::Success(void)]
-      def mark_stale!(ordering)
-        query = with_quoted_id_for ordering, <<~SQL
-        UPDATE ordering_entries SET stale_at = CURRENT_TIMESTAMP
-        WHERE ordering_id = %s
-        SQL
-
-        Try do
-          sql_update! query
-        end
-      end
-
-      # @param [Ordering] ordering
-      # @return [Dry::Monads::Success(Integer)]
       def update!(ordering)
         select_query = build_select_statement ordering
 
-        Try do
-          result = sql_insert! PREFIX, select_query, SUFFIX
+        suffix = with_quoted_id_for ordering, SUFFIX
 
-          result.count { |row| row["updated"] }
+        Try do
+          sql_insert! PREFIX, select_query, suffix
         end
       end
 
       # @param [Ordering] ordering
-      # @return [Dry::Monads::Success(Integer)]
+      # @return [Dry::Monads::Success(void)]
       def update_ancestors!(ordering)
         update_query = with_quoted_id_for ordering, ANCESTOR_LINK_QUERY
 
         Try do
-          result = sql_insert! update_query
-
-          result.count { |row| row["updated"] }
+          sql_insert! update_query
         end
       end
 
+      # @param [Ordering] ordering
+      # @return [Dry::Monads::Success(void)]
       def update_siblings!(ordering)
         update_query = with_quoted_id_for ordering, SIBLING_LINK_QUERY
 
         Try do
-          result = sql_insert! update_query
-
-          result.count { |row| row["updated"] }
+          sql_insert! update_query
         end
       end
 
-      # @!endgroup
+      # @!endgroup Steps
 
       # @see OrderingEntryCandidate.query_for
       # @param [Ordering] ordering
