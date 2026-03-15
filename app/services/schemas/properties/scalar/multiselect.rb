@@ -15,7 +15,7 @@ module Schemas
 
         schema_type! :string
 
-        config.graphql_value_key = :selections
+        graphql_value_key :selections
 
         attribute :default, :string_array
 

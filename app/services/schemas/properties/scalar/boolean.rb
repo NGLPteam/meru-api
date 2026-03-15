@@ -12,7 +12,7 @@ module Schemas
 
         schema_type! :bool
 
-        config.graphql_value_key = :checked
+        graphql_value_key :checked
       end
     end
   end

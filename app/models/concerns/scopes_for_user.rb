@@ -21,7 +21,7 @@ module ScopesForUser
     def recognized_user?(user)
       return false if user.try(:anonymous?)
       return user.model == ::User if user.kind_of?(ActiveRecord::Relation)
-      return user.all? { |u| u.kind_of?(::User) } if user.kind_of?(Array)
+      return user.all?(::User) if user.kind_of?(Array)
       return true if Support::GlobalTypes::UUID.valid?(user)
 
       user.present?

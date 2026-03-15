@@ -5,18 +5,22 @@ module Schemas
     module Scalar
       # @abstract
       class Base < Schemas::Properties::BaseDefinition
-        include ActiveSupport::Configurable
-
         extend Dry::Core::ClassAttributes
 
-        KNOWN_FUNCTIONS = %w[content metadata presentation sorting unspecified].freeze
+        KNOWN_FUNCTIONS = %w[
+          content
+          metadata
+          presentation
+          sorting
+          unspecified
+        ].freeze
 
         # @!scope class
         # @!attribute [r] always_wide
         # Declare whether this property type should always be rendered wide,
         # irrespective of its configured {#wide} property.
         # @return [Boolean]
-        defines :always_wide, type: Dry::Types["bool"]
+        defines :always_wide, type: Schemas::Properties::Types::Bool
 
         always_wide false
 
@@ -28,9 +32,19 @@ module Schemas
         # When validating values, the truthiness of this value is taken into account
         # alongside {.base_type} / {.schema_type}.
         # @return [Boolean]
-        defines :array, type: Dry::Types["bool"]
+        defines :array, type: Schemas::Properties::Types::Bool
 
         array false
+
+        # @!scope class
+        # @!attribute [r] array_element_macros
+        # When {.array}, this attribute can be set to an array of macros that should be
+        # applied to each element of the array in the schema when validating with a contract.
+        # @return [Array]
+
+        defines :array_element_macros, type: Schemas::Properties::Types::Array
+
+        array_element_macros Dry::Core::Constants::EMPTY_ARRAY
 
         # @!scope class
         # @!attribute [r] base_type
@@ -42,9 +56,17 @@ module Schemas
         # @!scope class
         # @!attribute [r] complex
         # @return [Boolean]
-        defines :complex, type: Dry::Types["bool"]
+        defines :complex, type: Schemas::Properties::Types::Bool
 
         complex false
+
+        # @!scope class
+        # @!attribute [r] custom_schema_predicates
+        # @return [{ Symbol => Object }]
+
+        defines :custom_schema_predicates, type: Schemas::Properties::Types::Hash
+
+        custom_schema_predicates Dry::Core::Constants::EMPTY_HASH
 
         # @!scope class
         # @!attribute [r] fillable
@@ -52,9 +74,20 @@ module Schemas
         #
         # @see https://dry-rb.org/gems/dry-schema/1.9/basics/macros/#filled
         # @return [Boolean]
-        defines :fillable, type: Dry::Types["bool"]
+        defines :fillable, type: Schemas::Properties::Types::Bool
 
         fillable false
+
+        # @!scope class
+        # @!attribute [r] graphql_value_key
+        # The key used to access the GraphQL value for this specific property type.
+        #
+        # @api private
+        # @note This attribute is primarily used for testing.
+        # @return [Symbol]
+        defines :graphql_value_key, type: Schemas::Properties::Types::Symbol
+
+        graphql_value_key :content
 
         # @!scope class
         # @!attribute [r] kind
@@ -69,7 +102,7 @@ module Schemas
         # @!scope class
         # @!attribute [r] orderable
         # @return [Boolean]
-        defines :orderable, type: Dry::Types["bool"]
+        defines :orderable, type: Schemas::Properties::Types::Bool
 
         orderable false
 
@@ -79,14 +112,14 @@ module Schemas
         #
         # @note A truthy value also implies {.complex}.
         # @return [Boolean]
-        defines :reference, type: Dry::Types["bool"]
+        defines :reference, type: Schemas::Properties::Types::Bool
 
         reference false
 
         # @!scope class
         # @!attribute [r] searchable
         # @return [Boolean]
-        defines :searchable, type: Dry::Types["bool"]
+        defines :searchable, type: Schemas::Properties::Types::Bool
 
         searchable false
 
@@ -125,9 +158,6 @@ module Schemas
 
         alias unorderable? unorderable
 
-        config.graphql_value_key = :content
-        config.schema_predicates = {}
-
         validates :function, presence: true, inclusion: { in: Schemas::Properties::Types::Function.values }
 
         delegate :always_wide?, :array?, :complex?, :kind, :reference?, :simple?,
@@ -135,61 +165,43 @@ module Schemas
           :base_type, :schema_type, :searchable?,
           to: :class
 
-        def actually_required?
-          !exclude_from_schema? && required
-        end
+        def actually_required? = !exclude_from_schema? && required
 
         # @!attribute [r] dig_path
         # An array of strings suitable for use with `Enumerable#dig`, grabbing
         # the property's group's `path` when {#nested? nested}.
         # @return [<String>]
-        def dig_path
-          nested? ? [parent.path, path] : [path]
-        end
+        def dig_path = nested? ? [parent.path, path] : [path]
 
         # @!attribute [r] full_path
         # The full `"dot.path"` for the property, based on whether the property is {#nested? nested}.
         # @return [String]
-        def full_path
-          nested? ? "#{parent.path}.#{path}" : path
-        end
+        def full_path = nested? ? "#{parent.path}.#{path}" : path
 
         # Determine whether this property has a `default`.
-        def has_default?
-          respond_to?(:default) && !default.nil?
-        end
+        def has_default? = respond_to?(:default) && !default.nil?
 
         # Whether this property is nested under a {Schemas::Properties::GroupDefinition group}.
-        def nested?
-          parent.kind_of?(Schemas::Properties::GroupDefinition)
-        end
+        def nested? = parent.kind_of?(Schemas::Properties::GroupDefinition)
 
         # Determine if this specific property is orderable based on its type
         # as well as if the schema author expressed it should not be.
         #
         # @see .orderable
         # @see #unorderable?
-        def orderable?
-          self.class.orderable? && !unorderable?
-        end
+        def orderable? = self.class.orderable? && !unorderable?
 
         # @!attribute [r] order_path
         # A condensed order path, that contains the type in order to ensure
         # the value is properly converted when sorting.
         # @return [String, nil]
-        def order_path
-          prefixed_path_with_type if orderable?
-        end
+        def order_path = orderable? ? prefixed_path_with_type : nil
 
         # @!attribute [r] search_path
         # @return [String, nil]
-        def search_path
-          prefixed_path_with_type if searchable?
-        end
+        def search_path = searchable? ? prefixed_path_with_type : nil
 
-        def prefixed_path_with_type
-          "props.#{full_path}##{type}"
-        end
+        def prefixed_path_with_type = "props.#{full_path}##{type}"
 
         # @api private
         # @return [void]
@@ -212,9 +224,7 @@ module Schemas
 
         # @api private
         # @see {.fillable}
-        def fillable_schema_type?
-          self.class.fillable?
-        end
+        def fillable_schema_type? = self.class.fillable?
 
         # @!attribute [r] schema_predicates
         # @return [{ Symbol => Object }]
@@ -222,7 +232,7 @@ module Schemas
           build_schema_predicates
         end
 
-        # @!endgroup
+        # @!endgroup Schema / Contract compilation
 
         # @!group Context / Value Extraction
 
@@ -258,9 +268,7 @@ module Schemas
         # @api private
         # @abstract
         # @return [Object]
-        def normalize_read_value(value)
-          array? ? Array(value) : value
-        end
+        def normalize_read_value(value) = array? ? Array(value) : value
 
         # @param [Schemas::Properties::WriteContext] context
         # @return [void]
@@ -268,7 +276,7 @@ module Schemas
           context.copy_value! path
         end
 
-        # @!endgroup
+        # @!endgroup Context / Value Extraction
 
         # @!group Version Property Hooks
 
@@ -288,7 +296,7 @@ module Schemas
           end.compact
         end
 
-        # @!endgroup
+        # @!endgroup Version Property Hooks
 
         private
 
@@ -324,12 +332,10 @@ module Schemas
         end
 
         def build_array_element_macros
-          [*Array(config.array_element_macros), build_array_element_predicates].compact_blank
+          [*self.class.array_element_macros, build_array_element_predicates].compact_blank
         end
 
-        def build_array_element_predicates
-          {}
-        end
+        def build_array_element_predicates = {}
 
         # @return [Dry::Schema::Macros::Required]
         # @return [Dry::Schema::Macros::Optional]
@@ -343,15 +349,13 @@ module Schemas
 
         # @abstract
         # @return [{ Symbol => Object }]
-        def build_schema_predicates
-          base_schema_predicates.merge(config.schema_predicates)
-        end
+        def build_schema_predicates = base_schema_predicates.merge(custom_schema_predicates)
 
         # @abstract
         # @return [{ Symbol => Object }]
-        def base_schema_predicates
-          {}
-        end
+        def base_schema_predicates = {}
+
+        def custom_schema_predicates = self.class.custom_schema_predicates
 
         class << self
           # Declare that this schema property type should {.always_wide always be wide}.
@@ -361,14 +365,23 @@ module Schemas
             always_wide true
           end
 
+          # @param [#to_sym] key
+          # @param [Object] value
+          # @return [void]
+          def add_schema_predicate!(key, value)
+            new_predicates = custom_schema_predicates.merge(key.to_sym => value).freeze
+
+            custom_schema_predicates new_predicates
+          end
+
           # Declare this schema property type to be an {.array}.
           #
-          # @param [Array] array_element_macros
+          # @param [Array] new_array_element_macros
           # @return [void]
-          def array!(*array_element_macros)
+          def array!(*new_array_element_macros)
             array true
 
-            config.array_element_macros = array_element_macros.flatten
+            array_element_macros new_array_element_macros.flatten.freeze
           end
 
           # Declare this schema property type to be {.fillable}.
@@ -418,39 +431,19 @@ module Schemas
           # @!group Introspection
 
           # @see {.always_wide}
-          def always_wide?
-            always_wide.present?
-          end
+          def always_wide? = always_wide.present?
 
           # @see {.array}
-          def array?
-            array.present?
-          end
+          def array? = array.present?
 
           # Detect whether this property type implements {Schemas::Properties::References::Collected}.
-          def collected_reference?
-            self < Schemas::Properties::References::Collected
-          end
+          def collected_reference? = self < Schemas::Properties::References::Collected
 
           # @see {.complex}
-          def complex?
-            complex.present?
-          end
+          def complex? = complex.present?
 
           # @see {.fillable}
-          def fillable?
-            fillable.present?
-          end
-
-          # @!attribute [r] graphql_value_key
-          # The key used to access the GraphQL value for this specific property type.
-          #
-          # @api private
-          # @note This attribute is primarily used for testing.
-          # @return [Symbol]
-          def graphql_value_key
-            config.graphql_value_key
-          end
+          def fillable? = fillable.present?
 
           # @!attribute [r] graphql_typename
           # The type name for this schema property.
@@ -459,35 +452,23 @@ module Schemas
           # @see Types::Schematic
           # @note This attribute is primarily used for testing.
           # @return [String]
-          def graphql_typename
-            "#{name.demodulize}Property"
-          end
+          def graphql_typename = "#{name.demodulize}Property"
 
           # Whether or not this property type is orderable.
           #
           # @see {.orderable}
-          def orderable?
-            orderable.present?
-          end
+          def orderable? = orderable.present?
 
           # @see {.reference}
-          def reference?
-            reference.present?
-          end
+          def reference? = reference.present?
 
           # Detect whether this property type implements {Schemas::Properties::References::Scalar}.
-          def scalar_reference?
-            self < Schemas::Properties::References::Scalar
-          end
+          def scalar_reference? = self < Schemas::Properties::References::Scalar
 
           # @see {.searchable}
-          def searchable?
-            searchable.present?
-          end
+          def searchable? = searchable.present?
 
-          def simple?
-            !complex? && !reference?
-          end
+          def simple? = !complex? && !reference?
 
           # @!attribute [r] type_reference
           # The type of the schema property expressed in a format suitable to use
@@ -496,11 +477,9 @@ module Schemas
           # @api private
           # @note This attribute is primarily used for testing.
           # @return [Symbol]
-          def type_reference
-            name.demodulize.underscore.to_sym
-          end
+          def type_reference = name.demodulize.underscore.to_sym
 
-          # @!endgroup
+          # @!endgroup Introspection
 
           private
 

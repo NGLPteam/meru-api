@@ -58,8 +58,8 @@ module Filtering
     end
 
     def filter_inputs
-      @filter_inputs ||= self.class.arguments.keys.each_with_object({}) do |key, h|
-        h[key.to_sym] = public_send(key)
+      @filter_inputs ||= self.class.arguments.keys.to_h do |key|
+        [key.to_sym, public_send(key)]
       end.compact
     end
 

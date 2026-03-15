@@ -26,8 +26,8 @@ module AssignsPolymorphicForeignKey
     def assign_polymorphic_foreign_key!(name, *direct_foreign_keys, required_interface: nil, **mapped_foreign_keys)
       direct_foreign_keys.flatten!
 
-      foreign_keys = direct_foreign_keys.each_with_object({}) do |key, h|
-        h[key.to_sym] = key.to_sym
+      foreign_keys = direct_foreign_keys.to_h do |key|
+        [key.to_sym, key.to_sym]
       end.merge(mapped_foreign_keys)
 
       options = {}

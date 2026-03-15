@@ -42,8 +42,10 @@ RSpec.describe Mutations::ControlledVocabularyUpsert, type: :request, graphql: :
               identifier: "bar",
               label: "Bar",
               children: [
-                identifier: "baz",
-                label: "Baz",
+                {
+                  identifier: "baz",
+                  label: "Baz",
+                },
               ]
             }
           ]

@@ -13,7 +13,7 @@ module Schemas
 
         searchable!
 
-        config.graphql_value_key = :date_with_precision
+        graphql_value_key :date_with_precision
 
         def normalize_schema_value_before_coercer(raw:, **)
           validate_raw_value raw

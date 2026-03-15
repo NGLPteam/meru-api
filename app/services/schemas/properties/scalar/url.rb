@@ -10,7 +10,7 @@ module Schemas
       class URL < Base
         schema_type! :url
 
-        config.graphql_value_key = :url
+        graphql_value_key :url
       end
     end
   end

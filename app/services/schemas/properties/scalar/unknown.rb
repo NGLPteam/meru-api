@@ -9,7 +9,7 @@ module Schemas
 
         schema_type! :any
 
-        config.graphql_value_key = :unknown_value
+        graphql_value_key :unknown_value
       end
     end
   end

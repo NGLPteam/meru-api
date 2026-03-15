@@ -22,7 +22,7 @@ module ImageAttachments
 
     # @return [String, nil]
     def url(**url_options)
-      uploaded_file.url(**url_options) if uploaded_file.present?
+      (uploaded_file.presence&.url(**url_options))
     end
   end
 end

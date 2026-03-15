@@ -7,9 +7,7 @@ module Roles
     include Roles::ComposesGrids
 
     included do
-      config.permission_names = [].freeze
-
-      config_accessor :permission_names, instance_reader: false, instance_writer: false
+      permission_names Dry::Core::Constants::EMPTY_ARRAY
     end
 
     INHERITED = Dry::Types["class"].constrained(lt: self)
@@ -47,7 +45,9 @@ module Roles
 
           attribute name, :boolean, default: default_value
 
-          config.permission_names = [*config.permission_names, name].uniq.freeze
+          new_permission_names = [*permission_names, name].uniq.freeze
+
+          permission_names new_permission_names
         end
 
         recalculate_available_actions!
@@ -61,8 +61,8 @@ module Roles
         klass_name = "#{scope}_grid".classify
 
         Dry::Core::ClassBuilder.new(parent: self, name: klass_name, namespace: parent).call.tap do |klass|
-          klass.scope_parent = parent
-          klass.scope_name = scope
+          klass.scope_parent parent
+          klass.scope_name scope
 
           klass.permission_grids.each do |name, defn|
             klass.grid name, defn[:type], default: defn[:default]

@@ -17,7 +17,6 @@ module Harvesting
         # @param [OAI::Record] record
         # @return [Dry::Monads::Success(String)]
         def extract_raw_metadata(record)
-          # :nocov:
           metadata = record.metadata
 
           return Success(nil) if metadata.nil?
@@ -25,11 +24,12 @@ module Harvesting
           if metadata.elements.size == 1
             Success metadata.elements.first.to_s
           elsif metadata.children.any?
-            Success metadata.children.map(&:to_s).join.strip
+            Success metadata.children.join.strip
           else
+            # :nocov:
             Failure[:invalid_metadata, "expected metadata to have at least 1 child"]
+            # :nocov:
           end
-          # :nocov:
         end
 
         # @param [OAI::Record] record

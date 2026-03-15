@@ -10,7 +10,7 @@ module Schemas
 
         schema_type! :time
 
-        config.graphql_value_key = :timestamp
+        graphql_value_key :timestamp
       end
     end
   end

@@ -12,11 +12,9 @@ module Schemas
 
         schema_type! :string
 
-        config.schema_predicates = {
-          format?: Support::GlobalTypes::EMAIL_PATTERN
-        }
+        add_schema_predicate! :format?, Support::GlobalTypes::EMAIL_PATTERN
 
-        config.graphql_value_key = :address
+        graphql_value_key :address
       end
     end
   end

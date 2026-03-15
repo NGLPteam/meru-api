@@ -4,18 +4,28 @@ module Roles
   module ComposesGrids
     extend ActiveSupport::Concern
 
-    include ActiveSupport::Configurable
-
     included do
+      extend Dry::Core::ClassAttributes
+
       include StoreModel::Model
 
-      delegate :scope, to: :class
+      # @!scope class
+      # @!attribute [r] permission_grids
+      # @return [{ Symbol => Roles::Grid }]
+      defines :permission_grids, type: Roles::Types::Hash
 
-      config.permission_grids = {}
-      config.permission_paths = []
+      defines :permission_names, type: Roles::Types::Array.of(Roles::Types::Symbol)
 
-      config_accessor :scope_parent
-      config_accessor :scope_name
+      defines :scope_parent, type: Roles::Types::Class.optional
+
+      defines :scope_name, type: Roles::Types::Symbol.optional
+
+      permission_grids Dry::Core::Constants::EMPTY_HASH
+      permission_names Dry::Core::Constants::EMPTY_ARRAY
+
+      scope_parent nil
+
+      scope_name nil
     end
 
     # @param [#to_s]
@@ -47,6 +57,9 @@ module Roles
         grid.permissions
       end
     end
+
+    # @return [String]
+    def scope = self.class.scope
 
     private
 
@@ -121,24 +134,14 @@ module Roles
         define_grid! name, type:, default: default_value
       end
 
-      # @return [{ Symbol => Roles::Grid }]
-      def permission_grids
-        config.permission_grids
-      end
-
       # @return [<String>]
-      def permission_grid_names
-        config.permission_grids.keys
-      end
+      def permission_grid_names = permission_grids.keys
 
-      def permission_grid_types
-        config.permission_grids.values.pluck(:type)
-      end
+      # @return [<Class>]
+      def permission_grid_types = permission_grids.values.pluck(:type)
 
       # @return [String]
-      def scope
-        [scope_parent&.scope, scope_name].map(&:presence).compact.join(?.)
-      end
+      def scope = [scope_parent&.scope, scope_name].map(&:presence).compact.join(?.)
 
       private
 
@@ -149,8 +152,15 @@ module Roles
         end
       end
 
+      # @param [Symbol] name
+      # @param [Hash] options
+      # @option options [Class] :type
+      # @option options [Boolean, { Symbol => Boolean }] :default
+      # @return [void]
       def define_grid!(name, **options)
-        config.permission_grids = config.permission_grids.merge(name => options)
+        new_grids = permission_grids.merge(name => options)
+
+        permission_grids new_grids.freeze
 
         recalculate_available_actions!
       end

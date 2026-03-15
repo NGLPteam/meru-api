@@ -226,8 +226,8 @@ module MutationOperations
       # :nocov:
       result = klass.upsert(attributes, returning: unique_by, unique_by:)
 
-      conditions = unique_by.each_with_object({}) do |key, h|
-        h[key.to_sym] = result.first[key.to_s]
+      conditions = unique_by.to_h do |key|
+        [key.to_sym, result.first[key.to_s]]
       end
 
       model = klass.find_by! conditions

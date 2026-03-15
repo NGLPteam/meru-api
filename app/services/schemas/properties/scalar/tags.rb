@@ -12,7 +12,7 @@ module Schemas
 
         schema_type! :string
 
-        config.graphql_value_key = :tags
+        graphql_value_key :tags
 
         attribute :default, :string_array
 

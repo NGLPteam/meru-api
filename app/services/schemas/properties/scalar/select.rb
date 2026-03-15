@@ -12,7 +12,7 @@ module Schemas
 
         schema_type! :string
 
-        config.graphql_value_key = :selection
+        graphql_value_key :selection
 
         attribute :default, :string
 

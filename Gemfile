@@ -13,11 +13,11 @@ gem "sorted_set", "~> 1.1"
 gem "stringio", "~> 3.2"
 gem "syslog", "~> 0.4", require: false
 
-gem "activesupport", "~> 8.0"
-gem "activerecord", "~> 8.0"
+gem "activesupport", "~> 8.1"
+gem "activerecord", "~> 8.1"
 
 # Rails / database
-gem "rails", "8.0.4"
+gem "rails", "~> 8.1.2"
 gem "pg", "~> 1.6.2"
 gem "activerecord-cte", "~> 0.4.0"
 gem "active_record_distinct_on", "1.9.0"
@@ -83,7 +83,7 @@ gem "ahoy_matey", "~> 5.4.1"
 gem "anystyle", "~> 1.6.0"
 gem "anyway_config", "~> 2.8"
 gem "autotuner", "~> 1.1.0"
-gem "connection_pool", "~> 2.5.5"
+gem "connection_pool", "~> 3"
 gem "down", "~> 5.4.2"
 gem "faraday", "~> 2.14.1"
 gem "faraday-follow_redirects", "~> 0.5"
@@ -163,11 +163,11 @@ end
 
 group :development do
   gem "listen", "~> 3.10"
-  gem "rubocop", "1.79.2", require: false
-  gem "rubocop-factory_bot", "2.27.1", require: false
-  gem "rubocop-rails", "2.32.0", require: false
-  gem "rubocop-rspec", "3.6.0", require: false
-  gem "rubocop-rspec_rails", "2.31.0", require: false
+  gem "rubocop", "~> 1.85", require: false
+  gem "rubocop-factory_bot", "~> 2.28", require: false
+  gem "rubocop-rails", "~> 2.34", require: false
+  gem "rubocop-rspec", "~> 3.9", require: false
+  gem "rubocop-rspec_rails", "~> 2.32", require: false
 end
 
 group :test do
