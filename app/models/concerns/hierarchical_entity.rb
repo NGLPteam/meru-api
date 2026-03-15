@@ -28,6 +28,7 @@ module HierarchicalEntity
   include ManualListSource
   include ManualListTarget
   include ModifiedByAdmin
+  include RecordPreloading
   include Renderable
   include Submittable
   include SyncsEntities
@@ -60,7 +61,7 @@ module HierarchicalEntity
 
     has_many_readonly :assigned_users, through: :contextual_permissions, source: :user
 
-    has_many_readonly :entity_breadcrumbs, -> { preload(:crumb).order(depth: :asc) }, as: :entity
+    has_many_readonly :entity_breadcrumbs, -> { includes(crumb: [:schema_definition, { schema_version: :schema_definition }]).order(depth: :asc) }, as: :entity
     has_many_readonly :entity_breadcrumb_entries, class_name: "EntityBreadcrumb", as: :crumb
 
     has_many_readonly :entity_derived_ancestors, -> { in_default_order.preload(:ancestor) }, as: :entity, inverse_of: :entity
@@ -460,4 +461,28 @@ module HierarchicalEntity
   end
 
   # @!endgroup
+
+  COMMON_DEPENDENCIES = {
+    schema_definition: [],
+    schema_version: [],
+  }.freeze
+
+  FULL_DEPENDENCIES = COMMON_DEPENDENCIES.merge(
+    attributions: [],
+    community: COMMON_DEPENDENCIES,
+    contributions: [],
+    entity_breadcrumbs: [],
+    entity_visibility: [],
+    named_ancestors: [],
+    named_variable_dates: [],
+    parent: COMMON_DEPENDENCIES
+  ).freeze
+
+  module ClassMethods
+    def preloaded_for_record_loading
+      dependencies = self == Community ? COMMON_DEPENDENCIES : FULL_DEPENDENCIES
+
+      super.includes(dependencies)
+    end
+  end
 end

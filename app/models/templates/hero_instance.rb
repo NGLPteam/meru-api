@@ -18,10 +18,12 @@ module Templates
     graphql_node_type_name "::Types::Templates::HeroTemplateInstanceType"
 
     belongs_to :layout_instance,
+      -> { for_preloading },
       class_name: "Layouts::HeroInstance",
       inverse_of: :hero_template_instances
 
     belongs_to :template_definition,
+      -> { for_preloading },
       class_name: "Templates::HeroDefinition",
       inverse_of: :template_instances
 

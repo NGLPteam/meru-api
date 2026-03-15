@@ -21,10 +21,12 @@ module Templates
     attribute :slots, ::Templates::SlotMappings::SupplementaryDefinitionSlots.to_type
 
     belongs_to :layout_definition,
+      -> { for_preloading },
       class_name: "Layouts::SupplementaryDefinition",
       inverse_of: :supplementary_template_definitions
 
     has_many :template_instances,
+      -> { for_preloading },
       class_name: "Templates::SupplementaryInstance",
       dependent: :destroy,
       inverse_of: :template_definition,

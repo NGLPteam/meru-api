@@ -34,10 +34,12 @@ module Templates
     <%= definition_model_declarations(indent: 4) %>
 
     belongs_to :layout_definition,
+      -> { for_preloading },
       class_name: <%= layout_record.definition_klass_name.inspect %>,
       inverse_of: :<%= template_kind %>_template_definitions
 
     has_many :template_instances,
+      -> { for_preloading },
       class_name: <%= template_record.instance_klass_name.inspect %>,
       dependent: :destroy,
       inverse_of: :template_definition,

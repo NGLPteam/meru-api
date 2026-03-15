@@ -18,10 +18,12 @@ module Templates
     graphql_node_type_name "::Types::Templates::SupplementaryTemplateInstanceType"
 
     belongs_to :layout_instance,
+      -> { for_preloading },
       class_name: "Layouts::SupplementaryInstance",
       inverse_of: :supplementary_template_instances
 
     belongs_to :template_definition,
+      -> { for_preloading },
       class_name: "Templates::SupplementaryDefinition",
       inverse_of: :template_instances
 

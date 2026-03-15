@@ -12,6 +12,7 @@ module Templates
       extend ActiveSupport::Concern
       extend DefinesMonadicOperation
 
+      include RecordPreloading
       include ::TemplateInstance
       include Templates::Instances::HasSelectionSource
 
@@ -43,6 +44,22 @@ module Templates
       # @return [void]
       def clear_entity_list!
         @entity_list = nil
+      end
+
+      ENTITY_LIST_DEPENDENCIES = {
+        cached_entity_list: {
+          cached_entity_list_items: {
+            entity: HierarchicalEntity::FULL_DEPENDENCIES,
+            list_item_layout_instance: [],
+          },
+          list_item_layout_instances: [],
+        }
+      }.freeze
+
+      module ClassMethods
+        def preloaded_for_record_loading
+          super.includes(ENTITY_LIST_DEPENDENCIES)
+        end
       end
     end
   end

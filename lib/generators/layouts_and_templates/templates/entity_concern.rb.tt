@@ -30,15 +30,35 @@ module EntityTemplating
     <%- layout_kinds.each do |layout_kind| -%>
 
     has_many :<%= layout_kind %>_layout_definitions,
+      -> { for_preloading },
       class_name: "Layouts::<%= layout_kind.classify %>Definition",
       as: :entity,
+      inverse_of: :entity,
       dependent: :destroy
 
     has_one :<%= layout_kind %>_layout_instance,
+      -> { for_preloading },
       class_name: "Layouts::<%= layout_kind.classify %>Instance",
       as: :entity,
       inverse_of: :entity,
       dependent: :destroy
     <%- end -%>
+  end
+
+  LAYOUT_DEPENDENCIES = {
+    <%- layout_kinds.each do |layout_kind| -%>
+    <%= layout_kind %>_layout_instance: [],
+    <%- end -%>
+  }.freeze
+
+  module ClassMethods
+    # @return [ActiveRecord::Relation]
+    def preloaded_for_layout_rendering
+      if record_preloading_active?
+        preloaded_for_record_loading.includes(LAYOUT_DEPENDENCIES)
+      else
+        all
+      end
+    end
   end
 end

@@ -15,6 +15,7 @@ class ApplicationRecord < ActiveRecord::Base
   include LimitToOne
   include LookupHelpers
   include ModelMutationSupport
+  include RecordPreloading
   include PostgresEnums
   include StoreModelIntrospection
   include ::Support::CallsCommonOperation

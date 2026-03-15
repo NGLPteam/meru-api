@@ -18,19 +18,21 @@ module Layouts
     belongs_to :entity, polymorphic: true, optional: true
 
     has_many :layout_instances,
+      -> { for_preloading },
       class_name: "Layouts::ListItemInstance",
       dependent: :destroy,
       inverse_of: :layout_definition,
       foreign_key: :layout_definition_id
 
     has_many :list_item_template_definitions,
+      -> { for_preloading },
       class_name: "Templates::ListItemDefinition",
       dependent: :destroy,
       inverse_of: :layout_definition,
       foreign_key: :layout_definition_id
 
     has_one :template_definition,
-      -> { in_recent_order },
+      -> { for_preloading },
       class_name: "Templates::ListItemDefinition",
       dependent: :destroy,
       inverse_of: :layout_definition,

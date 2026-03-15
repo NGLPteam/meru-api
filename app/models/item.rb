@@ -20,8 +20,8 @@ class Item < ApplicationRecord
 
   belongs_to :collection, inverse_of: :items
 
-  has_many :attributions, -> { in_default_order }, class_name: "ItemAttribution", dependent: :delete_all, inverse_of: :item
-  has_many :contributions, class_name: "ItemContribution", dependent: :destroy, inverse_of: :item
+  has_many :attributions, -> { for_preloading.in_default_order }, class_name: "ItemAttribution", dependent: :delete_all, inverse_of: :item
+  has_many :contributions, -> { for_preloading }, class_name: "ItemContribution", dependent: :destroy, inverse_of: :item
   has_many :contributors, through: :contributions
 
   has_one :community, through: :collection
@@ -36,14 +36,10 @@ class Item < ApplicationRecord
   validates :identifier, uniqueness: { scope: %i[collection_id parent_id] }
 
   # @return [:item]
-  def entity_kind
-    :item
-  end
+  def entity_kind = :item
 
   # @return [Collection]
-  def hierarchical_parent
-    collection
-  end
+  def hierarchical_parent = collection
 
   # @return [ActiveRecord::Relation<Item>] the child items of this item
   def items = children

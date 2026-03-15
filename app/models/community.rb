@@ -37,27 +37,17 @@ class Community < ApplicationRecord
   after_create :grant_system_roles!
 
   # @return [Community]
-  def community
-    self
-  end
+  def community = self
 
   # @return [ActiveRecord::Relation<Contribution>] a null relation
-  def contributions
-    CollectionContribution.none
-  end
+  def contributions = CollectionContribution.none
 
-  def currently_visible?
-    true
-  end
+  def currently_visible? = true
 
   # @return [:community]
-  def entity_kind
-    :community
-  end
+  def entity_kind = :community
 
-  def hierarchical_parent
-    nil
-  end
+  def hierarchical_parent = nil
 
   alias contextual_parent hierarchical_parent
 

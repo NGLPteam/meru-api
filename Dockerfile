@@ -33,7 +33,7 @@ RUN /usr/share/postgresql-common/pgdg/apt.postgresql.org.sh -y
 
 RUN apt-get update -qq && apt-get install -y -qq --no-install-recommends postgresql-client-18
 
-RUN gem update --system && gem install bundler:4.0.7
+RUN gem update --system && gem install bundler:4.0.8
 
 ENV BUNDLE_PATH=/bundle \
     BUNDLE_BIN=/bundle/bin \

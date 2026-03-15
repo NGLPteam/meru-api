@@ -13,9 +13,7 @@ module Templates
       extend DefinesMonadicOperation
 
       # @return [Templates::ContributionList]
-      def contribution_list
-        fetch_contribution_list!
-      end
+      def contribution_list = fetch_contribution_list!
 
       monadic_operation! def fetch_contribution_list
         call_operation("templates.instances.fetch_contribution_list", self)

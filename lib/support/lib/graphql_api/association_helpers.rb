@@ -11,11 +11,15 @@ module Support
       # @param [ApplicationRecord, Object] record
       # @return [Promise, Object]
       def association_loader_for(association, klass: object&.class, record: object)
+        record = record.unwrap_record if record.respond_to?(:unwrap_record)
+
         if !record.kind_of?(ActiveRecord::Base)
           # Handle AnonymousUser, other proxies
           record.try(association)
         elsif record.association(association).loaded?
           record.public_send(association)
+        elsif MeruConfig.record_preloading_enabled?
+          record.__send__(association)
         elsif MeruConfig.experimental_dataloader?
           # :nocov:
           dataloader.with(GraphQL::Dataloader::ActiveRecordAssociationSource, association).load(record)

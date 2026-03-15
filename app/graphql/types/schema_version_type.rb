@@ -3,6 +3,8 @@
 module Types
   # @see SchemaVersion
   class SchemaVersionType < Types::AbstractModel
+    disable_auth_checks!
+
     description <<~TEXT
     A specific version of a `SchemaDefinition`.
     TEXT
@@ -82,6 +84,8 @@ module Types
     field :enforces_children, Boolean, null: false do
       description "A boolean for the logic on `enforcedChildVersions`."
     end
+
+    load_association! :schema_definition
 
     load_association! :enforced_parent_versions
 

@@ -26,10 +26,12 @@ module Templates
     attribute :slots, ::Templates::SlotMappings::ContributorListDefinitionSlots.to_type
 
     belongs_to :layout_definition,
+      -> { for_preloading },
       class_name: "Layouts::MainDefinition",
       inverse_of: :contributor_list_template_definitions
 
     has_many :template_instances,
+      -> { for_preloading },
       class_name: "Templates::ContributorListInstance",
       dependent: :destroy,
       inverse_of: :template_definition,

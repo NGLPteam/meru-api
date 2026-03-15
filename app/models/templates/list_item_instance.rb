@@ -20,10 +20,12 @@ module Templates
     graphql_node_type_name "::Types::Templates::ListItemTemplateInstanceType"
 
     belongs_to :layout_instance,
+      -> { for_preloading },
       class_name: "Layouts::ListItemInstance",
       inverse_of: :list_item_template_instances
 
     belongs_to :template_definition,
+      -> { for_preloading },
       class_name: "Templates::ListItemDefinition",
       inverse_of: :template_instances
 

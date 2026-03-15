@@ -18,10 +18,12 @@ module Templates
     graphql_node_type_name "::Types::Templates::NavigationTemplateInstanceType"
 
     belongs_to :layout_instance,
+      -> { for_preloading },
       class_name: "Layouts::NavigationInstance",
       inverse_of: :navigation_template_instances
 
     belongs_to :template_definition,
+      -> { for_preloading },
       class_name: "Templates::NavigationDefinition",
       inverse_of: :template_instances
 

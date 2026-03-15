@@ -8,6 +8,8 @@ module Templates
       extend ActiveSupport::Concern
       extend DefinesMonadicOperation
 
+      include RecordPreloading
+
       included do
         belongs_to_readonly :see_all_ordering, class_name: "Ordering", optional: true
 
@@ -18,6 +20,12 @@ module Templates
       # @return [void]
       def infer_see_all_ordering!
         self.see_all_ordering = entity.ordering(template_definition.see_all_ordering_identifier)
+      end
+
+      module ClassMethods
+        def preloaded_for_record_loading
+          super.includes(:see_all_ordering)
+        end
       end
     end
   end

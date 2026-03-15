@@ -57,7 +57,7 @@ ENV RUBY_GC_HEAP_2_INIT_SLOTS=455808
 ENV RUBY_GC_HEAP_3_INIT_SLOTS=19968
 ENV RUBY_GC_HEAP_4_INIT_SLOTS=9265
 
-RUN gem update --system && gem install bundler:4.0.7
+RUN gem update --system && gem install bundler:4.0.8
 
 COPY Gemfile Gemfile.lock ./
 

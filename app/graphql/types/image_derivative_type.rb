@@ -3,6 +3,8 @@
 module Types
   # @see ImageAttachments::FormatWrapper
   class ImageDerivativeType < Types::BaseObject
+    disable_auth_checks!
+
     description "A derivative of the image with a specific size and format."
 
     implements Types::ImageType

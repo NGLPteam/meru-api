@@ -26,69 +26,107 @@ module EntityTemplating
     has_many :template_instance_digests, as: :entity, inverse_of: :entity, class_name: "Templates::InstanceDigest", dependent: :delete_all
 
     has_many :hero_layout_definitions,
+      -> { for_preloading },
       class_name: "Layouts::HeroDefinition",
       as: :entity,
+      inverse_of: :entity,
       dependent: :destroy
 
     has_one :hero_layout_instance,
+      -> { for_preloading },
       class_name: "Layouts::HeroInstance",
       as: :entity,
       inverse_of: :entity,
       dependent: :destroy
 
     has_many :list_item_layout_definitions,
+      -> { for_preloading },
       class_name: "Layouts::ListItemDefinition",
       as: :entity,
+      inverse_of: :entity,
       dependent: :destroy
 
     has_one :list_item_layout_instance,
+      -> { for_preloading },
       class_name: "Layouts::ListItemInstance",
       as: :entity,
       inverse_of: :entity,
       dependent: :destroy
 
     has_many :main_layout_definitions,
+      -> { for_preloading },
       class_name: "Layouts::MainDefinition",
       as: :entity,
+      inverse_of: :entity,
       dependent: :destroy
 
     has_one :main_layout_instance,
+      -> { for_preloading },
       class_name: "Layouts::MainInstance",
       as: :entity,
       inverse_of: :entity,
       dependent: :destroy
 
     has_many :navigation_layout_definitions,
+      -> { for_preloading },
       class_name: "Layouts::NavigationDefinition",
       as: :entity,
+      inverse_of: :entity,
       dependent: :destroy
 
     has_one :navigation_layout_instance,
+      -> { for_preloading },
       class_name: "Layouts::NavigationInstance",
       as: :entity,
       inverse_of: :entity,
       dependent: :destroy
 
     has_many :metadata_layout_definitions,
+      -> { for_preloading },
       class_name: "Layouts::MetadataDefinition",
       as: :entity,
+      inverse_of: :entity,
       dependent: :destroy
 
     has_one :metadata_layout_instance,
+      -> { for_preloading },
       class_name: "Layouts::MetadataInstance",
       as: :entity,
       inverse_of: :entity,
       dependent: :destroy
 
     has_many :supplementary_layout_definitions,
+      -> { for_preloading },
       class_name: "Layouts::SupplementaryDefinition",
       as: :entity,
+      inverse_of: :entity,
       dependent: :destroy
 
     has_one :supplementary_layout_instance,
+      -> { for_preloading },
       class_name: "Layouts::SupplementaryInstance",
       as: :entity,
       inverse_of: :entity,
       dependent: :destroy
+  end
+
+  LAYOUT_DEPENDENCIES = {
+    hero_layout_instance: [],
+    list_item_layout_instance: [],
+    main_layout_instance: [],
+    navigation_layout_instance: [],
+    metadata_layout_instance: [],
+    supplementary_layout_instance: [],
+  }.freeze
+
+  module ClassMethods
+    # @return [ActiveRecord::Relation]
+    def preloaded_for_layout_rendering
+      if record_preloading_active?
+        preloaded_for_record_loading.includes(LAYOUT_DEPENDENCIES)
+      else
+        all
+      end
+    end
   end
 end

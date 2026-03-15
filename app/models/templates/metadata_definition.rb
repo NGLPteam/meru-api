@@ -21,10 +21,12 @@ module Templates
     attribute :slots, ::Templates::SlotMappings::MetadataDefinitionSlots.to_type
 
     belongs_to :layout_definition,
+      -> { for_preloading },
       class_name: "Layouts::MetadataDefinition",
       inverse_of: :metadata_template_definitions
 
     has_many :template_instances,
+      -> { for_preloading },
       class_name: "Templates::MetadataInstance",
       dependent: :destroy,
       inverse_of: :template_definition,

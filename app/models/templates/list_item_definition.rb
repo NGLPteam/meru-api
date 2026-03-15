@@ -27,10 +27,12 @@ module Templates
     attribute :slots, ::Templates::SlotMappings::ListItemDefinitionSlots.to_type
 
     belongs_to :layout_definition,
+      -> { for_preloading },
       class_name: "Layouts::ListItemDefinition",
       inverse_of: :list_item_template_definitions
 
     has_many :template_instances,
+      -> { for_preloading },
       class_name: "Templates::ListItemInstance",
       dependent: :destroy,
       inverse_of: :template_definition,

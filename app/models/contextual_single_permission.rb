@@ -9,6 +9,7 @@
 class ContextualSinglePermission < ApplicationRecord
   include ScopesForHierarchical
   include ScopesForUser
+  include SkipsPreloading
   include View
 
   self.primary_key = [:user_id, :hierarchical_type, :hierarchical_id, :permission_id]
