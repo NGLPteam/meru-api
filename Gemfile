@@ -13,17 +13,17 @@ gem "sorted_set", "~> 1.1"
 gem "stringio", "~> 3.2"
 gem "syslog", "~> 0.4", require: false
 
-gem "activesupport", "~> 7.2"
-gem "activerecord", "~> 7.2"
+gem "activesupport", "~> 8.0"
+gem "activerecord", "~> 8.0"
 
 # Rails / database
-gem "rails", "7.2.3"
+gem "rails", "8.0.4"
 gem "pg", "~> 1.6.2"
 gem "activerecord-cte", "~> 0.4.0"
 gem "active_record_distinct_on", "1.9.0"
 gem "after_commit_everywhere", "~> 1.6.0"
 gem "async", "~> 2.34"
-gem "closure_tree", "~> 9.2"
+gem "closure_tree", "~> 9.6"
 gem "frozen_record", "~> 0.27.1"
 gem "ar_lazy_preload"
 gem "pghero", "~> 3.7.0"
@@ -122,7 +122,7 @@ gem "statesman", "~> 13.1"
 gem "strip_attributes", "~> 2.0.0"
 gem "tomlib", "~> 0.7.2"
 gem "validate_url", "~> 1.0.15"
-gem "with_advisory_lock", "~> 7.0.2"
+gem "with_advisory_lock", "~> 7.5"
 
 # File processing
 gem "aws-sdk-s3", "~> 1.214"
