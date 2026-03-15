@@ -277,17 +277,18 @@ module Resolvers
     # @param [{ Symbol => Object }] options
     # @return [ActiveRecord::Relation]
     def normalize_scope_option(scope: nil, **options)
-      # :nocov:
-      # We may want to skip authorization in some cases.
-      return scope unless applies_policy_scope?
-      # :nocov:
-
       config = self.class.config
 
       base_scope = scope || (config[:scope] && instance_eval(&config[:scope]))
 
+      # :nocov:
+      base_scope = base_scope.preloaded_for_record_loading if MeruConfig.record_preloading_enabled? && base_scope.respond_to?(:preloaded_for_record_loading)
+
+      # We may want to skip authorization in some cases.
+      return base_scope unless applies_policy_scope?
+      # :nocov:
+
       # This is necessary to avoid a namespace conflict with `Action` / `ActionPolicy`.
-      # For some reason, `ActionPolicy` obfuscates the `policy_class` on relations.
       with = implicit_authorization_target.try(:policy_class)
 
       authorized(base_scope.all, with:)

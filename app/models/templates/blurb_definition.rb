@@ -23,10 +23,12 @@ module Templates
     attribute :slots, ::Templates::SlotMappings::BlurbDefinitionSlots.to_type
 
     belongs_to :layout_definition,
+      -> { for_preloading },
       class_name: "Layouts::MainDefinition",
       inverse_of: :blurb_template_definitions
 
     has_many :template_instances,
+      -> { for_preloading },
       class_name: "Templates::BlurbInstance",
       dependent: :destroy,
       inverse_of: :template_definition,

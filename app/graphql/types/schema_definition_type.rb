@@ -3,6 +3,8 @@
 module Types
   # @see SchemaDefinition
   class SchemaDefinitionType < Types::AbstractModel
+    disable_auth_checks!
+
     description <<~TEXT
     A schema definition is a logical grouping of `SchemaVersion`s that identifies
     only the shared kind, namespace, and identifier. The name is also most likely

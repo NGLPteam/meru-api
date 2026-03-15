@@ -159,18 +159,25 @@ module Contribution
           all
         end
 
-      base.limit(limit).in_default_contributor_order
+      base.preloaded_for_record_loading.limit(limit).in_default_contributor_order
+    end
+
+    def preloaded_for_record_loading
+      super.includes(:role, :contributor)
     end
 
     # @param ["asc", "desc"] direction
     # @return [ActiveRecord::Relation<Contribution>]
     def with_ordered_target_title(direction: "asc")
-      case Support::GlobalTypes::SimpleSortDirection[direction]
-      when "desc"
-        joins(target_association_name).merge(target_klass.order(title: :desc))
-      else
-        joins(target_association_name).merge(target_klass.order(title: :asc))
-      end
+      lazily_order(:target_title, direction)
+    end
+
+    def prepare_order_for_target_title
+      joins(target_association_name)
+    end
+
+    def target_title_order_column
+      target_klass.arel_table[:title]
     end
 
     # @api private

@@ -11,6 +11,7 @@
 module ContextuallyDerivedConnection
   extend ActiveSupport::Concern
 
+  include SkipsPreloading
   include View
 
   CONTEXT_KEY = %i[user_id hierarchical_type hierarchical_id].freeze

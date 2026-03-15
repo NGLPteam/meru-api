@@ -6,6 +6,7 @@
 class ContextualPermission < ApplicationRecord
   include ScopesForHierarchical
   include ScopesForUser
+  include SkipsPreloading
   include TimestampScopes
   include View
 

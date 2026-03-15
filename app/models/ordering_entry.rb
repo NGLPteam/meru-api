@@ -3,6 +3,7 @@
 # A join model connecting a sorted {HierarchicalEntity entity} with an {Ordering}.
 class OrderingEntry < ApplicationRecord
   include EntityAdjacent
+  include SkipsPreloading
   include TimestampScopes
 
   ENTITY_TUPLE = %i[entity_type entity_id].freeze

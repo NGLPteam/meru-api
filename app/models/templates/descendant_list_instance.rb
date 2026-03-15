@@ -20,10 +20,12 @@ module Templates
     graphql_node_type_name "::Types::Templates::DescendantListTemplateInstanceType"
 
     belongs_to :layout_instance,
+      -> { for_preloading },
       class_name: "Layouts::MainInstance",
       inverse_of: :descendant_list_template_instances
 
     belongs_to :template_definition,
+      -> { for_preloading },
       class_name: "Templates::DescendantListDefinition",
       inverse_of: :template_instances
 

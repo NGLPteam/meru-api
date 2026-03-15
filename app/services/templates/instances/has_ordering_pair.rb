@@ -12,6 +12,7 @@ module Templates
       extend ActiveSupport::Concern
       extend DefinesMonadicOperation
 
+      include RecordPreloading
       include Templates::Instances::HasSelectionSource
 
       included do
@@ -54,6 +55,25 @@ module Templates
       # @return [Dry::Monads::Failure(:no_selection_source)]
       monadic_operation! def resolve_ordering_source
         template_definition.resolve_ordering_source_for(entity)
+      end
+
+      ORDERING_PAIR_DEPENDENCIES = {
+        ordering: [],
+        ordering_entry: {
+          entity: HierarchicalEntity::FULL_DEPENDENCIES,
+        },
+        next_sibling: {
+          entity: HierarchicalEntity::FULL_DEPENDENCIES,
+        },
+        prev_sibling: {
+          entity: HierarchicalEntity::FULL_DEPENDENCIES,
+        },
+      }.freeze
+
+      module ClassMethods
+        def preloaded_for_record_loading
+          super.includes(ORDERING_PAIR_DEPENDENCIES)
+        end
       end
     end
   end

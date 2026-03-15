@@ -23,6 +23,7 @@ module Layouts
     <%- layout_record.templates.each do |template| -%>
 
     has_many :<%= template.template_kind %>_template_instances,
+      -> { for_preloading },
       class_name: <%= template.instance_klass_name.inspect %>,
       dependent: :destroy,
       inverse_of: :layout_instance,
@@ -31,7 +32,7 @@ module Layouts
     <%- if has_single_template? -%>
 
     has_one :template_instance,
-      -> { in_recent_order },
+      -> { for_preloading },
       class_name: "Templates::<%= template_kinds.first.classify %>Instance",
       dependent: :destroy,
       inverse_of: :layout_instance,
@@ -39,5 +40,24 @@ module Layouts
     <%- end -%>
 
     has_one :schema_version, through: :layout_definition
+
+    # Dependencies that get preloaded in GraphQL.
+    # Layouts and templates have a pretty large tree, but relying
+    # on typical dataloading just won't work for our purposes.
+    LAYOUT_INSTANCE_DEPENDENCIES = {
+      layout_definition: [],
+      <%- layout_record.templates.each do |template| -%>
+      <%= template.template_kind %>_template_instances: [],
+      <%- end -%>
+      <%- if has_single_template? -%>
+      template_instance: [],
+      <%- end -%>
+    }.freeze
+
+    class << self
+      def preloaded_for_record_loading
+        super.includes(LAYOUT_INSTANCE_DEPENDENCIES)
+      end
+    end
   end
 end

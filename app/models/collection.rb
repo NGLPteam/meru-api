@@ -21,8 +21,8 @@ class Collection < ApplicationRecord
 
   belongs_to :community, inverse_of: :collections
 
-  has_many :attributions, -> { in_default_order }, class_name: "CollectionAttribution", dependent: :delete_all, inverse_of: :collection
-  has_many :contributions, class_name: "CollectionContribution", dependent: :destroy, inverse_of: :collection
+  has_many :attributions, -> { for_preloading.in_default_order }, class_name: "CollectionAttribution", dependent: :delete_all, inverse_of: :collection
+  has_many :contributions, -> { for_preloading }, class_name: "CollectionContribution", dependent: :destroy, inverse_of: :collection
 
   has_many :contributors, through: :contributions
 
@@ -41,18 +41,12 @@ class Collection < ApplicationRecord
   def collections = children
 
   # @return [:collection]
-  def entity_kind
-    :collection
-  end
+  def entity_kind = :collection
 
   # @return [Community]
-  def hierarchical_parent
-    community
-  end
+  def hierarchical_parent = community
 
-  def hierarchical_children
-    items
-  end
+  def hierarchical_children = items
 
   # @return [Collection, nil]
   def largest_child_collection

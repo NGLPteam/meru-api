@@ -19,10 +19,12 @@ module Templates
     graphql_node_type_name "::Types::Templates::DetailTemplateInstanceType"
 
     belongs_to :layout_instance,
+      -> { for_preloading },
       class_name: "Layouts::MainInstance",
       inverse_of: :detail_template_instances
 
     belongs_to :template_definition,
+      -> { for_preloading },
       class_name: "Templates::DetailDefinition",
       inverse_of: :template_instances
 

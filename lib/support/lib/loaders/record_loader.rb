@@ -42,6 +42,8 @@ module Support
           scope = scope.order @order
         end
 
+        scope = scope.preloaded_for_record_loading if MeruConfig.record_preloading_enabled? && scope.respond_to?(:preloaded_for_record_loading)
+
         scope.where(@find_by => keys)
       end
     end

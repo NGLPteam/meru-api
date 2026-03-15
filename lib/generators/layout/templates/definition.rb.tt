@@ -23,6 +23,7 @@ module Layouts
     belongs_to :entity, polymorphic: true, optional: true
 
     has_many :layout_instances,
+      -> { for_preloading },
       class_name: <%= layout_record.instance_klass_name.inspect %>,
       dependent: :destroy,
       inverse_of: :layout_definition,
@@ -30,6 +31,7 @@ module Layouts
     <%- layout_record.templates.each do |template| -%>
 
     has_many :<%= template.template_kind %>_template_definitions,
+      -> { for_preloading },
       class_name: <%= template.definition_klass_name.inspect %>,
       dependent: :destroy,
       inverse_of: :layout_definition,
@@ -38,7 +40,7 @@ module Layouts
     <%- if has_single_template? -%>
 
     has_one :template_definition,
-      -> { in_recent_order },
+      -> { for_preloading },
       class_name: <%= layout_record.templates.first.definition_klass_name.inspect %>,
       dependent: :destroy,
       inverse_of: :layout_definition,

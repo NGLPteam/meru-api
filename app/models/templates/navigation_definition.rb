@@ -21,10 +21,12 @@ module Templates
     attribute :slots, ::Templates::SlotMappings::NavigationDefinitionSlots.to_type
 
     belongs_to :layout_definition,
+      -> { for_preloading },
       class_name: "Layouts::NavigationDefinition",
       inverse_of: :navigation_template_definitions
 
     has_many :template_instances,
+      -> { for_preloading },
       class_name: "Templates::NavigationInstance",
       dependent: :destroy,
       inverse_of: :template_definition,

@@ -42,7 +42,7 @@ module Templates
       end
 
       wrapped_hook! def resolve
-        @contributions = @base_scope.for_template_list(filter:, limit:)
+        @contributions = @base_scope.for_template_list(filter:, limit:).to_a
 
         super
       end

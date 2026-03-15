@@ -7,6 +7,7 @@ module TemplateInstance
   include HasLayoutKind
   include HasTemplateKind
   include Renderable
+  include RecordPreloading
 
   included do
     self.filter_attributes = [:config, :slots]
@@ -40,9 +41,7 @@ module TemplateInstance
   # Boolean complement of {#force_show?}.
   #
   # Used when calculating {#hidden} to bypass the hide logic.
-  def calculate_allow_hide?
-    !force_show?
-  end
+  def calculate_allow_hide? = !force_show?
 
   # For most templates, it is just derived from from {#hidden_by_empty_slots}.
   #
@@ -50,21 +49,15 @@ module TemplateInstance
   # @api private
   # @see #hidden?
   # @return [Boolean]
-  def calculate_hidden
-    hidden_by_empty_slots?
-  end
+  def calculate_hidden = hidden_by_empty_slots?
 
   # @api private
   # @abstract
   # @return [Boolean]
-  def force_show
-    false
-  end
+  def force_show = false
 
   # @see #force_show
-  def force_show?
-    force_show
-  end
+  def force_show? = force_show
 
   # @see Templates::Instances::PostProcessor
   # @return [Dry::Monads::Success(TemplateInstance)]
@@ -101,6 +94,18 @@ module TemplateInstance
   module ClassMethods
     def policy_class
       TemplateInstancePolicy
+    end
+
+    def preloaded_for_record_loading
+      super.includes(
+        entity: HierarchicalEntity::FULL_DEPENDENCIES,
+        next_siblings: [],
+        prev_siblings: [],
+        layout_instance: [],
+        template_definition: [
+          :layout_definition,
+        ],
+      )
     end
   end
 end

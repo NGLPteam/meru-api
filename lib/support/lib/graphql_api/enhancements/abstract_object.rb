@@ -52,6 +52,15 @@ module Support
             value.cache_key
           end
         end
+
+        module ClassMethods
+          # @!parse [ruby]
+          #   extend ::Support::GraphQLAPI::DisableAuthChecks
+          # @return [void]
+          def disable_auth_checks!
+            extend Support::GraphQLAPI::DisableAuthChecks
+          end
+        end
       end
     end
   end

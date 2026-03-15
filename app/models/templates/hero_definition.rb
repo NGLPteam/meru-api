@@ -21,10 +21,12 @@ module Templates
     attribute :slots, ::Templates::SlotMappings::HeroDefinitionSlots.to_type
 
     belongs_to :layout_definition,
+      -> { for_preloading },
       class_name: "Layouts::HeroDefinition",
       inverse_of: :hero_template_definitions
 
     has_many :template_instances,
+      -> { for_preloading },
       class_name: "Templates::HeroInstance",
       dependent: :destroy,
       inverse_of: :template_definition,

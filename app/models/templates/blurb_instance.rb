@@ -18,10 +18,12 @@ module Templates
     graphql_node_type_name "::Types::Templates::BlurbTemplateInstanceType"
 
     belongs_to :layout_instance,
+      -> { for_preloading },
       class_name: "Layouts::MainInstance",
       inverse_of: :blurb_template_instances
 
     belongs_to :template_definition,
+      -> { for_preloading },
       class_name: "Templates::BlurbDefinition",
       inverse_of: :template_instances
 

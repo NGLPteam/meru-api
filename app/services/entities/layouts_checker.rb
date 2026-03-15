@@ -24,6 +24,8 @@ module Entities
         yield prepare!
 
         yield check!
+
+        yield preload!
       end
 
       Success Entities::LayoutsProxy.new(entity:, rendered:)
@@ -32,7 +34,7 @@ module Entities
     end
 
     wrapped_hook! def prepare
-      @entity = original_entity.class.find original_entity.id
+      @entity = original_entity.class.find(original_entity.id).skip_preload
 
       @rendered = false
 
@@ -51,6 +53,12 @@ module Entities
       else
         @rendered = true
       end
+
+      super
+    end
+
+    wrapped_hook! def preload
+      @entity = original_entity.class.preloaded_for_layout_rendering.find(original_entity.id)
 
       super
     end

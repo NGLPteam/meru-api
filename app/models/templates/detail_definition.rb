@@ -25,10 +25,12 @@ module Templates
     attribute :slots, ::Templates::SlotMappings::DetailDefinitionSlots.to_type
 
     belongs_to :layout_definition,
+      -> { for_preloading },
       class_name: "Layouts::MainDefinition",
       inverse_of: :detail_template_definitions
 
     has_many :template_instances,
+      -> { for_preloading },
       class_name: "Templates::DetailInstance",
       dependent: :destroy,
       inverse_of: :template_definition,

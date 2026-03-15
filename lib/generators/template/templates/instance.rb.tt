@@ -36,10 +36,12 @@ module Templates
     graphql_node_type_name "::<%= template_record.gql_instance_klass_name %>"
 
     belongs_to :layout_instance,
+      -> { for_preloading },
       class_name: <%= layout_record.instance_klass_name.inspect %>,
       inverse_of: :<%= template_kind %>_template_instances
 
     belongs_to :template_definition,
+      -> { for_preloading },
       class_name: <%= template_record.definition_klass_name.inspect %>,
       inverse_of: :template_instances
 

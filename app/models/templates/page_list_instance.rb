@@ -18,10 +18,12 @@ module Templates
     graphql_node_type_name "::Types::Templates::PageListTemplateInstanceType"
 
     belongs_to :layout_instance,
+      -> { for_preloading },
       class_name: "Layouts::MainInstance",
       inverse_of: :page_list_template_instances
 
     belongs_to :template_definition,
+      -> { for_preloading },
       class_name: "Templates::PageListDefinition",
       inverse_of: :template_instances
 

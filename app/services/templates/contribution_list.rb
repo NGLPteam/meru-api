@@ -38,25 +38,12 @@ module Templates
     def initialize(...)
       super
 
-      load_list_item_layouts!
-
       # Future-proofing
       @valid_contributions = contributions
 
       @count = valid_contributions.size
 
       @empty = valid_contributions.blank?
-    end
-
-    private
-
-    # @return [void]
-    def load_list_item_layouts!
-      associations = [:contributor]
-
-      preloader = ActiveRecord::Associations::Preloader.new(records:, associations:)
-
-      preloader.call
     end
   end
 end

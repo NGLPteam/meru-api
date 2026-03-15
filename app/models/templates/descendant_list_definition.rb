@@ -35,10 +35,12 @@ module Templates
     attribute :slots, ::Templates::SlotMappings::DescendantListDefinitionSlots.to_type
 
     belongs_to :layout_definition,
+      -> { for_preloading },
       class_name: "Layouts::MainDefinition",
       inverse_of: :descendant_list_template_definitions
 
     has_many :template_instances,
+      -> { for_preloading },
       class_name: "Templates::DescendantListInstance",
       dependent: :destroy,
       inverse_of: :template_definition,
