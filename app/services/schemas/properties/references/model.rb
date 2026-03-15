@@ -22,13 +22,11 @@ module Schemas
           # @return [<Class>]
           defines :model_types, type: ::Support::Models::Types::ModelClassList
 
-          model_types []
+          model_types Dry::Core::Constants::EMPTY_ARRAY
 
-          delegate :model_types, to: :class
+          complex true
 
-          config.complex = true
-
-          config.graphql_value_key = type_reference
+          graphql_value_key type_reference
         end
 
         def apply_schema_type_to(macro)
@@ -49,7 +47,11 @@ module Schemas
           end
         end
 
-        class_methods do
+        # @see .model_types
+        # @return [<Class>] the list of models that this reference can refer to.
+        def model_types = self.class.model_types
+
+        module ClassMethods
           # Declare a single {.model_types model type} that this type can refer to.
           #
           # @param [Class] model

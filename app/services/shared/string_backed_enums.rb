@@ -4,10 +4,12 @@ module Shared
   module StringBackedEnums
     extend ActiveSupport::Concern
 
-    class_methods do
+    module ClassMethods
       def string_enum(name, *values, **options)
-        mapping = values.flatten.each_with_object({}) do |value, h|
-          h[value.to_sym] = value.to_sym
+        mapping = values.flatten.to_h do |value|
+          sym = value.to_sym
+
+          [sym, sym]
         end
 
         enum(name, mapping, **options)

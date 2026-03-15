@@ -10,7 +10,7 @@ module Schemas
 
         schema_type! :date
 
-        config.graphql_value_key = :date
+        graphql_value_key :date
       end
     end
   end

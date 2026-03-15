@@ -55,8 +55,8 @@ module Support
       private
 
       memoize def initializer_options
-        self.class.dry_initializer.options.each_with_object({}) do |option, options|
-          options[option.source] = __send__(option.target)
+        self.class.dry_initializer.options.to_h do |option|
+          [option.source, __send__(option.target)]
         end
       end
 

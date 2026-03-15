@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-# rubocop:disable Metrics/PerceivedComplexity
 module ArelHelpers
   INT_ARRAY = ActiveRecord::ConnectionAdapters::PostgreSQL::OID::Array.new(ActiveRecord::Type::Integer.new).freeze
 
@@ -316,4 +315,3 @@ module ArelHelpers
     @arel_column_matcher ||= /\A#{Regexp.union(column_names)}\z/
   end
 end
-# rubocop:enable Metrics/PerceivedComplexity

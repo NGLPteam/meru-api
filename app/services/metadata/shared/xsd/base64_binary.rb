@@ -9,7 +9,7 @@ module Metadata
             return nil if value.nil?
 
             value = super
-            pattern = %r{(?-mix:\A([A-Za-z0-9+\/]+={0,2}|\s)*\z)}
+            pattern = %r{(?-mix:\A([A-Za-z0-9+/]+={0,2}|\s)*\z)}
             raise Lutaml::Model::Type::InvalidValueError, "The value #{value} does not match the required pattern: #{pattern}" unless value.match?(pattern)
             value
           end

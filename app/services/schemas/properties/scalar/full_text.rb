@@ -12,7 +12,7 @@ module Schemas
 
         schema_type! :full_text
 
-        config.graphql_value_key = :full_text
+        graphql_value_key :full_text
 
         # @see Schemas::Properties::Context#full_text
         def extract_raw_value_from(context)

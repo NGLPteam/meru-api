@@ -17,8 +17,10 @@ RSpec.describe ControlledVocabularies::Upsert, type: :operation do
               identifier: "bar",
               label: "Bar",
               children: [
-                identifier: "baz",
-                label: "Baz",
+                {
+                  identifier: "baz",
+                  label: "Baz",
+                },
               ]
             }
           ]

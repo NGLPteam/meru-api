@@ -1,13 +1,19 @@
 # frozen_string_literal: true
 
+# A concern for a materialized view-backed model.
+#
+# @see View
 module MaterializedView
   extend ActiveSupport::Concern
 
-  include ActiveSupport::Configurable
   include View
 
   included do
-    config.refreshes_concurrently = true
+    extend Dry::Core::ClassAttributes
+
+    defines :refreshes_concurrently, type: Support::Types::Bool
+
+    refreshes_concurrently true
   end
 
   module ClassMethods
@@ -16,14 +22,14 @@ module MaterializedView
     end
 
     # @return [void]
-    def refresh!(concurrently: config.refreshes_concurrently, cascade: false)
+    def refresh!(concurrently: refreshes_concurrently, cascade: false)
       Scenic.database.refresh_materialized_view(table_name, concurrently:, cascade:)
     end
 
     # @api private
     # @return [void]
     def refreshes_concurrently!
-      config.refreshes_concurrently = true
+      refreshes_concurrently true
     end
   end
 end

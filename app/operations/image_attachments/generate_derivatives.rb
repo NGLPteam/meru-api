@@ -16,8 +16,8 @@ module ImageAttachments
       derivatives = ImageAttachments.each_scoped_size(scope).each_with_object({}) do |size, sizes|
         resized = vips.resize_to_limit(size.width, size.height)
 
-        sizes[size.name] = ImageAttachments.each_format.each_with_object({}) do |format, formats|
-          formats[format.to_sym] = resized.convert! format.to_s
+        sizes[size.name] = ImageAttachments.each_format.to_h do |format|
+          [format.to_sym, resized.convert!(format.to_s)]
         end
       end
 

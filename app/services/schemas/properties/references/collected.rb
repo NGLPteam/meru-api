@@ -16,7 +16,7 @@ module Schemas
         MAX_SIZE = 20
 
         included do
-          array!
+          array! :model?
 
           attribute :min_size, :integer, default: 0
 

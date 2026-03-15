@@ -47,14 +47,16 @@ module TestHelpers
                 identifier: "bar",
                 label: "Bar",
                 children: [
-                  identifier: "baz",
-                  label: "Baz",
-                  children: [
-                    {
-                      identifier: "quux",
-                      label: "Quux",
-                    }
-                  ]
+                  {
+                    identifier: "baz",
+                    label: "Baz",
+                    children: [
+                      {
+                        identifier: "quux",
+                        label: "Quux",
+                      }
+                    ],
+                  },
                 ]
               }
             ]

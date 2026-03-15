@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+# Be sure to restart your server when you modify this file.
+
 module CORSHelper
   METHODS = %i[get post patch put delete options head].freeze
   S3MP_HEADERS = %w[Authorization Content-Type x-amz-content-sha256 x-amz-date Upload-Token].freeze
@@ -11,6 +13,9 @@ module CORSHelper
   ].freeze
 end
 
+# Avoid CORS issues when API is called from the frontend app.
+# Handle Cross-Origin Resource Sharing (CORS) in order to accept cross-origin Ajax requests.
+# Read more: https://github.com/cyu/rack-cors
 Rails.application.config.middleware.insert_before 0, Rack::Cors do
   allow do
     origins ?*

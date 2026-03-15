@@ -33,9 +33,10 @@ module Support
 
       file_name = File.basename(file_path)
       file_size = File.size(file_path)
-      io = File.open(file_path, 'rb')
 
-      upload_by_io(file_name:, file_size:, io:)
+      File.open(file_path, "rb") do |io|
+        upload_by_io(file_name:, file_size:, io:)
+      end
     end
 
     # @return [String] the tus URI
