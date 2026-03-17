@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - release
 
 jobs:
   deploy:
@@ -19,6 +20,7 @@ jobs:
             registry.digitalocean.com/meru/meru-api
           tags: |-
             type=raw,value=latest,enable={{is_default_branch}}
+            type=raw,value=release,enable=${{ github.ref == 'refs/heads/release' }}
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
       - name: Install doctl
