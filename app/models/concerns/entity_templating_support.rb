@@ -26,9 +26,6 @@ module EntityTemplatingSupport
     scope :sans_derived_layout_definitions, -> { where.missing(:entity_derived_layout_definitions) }
 
     scope :stale, -> { where(arel_build_staleness_condition) }
-
-    after_save :invalidate_layouts!, unless: :layout_invalidation_disabled?
-    after_save :invalidate_related_layouts!, unless: :layout_invalidation_disabled?
   end
 
   # @return [Boolean]

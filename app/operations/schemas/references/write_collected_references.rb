@@ -2,36 +2,35 @@
 
 module Schemas
   module References
+    # @api private
+    # @see Schemas::Instances::PropertiesApplicator
+    # @see SchematicCollectedReference
+    # @note Non-monadic operation.
     class WriteCollectedReferences
-      include Dry::Monads[:do, :result]
-
-      prepend TransactionalCall
-
       UNIQUE_BY = %i[referrer_type referrer_id referent_type referent_id path].freeze
 
       # @param [HasSchemaDefinition] referrer
       # @param [String] path
       # @param [<ApplicationRecord>] referents
+      # @return [void]
       def call(referrer, path, referents)
-        yield clear_missing! referrer, path, referents
+        clear_missing! referrer, path, referents
 
-        yield upsert! referrer, path, referents if referents.any?
-
-        Success nil
+        upsert! referrer, path, referents if referents.any?
       end
 
       private
 
+      # @return [void]
       def clear_missing!(referrer, path, referents)
         scope = referrer.schematic_collected_references.by_path(path)
 
         scope = scope.where.not(referent: referents) if referents.present?
 
         scope.delete_all
-
-        Success nil
       end
 
+      # @return [void]
       def upsert!(referrer, path, referents)
         base_columns = {
           referrer_type: referrer.model_name.to_s,
@@ -49,7 +48,7 @@ module Schemas
           )
         end
 
-        Success SchematicCollectedReference.upsert_all(attributes, unique_by: UNIQUE_BY)
+        SchematicCollectedReference.upsert_all(attributes, unique_by: UNIQUE_BY)
       end
     end
   end

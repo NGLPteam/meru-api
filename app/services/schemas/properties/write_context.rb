@@ -14,10 +14,11 @@ module Schemas
         param :input_values, Schemas::Types::ValueHash
       end
 
-      # @return [Dry::Monads::Result]
-      def finalize
-        Success Schemas::Properties::Context.new(**value_context)
-      end
+      # This is called by the applicator when all the properties have been processed
+      # and are ready to be written to the entity.
+      #
+      # @return [Schemas::Properties::Context]
+      def finalize = Schemas::Properties::Context.new(**value_context)
 
       def within_group!(path)
         @current_values = fetch_group(path)
@@ -39,17 +40,11 @@ module Schemas
         Success nil
       end
 
-      def has_value?(path)
-        current_values.key? path
-      end
+      def has_value?(path) = current_values.key? path
 
-      def value_for(path)
-        current_values[path]
-      end
+      def value_for(path) = current_values[path]
 
-      def write_value!(path, value)
-        current_output[path] = value
-      end
+      def write_value!(path, value) = current_output[path] = value
 
       # @param [String] path
       # @return [void]
@@ -97,9 +92,7 @@ module Schemas
         @current_output ||= output_values
       end
 
-      def fetch_group(path)
-        @input_values.fetch path, {}
-      end
+      def fetch_group(path) = @input_values.fetch(path, {})
 
       def full_path_for(path)
         @prefix.present? ? [@prefix, path].join(?.) : path

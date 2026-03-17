@@ -18,5 +18,11 @@ module Utility
     MessageMapValue = MethodName | Callable
 
     MessageKeyMap = Hash.map(MessageKey, MessageMapValue)
+
+    ValueSelectCasts = Hash.map(Coercible::Symbol, Coercible::Symbol)
+
+    ValueSelectValue = Hash.map(Coercible::Symbol, Any).constrained(min_size: 1)
+
+    ValueSelectValues = Array.of(ValueSelectValue)
   end
 end

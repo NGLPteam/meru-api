@@ -7,7 +7,7 @@ module Schemas
     # Once that finishes, it will purge any entries that should no longer be considered part of
     # the ordering.
     class Refresh
-      include Dry::Monads[:do, :result, :try]
+      include Dry::Monads[:result]
       include QueryOperation
 
       prepend TransactionalCall
@@ -116,15 +116,15 @@ module Schemas
       # @param [Ordering] ordering
       # @return [Dry::Monads::Success(void)]
       def call(ordering)
-        yield lock! ordering
+        lock! ordering
 
-        yield update! ordering
+        update! ordering
 
-        yield update_ancestors! ordering
+        update_ancestors! ordering
 
-        yield update_siblings! ordering
+        update_siblings! ordering
 
-        yield ordering.calculate_stats
+        ordering.calculate_stats!
 
         Success()
       end
@@ -138,41 +138,33 @@ module Schemas
       def lock!(ordering)
         query = with_quoted_id_for ordering, LOCK_QUERY
 
-        Try do
-          sql_select! query
-        end
+        sql_select! query
       end
 
       # @param [Ordering] ordering
-      # @return [Dry::Monads::Success(void)]
+      # @return [void]
       def update!(ordering)
         select_query = build_select_statement ordering
 
         suffix = with_quoted_id_for ordering, SUFFIX
 
-        Try do
-          sql_insert! PREFIX, select_query, suffix
-        end
+        sql_insert! PREFIX, select_query, suffix
       end
 
       # @param [Ordering] ordering
-      # @return [Dry::Monads::Success(void)]
+      # @return [void]
       def update_ancestors!(ordering)
         update_query = with_quoted_id_for ordering, ANCESTOR_LINK_QUERY
 
-        Try do
-          sql_insert! update_query
-        end
+        sql_insert! update_query
       end
 
       # @param [Ordering] ordering
-      # @return [Dry::Monads::Success(void)]
+      # @return [void]
       def update_siblings!(ordering)
         update_query = with_quoted_id_for ordering, SIBLING_LINK_QUERY
 
-        Try do
-          sql_insert! update_query
-        end
+        sql_insert! update_query
       end
 
       # @!endgroup Steps

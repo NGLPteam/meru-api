@@ -52,6 +52,8 @@ module Schemas
 
       OrderingFilters = Array.of(OrderingFilter)
 
+      RefreshMode = Coercible::String.default("sync").enum("sync", "async", "disabled")
+
       RenderMode = Coercible::String.default("flat").enum("flat", "tree").fallback("flat")
 
       SelectDirect = Coercible::String.default("children").enum("none", "children", "descendants").fallback("none")

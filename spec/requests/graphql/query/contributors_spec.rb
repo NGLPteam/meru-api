@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 RSpec.describe "Query.contributors", type: :request, disable_ordering_refresh: true do
-  include_context "sans entity sync"
-
   def create_person_contributor_at(time, item_count:, **attributes)
     Timecop.freeze time do
       FactoryBot.create(:contributor, :person, **attributes).tap do |contributor|

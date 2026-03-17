@@ -4,11 +4,8 @@ module Entities
   # Synchronizes a {SyncsEntities model} into an {Entity} representation.
   class Sync
     include Dry::Monads[:do, :result]
-    include Entities::Captors::Syncs::Interface
-    include MonadicPersistence
     include MeruAPI::Deps[
       calculate_authorizing: "entities.calculate_authorizing",
-      index_search_documents: "entities.index_search_documents",
       prefix_sanitize: "searching.prefix_sanitize",
       sync_hierarchies: "entities.sync_hierarchies",
       validate_sync: "entities.validate_sync",
@@ -26,9 +23,7 @@ module Entities
 
       yield handle_child_entity! source
 
-      yield index_search! source
-
-      yield sync_hierarchies.(source) unless entity_sync_captured?(source)
+      yield sync_hierarchies.(source)
 
       yield calculate_authorizing! source
 
@@ -59,12 +54,9 @@ module Entities
     # @param [{ Symbol => Object }] attributes
     # @return [Dry::Monads::Result]
     def upsert!(attributes)
-      monadic_upsert Entity, attributes, unique_by: UNIQUE_INDEX, skip_find: true
-    end
+      Entity.upsert(attributes, unique_by: UNIQUE_INDEX, returning: nil)
 
-    # @param [HierarchicalEntity] entity
-    def index_search!(entity)
-      index_search_documents.(entity:)
+      Success()
     end
 
     # @param [ChildEntity] entity
@@ -72,7 +64,7 @@ module Entities
     def handle_child_entity!(entity)
       return Success() unless entity.kind_of?(ChildEntity)
 
-      yield maybe_upsert_visibility! entity
+      ensure_visibility! entity
 
       yield entity.calculate_ancestors
 
@@ -80,20 +72,19 @@ module Entities
     end
 
     # @param [ChildEntity] entity
-    # @return [Dry::Monads::Result]
-    def maybe_upsert_visibility!(entity)
-      tuple = {}
+    # @return [void]
+    def ensure_visibility!(entity)
+      visibility = entity.actual_entity_visibility
 
-      tuple[:entity_id] = entity.id_for_entity
-      tuple[:entity_type] = entity.entity_type
+      return if visibility.persisted?
 
-      monadic_upsert EntityVisibility, tuple, unique_by: UNIQUE_INDEX, skip_find: true
+      visibility.entity_id ||= entity.id
+
+      visibility.save!
     end
 
     # @param [SyncsEntities] source
     # @return [Dry::Monads::Result]
-    def calculate_authorizing!(source)
-      calculate_authorizing.call auth_path: source.entity_auth_path
-    end
+    def calculate_authorizing!(source) = calculate_authorizing.call(auth_path: source.entity_auth_path)
   end
 end

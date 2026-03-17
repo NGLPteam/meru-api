@@ -6,11 +6,14 @@
 # The predicate to use in lifecycles is {#in_graphql_mutation?}.
 #
 # @see Mutations.with_active
-# @see Mutations::Active
+# @see Mutations::Current
 module ModelMutationSupport
   extend ActiveSupport::Concern
 
-  include Dry::Effects.Reader(:graphql_mutation_active, default: false)
+  # @!attribute [r] graphql_mutation_active
+  #   @see Mutations::Current
+  #   @return [Boolean] whether the current context is within an active GraphQL mutation
+  def graphql_mutation_active = ::Mutations::Current.active
 
   alias graphql_mutation_active? graphql_mutation_active
 

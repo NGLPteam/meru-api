@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 RSpec.describe Audits::MismatchedCollectionParent, type: :model, disable_ordering_refresh: true do
-  include_context "sans entity sync"
-
   let!(:community) { FactoryBot.create :community }
   let!(:collection) { FactoryBot.create :collection, community: }
   let!(:subcollection) { FactoryBot.create :collection, parent: collection }

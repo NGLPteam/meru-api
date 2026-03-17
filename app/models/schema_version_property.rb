@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
 # A queryable, introspectable version of the various properties on a {SchemaVersion}.
+#
+# The data here is populated in {Schemas::Versions::ExtractProperties},
+# and is used to populate the materialized view {SchemaDefinitionProperty}.
 class SchemaVersionProperty < ApplicationRecord
   include GenericAccessible
   include TimestampScopes

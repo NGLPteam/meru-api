@@ -3,8 +3,8 @@
 RSpec.shared_examples_for "an entity with schematic properties" do |var_name|
   let!(:entity) { public_send(var_name) }
 
-  it "can extract core texts" do
-    expect(entity.extract_core_texts).to be_a_monadic_success
+  it "can write schematic text references" do
+    expect(entity.write_schematic_texts).to be_a_monadic_success
   end
 
   it "can extract orderable properties" do

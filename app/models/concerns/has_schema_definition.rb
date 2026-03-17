@@ -83,6 +83,7 @@ module HasSchemaDefinition
   end
 
   # @see Schemas::Instances::Apply
+  # @see Schemas::Instances::PropertiesApplicator
   # @param [Hash] values
   # @return [Dry::Monads::Result]
   monadic_operation! def apply_properties(values)
@@ -90,22 +91,25 @@ module HasSchemaDefinition
   end
 
   # @api private
-  # @return [void]
+  # @note This will actually use patch properties.
+  # @return [Boolean]
   def apply_pending_properties!
-    return if pending_properties.blank?
+    return false if pending_properties.blank?
 
     begin
       pending = pending_properties
 
       self.pending_properties = nil
 
-      apply_properties!(pending)
+      patch_properties!(pending)
     rescue Dry::Monads::UnwrapError => e
       # :nocov:
       self.pending_properties = pending
 
       raise e
       # :nocov:
+    else
+      return true
     end
   end
 

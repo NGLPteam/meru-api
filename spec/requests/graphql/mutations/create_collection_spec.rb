@@ -73,7 +73,7 @@ RSpec.describe Mutations::CreateCollection, type: :request, graphql: :mutation d
           req.effect! change(Layouts::MainInstance, :count).by(1)
           req.effect! have_enqueued_job(Entities::InvalidateAncestorLayoutsJob).once
           req.effect! have_enqueued_job(Entities::InvalidateDescendantLayoutsJob).once
-          req.effect! have_enqueued_job(Entities::SyncHierarchiesJob).once
+          req.effect! have_enqueued_job(Entities::IndexSearchDocumentsJob)
 
           req.data! expected_shape
         end
@@ -94,7 +94,7 @@ RSpec.describe Mutations::CreateCollection, type: :request, graphql: :mutation d
             req.effect! change(Ordering, :count).by(2)
             req.effect! have_enqueued_job(Entities::InvalidateAncestorLayoutsJob).once
             req.effect! have_enqueued_job(Entities::InvalidateDescendantLayoutsJob).once
-            req.effect! have_enqueued_job(Entities::SyncHierarchiesJob).once
+            req.effect! have_enqueued_job(Entities::IndexSearchDocumentsJob)
 
             req.data! expected_shape
           end
@@ -111,7 +111,7 @@ RSpec.describe Mutations::CreateCollection, type: :request, graphql: :mutation d
           req.effect! change(Layouts::MainInstance, :count).by(1)
           req.effect! have_enqueued_job(Entities::InvalidateAncestorLayoutsJob).once
           req.effect! have_enqueued_job(Entities::InvalidateDescendantLayoutsJob).once
-          req.effect! have_enqueued_job(Entities::SyncHierarchiesJob).once
+          req.effect! have_enqueued_job(Entities::IndexSearchDocumentsJob)
 
           req.data! expected_shape
         end

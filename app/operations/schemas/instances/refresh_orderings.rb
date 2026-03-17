@@ -2,32 +2,43 @@
 
 module Schemas
   module Instances
-    # An operation that handles refreshing all orderings associated with a specific entity.
+    # An operation that handles refreshing all {Ordering}s associated with
+    # a specific {HierarchicalEntity entity}.
     #
-    # @see Schemas::Orderings::RefreshStatus
+    # The behavior of this operation depends entirely on the
+    # {Schemas::Orderings::Current current}
+    # {Schemas::Orderings::RefreshStatus refresh status}.
+    #
+    # * when `"sync"`, it will synchronously refresh **all**
+    #   relevant orderings by calling {Schemas::Orderings::Refresh} directly.
+    # * when `"async"`, it will mark the orderings {Ordering#invalidate! stale},
+    #   to be processed asynchronously by {OrderingInvalidations::ProcessAllJob}.
+    # * when `"disabled"`, it will skip refreshing entirely. This should be used
+    #   with caution in live environments, as it means that entity trees will get
+    #   inaccurate over time, as far as being able to browse them.
+    #
+    # @see Schemas::Orderings::Refresh
     class RefreshOrderings
       include Dry::Effects.Resolve(:refresh_status)
       include Dry::Monads[:do, :result]
-      include MonadicPersistence
-
-      include MeruAPI::Deps[refresh: "schemas.orderings.refresh"]
 
       # @param [HierarchicalEntity] entity
-      # @return [Dry::Monads::Result]
+      # @return [Dry::Monads::Success(void)]
       def call(entity)
-        status = refresh_status { Schemas::Orderings::RefreshStatus.new }
+        status = Schemas::Orderings::Current.refresh_status
 
-        return Success() if status.disabled? || status.skip?(entity)
+        return Success() if status.disabled?
 
         Ordering.owned_by_or_ordering(entity).find_each do |ordering|
-          next if status.skip?(ordering)
-
+          # Skip refreshing this ordering if it doesn't apply,
+          # for instance an article entity asking about its journal's
+          # volume ordering.
           next unless ordering.refreshes_for? entity
 
-          if status.deferred? || status.async?
+          if status.async?
             ordering.invalidate!
           else
-            yield refresh.(ordering)
+            yield ordering.refresh
           end
         end
 

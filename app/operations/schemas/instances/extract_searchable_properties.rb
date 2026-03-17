@@ -8,7 +8,6 @@ module Schemas
       include MeruAPI::Deps[
         instance_for: "schemas.utility.instance_for",
         read_searchable_values: "schemas.instances.read_searchable_property_values",
-        write_full_text: "schemas.instances.write_full_text",
       ]
 
       # @param [HasSchemaDefinition, Entity, EntityLink] schema_instance (@see Schemas::Utility::InstanceFor for acceptable values to pass)
@@ -23,16 +22,9 @@ module Schemas
 
         entity_attrs = base_attrs_for schema_instance
 
-        properties_without_full_text = schema_version.schema_version_properties.searchable.reject do |svp|
-          svp.with_full_text_type?
-        end
-
-        markdown_properties, properties = properties_without_full_text.partition(&:with_markdown_type?)
-
-        markdown_properties.each do |svp|
-          full_text = { kind: "markdown", content: values[svp.path] }
-
-          yield write_full_text.(schema_instance, svp.path, full_text)
+        properties = schema_version.schema_version_properties.searchable.reject do |svp|
+          # These are handled by {Schemas::Texts::Writer}.
+          svp.with_full_text_type? || svp.with_markdown_type?
         end
 
         searchable_attributes = properties.map do |svp|
@@ -45,7 +37,7 @@ module Schemas
 
         props = yield upsert_searchable_properties! searchable_attributes
 
-        result = { md: markdown_properties.size, props: }
+        result = { props: }
 
         Success result
       end
@@ -53,7 +45,9 @@ module Schemas
       private
 
       def upsert_searchable_properties!(attributes)
+        # :nocov:
         return Success(0) if attributes.blank?
+        # :nocov:
 
         res = EntitySearchableProperty.upsert_all(
           attributes,

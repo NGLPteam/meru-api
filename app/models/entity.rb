@@ -35,7 +35,8 @@ class Entity < ApplicationRecord
   belongs_to :entity_search_document,
     primary_key: ENTITY_TUPLE,
     foreign_key: CONTEXTUAL_TUPLE,
-    inverse_of: :synchronized_entities
+    inverse_of: :synchronized_entities,
+    optional: true
 
   has_many :authorizing_entities, inverse_of: :entity, dependent: :delete_all
 

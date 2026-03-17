@@ -7,76 +7,67 @@ module Schemas
     #
     # @see Types::SchemaInstanceContextType
     class Context
-      EMPTY_HASH = proc { {} }
-
-      include Dry::Core::Memoizable
+      include Dry::Core::Constants
       include Dry::Initializer[undefined: false].define -> do
-        option :version, Schemas::Types.Instance(SchemaVersion).optional, default: proc {}
-        option :instance, Schemas::Types::SchemaInstance.optional, default: proc {}
+        option :version, Schemas::Types::Version.optional, optional: true
+        option :instance, Schemas::Types::Entity.optional, optional: true
 
         option :type_mapping, Schemas::Properties::TypeMapping::Type, default: proc { version&.type_mapping || Schemas::Properties::TypeMapping.new }
 
-        option :values, Schemas::Types::ValueHash, default: EMPTY_HASH
-        option :full_texts, FullText::Types::Map, default: EMPTY_HASH
-        option :collected_references, Schemas::References::Types::CollectedMap, default: EMPTY_HASH
-        option :scalar_references, Schemas::References::Types::ScalarMap, default: EMPTY_HASH
+        option :values, Schemas::Types::ValueHash, default: proc { EMPTY_HASH }
+        option :full_texts, FullText::Types::Map, default: proc { EMPTY_HASH }
+        option :collected_references, Schemas::References::Types::CollectedMap, default: proc { EMPTY_HASH }
+        option :scalar_references, Schemas::References::Types::ScalarMap, default: proc { EMPTY_HASH }
       end
 
       delegate :has_any_types?, :has_contributors?, :has_type?, to: :type_mapping
 
-      # @!attribute [r] current_values
       # @return [Hash]
-      memoize def current_values
-        calculate_current_values
-      end
+      attr_reader :current_values
 
-      # @!attribute [r] default_values
       # @return [Hash]
-      memoize def default_values
-        {}
-      end
+      attr_reader :default_values
 
-      # @!attribute [r] field_values
       # @return [Hash]
-      memoize def field_values
-        calculate_field_values
-      end
+      attr_reader :field_values
 
-      # @!attribute [r] filtered_values
+      # @api private
       # @return [::Support::PropertyHash]
-      memoize def filtered_values
-        filter_values
+      attr_reader :known_values
+
+      def initialize(...)
+        super
+
+        @known_values = filter_values.freeze
+
+        @current_values = calculate_current_values.freeze
+
+        @default_values = EMPTY_HASH
+
+        @field_values = calculate_field_values.freeze
       end
 
       # @param [String] path
       # @return [<ApplicationRecord>]
-      def collected_reference(path)
-        collected_references.fetch path, []
-      end
+      def collected_reference(path) = collected_references.fetch(path, EMPTY_ARRAY)
 
       # @param [String] path
       # @return [SchematicText, nil]
-      def full_text(path)
-        full_texts[path]
-      end
+      def full_text(path) = full_texts[path]
 
       # @param [String] path
       # @return [ApplicationRecord, nil]
-      def scalar_reference(path)
-        scalar_references[path]
-      end
+      def scalar_reference(path) = scalar_references[path]
 
       # @param [String] path
       # @return [Object, nil]
-      def value_at(path)
-        filtered_values[path]
-      end
+      def value_at(path) = known_values[path]
 
       private
 
       # @return [Hash]
       def calculate_current_values
-        property_hash = filter_values
+        property_hash = known_values.dup
 
         property_hash.merge! collected_references
         property_hash.merge! scalar_references
@@ -85,9 +76,9 @@ module Schemas
         property_hash.to_h
       end
 
-      # @return [::Support::PropertyHash]
+      # @return [Hash]
       def calculate_field_values
-        property_hash = filter_values
+        property_hash = known_values.dup
 
         encoded_collections = collected_references.transform_values do |value|
           value.map(&:to_encoded_id)
@@ -104,6 +95,7 @@ module Schemas
         property_hash.to_h
       end
 
+      # @return [::Support::PropertyHash]
       def filter_values
         ::Support::PropertyHash.new(values).tap do |v|
           v.paths.each do |path|
@@ -112,9 +104,10 @@ module Schemas
         end
       end
 
+      # @param [String] path
       def known_path?(path)
         paths = [path].tap do |p|
-          p << path[/\A([^.]+)\./, 1] if /\./.match?(path)
+          p << path[/\A([^.]+)\./, 1] if ?..in?(path)
         end
 
         paths.any? { _1.in?(type_mapping.paths) }

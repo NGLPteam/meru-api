@@ -5,14 +5,13 @@ module Schemas
     class Reindex
       include Dry::Monads[:result, :do]
       include MeruAPI::Deps[
-        extract_core_texts: "schemas.instances.write_core_texts",
         extract_searchable_properties: "schemas.instances.extract_searchable_properties",
         extract_composed_text: "schemas.instances.extract_composed_text",
       ]
 
       # @param [HierarchicalEntity] entity
       def call(entity)
-        yield extract_core_texts.(entity)
+        yield entity.write_schematic_texts
 
         yield extract_searchable_properties.(entity)
 

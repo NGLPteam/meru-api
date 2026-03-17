@@ -114,17 +114,9 @@ module HierarchicalEntity
     after_validation :set_temporary_auth_path!, on: :create
     after_validation :maybe_update_auth_path!, on: :update
 
-    after_create :populate_orderings!
+    after_create :maintain_for_create!
 
-    after_save :track_parent_changes!
-
-    after_save :maintain_links!
-
-    after_save :refresh_orderings!
-
-    after_save :extract_core_texts!
-
-    after_save :extract_composed_text!
+    after_update :maintain_for_update!
   end
 
   # @param [String] ancestor_name
@@ -251,6 +243,12 @@ module HierarchicalEntity
     :"#{hierarchical_parent&.hierarchical_child_association}_id" if hierarchical_parent.present?
   end
 
+  # @see Entities::IndexSearchDocuments
+  # @return [Dry::Monads::Success(void)]
+  monadic_operation! def index_search_documents
+    call_operation("entities.index_search_documents", entity: self)
+  end
+
   # @see Links::Connect
   # @param [HierarchicalEntity] source
   # @param [String] operator
@@ -275,6 +273,28 @@ module HierarchicalEntity
   # @return [<HierarchicalEntity>]
   def linking_entities
     incoming_links.map(&:source)
+  end
+
+  # @see Entities::Maintain
+  # @see Entities::Maintainer
+  # @param [:create, :update] maintenance_mode
+  # @return [Dry::Monads::Success(void)]
+  monadic_operation! def maintain(maintenance_mode:)
+    call_operation("entities.maintain", self, maintenance_mode:)
+  end
+
+  # @see Entities::Maintain
+  # @see Entities::Maintainer
+  # @return [Dry::Monads::Success(void)]
+  monadic_operation! def maintain_for_create
+    maintain(maintenance_mode: :create)
+  end
+
+  # @see Entities::Maintain
+  # @see Entities::Maintainer
+  # @return [Dry::Monads::Success(void)]
+  monadic_operation! def maintain_for_update
+    maintain(maintenance_mode: :update)
   end
 
   # @see Links::Maintain
@@ -324,6 +344,12 @@ module HierarchicalEntity
     call_operation("entities.calculate_ancestors", self)
   end
 
+  # @see Entities::CalculateAuthorizing
+  # @return [Dry::Monads::Success(void)]
+  monadic_operation! def calculate_authorizing
+    call_operation("entities.calculate_authorizing", auth_path:)
+  end
+
   # @see Entities::SyncHierarchies
   monadic_operation! def sync_hierarchies
     call_operation("entities.sync_hierarchies", self)
@@ -359,10 +385,11 @@ module HierarchicalEntity
     call_operation("schemas.instances.extract_composed_text", self)
   end
 
-  # @see Schemas::Instances::WriteCoreTexts
-  # @return [Dry::Monads::Success]
-  monadic_operation! def extract_core_texts
-    call_operation("schemas.instances.write_core_texts", self)
+  # @see Schemas::Texts::Write
+  # @see Schemas::Texts::Writer
+  # @return [Dry::Monads::Success(HierarchicalEntity)]
+  monadic_operation! def write_schematic_texts(**options)
+    call_operation("schemas.texts.write", self, **options)
   end
 
   # @see Ordering.owned_by_or_ordering
