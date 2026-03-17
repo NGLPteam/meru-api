@@ -24,11 +24,7 @@ module WrapsSchemaProperty
     scope :sans_paths, ->(paths) { where.not(path: paths) }
   end
 
-  def citextual?
-    with_email_type?
-  end
+  def citextual? = with_email_type?
 
-  def textual?
-    with_email_type? || with_select_type? || with_string_type?
-  end
+  def textual? = with_email_type? || with_select_type? || with_string_type?
 end

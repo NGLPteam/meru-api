@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 RSpec.describe "Query.item.relatedItems", type: :request, disable_ordering_refresh: true do
-  include_context "sans entity sync"
-
   let!(:query) do
     <<~GRAPHQL
     query getRelatedItems($slug: Slug!) {

@@ -4,6 +4,10 @@
 #
 # It is created by an {Entity} after commit and not managed directly.
 #
+# Nowadays this is primarily a trimmed down, denormalized version of {EntityHierarchy}
+# that is just used for calculating authorization. In the future, we'll likely rebuild
+# the authorization system to draw from `entity_hierarchies` directly.
+#
 # @see Entities::AuditAuthorizing
 # @see Entities::CalculateAuthorizing
 class AuthorizingEntity < ApplicationRecord

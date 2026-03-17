@@ -2,32 +2,40 @@
 
 module Schemas
   module References
+    # @api private
+    # @see Schemas::Instances::PropertiesApplicator
+    # @see SchematicScalarReference
+    # @note Non-monadic operation.
     class WriteScalarReference
-      include Dry::Monads[:do, :result]
-
-      prepend TransactionalCall
-
       UNIQUE_BY = %i[referrer_type referrer_id path].freeze
 
       # @param [HasSchemaDefinition] referrer
       # @param [String] path
       # @param [ApplicationRecord, nil] referents
+      # @return [void]
       def call(referrer, path, referent)
         if referent.present?
-          yield upsert! referrer, path, referent
+          upsert! referrer, path, referent
         else
-          yield clear! referrer, path
+          clear! referrer, path
         end
 
-        Success nil
+        return
       end
 
       private
 
+      # @param [HasSchemaDefinition] referrer
+      # @param [String] path
+      # @return [void]
       def clear!(referrer, path)
-        Success SchematicScalarReference.by_referrer(referrer).by_path(path).delete_all
+        SchematicScalarReference.by_referrer(referrer).by_path(path).delete_all
       end
 
+      # @param [HasSchemaDefinition] referrer
+      # @param [String] path
+      # @param [ApplicationRecord] referent
+      # @return [void]
       def upsert!(referrer, path, referent)
         attributes = {
           referrer_type: referrer.model_name.to_s,
@@ -37,7 +45,7 @@ module Schemas
           referent_id: referent.id
         }
 
-        Success SchematicScalarReference.upsert(attributes, unique_by: UNIQUE_BY)
+        SchematicScalarReference.upsert(attributes, unique_by: UNIQUE_BY)
       end
     end
   end

@@ -1411,6 +1411,24 @@ $_$;
 
 
 --
+-- Name: entity_property_values_valid(jsonb); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.entity_property_values_valid(jsonb) RETURNS boolean
+    LANGUAGE sql IMMUTABLE PARALLEL SAFE
+    AS $_$
+SELECT $1 IS NOT NULL AND ($1 -> 'values' IS NULL OR jsonb_typeof($1 -> 'values') = 'object');
+$_$;
+
+
+--
+-- Name: FUNCTION entity_property_values_valid(jsonb); Type: COMMENT; Schema: public; Owner: -
+--
+
+COMMENT ON FUNCTION public.entity_property_values_valid(jsonb) IS 'Check that the given JSONB object has a "values" key of the correct type (object or null).';
+
+
+--
 -- Name: entity_visibility_active(public.entity_visibility, tstzrange, timestamp with time zone); Type: FUNCTION; Schema: public; Owner: -
 --
 
@@ -3003,6 +3021,7 @@ CREATE OPERATOR public.< (
     FUNCTION = public.vpdate_lt,
     LEFTARG = public.variable_precision_date,
     RIGHTARG = public.variable_precision_date,
+    COMMUTATOR = OPERATOR(public.>),
     NEGATOR = OPERATOR(public.>=),
     RESTRICT = scalarltsel,
     JOIN = scalarltjoinsel
@@ -3184,6 +3203,7 @@ CREATE OPERATOR public.<= (
     LEFTARG = public.variable_precision_date,
     RIGHTARG = public.variable_precision_date,
     COMMUTATOR = OPERATOR(public.>=),
+    NEGATOR = OPERATOR(public.>),
     RESTRICT = scalarlesel,
     JOIN = scalarlejoinsel
 );
@@ -4205,7 +4225,8 @@ CREATE TABLE public.collections (
     cache_warming_default_enabled boolean DEFAULT false NOT NULL,
     cache_warming_enabled boolean DEFAULT false NOT NULL,
     cache_warming_status public.cache_warming_status DEFAULT 'default'::public.cache_warming_status NOT NULL,
-    submission_status public.entity_submission_status DEFAULT 'unsubmitted'::public.entity_submission_status NOT NULL
+    submission_status public.entity_submission_status DEFAULT 'unsubmitted'::public.entity_submission_status NOT NULL,
+    CONSTRAINT chk_collections_property_values_safeguard CHECK (public.entity_property_values_valid(properties))
 );
 
 
@@ -4256,7 +4277,8 @@ CREATE TABLE public.communities (
     cache_warming_default_enabled boolean DEFAULT true NOT NULL,
     cache_warming_enabled boolean DEFAULT false NOT NULL,
     cache_warming_status public.cache_warming_status DEFAULT 'default'::public.cache_warming_status NOT NULL,
-    submission_status public.entity_submission_status DEFAULT 'unsubmitted'::public.entity_submission_status NOT NULL
+    submission_status public.entity_submission_status DEFAULT 'unsubmitted'::public.entity_submission_status NOT NULL,
+    CONSTRAINT chk_communities_property_values_safeguard CHECK (public.entity_property_values_valid(properties))
 );
 
 
@@ -4324,7 +4346,8 @@ CREATE TABLE public.items (
     cache_warming_default_enabled boolean DEFAULT false NOT NULL,
     cache_warming_enabled boolean DEFAULT false NOT NULL,
     cache_warming_status public.cache_warming_status DEFAULT 'default'::public.cache_warming_status NOT NULL,
-    submission_status public.entity_submission_status DEFAULT 'unsubmitted'::public.entity_submission_status NOT NULL
+    submission_status public.entity_submission_status DEFAULT 'unsubmitted'::public.entity_submission_status NOT NULL,
+    CONSTRAINT chk_items_property_values_safeguard CHECK (public.entity_property_values_valid(properties))
 );
 
 
@@ -4451,9 +4474,9 @@ CREATE MATERIALIZED VIEW public.collection_authorizations AS
            FROM (public.collections coll
              JOIN closure_tree ct ON ((ct.collection_id = coll.parent_id)))
         )
- SELECT closure_tree.community_id,
-    closure_tree.collection_id,
-    closure_tree.auth_path
+ SELECT community_id,
+    collection_id,
+    auth_path
    FROM closure_tree
   WITH NO DATA;
 
@@ -4605,7 +4628,7 @@ CREATE VIEW public.contextually_assigned_roles AS
 
 CREATE TABLE public.contribution_role_configurations (
     id uuid DEFAULT gen_random_uuid() NOT NULL,
-    controlled_vocabulary_id uuid NOT NULL,
+    controlled_vocabulary_id uuid CONSTRAINT contribution_role_configurati_controlled_vocabulary_id_not_null NOT NULL,
     default_item_id uuid NOT NULL,
     other_item_id uuid,
     source_type character varying NOT NULL,
@@ -4706,24 +4729,24 @@ CREATE MATERIALIZED VIEW public.contributor_attributions AS
              LEFT JOIN public.named_variable_dates nvd USING (entity_id, entity_type))
           WHERE (nvd.path = '$published$'::text)
         )
- SELECT att.attribution_id,
-    att.attribution_type,
-    att.contributor_id,
-    att.collection_id,
-    att.item_id,
-    att.entity_id,
-    att.entity_type,
-    att.kind,
-    att.title,
-    att.has_published,
-    att.published,
-    att.published_on,
+ SELECT attribution_id,
+    attribution_type,
+    contributor_id,
+    collection_id,
+    item_id,
+    entity_id,
+    entity_type,
+    kind,
+    title,
+    has_published,
+    published,
+    published_on,
     dense_rank() OVER publish_w AS published_rank,
     dense_rank() OVER title_w AS title_rank,
-    att.created_at,
-    att.updated_at
+    created_at,
+    updated_at
    FROM hydrated_attributions att
-  WINDOW publish_w AS (PARTITION BY att.contributor_id ORDER BY COALESCE(att.published_on, (att.created_at)::date), att.title, att.created_at), title_w AS (PARTITION BY att.contributor_id ORDER BY att.title, att.created_at)
+  WINDOW publish_w AS (PARTITION BY contributor_id ORDER BY COALESCE(published_on, (created_at)::date), title, created_at), title_w AS (PARTITION BY contributor_id ORDER BY title, created_at)
   WITH NO DATA;
 
 
@@ -5083,7 +5106,7 @@ CREATE TABLE public.entity_derived_layout_definitions (
     schema_version_id uuid NOT NULL,
     entity_type character varying NOT NULL,
     entity_id uuid NOT NULL,
-    layout_definition_type character varying NOT NULL,
+    layout_definition_type character varying CONSTRAINT entity_derived_layout_definitio_layout_definition_type_not_null NOT NULL,
     layout_definition_id uuid NOT NULL,
     layout_kind public.layout_kind NOT NULL,
     created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
@@ -5124,21 +5147,21 @@ CREATE TABLE public.entity_hierarchies (
 --
 
 CREATE VIEW public.entity_descendants AS
- SELECT hier.ancestor_type AS parent_type,
-    hier.ancestor_id AS parent_id,
-    hier.hierarchical_type AS descendant_type,
-    hier.hierarchical_id AS descendant_id,
-    hier.schema_version_id,
-    hier.link_operator,
-    hier.auth_path,
-    hier.descendant_scope AS scope,
-    hier.title,
-    hier.depth AS actual_depth,
-    hier.generations AS relative_depth,
-    hier.created_at,
-    hier.updated_at
+ SELECT ancestor_type AS parent_type,
+    ancestor_id AS parent_id,
+    hierarchical_type AS descendant_type,
+    hierarchical_id AS descendant_id,
+    schema_version_id,
+    link_operator,
+    auth_path,
+    descendant_scope AS scope,
+    title,
+    depth AS actual_depth,
+    generations AS relative_depth,
+    created_at,
+    updated_at
    FROM public.entity_hierarchies hier
-  WHERE (hier.ancestor_id <> hier.descendant_id);
+  WHERE (ancestor_id <> descendant_id);
 
 
 --
@@ -5594,7 +5617,7 @@ CREATE TABLE public.good_jobs (
 
 CREATE TABLE public.harvest_attempt_entity_link_transitions (
     id uuid DEFAULT gen_random_uuid() NOT NULL,
-    harvest_attempt_entity_link_id uuid NOT NULL,
+    harvest_attempt_entity_link_id uuid CONSTRAINT harvest_attempt_entity_link_harvest_attempt_entity_lin_not_null NOT NULL,
     most_recent boolean NOT NULL,
     sort_key integer NOT NULL,
     to_state character varying NOT NULL,
@@ -5682,7 +5705,7 @@ CREATE VIEW public.harvest_attempt_entity_statuses AS
 
 CREATE TABLE public.harvest_attempt_record_link_transitions (
     id uuid DEFAULT gen_random_uuid() NOT NULL,
-    harvest_attempt_record_link_id uuid NOT NULL,
+    harvest_attempt_record_link_id uuid CONSTRAINT harvest_attempt_record_link_harvest_attempt_record_lin_not_null NOT NULL,
     most_recent boolean NOT NULL,
     sort_key integer NOT NULL,
     to_state character varying NOT NULL,
@@ -5725,17 +5748,17 @@ CREATE VIEW public.harvest_attempt_record_statuses AS
              LEFT JOIN LATERAL ( SELECT COALESCE(mrt.to_state, 'pending'::character varying) AS current_state) deets ON (true))
           GROUP BY harvest_attempt_record_links.harvest_attempt_id
         )
- SELECT stats.harvest_attempt_id,
-    stats.total_records,
-    stats.total_records_waiting_for_extraction,
-    stats.total_records_waiting_for_upsert,
-    stats.total_records_success,
-    stats.extraction_stats,
-    stats.extraction_duration_average,
-    stats.extraction_duration_stddev,
+ SELECT harvest_attempt_id,
+    total_records,
+    total_records_waiting_for_extraction,
+    total_records_waiting_for_upsert,
+    total_records_success,
+    extraction_stats,
+    extraction_duration_average,
+    extraction_duration_stddev,
     LEAST(
         CASE
-            WHEN (stats.total_records > 0) THEN ((stats.total_records_success)::numeric / (stats.total_records)::numeric)
+            WHEN (total_records > 0) THEN ((total_records_success)::numeric / (total_records)::numeric)
             ELSE 0.0
         END, 1.0) AS completion
    FROM stats;
@@ -5789,7 +5812,7 @@ CREATE TABLE public.harvest_attempts (
 
 CREATE TABLE public.harvest_cached_asset_references (
     id uuid DEFAULT gen_random_uuid() NOT NULL,
-    harvest_cached_asset_id uuid NOT NULL,
+    harvest_cached_asset_id uuid CONSTRAINT harvest_cached_asset_reference_harvest_cached_asset_id_not_null NOT NULL,
     cacheable_type character varying NOT NULL,
     cacheable_id uuid NOT NULL,
     created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
@@ -6107,15 +6130,15 @@ CREATE TABLE public.harvest_sources (
 --
 
 CREATE VIEW public.hierarchical_schema_ranks AS
- SELECT hier.ancestor_type AS entity_type,
-    hier.ancestor_id AS entity_id,
-    hier.schema_definition_id,
-    count(DISTINCT hier.schema_version_id) AS distinct_version_count,
+ SELECT ancestor_type AS entity_type,
+    ancestor_id AS entity_id,
+    schema_definition_id,
+    count(DISTINCT schema_version_id) AS distinct_version_count,
     count(*) AS schema_count,
-    mode() WITHIN GROUP (ORDER BY hier.depth) AS schema_rank
+    mode() WITHIN GROUP (ORDER BY depth) AS schema_rank
    FROM public.entity_hierarchies hier
-  WHERE (hier.ancestor_id <> hier.descendant_id)
-  GROUP BY hier.ancestor_type, hier.ancestor_id, hier.schema_definition_id;
+  WHERE (ancestor_id <> descendant_id)
+  GROUP BY ancestor_type, ancestor_id, schema_definition_id;
 
 
 --
@@ -6123,15 +6146,15 @@ CREATE VIEW public.hierarchical_schema_ranks AS
 --
 
 CREATE VIEW public.hierarchical_schema_version_ranks AS
- SELECT hier.ancestor_type AS entity_type,
-    hier.ancestor_id AS entity_id,
-    hier.schema_definition_id,
-    hier.schema_version_id,
+ SELECT ancestor_type AS entity_type,
+    ancestor_id AS entity_id,
+    schema_definition_id,
+    schema_version_id,
     count(*) AS schema_count,
-    mode() WITHIN GROUP (ORDER BY hier.depth) AS schema_rank
+    mode() WITHIN GROUP (ORDER BY depth) AS schema_rank
    FROM public.entity_hierarchies hier
-  WHERE (hier.ancestor_id <> hier.descendant_id)
-  GROUP BY hier.ancestor_type, hier.ancestor_id, hier.schema_definition_id, hier.schema_version_id;
+  WHERE (ancestor_id <> descendant_id)
+  GROUP BY ancestor_type, ancestor_id, schema_definition_id, schema_version_id;
 
 
 --
@@ -6169,10 +6192,10 @@ CREATE MATERIALIZED VIEW public.item_authorizations AS
              JOIN collection_paths coll USING (collection_id))
              JOIN item_paths ip ON ((ip.item_id = i.parent_id)))
         )
- SELECT item_paths.community_id,
-    item_paths.collection_id,
-    item_paths.item_id,
-    item_paths.auth_path
+ SELECT community_id,
+    collection_id,
+    item_id,
+    auth_path
    FROM item_paths
   WITH NO DATA;
 
@@ -6196,12 +6219,12 @@ CREATE TABLE public.item_links (
 --
 
 CREATE VIEW public.latest_harvest_attempt_links AS
- SELECT DISTINCT ON (harvest_attempts.harvest_source_id, harvest_attempts.harvest_set_id, harvest_attempts.harvest_mapping_id) harvest_attempts.harvest_source_id,
-    harvest_attempts.harvest_set_id,
-    harvest_attempts.harvest_mapping_id,
-    harvest_attempts.id AS harvest_attempt_id
+ SELECT DISTINCT ON (harvest_source_id, harvest_set_id, harvest_mapping_id) harvest_source_id,
+    harvest_set_id,
+    harvest_mapping_id,
+    id AS harvest_attempt_id
    FROM public.harvest_attempts
-  ORDER BY harvest_attempts.harvest_source_id, harvest_attempts.harvest_set_id, harvest_attempts.harvest_mapping_id, harvest_attempts.created_at DESC;
+  ORDER BY harvest_source_id, harvest_set_id, harvest_mapping_id, created_at DESC;
 
 
 --
@@ -7185,14 +7208,14 @@ CREATE TABLE public.schematic_texts (
 --
 
 CREATE VIEW public.stale_entities AS
- SELECT DISTINCT ON (layout_invalidations.entity_id) layout_invalidations.sequence_id AS id,
-    layout_invalidations.entity_type,
-    layout_invalidations.entity_id,
-    layout_invalidations.stale_at,
-    layout_invalidations.created_at,
-    layout_invalidations.updated_at
+ SELECT DISTINCT ON (entity_id) sequence_id AS id,
+    entity_type,
+    entity_id,
+    stale_at,
+    created_at,
+    updated_at
    FROM public.layout_invalidations
-  ORDER BY layout_invalidations.entity_id, layout_invalidations.stale_at DESC;
+  ORDER BY entity_id, stale_at DESC;
 
 
 --
@@ -7201,7 +7224,7 @@ CREATE VIEW public.stale_entities AS
 
 CREATE TABLE public.submission_batch_publication_transitions (
     id uuid DEFAULT gen_random_uuid() NOT NULL,
-    submission_batch_publication_id uuid NOT NULL,
+    submission_batch_publication_id uuid CONSTRAINT submission_batch_publicatio_submission_batch_publicati_not_null NOT NULL,
     user_id uuid,
     most_recent boolean NOT NULL,
     sort_key integer NOT NULL,
@@ -7269,7 +7292,7 @@ CREATE TABLE public.submission_deposit_targets (
 
 CREATE TABLE public.submission_publication_transitions (
     id uuid DEFAULT gen_random_uuid() NOT NULL,
-    submission_publication_id uuid NOT NULL,
+    submission_publication_id uuid CONSTRAINT submission_publication_trans_submission_publication_id_not_null NOT NULL,
     user_id uuid,
     most_recent boolean NOT NULL,
     sort_key integer NOT NULL,
@@ -7496,8 +7519,8 @@ CREATE TABLE public.templates_blurb_instances (
 
 CREATE TABLE public.templates_cached_entity_list_items (
     id uuid DEFAULT gen_random_uuid() NOT NULL,
-    cached_entity_list_id uuid NOT NULL,
-    list_item_layout_instance_id uuid NOT NULL,
+    cached_entity_list_id uuid CONSTRAINT templates_cached_entity_list_ite_cached_entity_list_id_not_null NOT NULL,
+    list_item_layout_instance_id uuid CONSTRAINT templates_cached_entity_lis_list_item_layout_instance__not_null NOT NULL,
     schema_version_id uuid NOT NULL,
     entity_type character varying NOT NULL,
     entity_id uuid NOT NULL,
@@ -7535,7 +7558,7 @@ CREATE TABLE public.templates_cached_entity_lists (
 
 CREATE TABLE public.templates_contributor_list_definitions (
     id uuid DEFAULT gen_random_uuid() NOT NULL,
-    layout_definition_id uuid NOT NULL,
+    layout_definition_id uuid CONSTRAINT templates_contributor_list_defini_layout_definition_id_not_null NOT NULL,
     layout_kind public.layout_kind DEFAULT 'main'::public.layout_kind NOT NULL,
     template_kind public.template_kind DEFAULT 'contributor_list'::public.template_kind NOT NULL,
     "position" bigint NOT NULL,
@@ -7556,8 +7579,8 @@ CREATE TABLE public.templates_contributor_list_definitions (
 
 CREATE TABLE public.templates_contributor_list_instances (
     id uuid DEFAULT gen_random_uuid() NOT NULL,
-    layout_instance_id uuid NOT NULL,
-    template_definition_id uuid NOT NULL,
+    layout_instance_id uuid CONSTRAINT templates_contributor_list_instance_layout_instance_id_not_null NOT NULL,
+    template_definition_id uuid CONSTRAINT templates_contributor_list_inst_template_definition_id_not_null NOT NULL,
     entity_type character varying NOT NULL,
     entity_id uuid NOT NULL,
     layout_kind public.layout_kind DEFAULT 'main'::public.layout_kind NOT NULL,
@@ -7574,7 +7597,7 @@ CREATE TABLE public.templates_contributor_list_instances (
     all_slots_empty boolean DEFAULT false NOT NULL,
     allow_hide boolean DEFAULT true NOT NULL,
     hidden boolean DEFAULT false NOT NULL,
-    hidden_by_empty_slots boolean DEFAULT false NOT NULL
+    hidden_by_empty_slots boolean DEFAULT false CONSTRAINT templates_contributor_list_insta_hidden_by_empty_slots_not_null NOT NULL
 );
 
 
@@ -7584,7 +7607,7 @@ CREATE TABLE public.templates_contributor_list_instances (
 
 CREATE TABLE public.templates_descendant_list_definitions (
     id uuid DEFAULT gen_random_uuid() NOT NULL,
-    layout_definition_id uuid NOT NULL,
+    layout_definition_id uuid CONSTRAINT templates_descendant_list_definit_layout_definition_id_not_null NOT NULL,
     layout_kind public.layout_kind DEFAULT 'main'::public.layout_kind NOT NULL,
     template_kind public.template_kind DEFAULT 'descendant_list'::public.template_kind NOT NULL,
     "position" bigint NOT NULL,
@@ -7594,7 +7617,7 @@ CREATE TABLE public.templates_descendant_list_definitions (
     slots jsonb DEFAULT '{}'::jsonb NOT NULL,
     background public.descendant_list_background DEFAULT 'none'::public.descendant_list_background NOT NULL,
     variant public.descendant_list_variant DEFAULT 'cards'::public.descendant_list_variant NOT NULL,
-    selection_source_mode public.selection_source_mode DEFAULT 'self'::public.selection_source_mode NOT NULL,
+    selection_source_mode public.selection_source_mode DEFAULT 'self'::public.selection_source_mode CONSTRAINT templates_descendant_list_defini_selection_source_mode_not_null NOT NULL,
     selection_mode public.descendant_list_selection_mode DEFAULT 'manual'::public.descendant_list_selection_mode NOT NULL,
     selection_source text DEFAULT 'self'::text NOT NULL,
     title text,
@@ -7602,21 +7625,21 @@ CREATE TABLE public.templates_descendant_list_definitions (
     dynamic_ordering_definition jsonb,
     ordering_identifier text,
     see_all_button_label text,
-    show_see_all_button boolean DEFAULT false NOT NULL,
-    show_entity_context boolean DEFAULT false NOT NULL,
+    show_see_all_button boolean DEFAULT false CONSTRAINT templates_descendant_list_definiti_show_see_all_button_not_null NOT NULL,
+    show_entity_context boolean DEFAULT false CONSTRAINT templates_descendant_list_definiti_show_entity_context_not_null NOT NULL,
     manual_list_name text DEFAULT 'manual'::text NOT NULL,
     selection_source_ancestor_name text,
     selection_property_path text,
     show_hero_image boolean DEFAULT false NOT NULL,
-    use_selection_fallback boolean DEFAULT false NOT NULL,
-    selection_fallback_mode public.descendant_list_selection_mode DEFAULT 'manual'::public.descendant_list_selection_mode NOT NULL,
+    use_selection_fallback boolean DEFAULT false CONSTRAINT templates_descendant_list_defin_use_selection_fallback_not_null NOT NULL,
+    selection_fallback_mode public.descendant_list_selection_mode DEFAULT 'manual'::public.descendant_list_selection_mode CONSTRAINT templates_descendant_list_defi_selection_fallback_mode_not_null NOT NULL,
     width public.template_width DEFAULT 'full'::public.template_width NOT NULL,
     see_all_ordering_identifier text,
-    show_contributors boolean DEFAULT false NOT NULL,
-    show_nested_entities boolean DEFAULT false NOT NULL,
+    show_contributors boolean DEFAULT false CONSTRAINT templates_descendant_list_definition_show_contributors_not_null NOT NULL,
+    show_nested_entities boolean DEFAULT false CONSTRAINT templates_descendant_list_definit_show_nested_entities_not_null NOT NULL,
     entity_context public.list_entity_context DEFAULT 'none'::public.list_entity_context NOT NULL,
     browse_style boolean DEFAULT false NOT NULL,
-    selection_unbounded boolean DEFAULT false NOT NULL
+    selection_unbounded boolean DEFAULT false CONSTRAINT templates_descendant_list_definiti_selection_unbounded_not_null NOT NULL
 );
 
 
@@ -7627,7 +7650,7 @@ CREATE TABLE public.templates_descendant_list_definitions (
 CREATE TABLE public.templates_descendant_list_instances (
     id uuid DEFAULT gen_random_uuid() NOT NULL,
     layout_instance_id uuid NOT NULL,
-    template_definition_id uuid NOT NULL,
+    template_definition_id uuid CONSTRAINT templates_descendant_list_insta_template_definition_id_not_null NOT NULL,
     entity_type character varying NOT NULL,
     entity_id uuid NOT NULL,
     layout_kind public.layout_kind DEFAULT 'main'::public.layout_kind NOT NULL,
@@ -7645,8 +7668,8 @@ CREATE TABLE public.templates_descendant_list_instances (
     all_slots_empty boolean DEFAULT false NOT NULL,
     allow_hide boolean DEFAULT true NOT NULL,
     hidden boolean DEFAULT false NOT NULL,
-    hidden_by_empty_slots boolean DEFAULT false NOT NULL,
-    hidden_by_entity_list boolean DEFAULT false NOT NULL,
+    hidden_by_empty_slots boolean DEFAULT false CONSTRAINT templates_descendant_list_instan_hidden_by_empty_slots_not_null NOT NULL,
+    hidden_by_entity_list boolean DEFAULT false CONSTRAINT templates_descendant_list_instan_hidden_by_entity_list_not_null NOT NULL,
     entity_list_cached_at timestamp without time zone
 );
 
@@ -7791,7 +7814,7 @@ CREATE TABLE public.templates_link_list_definitions (
     selection_source_ancestor_name text,
     show_hero_image boolean DEFAULT false NOT NULL,
     use_selection_fallback boolean DEFAULT false NOT NULL,
-    selection_fallback_mode public.link_list_selection_mode DEFAULT 'manual'::public.link_list_selection_mode NOT NULL,
+    selection_fallback_mode public.link_list_selection_mode DEFAULT 'manual'::public.link_list_selection_mode CONSTRAINT templates_link_list_definition_selection_fallback_mode_not_null NOT NULL,
     width public.template_width DEFAULT 'full'::public.template_width NOT NULL,
     see_all_ordering_identifier text,
     show_contributors boolean DEFAULT false NOT NULL,
@@ -7850,7 +7873,7 @@ CREATE TABLE public.templates_list_item_definitions (
     use_selection_fallback boolean DEFAULT false NOT NULL,
     selection_limit integer,
     selection_mode public.list_item_selection_mode DEFAULT 'manual'::public.list_item_selection_mode NOT NULL,
-    selection_fallback_mode public.list_item_selection_mode DEFAULT 'manual'::public.list_item_selection_mode NOT NULL,
+    selection_fallback_mode public.list_item_selection_mode DEFAULT 'manual'::public.list_item_selection_mode CONSTRAINT templates_list_item_definition_selection_fallback_mode_not_null NOT NULL,
     selection_source_mode public.selection_source_mode DEFAULT 'self'::public.selection_source_mode NOT NULL,
     dynamic_ordering_definition jsonb,
     ordering_identifier text,
@@ -8096,7 +8119,7 @@ CREATE TABLE public.templates_page_list_instances (
 
 CREATE TABLE public.templates_supplementary_definitions (
     id uuid DEFAULT gen_random_uuid() NOT NULL,
-    layout_definition_id uuid NOT NULL,
+    layout_definition_id uuid CONSTRAINT templates_supplementary_definitio_layout_definition_id_not_null NOT NULL,
     layout_kind public.layout_kind DEFAULT 'supplementary'::public.layout_kind NOT NULL,
     template_kind public.template_kind DEFAULT 'supplementary'::public.template_kind NOT NULL,
     "position" bigint NOT NULL,
@@ -8115,7 +8138,7 @@ CREATE TABLE public.templates_supplementary_definitions (
 CREATE TABLE public.templates_supplementary_instances (
     id uuid DEFAULT gen_random_uuid() NOT NULL,
     layout_instance_id uuid NOT NULL,
-    template_definition_id uuid NOT NULL,
+    template_definition_id uuid CONSTRAINT templates_supplementary_instanc_template_definition_id_not_null NOT NULL,
     entity_type character varying NOT NULL,
     entity_id uuid NOT NULL,
     layout_kind public.layout_kind DEFAULT 'supplementary'::public.layout_kind NOT NULL,
@@ -8132,7 +8155,7 @@ CREATE TABLE public.templates_supplementary_instances (
     all_slots_empty boolean DEFAULT false NOT NULL,
     allow_hide boolean DEFAULT true NOT NULL,
     hidden boolean DEFAULT false NOT NULL,
-    hidden_by_empty_slots boolean DEFAULT false NOT NULL
+    hidden_by_empty_slots boolean DEFAULT false CONSTRAINT templates_supplementary_instance_hidden_by_empty_slots_not_null NOT NULL
 );
 
 
@@ -8442,27 +8465,27 @@ CREATE VIEW public.templates_derived_instance_digests AS
              JOIN public.layouts_supplementary_instances ON ((layouts_supplementary_instances.id = templates_supplementary_instances.layout_instance_id)))
              JOIN public.templates_supplementary_definitions ON ((templates_supplementary_definitions.id = templates_supplementary_instances.template_definition_id)))
         )
- SELECT digested_template_instances.template_instance_id,
-    digested_template_instances.template_instance_type,
-    digested_template_instances.template_definition_id,
-    digested_template_instances.template_definition_type,
-    digested_template_instances.layout_instance_id,
-    digested_template_instances.layout_instance_type,
-    digested_template_instances.layout_definition_id,
-    digested_template_instances.layout_definition_type,
-    digested_template_instances.entity_id,
-    digested_template_instances.entity_type,
-    digested_template_instances."position",
-    digested_template_instances.layout_kind,
-    digested_template_instances.template_kind,
-    digested_template_instances.width,
-    digested_template_instances.generation,
-    digested_template_instances.config,
-    digested_template_instances.slots,
-    digested_template_instances.last_rendered_at,
-    digested_template_instances.render_duration,
-    digested_template_instances.created_at,
-    digested_template_instances.updated_at
+ SELECT template_instance_id,
+    template_instance_type,
+    template_definition_id,
+    template_definition_type,
+    layout_instance_id,
+    layout_instance_type,
+    layout_definition_id,
+    layout_definition_type,
+    entity_id,
+    entity_type,
+    "position",
+    layout_kind,
+    template_kind,
+    width,
+    generation,
+    config,
+    slots,
+    last_rendered_at,
+    render_duration,
+    created_at,
+    updated_at
    FROM digested_template_instances;
 
 
@@ -16735,6 +16758,7 @@ ALTER TABLE ONLY public.templates_ordering_instances
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20260316200244'),
 ('20260314094207'),
 ('20260312201100'),
 ('20260312195907'),

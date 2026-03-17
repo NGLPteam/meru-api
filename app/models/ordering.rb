@@ -98,9 +98,7 @@ class Ordering < ApplicationRecord
     call_operation("schemas.orderings.order_builder.compile", definition)
   end
 
-  def defined_in_schema?
-    schema_version.has_ordering? identifier
-  end
+  def defined_in_schema? = schema_version.has_ordering? identifier
 
   # @return [void]
   def disable!
@@ -109,9 +107,7 @@ class Ordering < ApplicationRecord
     save!
   end
 
-  def disabled?
-    disabled_at.present?
-  end
+  def disabled? = disabled_at.present?
 
   # @return [void]
   def enable!
@@ -132,14 +128,14 @@ class Ordering < ApplicationRecord
   end
 
   # @return [<Schemas::Orderings::OrderDefinition>]
-  def order_definitions
-    Array(definition.order)
-  end
+  def order_definitions = Array(definition.order)
 
+  # Determine whether or not to refresh this ordering when invoking {Schemas::Instances::RefreshOrderings}
+  # for a specific entity. This is always true when the entity owns its ordering, but may also be true for
+  # descendant entities that are covered by this ordering's accepted schemas.
+  #
   # @param [HierarchicalEntity] refreshing_entity
-  def refreshes_for?(refreshing_entity)
-    entity == refreshing_entity || covers_schema?(refreshing_entity)
-  end
+  def refreshes_for?(refreshing_entity) = entity == refreshing_entity || covers_schema?(refreshing_entity)
 
   # @see Schemas::Orderings::Refresh
   # @return [Dry::Monads::Result]
@@ -225,10 +221,15 @@ class Ordering < ApplicationRecord
     # @see .by_handled_schema_definition
     # @param [String] slug
     # @return [Ordering, nil]
-    def handling_schema(slug)
-      by_handled_schema_definition(slug).first
-    end
+    def handling_schema(slug) = by_handled_schema_definition(slug).first
 
+    # This is used to determine the set of orderings that should be considered for refreshing
+    # when {Schemas::Instances::RefreshOrderings} is invoked for a specific entity. It covers:
+    #
+    # 1. Orderings owned by the entity itself
+    # 2. Orderings owned by any ancestor entity that might need to order it (e.g. an article owned by issues, volumes, journal)
+    # 3. Orderings owned by anything that links to the entity
+    #
     # @see HierarchicalEntity#self_and_referring_entities
     # @param [HierarchicalEntity] entity
     # @return [ActiveRecord::Relation<Ordering>]

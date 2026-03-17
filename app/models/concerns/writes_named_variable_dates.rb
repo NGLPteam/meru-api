@@ -16,8 +16,6 @@ module WritesNamedVariableDates
     writes_named_variable_date! :published
 
     before_create :create_shared_named_variable_date_records!
-
-    after_save :persist_named_variable_dates!
   end
 
   # @note Overrides {ReferencesNamedVariableDates#named_variable_date_value_for}

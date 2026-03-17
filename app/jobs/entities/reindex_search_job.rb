@@ -1,8 +1,11 @@
 # frozen_string_literal: true
 
 module Entities
-  # @see Schemas::Instances::ExtractCoreTextsJob
+  # A manually-invoked job to reindex all search properties.
+  #
   # @see Schemas::Instances::ExtractSearchablePropertiesJob
+  # @see Schemas::Instances::Reindex
+  # @see Schemas::Instances::ReindexJob
   class ReindexSearchJob < ApplicationJob
     include JobIteration::Iteration
 

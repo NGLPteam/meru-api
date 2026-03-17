@@ -3,6 +3,7 @@
 module Support
   # Extracted from an in-progress gem.
   class PropertyHash
+    include Dry::Core::Equalizer.new(:inner)
     include Enumerable
 
     KEY_PATH = /\A[^.]+(?:\.[^.]+)+\z/
@@ -12,12 +13,25 @@ module Support
 
     delegate :size, :length, to: :@inner
 
+    # @return [<String>]
+    attr_reader :paths
+
     def initialize(base_hash = {})
       @inner = {}
 
-      Hash(base_hash).deep_stringify_keys.each do |key, value|
-        self[key] = value
+      @path_hash = {}.freeze
+
+      @paths = [].freeze
+
+      @batching = false
+
+      with_batch do
+        Hash(base_hash).deep_stringify_keys.each do |key, value|
+          self[key] = value
+        end
       end
+
+      derive_paths!
     end
 
     def [](path)
@@ -81,11 +95,13 @@ module Support
         raise InvalidPath, "Cannot get path from: #{path.inspect}"
         # :nocov:
       end
+    ensure
+      derive_paths! unless @batching
     end
 
-    def blank?
-      @inner.blank?
-    end
+    def batching? = @batching
+
+    def blank? = @inner.blank?
 
     def delete!(path)
       self[path] = DELETE
@@ -124,17 +140,21 @@ module Support
       end
     end
 
+    # @param [Hash, PropertyHash] other
+    # @return [Support::PropertyHash]
     def merge(other)
       other_hash = other.kind_of?(PropertyHash) ? other : PropertyHash.new(other)
 
       new_hash = PropertyHash.new
 
-      each do |key, value|
-        new_hash[key] = value
-      end
+      new_hash.with_batch do
+        each do |key, value|
+          new_hash[key] = value
+        end
 
-      other_hash.each do |key, value|
-        new_hash[key] = value
+        other_hash.each do |key, value|
+          new_hash[key] = value
+        end
       end
 
       return new_hash
@@ -142,44 +162,68 @@ module Support
 
     alias | merge
 
+    # @param [Hash, PropertyHash] other
+    # @return [self]
     def merge!(other)
       other_hash = other.kind_of?(PropertyHash) ? other : PropertyHash.new(other)
 
-      other_hash.each do |key, value|
-        self[key] = value
+      with_batch do
+        other_hash.each do |key, value|
+          self[key] = value
+        end
       end
 
       return self
     end
 
-    def paths
-      derive_path_hash.keys
-    end
-
     # @return [{ String => Object }]
-    def to_flat_hash
-      derive_path_hash
-    end
+    def to_flat_hash = @path_hash
 
-    def to_h
-      @inner.to_h
-    end
+    def to_h = export_inner_hash
 
     alias to_hash to_h
 
-    def as_json(...)
-      to_h
+    def as_json(...) = to_h
+
+    # @param [Support::PropertyHash] other
+    # @return [void]
+    def initialize_copy(original)
+      super
+
+      @inner = original.export_inner_hash
+      @batching = false
+
+      derive_paths!
+    end
+
+    # @return [void]
+    def with_batch
+      @batching = true
+
+      yield
+    ensure
+      @batching = false
+
+      derive_paths!
     end
 
     protected
 
+    # @note We don't use deep_dup here because sometimes we want to preserve mutable values in the hash
+    # @return [Hash] a semi-deep copy of the inner hash
+    def export_inner_hash
+      @inner.deep_transform_values do |value|
+        case value
+        when Array then value.map { _1 }
+        else
+          value
+        end
+      end
+    end
+
     attr_reader :inner
 
     private
-
-    def derive_path_hash
-      calculate_nested_paths with: @inner
-    end
 
     def calculate_nested_paths(with:, on: {}, parent: [])
       with.each_with_object(on) do |(key, value), h|
@@ -194,6 +238,18 @@ module Support
           h[full_path] = value
         end
       end
+    end
+
+    def derive_path_hash
+      calculate_nested_paths with: @inner
+    end
+
+    # @return [void]
+    def derive_paths!
+      @path_hash = derive_path_hash.freeze
+      @paths = @path_hash.keys.freeze
+    ensure
+      @batching = false
     end
 
     class InvalidPath < KeyError; end

@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 RSpec.describe Seeding::Import::Run, type: :operation, disable_ordering_refresh: true do
-  include_context "sans entity sync"
-
   let(:import_path) { Rails.root.join "spec", "data", "sample_import.json" }
 
   before do

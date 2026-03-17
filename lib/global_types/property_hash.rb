@@ -24,6 +24,9 @@ module GlobalTypes
       cast(super)
     end
 
+    # @return [Hash]
+    def serialize_for_store_model(value) = cast(value).to_h
+
     # @api private
     # @note Compatibility method for ActiveRecord::Type
     # @return [Class]

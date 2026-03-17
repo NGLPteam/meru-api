@@ -44,35 +44,24 @@ module Schemas
         path.to_sym
       end
 
-      def array?
-        false
-      end
+      def array? = false
 
-      def group?
-        type == "group"
-      end
+      def group? = type == "group"
 
-      def nested?
-        false
-      end
+      def nested? = false
 
-      def required?
-        false
-      end
+      def required? = false
 
-      def scalar?
-        type != "group"
-      end
+      def scalar? = type != "group"
+
+      # @abstract
+      def searchable? = false
 
       # @!attribute [r] kind
       # @return ["group", "reference", "complex", "simple"]
-      def kind
-        group? ? "group" : "simple"
-      end
+      def kind = group? ? "group" : "simple"
 
-      def version_property_label
-        path.to_s.titleize
-      end
+      def version_property_label = path.to_s.titleize
 
       def to_version_property
         {
@@ -87,6 +76,7 @@ module Schemas
           required: required?,
           metadata: to_version_property_metadata,
           function: 'unspecified',
+          searchable: searchable?,
         }
       end
 

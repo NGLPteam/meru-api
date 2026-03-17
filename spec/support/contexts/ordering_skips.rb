@@ -1,30 +1,10 @@
 # frozen_string_literal: true
 
-require_relative "../helpers/test_operation"
-
-RSpec.shared_context "skipped orderings by schema" do |*declarations|
+RSpec.shared_context "disable ordering refreshes" do
   around do |example|
-    declarations.flatten!
-
-    versions = declarations.map { |d| SchemaVersion[d] }
-
-    Schemas::Orderings.skip_refresh_for(*versions) do
+    Schemas::Orderings.with_disabled_refresh do
       example.run
     end
-  end
-end
-
-RSpec.shared_context "disable ordering refreshes" do
-  before(:all) do
-    MeruAPI::Container.stub("schemas.instances.refresh_orderings", stubbed_ordering_refresh)
-  end
-
-  def stubbed_ordering_refresh
-    TestHelpers::TestOperation.new
-  end
-
-  after(:all) do
-    MeruAPI::Container.unstub("schemas.instances.refresh_orderings")
   end
 end
 

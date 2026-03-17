@@ -6,8 +6,6 @@ module Entities
     include Dry::Monads[:do, :result]
     include QueryOperation
 
-    prepend TransactionalCall
-
     PREFIX = <<~SQL
     WITH aggregated_texts AS (
       SELECT entity_type, entity_id, tsvector_agg(document) AS document

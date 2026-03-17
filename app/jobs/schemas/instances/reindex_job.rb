@@ -3,7 +3,6 @@
 module Schemas
   module Instances
     # @see Schemas::Instances::ExtractComposedTextsJob
-    # @see Schemas::Instances::ExtractCoreTextsJob
     # @see Schemas::Instances::ExtractSearchablePropertiesJob
     class ReindexJob < ApplicationJob
       queue_as :maintenance

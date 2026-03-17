@@ -55,6 +55,12 @@ module System
       super
     end
 
+    wrapped_hook! def check_schema_properties
+      SchemaDefinitionProperty.refresh!
+
+      super
+    end
+
     private
 
     # @param [String] name

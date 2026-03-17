@@ -6,69 +6,33 @@ module Schemas
     class << self
       # Set options for refreshing orderings as a part of model lifecycles.
       #
+      # @see Schemas::Orderings::Current.refresh_with!
+      # @see Schemas::Orderings::Refresh
       # @see Schemas::Orderings::RefreshStatus
-      def refresh(**options)
-        Schemas::Orderings::RefreshStatus.new(**options).wrap do
-          yield if block_given?
-        end
+      # @param ["async", "disabled", "sync"] mode
+      # @yield a block where the provided refresh mode will be in effect
+      # @return [void]
+      def refresh_with!(mode:, &)
+        Schemas::Orderings::Current.refresh_with!(mode:, &)
       end
 
-      # @see .refresh
-      # @param [<HierarchicalEntity, SchemaVersion, String>] entities
-      # @param [{ Symbol => Object }] options
+      # Rather than refresh orderings immediately, specify that they should be
+      # enqueued in the backend.
+      #
+      # @see .refresh_with!
       # @return [void]
-      def skip_refresh_for(*things, **options, &)
-        things.flatten!
-
-        options[:skip_entities] ||= []
-        options[:skip_identifiers] ||= []
-        options[:skip_schemas] ||= []
-
-        things.each do |thing|
-          case thing
-          when ::HierarchicalEntity
-            options[:skip_entities] << thing
-          when ::String
-            options[:skip_identifiers] << thing
-          when ::SchemaVersion
-            options[:skip_schemas] << thing
-          else
-            # :nocov:
-            raise ArgumentError, "Don't know how to skip #{thing.inspect}"
-            # :nocov:
-          end
-        end
-
-        refresh(**options, &)
+      def with_asynchronous_refresh(&)
+        refresh_with!(mode: "async", &)
       end
 
-      # @see .refresh
-      # @param [{ Symbol => Object }] options
+      # Disable refreshing orderings entirely for the duration of the block.
+      # May be used in tests, or for manual fixes that will end up reprocessing
+      # a significant number of orderings en masse after completion.
+      #
+      # @see .refresh_with!
       # @return [void]
-      def with_asynchronous_refresh(**options, &)
-        options[:async] = true
-
-        refresh(**options, &)
-      end
-
-      # @see https://dry-rb.org/gems/dry-effects/master/effects/defer/
-      # @see .refresh
-      # @param [{ Symbol => Object }] options
-      # @return [void]
-      def with_deferred_refresh(**options, &)
-        options[:deferred] = true
-        options[:async] = true
-
-        refresh(**options, &)
-      end
-
-      # @see .refresh
-      # @param [{ Symbol => Object }] options
-      # @return [void]
-      def with_disabled_refresh(**options, &)
-        options[:disabled] = true
-
-        refresh(**options, &)
+      def with_disabled_refresh(&)
+        refresh_with!(mode: "disabled", &)
       end
     end
   end

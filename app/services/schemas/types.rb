@@ -58,9 +58,17 @@ module Schemas
       end
     end
 
+    Community = ModelInstance("Community")
+
+    Collection = ModelInstance("Collection")
+
+    Item = ModelInstance("Item")
+
+    Entity = Community | Collection | Item
+
     HasSchemaVersion = Interface(:schema_version)
 
-    SchemaInstance = Instance(::Community) | Instance(::Collection) | Instance(::Item)
+    SchemaInstance = Community | Collection | Item
 
     ChildAssociation = Symbol.enum(:collections, :children, :items)
 
@@ -105,11 +113,16 @@ module Schemas
     end
 
     ValueHash = Instance(ActiveSupport::HashWithIndifferentAccess).constructor do |value|
-      maybe_value = value.respond_to?(:to_h) ? value.to_h : value
+      case value
+      when ActiveSupport::HashWithIndifferentAccess then value
+      when ::Hash then value.with_indifferent_access
+      else
+        maybe_value = value.respond_to?(:to_h) ? value.to_h : value
 
-      maybe_hash = Coercible::Hash.try maybe_value
+        maybe_hash = Coercible::Hash.try maybe_value
 
-      maybe_hash.to_monad.value_or({}).with_indifferent_access
+        maybe_hash.to_monad.value_or(Dry::Core::Constants::EMPTY_HASH).with_indifferent_access
+      end
     end
 
     Version = ModelInstance("SchemaVersion")

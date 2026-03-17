@@ -2,6 +2,9 @@
 
 # A model that stores a representation of itself in the global {Entity} hierarchy.
 #
+# It exposes {#syncs_entity}, which should be called during some part of the model's
+# lifecycle (e.g. after save) in order to keep the {Entity} representation up to date.
+#
 # @see Entities::Sync
 module SyncsEntities
   extend ActiveSupport::Concern
@@ -9,8 +12,6 @@ module SyncsEntities
 
   included do
     has_one :entity, as: :entity, dependent: :destroy
-
-    after_save :sync_entity!
   end
 
   # @!group Entity Contract

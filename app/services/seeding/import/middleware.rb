@@ -38,7 +38,7 @@ module Seeding
       end
 
       def with_delayed_orderings
-        Schemas::Orderings.with_deferred_refresh do
+        Schemas::Orderings.with_asynchronous_refresh do
           yield
         end
       end

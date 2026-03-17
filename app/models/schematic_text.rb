@@ -6,6 +6,9 @@
 #
 # @see FullText::Types::Reference
 # @see Schemas::Properties::Scalar::FullText
+# @see Schemas::Properties::Scalar::Markdown
+# @see Schemas::Texts::Write
+# @see Schemas::Texts::Writer
 # @see Types::Schematic::FullTextPropertyType
 class SchematicText < ApplicationRecord
   include GenericAccessible
@@ -34,9 +37,7 @@ class SchematicText < ApplicationRecord
   #
   # @see FullText::Types::Reference
   # @return [{ Symbol => String }]
-  def to_reference
-    FullText::Types::Reference[slice(:content, :kind, :lang)]
-  end
+  def to_reference = FullText::Types::Reference[slice(:content, :kind, :lang)]
 
   # @api private
   # @return [void]
@@ -46,8 +47,7 @@ class SchematicText < ApplicationRecord
   end
 
   class << self
-    def valid_paths_column
-      :text_reference_paths
-    end
+    # @see SchematicPathValidity
+    def valid_paths_column = :text_reference_paths
   end
 end
