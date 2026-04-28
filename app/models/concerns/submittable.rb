@@ -18,6 +18,11 @@ module Submittable
     has_one :submission, as: :entity, dependent: :nullify, inverse_of: :entity
 
     has_one :submitter, through: :submission, source: :user
+
+    # Used for default filtering of items.
+    scope :sans_drafts, -> { not_submission_draft }
+
+    before_validation :enforce_hidden_if_draft!
   end
 
   # @see SubmissionTargets::Configure
@@ -32,5 +37,12 @@ module Submittable
   # @return [Dry::Monads::Success(SubmissionTarget)]
   monadic_operation! def fetch_submission_target
     call_operation("submission_targets.fetch", self)
+  end
+
+  private
+
+  # @return [void]
+  def enforce_hidden_if_draft!
+    self.visibility = :hidden if submission_draft?
   end
 end

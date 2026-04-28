@@ -64,6 +64,8 @@ module Submissions
 
       entity.submission_status = "submission_published"
 
+      entity.visibility = :visible
+
       entity.save!
     end
 

@@ -32,7 +32,8 @@
       "type": "full_text",
       "required": false,
       "wide": true,
-      "function": "content"
+      "function": "content",
+      "submittable": true
     },
     {
       "path": "abstract",
@@ -40,7 +41,8 @@
       "type": "full_text",
       "required": false,
       "wide": true,
-      "function": "content"
+      "function": "content",
+      "submittable": true
     },
     {
       "path": "citation",
@@ -67,7 +69,9 @@
       "label": "PDF Version",
       "type": "asset",
       "required": false,
-      "function": "content"
+      "function": "content",
+      "submittable": true,
+      "instructions": "Upload a PDF version of the article. This will be displayed on the article page once published, as well as being available to download."
     },
     {
       "path": "keywords",
@@ -75,7 +79,8 @@
       "type": "tags",
       "required": false,
       "function": "metadata",
-      "default": []
+      "default": [],
+      "submittable": true
     },
     {
       "path": "volume_position",

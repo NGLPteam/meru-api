@@ -28,6 +28,12 @@
       "identifier": "book_section"
     }
   ],
+  "submissions": [
+    {
+      "namespace": "nglp",
+      "identifier": "book_section"
+    }
+  ],
   "orderings": [
     {
       "id": "sections",

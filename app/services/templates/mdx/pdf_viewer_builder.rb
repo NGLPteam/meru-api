@@ -11,7 +11,7 @@ module Templates
 
       option :asset, Templates::Types::Asset
 
-      option :url, Templates::Types::String, default: proc { asset.download_url }
+      option :url, Templates::Types::String, default: proc { asset.view_url }
 
       delegate :file_size, :original_filename, :system_slug, to: :asset
 

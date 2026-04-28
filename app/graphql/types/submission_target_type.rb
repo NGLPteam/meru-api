@@ -66,6 +66,12 @@ module Types
       TEXT
     end
 
+    field :auto_approve_depositors, Boolean, null: false do
+      description <<~TEXT
+      Whether or not depositors should be automatically approved when they request to become a depositor for this submission target.
+      TEXT
+    end
+
     field :description, ::Types::SubmissionTargetDescriptionType, null: false do
       description <<~TEXT
       A description of this submission target, which may include a human-readable title and/or a machine-readable schema.org description.

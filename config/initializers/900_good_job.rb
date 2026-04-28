@@ -107,7 +107,7 @@ Rails.application.configure do
     },
     "harvesting.mappings.schedule_all_attempts": {
       cron: "30 6 * * *",
-      class: "Harvesting::Mappings::ScheduleAllAttempts",
+      class: "Harvesting::Mappings::ScheduleAllAttemptsJob",
       description: "Schedule all attempts once a day.",
     },
     "ordering_invalidations.process_all": {

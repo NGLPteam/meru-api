@@ -59,6 +59,12 @@ module Types
       TEXT
     end
 
+    field :agreement_accepted_at, ::GraphQL::Types::ISO8601DateTime, null: true do
+      description <<~TEXT
+      The timestamp of when the submitter accepted the agreement for this submission, if applicable.
+      TEXT
+    end
+
     expose_authorization_rule :alter_schema_version?, <<~TEXT
     Whether or not the current user can alter the schema version of this submission.
     TEXT

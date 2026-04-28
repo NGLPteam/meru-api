@@ -32,20 +32,86 @@
   ],
   "orderings": [],
   "properties": [
-    { "path": "body", "label": "Full Text", "type": "full_text", "required": false, "wide": true, "function": "content" },
-    { "path": "abstract", "label": "Abstract", "type": "full_text", "required": false, "wide": true, "function": "content" },
-    { "path": "citation", "label": "How to Cite", "type": "markdown", "required": false, "function": "content" },
-    { "path": "preprint_version", "type": "boolean", "label": "Pre-Print Version", "function": "metadata" },
-    { "path": "online_version", "label": "Online Version", "type": "url", "required": false, "function": "content" },
-    { "path": "pdf_version", "label": "PDF Version", "type": "asset", "required": false, "function": "content" },
-    { "path": "keywords", "label": "Keywords", "type": "tags", "required": false, "function": "metadata", "default": [] },
-    { "path": "issue_position", "label": "Issue Position", "type": "integer", "function": "metadata", "description": "The position of the article within the issue." },
+    {
+      "path": "body",
+      "label": "Full Text",
+      "type": "full_text",
+      "required": false,
+      "wide": true,
+      "function": "content",
+      "submittable": true
+    },
+    {
+      "path": "abstract",
+      "label": "Abstract",
+      "type": "full_text",
+      "required": false,
+      "wide": true,
+      "function": "content",
+      "submittable": true
+    },
+    {
+      "path": "citation",
+      "label": "How to Cite",
+      "type": "markdown",
+      "required": false,
+      "function": "content"
+    },
+    {
+      "path": "preprint_version",
+      "type": "boolean",
+      "label": "Pre-Print Version",
+      "function": "metadata"
+    },
+    {
+      "path": "online_version",
+      "label": "Online Version",
+      "type": "url",
+      "required": false,
+      "function": "content"
+    },
+    {
+      "path": "pdf_version",
+      "label": "PDF Version",
+      "type": "asset",
+      "required": false,
+      "function": "content",
+      "submittable": true,
+      "instructions": "Upload a PDF version of the article. This will be displayed on the article page once published, as well as being available to download."
+    },
+    {
+      "path": "keywords",
+      "label": "Keywords",
+      "type": "tags",
+      "required": false,
+      "function": "metadata",
+      "default": [],
+      "submittable": true
+    },
+    {
+      "path": "issue_position",
+      "label": "Issue Position",
+      "type": "integer",
+      "function": "metadata",
+      "description": "The position of the article within the issue."
+    },
     {
       "path": "meta",
       "legend": "Article Metadata",
       "properties": [
-        { "path": "collected", "label": "Collected", "type": "variable_date", "function": "metadata" },
-        { "path": "page_count", "label": "Page Count", "type": "integer", "function": "metadata", "unorderable": true }
+        {
+          "path": "collected",
+          "label": "Collected",
+          "type": "variable_date",
+          "function": "metadata"
+        },
+        {
+          "path": "page_count",
+          "label": "Page Count",
+          "type": "integer",
+          "function": "metadata",
+          "unorderable": true
+        }
       ],
       "type": "group"
     }

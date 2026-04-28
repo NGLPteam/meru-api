@@ -57,6 +57,12 @@ module Types
       TEXT
     end
 
+    field :submittable_versions, [Types::SchemaVersionType, { null: false }], null: false do
+      description <<~TEXT
+      The versions that are allowed to be submitted to this schema.
+      TEXT
+    end
+
     field :enforced_child_declarations, [Types::SlugType, { null: false }], null: false do
       description <<~TEXT
       Declarations / slugs for `enforcedChildVersions`.
@@ -90,6 +96,8 @@ module Types
     load_association! :enforced_parent_versions
 
     load_association! :enforced_child_versions
+
+    load_association! :submittable_versions
 
     # @see Schemas::Versions::Configuration#render
     # @return [Schemas::Versions::RenderDefinition]

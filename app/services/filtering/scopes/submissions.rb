@@ -4,6 +4,10 @@ module Filtering
   module Scopes
     # The filtering scope implementation for {Submission}.
     class Submissions < ::Filtering::FilterScope[::Submission]
+      fts_search! :search_by_prefix, key: :prefix
+
+      fts_search! :search_by_query, key: :query
+
       simple_scope_filter! :parent_entity, :any_entities do |arg|
         arg.description <<~TEXT
         Filter submissions to only those with the given parent entity(ies).

@@ -62,6 +62,12 @@ module Mutations
       TEXT
     end
 
+    argument :auto_approve_depositors, Boolean, required: false, default_value: false, replace_null_with_default: true do
+      description <<~TEXT
+      Whether depositors should be automatically approved when they request to become a depositor for this submission target.
+      TEXT
+    end
+
     argument :description, Types::SubmissionTargetDescriptionInputType, required: true do
       description <<~TEXT
       A description of this submission target, which may be displayed to submitters when making a submission to this target.

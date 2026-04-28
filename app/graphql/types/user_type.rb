@@ -83,6 +83,20 @@ module Types
       description "All access grants for this user on an item"
     end
 
+    field :contributor_links, [::Types::ContributorUserLinkType, { null: false }], null: false do
+      description <<~TEXT
+      Any links between this user and contributors in the system.
+      TEXT
+    end
+
+    field :primary_contributor, Types::ContributorType, null: true do
+      description <<~TEXT
+      The primary contributor associated with this user, if any.
+
+      For the actual link records, see `User.contributorLinks`.
+      TEXT
+    end
+
     expose_authorization_rule :receive_review_requests?, <<~TEXT
     Whether this user is a reviewer on **any** submission targets, and should see information about
     potential review requests in the UI.
@@ -97,6 +111,9 @@ module Types
     expose_authorization_rule :revalidate_instance?, <<~TEXT
     Whether this user has permission to trigger revalidation of the entire frontend.
     TEXT
+
+    load_association! :primary_contributor
+    load_association! :user_contributor_links, as: :contributor_links
 
     # @see AnonymousInterface#system_slug_id
     # @see User#system_slug_id

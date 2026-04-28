@@ -10,6 +10,11 @@ module Mutations
         required(:schema_version).value(:schema_version)
         required(:parent_entity).value(:any_entity)
         required(:title).filled(:string)
+        required(:agreement_accepted).value(:bool)
+      end
+
+      rule(:agreement_accepted) do
+        base.failure(:depositor_agreement_required) unless value
       end
     end
   end

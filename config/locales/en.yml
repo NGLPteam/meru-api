@@ -92,6 +92,7 @@ en:
       unacceptable_edge: "An entity of type '%{parent}' cannot be a direct parent of '%{child}'"
       update_and_clear_attachment: "cannot receive a new attachment while also clearing it"
       rules:
+        depositor_agreement_required: "You must accept the depositor agreement to submit."
         not_yet_implemented: "This mutation is not yet implemented."
         revalidation_connection_failed: "The revalidation request failed to connect."
         revalidation_request_failed: "The revalidation request failed."

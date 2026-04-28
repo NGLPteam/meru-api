@@ -41,6 +41,26 @@ class Submission < ApplicationRecord
 
   validates :entity_id, uniqueness: { scope: :entity_type, if: :entity_id? }
 
+  # @!attribute [rw] agreement_accepted
+  # @return [Boolean]
+  def agreement_accepted = agreement_accepted_at?
+
+  alias agreement_accepted? agreement_accepted
+
+  def agreement_accepted=(value)
+    # :nocov:
+    self.agreement_accepted_at ||= Time.current if ActiveRecord::Type::Boolean.new.cast(value)
+    # :nocov:
+  end
+
+  # @note Called during rejection.
+  # @see Submissions::Cleaner
+  # @see Submissions::CleanUp
+  # @return [Dry::Monads::Result]
+  monadic_operation! def clean_up
+    call_operation("submissions.clean_up", self)
+  end
+
   # @see Submissions::ConstructDraftEntity
   # @see Submissions::DraftEntityConstructor
   # @return [Dry::Monads::Result]
@@ -85,6 +105,14 @@ class Submission < ApplicationRecord
       # :nocov:
 
       where(user:)
+    end
+
+    def search_by_prefix(...)
+      where(entity_id: EntitySearchDocument.search_by_prefix(...).select(:entity_id))
+    end
+
+    def search_by_query(...)
+      where(entity_id: EntitySearchDocument.search_by_query(...).select(:entity_id))
     end
 
     # @param [User, AnonymousUser] user

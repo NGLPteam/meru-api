@@ -670,10 +670,21 @@
           "type": "string"
         },
         "description": { "$ref": "#/definitions/PropertyDescription" },
+        "instructions": {
+          "title": "Depositor Instructions",
+          "description": "Markdown content that can be used to provide instructions for filling out the field in a form.",
+          "type": "string"
+        },
         "mappings": { "$ref": "#/definitions/PropertyMappings" },
         "required": {
           "title": "Required?",
           "description": "Whether the property is required for base validity",
+          "type": "boolean",
+          "default": false
+        },
+        "submittable": {
+          "title": "Submittable?",
+          "description": "Whether the property should be included in submission forms.",
           "type": "boolean",
           "default": false
         },
@@ -1183,6 +1194,10 @@
         "children": {
           "$ref": "#/definitions/Associations",
           "description": "The type(s) of direct children this schema accepts."
+        },
+        "submissions": {
+          "$ref": "#/definitions/Associations",
+          "description": "The type(s) of submissions this schema accepts."
         },
         "orderings": {
           "title": "Orderings",

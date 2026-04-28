@@ -14,5 +14,7 @@ module Resolvers
     type ::Types::ItemConnectionType, null: false
 
     resolves_model! ::Item, must_have_object: true
+
+    filters_with! ::Filtering::Scopes::Items
   end
 end

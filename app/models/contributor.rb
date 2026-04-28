@@ -27,6 +27,10 @@ class Contributor < ApplicationRecord
   has_many :item_contributions, dependent: :destroy, inverse_of: :contributor
   has_many :items, through: :item_contributions
 
+  has_one :contributor_user_link, dependent: :destroy, inverse_of: :contributor
+
+  has_one :user, through: :contributor_user_link
+
   scope :by_kind, ->(kind) { where(kind:) }
   scope :by_orcid, ->(orcid) { where(orcid:) }
   scope :unharvested, -> { where.not(id: HarvestContributor.harvested_ids) }

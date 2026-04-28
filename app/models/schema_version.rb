@@ -54,10 +54,12 @@ class SchemaVersion < ApplicationRecord
   with_options foreign_key: :source_id, inverse_of: :source, class_name: "SchemaVersionAssociation" do
     has_many_readonly :parent_associations, -> { by_name("parent") }
     has_many_readonly :child_associations, -> { by_name("child") }
+    has_many_readonly :submission_associations, -> { by_name("submission") }
   end
 
   has_many :enforced_parent_versions, through: :parent_associations, source: :target
   has_many :enforced_child_versions, through: :child_associations, source: :target
+  has_many :submittable_versions, through: :submission_associations, source: :target
 
   has_many :entity_links, dependent: :destroy
 

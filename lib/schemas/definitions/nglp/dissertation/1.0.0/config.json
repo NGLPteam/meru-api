@@ -6,18 +6,86 @@
   "kind": "item",
   "orderings": [],
   "properties": [
-    { "path": "abstract", "label": "Abstract", "type": "full_text", "required": false, "wide": true, "function": "content" },
-    { "path": "citation", "label": "How to Cite", "type": "markdown", "required": false, "function": "content" },
-    { "path": "pdf_version", "label": "PDF Version", "type": "asset", "required": false, "function": "content" },
-    { "path": "text_version", "label": "Text Version", "type": "asset", "required": false, "function": "content" },
-    { "path": "publisher", "type": "string", "required": false, "function": "metadata" },
-    { "path": "advisor", "type": "string", "required": false, "function": "metadata" },
-    { "path": "language", "label": "language", "type": "string", "required": false, "function": "metadata" },
-    { "path": "graduation_date", "label": "Graduation Date", "type": "variable_date", "function": "metadata" },
-    { "path": "streaming_media", "label": "Streaming Media", "type": "url", "function": "metadata" },
-    { "path": "keywords", "label": "Keywords", "type": "tags", "required": false, "function": "metadata", "default": [] },
-    { "path": "language_code", "type": "string", "label": "Language Code" },
-    { "path": "handle", "label": "Handle", "type": "url", "required": false, "function": "metadata" },
+    {
+      "path": "abstract",
+      "label": "Abstract",
+      "type": "full_text",
+      "required": false,
+      "wide": true,
+      "function": "content"
+    },
+    {
+      "path": "citation",
+      "label": "How to Cite",
+      "type": "markdown",
+      "required": false,
+      "function": "content"
+    },
+    {
+      "path": "pdf_version",
+      "label": "PDF Version",
+      "type": "asset",
+      "required": false,
+      "function": "content"
+    },
+    {
+      "path": "text_version",
+      "label": "Text Version",
+      "type": "asset",
+      "required": false,
+      "function": "content"
+    },
+    {
+      "path": "publisher",
+      "type": "string",
+      "required": false,
+      "function": "metadata"
+    },
+    {
+      "path": "advisor",
+      "type": "string",
+      "required": false,
+      "function": "metadata"
+    },
+    {
+      "path": "language",
+      "label": "language",
+      "type": "string",
+      "required": false,
+      "function": "metadata"
+    },
+    {
+      "path": "graduation_date",
+      "label": "Graduation Date",
+      "type": "variable_date",
+      "function": "metadata"
+    },
+    {
+      "path": "streaming_media",
+      "label": "Streaming Media",
+      "type": "url",
+      "function": "metadata"
+    },
+    {
+      "path": "keywords",
+      "label": "Keywords",
+      "type": "tags",
+      "required": false,
+      "function": "metadata",
+      "default": []
+    },
+    {
+      "path": "language_code",
+      "type": "string",
+      "label": "Language Code"
+    },
+    {
+      "path": "handle",
+      "label": "Handle",
+      "type": "url",
+      "required": false,
+      "function": "metadata"
+    },
     {
       "type": "select",
       "path": "cc_license",
@@ -49,31 +117,73 @@
         }
       ]
     },
-    { "path": "rights_statement", "label": "Rights Statement", "type": "full_text", "required": false, "wide": true, "function": "metadata" },
-    { "path": "peer_reviewed", "label": "Peer Reviewed", "type": "boolean", "function": "metadata" },
+    {
+      "path": "rights_statement",
+      "label": "Rights Statement",
+      "type": "full_text",
+      "required": false,
+      "wide": true,
+      "function": "metadata"
+    },
+    {
+      "path": "peer_reviewed",
+      "label": "Peer Reviewed",
+      "type": "boolean",
+      "function": "metadata"
+    },
     {
       "path": "degree",
       "type": "group",
       "legend": "Degree Details",
       "properties": [
         {
-          "label": "Degree Name", "path": "name", "type": "string", "function": "metadata"
+          "label": "Degree Name",
+          "path": "name",
+          "type": "string",
+          "function": "metadata"
         },
         {
-          "label": "Degree Level", "path": "level", "type": "string", "required": false, "function": "metadata"
+          "label": "Degree Level",
+          "path": "level",
+          "type": "string",
+          "required": false,
+          "function": "metadata"
         },
         {
-          "label": "Degree Department", "path": "program", "type": "string", "function": "metadata"
+          "label": "Degree Department",
+          "path": "program",
+          "type": "string",
+          "function": "metadata"
         },
         {
-          "label": "Degree Grantor", "path": "grantor", "type": "string", "required": false, "function": "metadata"
+          "label": "Degree Grantor",
+          "path": "grantor",
+          "type": "string",
+          "required": false,
+          "function": "metadata"
         },
         {
-          "label": "Degree Awarded Date", "path": "date", "type": "variable_date", "required": false, "function": "metadata"
+          "label": "Degree Awarded Date",
+          "path": "date",
+          "type": "variable_date",
+          "required": false,
+          "function": "metadata"
         }
       ]
     },
-    { "path": "accessioned", "type": "variable_date", "label": "Accessioned", "description": "When the ETD was added to a collection", "function": "metadata" },
-    { "path": "available", "type": "variable_date", "label": "Available", "description": "When the ETD was made available", "function": "metadata" }
+    {
+      "path": "accessioned",
+      "type": "variable_date",
+      "label": "Accessioned",
+      "description": "When the ETD was added to a collection",
+      "function": "metadata"
+    },
+    {
+      "path": "available",
+      "type": "variable_date",
+      "label": "Available",
+      "description": "When the ETD was made available",
+      "function": "metadata"
+    }
   ]
 }

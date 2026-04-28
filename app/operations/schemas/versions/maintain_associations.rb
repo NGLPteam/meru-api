@@ -98,6 +98,7 @@ module Schemas
 
         mapping["parent"] = yield versions_for config.parents
         mapping["child"] = yield versions_for config.children
+        mapping["submission"] = yield versions_for config.submissions
 
         rows = mapping.flat_map do |(name, targets)|
           targets.map do |target|

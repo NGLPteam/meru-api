@@ -13,11 +13,28 @@ RSpec.describe "Downloads Controller", type: :request do
       get download_path(id, token:)
     end
 
-    context "with a valid token" do
-      let(:token) { existing_asset.download_token }
+    context "with a valid view token" do
+      let(:token) { existing_asset.encode_download_token!(mode: "view") }
+
+      it "redirects to a PDF viewer url" do
+        expect do
+          safely_make_request!
+        end.to change(Ahoy::Event.where(name: "asset.view"), :count).by(1)
+          .and keep_the_same(Ahoy::Event.where(name: "asset.download"), :count)
+
+        expect(response).to redirect_to existing_asset.actual_download_url
+        expect(response).to have_http_status :see_other
+      end
+    end
+
+    context "with a valid download token" do
+      let(:token) { existing_asset.encode_download_token!(mode: "download") }
 
       it "redirects to a download url" do
-        safely_make_request!
+        expect do
+          safely_make_request!
+        end.to change(Ahoy::Event.where(name: "asset.download"), :count).by(1)
+          .and keep_the_same(Ahoy::Event.where(name: "asset.view"), :count)
 
         expect(response).to redirect_to existing_asset.actual_download_url
         expect(response).to have_http_status :see_other
