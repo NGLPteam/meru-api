@@ -9,6 +9,10 @@ FactoryBot.define do
 
     title { Faker::Lorem.sentence }
 
+    trait :item do
+      association :schema_version, :item
+    end
+
     trait :submitted do
       after(:create) do |submission|
         submission.transition_to! :submitted

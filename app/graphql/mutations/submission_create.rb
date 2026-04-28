@@ -33,6 +33,14 @@ module Mutations
       TEXT
     end
 
+    argument :agreement_accepted, Boolean, required: false, default_value: false, replace_null_with_default: true do
+      description <<~TEXT
+      Whether or not the submitter has accepted the agreement for this submission.
+
+      This must be true.
+      TEXT
+    end
+
     argument :title, String, required: true do
       description <<~TEXT
       The title of the submission.

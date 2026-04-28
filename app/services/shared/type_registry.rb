@@ -17,6 +17,7 @@ module Shared
     tc.add_model! "Collection"
     tc.add_model! "Community"
     tc.add_model! "Contributor"
+    tc.add_model! "ContributorUserLink"
     tc.add_model! "ControlledVocabulary"
     tc.add_model! "ControlledVocabularyItem"
     tc.add_model! "ControlledVocabularySource"
@@ -42,6 +43,7 @@ module Shared
     tc.add_model! "SubmissionTargetReviewer"
 
     tc.add_enum! ::Types::ClientLocationType
+    tc.add_enum! ::Types::ContributorUserLinkageType
     tc.add_enum! ::Types::DepositorRequestStateType
     tc.add_enum! ::Types::EntitySubmissionStatusType
     tc.add_enum! ::Types::HarvestMetadataFormatType

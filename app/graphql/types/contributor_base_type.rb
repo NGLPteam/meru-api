@@ -101,6 +101,14 @@ module Types
       TEXT
     end
 
+    field :user_link, Types::ContributorUserLinkType, null: true do
+      description <<~TEXT
+      The link between this contributor and a user, if any exists.
+      TEXT
+    end
+
+    load_association! :contributor_user_link, as: :user_link
+
     # @return [<Contributors::Link>]
     def links
       Array(object.links).compact

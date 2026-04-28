@@ -9,6 +9,12 @@ RSpec.describe ItemPolicy, type: :policy do
 
   let_it_be(:other_item, refind: true) { FactoryBot.create :item, title: "Other Item" }
 
+  let_it_be(:submission, refind: true) { FactoryBot.create :submission, :item }
+
+  let_it_be(:submission_item, refind: true) do
+    submission.entity
+  end
+
   let_it_be(:contextual_role) { FactoryBot.create :role, :all_contextual }
 
   let(:record) { item }
@@ -157,18 +163,23 @@ RSpec.describe ItemPolicy, type: :policy do
       let(:user) { admin }
 
       it "includes everything" do
-        is_expected.to include item, subitem, other_item
+        is_expected.to include item, subitem, other_item, submission_item
       end
     end
 
     context "as a user with all contextual permissions" do
       before do
         grant_access! contextual_role, on: item, to: user
+
         other_item.update!(visibility: :hidden)
       end
 
       it "excludes hidden records" do
         is_expected.to exclude(other_item).and include(item, subitem)
+      end
+
+      it "excludes unpublished records" do
+        is_expected.to exclude(submission_item)
       end
     end
 
@@ -177,6 +188,10 @@ RSpec.describe ItemPolicy, type: :policy do
 
       it "excludes hidden records" do
         is_expected.to exclude(other_item).and include(item, subitem)
+      end
+
+      it "excludes unpublished records" do
+        is_expected.to exclude(submission_item)
       end
     end
 
@@ -187,6 +202,10 @@ RSpec.describe ItemPolicy, type: :policy do
 
       it "excludes hidden records" do
         is_expected.to exclude(other_item).and include(item, subitem)
+      end
+
+      it "excludes unpublished records" do
+        is_expected.to exclude(submission_item)
       end
     end
   end

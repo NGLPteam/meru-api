@@ -8,6 +8,8 @@ RSpec.describe Mutations::SubmissionCreate, type: :request, graphql: :mutation, 
         id
         slug
 
+        agreementAcceptedAt
+
         submissionTarget {
           id
 
@@ -49,12 +51,15 @@ RSpec.describe Mutations::SubmissionCreate, type: :request, graphql: :mutation, 
   let_mutation_input!(:schema_version_id) { item_schema_version.to_encoded_id }
   let_mutation_input!(:parent_entity_id) { collection.to_encoded_id }
   let_mutation_input!(:title) { "Test Submission" }
+  let_mutation_input!(:agreement_accepted) { true }
 
   let(:valid_mutation_shape) do
     gql.mutation(:submission_create) do |m|
       m.prop(:submission) do |s|
         s[:id] = be_an_encoded_id.of_an_existing_model
         s[:slug] = be_an_encoded_slug
+
+        s[:agreement_accepted_at] = be_present
 
         s.prop :submission_target do |st|
           st[:id] = submission_target_id
@@ -110,6 +115,27 @@ RSpec.describe Mutations::SubmissionCreate, type: :request, graphql: :mutation, 
 
   shared_examples_for "an authorized mutation" do
     include_examples "a successful mutation"
+
+    context "when the agreement is not accepted" do
+      let_mutation_input!(:agreement_accepted) { false }
+
+      let(:expected_shape) do
+        gql.mutation(:submission_create) do |m|
+          m[:submission] = nil
+          m.global_errors do |ge|
+            ge.error :depositor_agreement_required
+          end
+        end
+      end
+
+      it "fails validation" do
+        expect_request! do |req|
+          req.effect! keep_the_same(Submission, :count)
+
+          req.data! expected_shape
+        end
+      end
+    end
   end
 
   as_an_admin_user do

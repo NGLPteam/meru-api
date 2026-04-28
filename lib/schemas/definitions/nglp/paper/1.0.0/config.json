@@ -6,16 +6,79 @@
   "kind": "item",
   "orderings": [],
   "properties": [
-    { "path": "abstract", "label": "Abstract", "type": "full_text", "required": false, "wide": true, "function": "content" },
-    { "path": "funding_note", "type": "string", "label": "Funding Note", "required": false },
-    { "path": "rights_statement", "type": "string", "label": "Rights Statement" },
-    { "path": "pdf_version", "label": "PDF Version", "type": "asset", "required": false, "function": "content" },
-    { "path": "text_version", "label": "Text Version", "type": "asset", "required": false, "function": "content" },
-    { "path": "accessioned", "type": "variable_date", "label": "Accessioned", "description": "When the paper was added to a collection", "function": "metadata" },
-    { "path": "available", "type": "variable_date", "label": "Available", "description": "When the paper was made available", "function": "metadata" },
-    { "path": "language_code", "type": "string", "label": "Language Code" },
-    { "path": "keywords", "label": "Keywords", "type": "tags", "required": false, "function": "metadata", "default": [] },
-    { "path": "handle", "label": "Handle", "type": "url", "required": false, "function": "metadata" },
+    {
+      "path": "abstract",
+      "label": "Abstract",
+      "type": "full_text",
+      "required": false,
+      "wide": true,
+      "function": "content",
+      "submittable": true
+    },
+    {
+      "path": "funding_note",
+      "type": "string",
+      "label": "Funding Note",
+      "required": false
+    },
+    {
+      "path": "rights_statement",
+      "type": "string",
+      "label": "Rights Statement"
+    },
+    {
+      "path": "pdf_version",
+      "label": "PDF Version",
+      "type": "asset",
+      "required": false,
+      "function": "content",
+      "submittable": true,
+      "instructions": "Upload a PDF version of the paper. This will be visible on the web once published, as well as being made available to download."
+    },
+    {
+      "path": "text_version",
+      "label": "Text Version",
+      "type": "asset",
+      "required": false,
+      "function": "content",
+      "submittable": true,
+      "instructions": "Upload a text version of the paper. This will be made available to download once published."
+    },
+    {
+      "path": "accessioned",
+      "type": "variable_date",
+      "label": "Accessioned",
+      "description": "When the paper was added to a collection",
+      "function": "metadata"
+    },
+    {
+      "path": "available",
+      "type": "variable_date",
+      "label": "Available",
+      "description": "When the paper was made available",
+      "function": "metadata"
+    },
+    {
+      "path": "language_code",
+      "type": "string",
+      "label": "Language Code"
+    },
+    {
+      "path": "keywords",
+      "label": "Keywords",
+      "type": "tags",
+      "required": false,
+      "function": "metadata",
+      "default": [],
+      "submittable": true
+    },
+    {
+      "path": "handle",
+      "label": "Handle",
+      "type": "url",
+      "required": false,
+      "function": "metadata"
+    },
     {
       "type": "group",
       "path": "publisher",
@@ -23,8 +86,18 @@
       "description": "Details about the publisher of the paper",
       "function": "presentation",
       "properties": [
-        { "path": "name", "type": "string", "required": false, "function": "presentation" },
-        { "path": "location", "type": "string", "required": false, "function": "presentation" }
+        {
+          "path": "name",
+          "type": "string",
+          "required": false,
+          "function": "presentation"
+        },
+        {
+          "path": "location",
+          "type": "string",
+          "required": false,
+          "function": "presentation"
+        }
       ]
     },
     {
@@ -34,12 +107,50 @@
       "description": "Details about the source of the paper",
       "function": "presentation",
       "properties": [
-        { "path": "title", "type": "string", "required": false, "function": "presentation" },
-        { "path": "volume", "type": "string", "required": false, "function": "presentation", "unorderable": true },
-        { "path": "issue", "type": "string", "required": false, "function": "presentation", "unorderable": true },
-        { "path": "fpage", "type": "integer", "label": "First Page", "required": false, "function": "metadata", "unorderable": true },
-        { "path": "lpage", "type": "integer", "label": "Last Page", "required": false, "function": "metadata", "unorderable": true },
-        { "path": "page_count", "type": "integer", "label": "Page Count", "required": false, "function": "metadata", "unorderable": true }
+        {
+          "path": "title",
+          "type": "string",
+          "required": false,
+          "function": "presentation"
+        },
+        {
+          "path": "volume",
+          "type": "string",
+          "required": false,
+          "function": "presentation",
+          "unorderable": true
+        },
+        {
+          "path": "issue",
+          "type": "string",
+          "required": false,
+          "function": "presentation",
+          "unorderable": true
+        },
+        {
+          "path": "fpage",
+          "type": "integer",
+          "label": "First Page",
+          "required": false,
+          "function": "metadata",
+          "unorderable": true
+        },
+        {
+          "path": "lpage",
+          "type": "integer",
+          "label": "Last Page",
+          "required": false,
+          "function": "metadata",
+          "unorderable": true
+        },
+        {
+          "path": "page_count",
+          "type": "integer",
+          "label": "Page Count",
+          "required": false,
+          "function": "metadata",
+          "unorderable": true
+        }
       ]
     }
   ]

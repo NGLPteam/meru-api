@@ -50,6 +50,14 @@ class User < ApplicationRecord
 
   has_many :submission_transitions, dependent: :nullify, inverse_of: :user
 
+  has_many :contributor_user_links, -> { in_default_order }, inverse_of: :user, dependent: :destroy
+
+  has_many :contributors, through: :contributor_user_links
+
+  has_one_readonly :primary_contributor_user_link, -> { primary_linkage }, class_name: "ContributorUserLink", inverse_of: :user
+
+  has_one :primary_contributor, through: :primary_contributor_user_link, source: :contributor
+
   validates :keycloak_id, presence: true
 
   attribute :global_access_control_list, Roles::GlobalAccessControlList.to_type

@@ -24,6 +24,12 @@
       "identifier": "collected_article"
     }
   ],
+  "submissions": [
+    {
+      "namespace": "nglp",
+      "identifier": "collected_article"
+    }
+  ],
   "orderings": [
     {
       "id": "articles",

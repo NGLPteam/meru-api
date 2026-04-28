@@ -177,5 +177,9 @@ module Types
     field :upsert_contribution, mutation: Mutations::UpsertContribution
 
     field :user_reset_password, mutation: Mutations::UserResetPassword
+
+    field :contributor_user_link_destroy, mutation: Mutations::ContributorUserLinkDestroy
+
+    field :contributor_user_link_upsert, mutation: Mutations::ContributorUserLinkUpsert
   end
 end

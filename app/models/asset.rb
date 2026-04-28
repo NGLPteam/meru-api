@@ -42,10 +42,8 @@ class Asset < ApplicationRecord
 
   delegate :original_filename, to: :attachment, allow_nil: true
 
-  # Compatibility for {EntityChildRecordPolicy}
-  def entity
-    attachable
-  end
+  # @note Compatibility for {EntityChildRecordPolicy}
+  def entity = attachable
 
   # We mask this with {#download_url} in order to track analytics of a download.
   #
@@ -54,14 +52,14 @@ class Asset < ApplicationRecord
     attachment.url(
       public: Rails.env.development?,
       expires_in: 15.minutes.to_i,
-      response_content_disposition: content_disposition,
+      response_content_disposition:,
     )
   end
 
   # @return [String]
-  def content_disposition
-    ContentDisposition.attachment(download_name)
-  end
+  def content_disposition = ContentDisposition.attachment(download_name)
+
+  alias response_content_disposition content_disposition
 
   # @return [String]
   def download_name
@@ -90,13 +88,12 @@ class Asset < ApplicationRecord
   end
 
   # @return [String]
-  def download_url
-    generate_download_url!
-  end
+  def download_url = generate_download_url!(mode: "download")
 
-  def has_attachment?
-    persisted? && attachment.present?
-  end
+  # @return [String]
+  def view_url = generate_download_url!(mode: "view")
+
+  def has_attachment? = persisted? && attachment.present?
 
   # @return [Class]
   def graphql_node_type
@@ -124,13 +121,9 @@ class Asset < ApplicationRecord
 
   # @!attribute [r] signature
   # @return [String, nil]
-  def signature
-    attachment&.metadata&.[]("sha256")
-  end
+  def signature = attachment&.metadata&.[]("sha256")
 
-  def to_schematic_referent_label
-    name
-  end
+  def to_schematic_referent_label = name
 
   # @param [String] token
   # @return [Dry::Monads::Success(Boolean)]

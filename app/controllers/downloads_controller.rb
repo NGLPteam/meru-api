@@ -2,11 +2,13 @@
 
 class DownloadsController < ApplicationController
   def show
-    asset = Asset.find_graphql_slug params[:id]
+    asset = subject = Asset.find_graphql_slug params[:id]
+
+    entity = asset.attachable
 
     perform_operation "assets.decode_download_token", asset, params[:token] do |m|
-      m.success do
-        ahoy.track "asset.download", subject: asset, entity: asset.attachable
+      m.success do |mode|
+        ahoy.track("asset.#{mode}", subject:, entity:)
 
         redirect_to asset.actual_download_url, status: :see_other, allow_other_host: true
       end

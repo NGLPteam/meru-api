@@ -18,6 +18,16 @@
       "identifier": "series"
     }
   ],
+  "submissions": [
+    {
+      "namespace": "nglp",
+      "identifier": "paper"
+    },
+    {
+      "namespace": "nglp",
+      "identifier": "dissertation"
+    }
+  ],
   "orderings": [
     {
       "id": "etd",

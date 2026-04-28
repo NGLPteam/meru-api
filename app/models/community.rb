@@ -64,4 +64,10 @@ class Community < ApplicationRecord
   monadic_operation! def purge(...)
     call_operation("communities.purge", self, ...)
   end
+
+  class << self
+    # @note compatibility with {Submittable} implementations
+    # @return [ActiveRecord::Relation<Community>]
+    def sans_drafts = all
+  end
 end

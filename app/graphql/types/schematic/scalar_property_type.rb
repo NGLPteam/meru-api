@@ -13,6 +13,12 @@ module Types
         TEXT
       end
 
+      field :instructions, String, null: true do
+        description <<~TEXT
+        Instructions for filling out this property during submission, if applicable.
+        TEXT
+      end
+
       field :required, Boolean, null: false do
         description <<~TEXT
         Whether or not this property is required in order for the schema instance
@@ -21,6 +27,12 @@ module Types
         Note: invalid data provided to a schema property will still invalidate
         the instance as a whole—the required trait only determines whether a value
         **must** be set.
+        TEXT
+      end
+
+      field :submittable, Boolean, null: false do
+        description <<~TEXT
+        Whether or not this property should be displayed as part of the submission process for this schema.
         TEXT
       end
 

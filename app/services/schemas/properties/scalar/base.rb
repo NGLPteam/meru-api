@@ -138,6 +138,10 @@ module Schemas
         # @return [Schemas::Properties::Types::Function]
         attribute :function, :string, default: "unspecified"
 
+        # @!attribute [rw] instructions
+        # @return [String]
+        attribute :instructions, :string
+
         # @!attribute [rw] mappings
         # @return [<Schemas::Properties::MappingDefinition>]
         attribute :mappings, Schemas::Properties::MappingDefinition.to_array_type
@@ -145,6 +149,10 @@ module Schemas
         # @!attribute [rw] required
         # @return [Boolean]
         attribute :required, :boolean, default: proc { false }
+
+        # @!attribute [rw] submittable
+        # @return [Boolean]
+        attribute :submittable, :boolean, default: proc { false }
 
         # @!attribute [rw] wide
         # @return [Boolean]

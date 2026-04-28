@@ -669,6 +669,9 @@ RSpec/ExcessiveDocstringSpacing:
 RSpec/ExpectActual:
   Enabled: false
 
+RSpec/ExpectChange:
+  Enabled: false
+
 RSpec/ExpectInHook:
   Enabled: false
 

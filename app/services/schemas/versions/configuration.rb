@@ -71,6 +71,11 @@ module Schemas
       # @return [Schemas::Versions::RenderDefinition]
       attribute :render, Schemas::Versions::RenderDefinition.to_type, default: proc { {} }
 
+      # A collection of configurations for what kinds of {Submission submissions} can be made to an entity that implements this schema.
+      #
+      # @return [<Schemas::Associations::Submission>]
+      attribute :submissions, Schemas::Associations::Submission.to_array_type, default: proc { [] }
+
       validates :kind, inclusion: { in: %w[community collection item] }
 
       validates :version, :namespace, :identifier, :name, presence: true

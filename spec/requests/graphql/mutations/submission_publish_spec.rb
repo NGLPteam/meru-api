@@ -81,8 +81,6 @@ RSpec.describe Mutations::SubmissionPublish, type: :request, graphql: :mutation 
     )
   end
 
-  let_it_be(:rejected_entity, refind: true) { rejected_submission.entity }
-
   let_mutation_input!(:submission_id) { approved_submission.to_encoded_id }
 
   let(:valid_mutation_shape) do
@@ -140,7 +138,6 @@ RSpec.describe Mutations::SubmissionPublish, type: :request, graphql: :mutation 
           req.effect! keep_the_same(SubmissionPublication, :count)
           req.effect! keep_the_same(SubmissionPublicationTransition, :count)
           req.effect! keep_the_same { rejected_submission.current_state(force_reload: true) }
-          req.effect! keep_the_same { rejected_entity.reload.submission_status }
 
           req.data! expected_shape
         end

@@ -18,6 +18,16 @@
       "identifier": "collected_volume"
     }
   ],
+  "submissions": [
+    {
+      "namespace": "nglp",
+      "identifier": "journal_article"
+    },
+    {
+      "namespace": "nglp",
+      "identifier": "collected_article"
+    }
+  ],
   "orderings": [
     {
       "id": "articles",

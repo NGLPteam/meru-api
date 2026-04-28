@@ -23,6 +23,8 @@ module Submissions
     transition from: :under_review, to: :rejected
 
     transition from: :revision_requested, to: :submitted
+    transition from: :revision_requested, to: :approved
+    transition from: :revision_requested, to: :rejected
 
     transition from: :approved, to: :under_review
     transition from: :approved, to: :revision_requested
@@ -30,6 +32,10 @@ module Submissions
 
     after_transition do |submission, transition|
       submission.update_column(:state, transition.to_state)
+    end
+
+    after_transition to: :rejected do |submission, _transition|
+      submission.clean_up!
     end
   end
 end

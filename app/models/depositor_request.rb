@@ -15,15 +15,24 @@ class DepositorRequest < ApplicationRecord
 
   scope :in_default_order, -> { order(created_at: :desc) }
 
+  delegate :auto_approve_depositors?, to: :submission_target
   delegate :entity, to: :submission_target, prefix: :target
 
   validates :user_id, uniqueness: { scope: :submission_target_id }
+
+  after_create :maybe_auto_approve!
 
   # @see Access::Grant
   monadic_operation! def add_depositor
     call_operation("access.grant", Role.fetch(:depositor), on: target_entity, to: user).bind do
       submission_target.accept_agreement_for(user)
     end
+  end
+
+  # @api private
+  # @return [void]
+  def maybe_auto_approve!
+    transition_to!(:approved) if auto_approve_depositors? && pending?
   end
 
   # @see Access::Revoke

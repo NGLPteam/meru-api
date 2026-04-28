@@ -256,6 +256,16 @@ CREATE TYPE public.contributor_list_filter AS ENUM (
 
 
 --
+-- Name: contributor_user_linkage; Type: TYPE; Schema: public; Owner: -
+--
+
+CREATE TYPE public.contributor_user_linkage AS ENUM (
+    'primary',
+    'auxiliary'
+);
+
+
+--
 -- Name: date_precision; Type: TYPE; Schema: public; Owner: -
 --
 
@@ -4751,6 +4761,20 @@ CREATE MATERIALIZED VIEW public.contributor_attributions AS
 
 
 --
+-- Name: contributor_user_links; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.contributor_user_links (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    contributor_id uuid NOT NULL,
+    user_id uuid NOT NULL,
+    linkage public.contributor_user_linkage DEFAULT 'auxiliary'::public.contributor_user_linkage NOT NULL,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+
+--
 -- Name: contributors; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -7040,7 +7064,8 @@ CREATE TABLE public.schema_version_properties (
     updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     default_value jsonb GENERATED ALWAYS AS ((metadata -> 'default'::text)) STORED,
     function public.schema_property_function DEFAULT 'unspecified'::public.schema_property_function NOT NULL,
-    searchable boolean DEFAULT false NOT NULL
+    searchable boolean DEFAULT false NOT NULL,
+    submittable boolean DEFAULT false NOT NULL
 );
 
 
@@ -7420,7 +7445,8 @@ CREATE TABLE public.submission_targets (
     agreement_content text,
     description jsonb DEFAULT '{}'::jsonb NOT NULL,
     created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    auto_approve_depositors boolean DEFAULT false NOT NULL
 );
 
 
@@ -7462,7 +7488,8 @@ CREATE TABLE public.submissions (
     title public.citext NOT NULL,
     metadata jsonb DEFAULT '{}'::jsonb NOT NULL,
     created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    agreement_accepted_at timestamp without time zone
 );
 
 
@@ -8765,6 +8792,14 @@ ALTER TABLE ONLY public.community_memberships
 
 ALTER TABLE ONLY public.contribution_role_configurations
     ADD CONSTRAINT contribution_role_configurations_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: contributor_user_links contributor_user_links_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.contributor_user_links
+    ADD CONSTRAINT contributor_user_links_pkey PRIMARY KEY (id);
 
 
 --
@@ -11244,6 +11279,27 @@ CREATE INDEX index_contributor_published_ranking ON public.contributor_attributi
 --
 
 CREATE INDEX index_contributor_title_ranking ON public.contributor_attributions USING btree (contributor_id, title_rank);
+
+
+--
+-- Name: index_contributor_user_links_on_contributor_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_contributor_user_links_on_contributor_id ON public.contributor_user_links USING btree (contributor_id);
+
+
+--
+-- Name: index_contributor_user_links_on_user_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_contributor_user_links_on_user_id ON public.contributor_user_links USING btree (user_id);
+
+
+--
+-- Name: index_contributor_user_primary_link; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_contributor_user_primary_link ON public.contributor_user_links USING btree (user_id, contributor_id, linkage) WHERE (linkage = 'primary'::public.contributor_user_linkage);
 
 
 --
@@ -15512,6 +15568,14 @@ ALTER TABLE ONLY public.templates_list_item_instances
 
 
 --
+-- Name: contributor_user_links fk_rails_5d62727433; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.contributor_user_links
+    ADD CONSTRAINT fk_rails_5d62727433 FOREIGN KEY (contributor_id) REFERENCES public.contributors(id) ON DELETE CASCADE;
+
+
+--
 -- Name: item_attributions fk_rails_5d6b986800; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -16648,6 +16712,14 @@ ALTER TABLE ONLY public.ahoy_events
 
 
 --
+-- Name: contributor_user_links fk_rails_f229d9e76d; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.contributor_user_links
+    ADD CONSTRAINT fk_rails_f229d9e76d FOREIGN KEY (user_id) REFERENCES public.users(id) ON DELETE CASCADE;
+
+
+--
 -- Name: collection_contributions fk_rails_f2db32c240; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -16758,6 +16830,8 @@ ALTER TABLE ONLY public.templates_ordering_instances
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20260422183557'),
+('20260421173838'),
 ('20260316200244'),
 ('20260314094207'),
 ('20260312201100'),
