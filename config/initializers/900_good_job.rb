@@ -7,7 +7,7 @@ Rails.application.configure do
   queues = [
     "maintenance:1",
     "rendering:1",
-    "+purging,hierarchies,entities,orderings,invalidations,layouts:2",
+    "+purging,hierarchies,entities,orderings,indexing,invalidations,layouts:2",
     "+harvest_pruning,extraction,harvesting,asset_fetching:2",
     "default,mailers,ahoy,depositing,processing,cache_warming:2",
   ].join(?;)
