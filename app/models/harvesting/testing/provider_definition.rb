@@ -2,7 +2,7 @@
 
 module Harvesting
   module Testing
-    class ProviderDefinition < Support::FrozenRecordHelpers::AbstractRecord
+    class ProviderDefinition < ::ApplicationFrozenRecord
       include Harvesting::Frozen::HasProtocolAndMetadata
 
       schema!(types: ::Harvesting::Testing::TypeRegistry) do

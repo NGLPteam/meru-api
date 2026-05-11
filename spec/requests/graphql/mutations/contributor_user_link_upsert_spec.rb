@@ -41,6 +41,7 @@ RSpec.describe Mutations::ContributorUserLinkUpsert, type: :request, graphql: :m
 
     ... on ContributorBase {
       kind
+      claimed
     }
   }
 
@@ -57,6 +58,7 @@ RSpec.describe Mutations::ContributorUserLinkUpsert, type: :request, graphql: :m
   let_it_be(:other_contributor, refind: true) do
     FactoryBot.create(:contributor, :person)
   end
+
   let_it_be(:other_user, refind: true) { FactoryBot.create(:user) }
 
   let_it_be(:contributor, refind: true) { FactoryBot.create(:contributor, :person) }
@@ -70,8 +72,30 @@ RSpec.describe Mutations::ContributorUserLinkUpsert, type: :request, graphql: :m
   let(:valid_mutation_shape) do
     gql.mutation(:contributor_user_link_upsert) do |m|
       m.prop(:contributor) do |c|
-        c[:id] = be_an_encoded_id.of_an_existing_model
-        c[:slug] = be_an_encoded_slug
+        c[:id] = contributor_id
+        c[:slug] = contributor.system_slug
+      end
+
+      m.prop(:user) do |u|
+        u[:id] = user_id
+        u[:slug] = user.system_slug
+      end
+
+      m.prop(:contributor_user_link) do |cul|
+        cul[:id] = be_an_encoded_id.of_an_existing_model
+        cul[:slug] = be_an_encoded_slug
+
+        cul[:linkage] = linkage
+
+        cul.prop(:contributor) do |c|
+          c[:id] = contributor_id
+          c[:slug] = contributor.system_slug
+        end
+
+        cul.prop(:user) do |u|
+          u[:id] = user_id
+          u[:slug] = user.system_slug
+        end
       end
     end
   end

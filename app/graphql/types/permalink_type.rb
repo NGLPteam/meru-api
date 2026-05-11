@@ -2,7 +2,7 @@
 
 module Types
   # @see Permalink
-  class PermalinkType < Types::AbstractModel
+  class PermalinkType < Types::BaseModel
     description <<~TEXT
     A permalink is a persistant link to a resource with a human-readable URI.
     Each resource can have multiple permalinks, but only one can be marked as canonical.

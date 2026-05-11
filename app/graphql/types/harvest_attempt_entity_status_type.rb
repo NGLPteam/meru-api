@@ -2,7 +2,7 @@
 
 module Types
   # @see HarvestAttemptEntityStatus
-  class HarvestAttemptEntityStatusType < Types::AbstractModel
+  class HarvestAttemptEntityStatusType < Types::BaseModel
     description <<~TEXT
     A progress report for entity data during a harvest attempt.
     TEXT

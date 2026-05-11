@@ -13,13 +13,19 @@ module Resolvers
 
     resolves_model! ::Contributor
 
+    filters_with! Filtering::Scopes::Contributors
+
     option :kind, type: ::Types::ContributorFilterKindType, default: "ALL"
 
     PREFIX_DESC = <<~TEXT
     Search for contributors with names that start with the provided text.
     TEXT
 
-    option :prefix, type: String, description: PREFIX_DESC do |scope, value|
+    PREFIX_DEPR = <<~TEXT
+    Use the `nameSearch` filter instead.
+    TEXT
+
+    option :prefix, type: String, description: PREFIX_DESC, deprecation_reason: PREFIX_DEPR do |scope, value|
       scope.apply_prefix value
     end
 

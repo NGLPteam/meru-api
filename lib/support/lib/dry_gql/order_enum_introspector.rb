@@ -5,7 +5,7 @@ module Support
     class OrderEnumIntrospector
       include Dry::Core::Memoizable
       include Dry::Initializer[undefined: false].define -> do
-        param :enum, Support::DryGQL::Types::EnumClass
+        param :enum, Support::DryGQL::Types::EnumType
       end
 
       ORDER_PRIORITY = %w[DEFAULT RECENT].freeze

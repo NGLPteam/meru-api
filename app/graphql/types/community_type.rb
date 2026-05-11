@@ -2,7 +2,7 @@
 
 module Types
   # A GraphQL representation of a {Community}.
-  class CommunityType < Types::AbstractModel
+  class CommunityType < Types::BaseModel
     implements Types::AccessibleType
     implements Types::EntityType
     implements Types::HarvestTargetType

@@ -2,6 +2,9 @@
 
 module Roles
   # Define a role with a specific list of permissions for scoped and global access.
+  #
+  # @api private
+  # @see Roles::Calculator
   class Definer
     include Dry::Initializer[undefined: false].define -> do
       param :identifier, Dry::Types["coercible.string"]

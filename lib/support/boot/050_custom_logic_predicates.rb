@@ -8,6 +8,10 @@ Dry::Logic::Predicates.predicate :rails_present? do |input|
   input.present?
 end
 
+Dry::Logic::Predicates.predicate :anonymous_user? do |input|
+  type?(Support::Users::AnonymousInterface, input) && input.anonymous?
+end
+
 Dry::Logic::Predicates.predicate :email? do |input|
   format? URI::MailTo::EMAIL_REGEXP, input
 end

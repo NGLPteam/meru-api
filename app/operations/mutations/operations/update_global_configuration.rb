@@ -14,7 +14,9 @@ module Mutations
       authorizes! :config, with: :update?
 
       # @param [GlobalConfiguration] config
-      def call(config:, contribution_roles: nil, depositing: nil, entities: nil, institution: nil, site: nil, theme: nil, **args)
+      def call(config:, contribution_roles: nil, contributors: nil, depositing: nil, entities: nil, institution: nil, site: nil, theme: nil, **args)
+        config.contributors = contributors if contributors.present?
+
         config.depositing = depositing if depositing.present?
 
         config.entities = entities if entities.present?

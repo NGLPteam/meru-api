@@ -6,13 +6,19 @@
 class ApplicationPolicy < ActionPolicy::Base
   extend Dry::Core::ClassAttributes
 
-  defines :always_readable, :readable_in_dev, type: Roles::Types::Bool
+  defines :always_readable, :authenticated_readable, :readable_in_dev, type: Roles::Types::Bool
 
   # @!attribute [r] always_readable
   #   @!scope class
   #   Whether the record is always readable, regardless of user permissions.
   #   @return [Boolean]
   always_readable false
+
+  # @!attribute [r] authenticated_readable
+  #   @!scope class
+  #   Whether the record is readable by any authenticated user, regardless of other permissions.
+  #   @return [Boolean]
+  authenticated_readable false
 
   # @!attribute [r] readable_in_dev
   #   @!scope class
@@ -42,14 +48,15 @@ class ApplicationPolicy < ActionPolicy::Base
   # @see #show?
   def read? = admin_or_owns_resource?
 
+  def show? = read?
+
   # @!parse [ruby]
-  #   alias show? read?
-  #   alias index? read?
-  alias_rule :show?, :index?, to: :read?
+  #   alias index? show?
+  alias_rule :index?, to: :show?
 
   # Sometimes we need to allow read access specifically for use with mutation arguments
   # in a way that differs from normal read access. This happens in other projects, but
-  # not here yet. This is here for support with {Types::AbstractModel.authorized?}.
+  # not here yet. This is here for support with {Types::BaseModel.authorized?}.
   #
   # For the sake of mutations, assume arguments provided can always be read and worry
   # about authorizing within the context of the mutation.
@@ -96,6 +103,11 @@ class ApplicationPolicy < ActionPolicy::Base
   def anonymous? = user.anonymous?
 
   def authenticated? = user.authenticated?
+
+  def authenticated_readable? = self.class.authenticated_readable
+
+  # @return [GlobalConfiguration]
+  def current_global_configuration = GlobalConfiguration.current
 
   def has_any_access_management_permissions? = user.can_manage_access_globally? || user.can_manage_access_contextually?
 
@@ -170,6 +182,7 @@ class ApplicationPolicy < ActionPolicy::Base
   # @return [void]
   def allow_public_reading!
     allow! if always_readable? || readable_in_dev?
+    allow! if authenticated_readable? && authenticated?
   end
 
   # @api private
@@ -221,6 +234,8 @@ class ApplicationPolicy < ActionPolicy::Base
   def resolve_scope_for_non_admin(relation)
     if always_readable? || readable_in_dev?
       relation.all
+    elsif authenticated_readable? && authenticated?
+      relation.all
     else
       relation.none
     end
@@ -255,6 +270,14 @@ class ApplicationPolicy < ActionPolicy::Base
     # @return [void]
     def always_readable!
       always_readable true
+    end
+
+    # Specify that the record is readable by any authenticated user.
+    #
+    # @see .authenticated_readable
+    # @return [void]
+    def authenticated_readable!
+      authenticated_readable true
     end
 
     # Specify that the record is readable in development mode.

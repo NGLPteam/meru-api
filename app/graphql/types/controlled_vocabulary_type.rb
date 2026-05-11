@@ -2,7 +2,7 @@
 
 module Types
   # @see ControlledVocabulary
-  class ControlledVocabularyType < Types::AbstractModel
+  class ControlledVocabularyType < Types::BaseModel
     description <<~TEXT
     A set of terms that can be selected in schemas.
 

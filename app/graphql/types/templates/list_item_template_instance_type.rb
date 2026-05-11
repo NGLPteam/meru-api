@@ -3,7 +3,7 @@
 module Types
   module Templates
     # @see ::Templates::ListItemInstance
-    class ListItemTemplateInstanceType < AbstractModel
+    class ListItemTemplateInstanceType < ::Types::BaseModel
       implements ::Types::TemplateInstanceType
       implements ::Types::TemplateHasEntityListType
       implements ::Types::TemplateHasSeeAllOrderingType

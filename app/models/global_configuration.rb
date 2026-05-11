@@ -13,6 +13,7 @@ class GlobalConfiguration < ApplicationRecord
   include SiteLogoUploader::Attachment.new(:logo)
   include TimestampScopes
 
+  attribute :contributors, Settings::Contributors.to_type
   attribute :depositing, Settings::Depositing.to_type
   attribute :entities, Settings::Entities.to_type
   attribute :institution, Settings::Institution.to_type
@@ -23,13 +24,17 @@ class GlobalConfiguration < ApplicationRecord
 
   validates :guard, presence: true, uniqueness: true
 
-  validates :entities, :institution, :site, :theme, store_model: true
+  validates :depositing, :entities, :institution, :site, :theme, store_model: true
 
   validates :contribution_role_configuration, presence: { on: :update }
 
   before_validation :maybe_clear_logo_mode!
 
   before_validation :enforce_contribution_role_config!
+
+  after_save :refresh_current_record!
+
+  delegate :missing_agreement?, to: :depositing, prefix: true
 
   # @api private
   # @return [void]
@@ -68,7 +73,26 @@ class GlobalConfiguration < ApplicationRecord
     end
   end
 
+  # @return [void]
+  def refresh_current_record!
+    GlobalConfiguration.current!
+  end
+
   class << self
+    # @!attribute [r] current
+    # A request-local instance of the current {GlobalConfiguration}.
+    # @see GlobalConfigurations::Current
+    # @return [GlobalConfiguration]
+    def current
+      GlobalConfigurations::Current.record
+    end
+
+    # Fetch a fresh instance to set for {.current}.
+    # @return [GlobalConfiguration]
+    def current!
+      GlobalConfigurations::Current.record = fetch
+    end
+
     # @return [GlobalConfiguration]
     def fetch
       GlobalConfiguration.singleton.first_or_create!

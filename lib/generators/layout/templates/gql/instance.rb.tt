@@ -6,7 +6,7 @@
 module Types
   module Layouts
     # @see ::Layouts::<%= class_name %>Instance
-    class <%= class_name %>LayoutInstanceType < AbstractModel
+    class <%= class_name %>LayoutInstanceType < ::Types::BaseModel
       implements ::Types::LayoutInstanceType
 
       field :layout_definition, Types::Layouts::<%= class_name %>LayoutDefinitionType, null: false do

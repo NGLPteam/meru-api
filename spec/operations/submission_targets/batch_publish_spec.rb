@@ -56,7 +56,8 @@ RSpec.describe SubmissionTargets::BatchPublish, type: :operation do
 
     expect do
       flush_enqueued_jobs
-    end.to change { approved_entity.reload.submission_status }.from("submission_draft").to("submission_published")
+    end.to execute_safely
+      .and change { approved_entity.reload.submission_status }.from("submission_draft").to("submission_published")
       .and change { approved_submission.current_state(force_reload: true) }.from("approved").to("published")
       .and keep_the_same { rejected_submission.current_state(force_reload: true) }
       .and change(SubmissionBatchPublicationTransition.to_finished, :count).by(1)

@@ -193,7 +193,7 @@ RSpec.describe "Query.item", type: :request do
   end
 
   as_an_anonymous_user do
-    let(:expected_contributors_count) { 0 }
+    let(:expected_contributors_count) { item_contributions.size }
 
     include_examples "a found item"
   end

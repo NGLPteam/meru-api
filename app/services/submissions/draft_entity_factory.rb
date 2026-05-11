@@ -25,6 +25,8 @@ module Submissions
         yield prepare!
 
         yield persist!
+
+        yield attach_contributions!
       end
 
       Success draft
@@ -52,6 +54,14 @@ module Submissions
       submission.entity = draft
 
       submission.save!
+
+      super
+    end
+
+    wrapped_hook! def attach_contributions
+      yield submission.enforce_author
+
+      yield submission.attach_contributions
 
       super
     end

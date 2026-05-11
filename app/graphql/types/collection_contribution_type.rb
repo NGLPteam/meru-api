@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Types
-  class CollectionContributionType < Types::AbstractModel
+  class CollectionContributionType < Types::BaseModel
     implements Types::ContributionType
 
     description "A contribution to a collection"

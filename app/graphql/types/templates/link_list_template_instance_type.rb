@@ -3,7 +3,7 @@
 module Types
   module Templates
     # @see ::Templates::LinkListInstance
-    class LinkListTemplateInstanceType < AbstractModel
+    class LinkListTemplateInstanceType < ::Types::BaseModel
       implements ::Types::TemplateInstanceType
       implements ::Types::TemplateHasEntityListType
       implements ::Types::TemplateHasSeeAllOrderingType

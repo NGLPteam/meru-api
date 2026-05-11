@@ -11,13 +11,13 @@ module Types
     field :collection_contribution, Types::CollectionContributionType, null: true do
       description "Look up a collection contribution by slug"
 
-      argument :slug, Types::SlugType, required: true
+      argument :slug, Support::GQL::SlugType, required: true
     end
 
     field :contributor, Types::ContributorType, null: true do
       description "Look up a contributor by slug"
 
-      argument :slug, Types::SlugType, required: true
+      argument :slug, Support::GQL::SlugType, required: true
     end
 
     field :contributor_lookup, Types::ContributorType, null: true do
@@ -38,7 +38,7 @@ module Types
         TEXT
       end
 
-      argument :order, Types::SimpleOrderType, required: true, default_value: "RECENT" do
+      argument :order, Support::GQL::SimpleOrderType, required: true, default_value: "RECENT" do
         description <<~TEXT
         For certain fields, the values are not guaranteed to be unique. In these instances,
         the *most recently* created contributor will be selected by default. If the first
@@ -62,7 +62,7 @@ module Types
     field :item_contribution, Types::ItemContributionType, null: true do
       description "Look up an item contribution by slug"
 
-      argument :slug, Types::SlugType, required: true
+      argument :slug, Support::GQL::SlugType, required: true
     end
 
     def collection_contribution(slug:)

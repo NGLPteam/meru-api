@@ -8,7 +8,7 @@ module Types
     field :user, Types::UserType, null: true do
       description "Look up a user by slug"
 
-      argument :slug, Types::SlugType, required: true
+      argument :slug, Support::GQL::SlugType, required: true
     end
 
     field :users, resolver: Resolvers::UserResolver do

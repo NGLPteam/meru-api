@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class TemplateEnumProperty < Support::FrozenRecordHelpers::AbstractRecord
+class TemplateEnumProperty < ::ApplicationFrozenRecord
   include Dry::Core::Equalizer.new(:name)
   include Dry::Core::Memoizable
   include ScopedTranslatableAttributes

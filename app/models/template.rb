@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Template < Support::FrozenRecordHelpers::AbstractRecord
+class Template < ::ApplicationFrozenRecord
   include ActiveModel::Validations
   include Dry::Core::Equalizer.new(:template_kind)
   include Dry::Core::Memoizable

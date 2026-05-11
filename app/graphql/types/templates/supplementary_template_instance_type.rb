@@ -3,7 +3,7 @@
 module Types
   module Templates
     # @see ::Templates::SupplementaryInstance
-    class SupplementaryTemplateInstanceType < AbstractModel
+    class SupplementaryTemplateInstanceType < ::Types::BaseModel
       implements ::Types::TemplateInstanceType
 
       field :definition, ::Types::Templates::SupplementaryTemplateDefinitionType, null: false do

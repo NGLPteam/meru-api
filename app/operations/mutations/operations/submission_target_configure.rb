@@ -18,6 +18,20 @@ module Mutations
 
         with_attached_result!(:submission_target, result)
       end
+
+      before_prepare def extract_configurable_parts
+        args[:entity], args[:submission_target] =
+          case args[:configurable]
+          in SubmissionTarget => submission_target
+            [submission_target.entity, submission_target]
+          in HierarchicalEntity => entity
+            [entity, entity.fetch_submission_target!]
+          else
+            # :nocov:
+            raise "Unexpected configurable type: #{inputs[:configurable].class}"
+            # :nocov:
+          end
+      end
     end
   end
 end

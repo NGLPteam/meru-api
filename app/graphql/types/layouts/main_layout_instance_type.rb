@@ -3,7 +3,7 @@
 module Types
   module Layouts
     # @see ::Layouts::MainInstance
-    class MainLayoutInstanceType < AbstractModel
+    class MainLayoutInstanceType < ::Types::BaseModel
       implements ::Types::LayoutInstanceType
 
       field :layout_definition, Types::Layouts::MainLayoutDefinitionType, null: false do

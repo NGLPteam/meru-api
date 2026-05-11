@@ -3,7 +3,7 @@
 module Types
   module Layouts
     # @see ::Layouts::NavigationInstance
-    class NavigationLayoutInstanceType < AbstractModel
+    class NavigationLayoutInstanceType < ::Types::BaseModel
       implements ::Types::LayoutInstanceType
 
       field :layout_definition, Types::Layouts::NavigationLayoutDefinitionType, null: false do

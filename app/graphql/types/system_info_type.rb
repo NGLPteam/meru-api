@@ -12,11 +12,11 @@ module Types
       Check to see if an entity of a given `descendant` type exists with a given `ancestor` type.
       TEXT
 
-      argument :ancestor, Types::SlugType, required: true do
+      argument :ancestor, Support::GQL::SlugType, required: true do
         description "Should be `namespace:identifier`."
       end
 
-      argument :descendant, Types::SlugType, required: true do
+      argument :descendant, Support::GQL::SlugType, required: true do
         description "Should be `namespace:identifier`."
       end
     end

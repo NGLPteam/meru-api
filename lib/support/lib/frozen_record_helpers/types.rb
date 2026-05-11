@@ -12,6 +12,8 @@ module Support
       DefaultSQLValues = Array.of(Symbol)
 
       Schema = Nominal(Dry::Schema::Processor)
+
+      TypeRegistry = Instance(Support::Schemas::TypeContainer)
     end
   end
 end

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Types
-  class OrganizationContributorType < Types::AbstractModel
+  class OrganizationContributorType < Types::BaseModel
     implements Types::ContributorType
 
     description <<~TEXT

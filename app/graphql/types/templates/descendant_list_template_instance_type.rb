@@ -3,7 +3,7 @@
 module Types
   module Templates
     # @see ::Templates::DescendantListInstance
-    class DescendantListTemplateInstanceType < AbstractModel
+    class DescendantListTemplateInstanceType < ::Types::BaseModel
       implements ::Types::TemplateInstanceType
       implements ::Types::TemplateHasEntityListType
       implements ::Types::TemplateHasSeeAllOrderingType

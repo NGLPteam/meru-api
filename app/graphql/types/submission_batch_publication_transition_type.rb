@@ -4,7 +4,7 @@ module Types
   # @see SubmissionBatchPublicationTransition
   # @see ::Types::SubmissionBatchPublicationTransitionConnectionType
   # @see ::Types::SubmissionBatchPublicationTransitionEdgeType
-  class SubmissionBatchPublicationTransitionType < Types::AbstractModel
+  class SubmissionBatchPublicationTransitionType < Types::BaseModel
     description <<~TEXT
     A transition for a `SubmissionBatchPublication`.
     TEXT

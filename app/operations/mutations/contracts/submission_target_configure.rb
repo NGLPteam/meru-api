@@ -7,6 +7,8 @@ module Mutations
     class SubmissionTargetConfigure < MutationOperations::Contract
       json do
         required(:configurable).value(::SubmissionTargets::Types::Configurable)
+        required(:entity).value(:any_entity)
+        required(:submission_target).value(:submission_target)
         required(:deposit_mode).value(:submission_deposit_mode)
         required(:deposit_targets).array(:any_entity)
         required(:schema_versions).array(:schema_version) { filled? }
@@ -23,7 +25,7 @@ module Mutations
       end
 
       rule(:agreement_content) do
-        key.failure(:filled?) if values[:agreement_required] && value.blank?
+        key.failure(:filled?) if values[:agreement_required] && value.blank? && GlobalConfiguration.current.depositing_missing_agreement?
       end
 
       rule(:deposit_targets) do

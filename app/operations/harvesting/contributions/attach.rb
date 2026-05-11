@@ -11,7 +11,6 @@ module Harvesting
       include Dry::Monads[:do, :result]
       include MonadicPersistence
       include MeruAPI::Deps[
-        attach: "contributors.attach",
         connect_or_create: "harvesting.contributors.connect_or_create",
       ]
 
@@ -23,7 +22,7 @@ module Harvesting
 
         options = harvest_contribution.to_attach_options
 
-        attach.call(contributor, contributable, **options)
+        contributable.attach_contribution(contributor, **options)
       end
     end
   end

@@ -1,20 +1,13 @@
 # frozen_string_literal: true
 
 module Types
-  class BaseObject < Types::AbstractObjectType
-    edge_type_class Types::BaseEdge
+  # @abstract
+  class BaseObject < ::Support::GQL::BaseObject
+    edge_type_class ::Types::BaseEdge
 
-    connection_type_class Types::BaseConnection
+    connection_type_class ::Types::BaseConnection
 
-    field_class Types::BaseField
-
-    def call_operation(name, ...)
-      MeruAPI::Container[name].call(...)
-    end
-
-    def call_operation!(name, ...)
-      call_operation(name, ...).value!
-    end
+    field_class ::Types::BaseField
 
     # @api private
     # @param [HierarchicalEntity, nil] promise

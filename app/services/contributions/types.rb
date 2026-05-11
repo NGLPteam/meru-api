@@ -21,5 +21,9 @@ module Contributions
     Contributor = ModelInstance("Contributor")
 
     Role = ModelInstance("ControlledVocabularyItem")
+
+    UniqueByKey = Coercible::Symbol.enum(:contributor_id, :item_id, :collection_id, :role_id)
+
+    UniqueByTuple = Array.of(UniqueByKey).constrained(size: 3)
   end
 end

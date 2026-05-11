@@ -3,7 +3,7 @@
 module Types
   module Templates
     # @see ::Templates::HeroInstance
-    class HeroTemplateInstanceType < AbstractModel
+    class HeroTemplateInstanceType < ::Types::BaseModel
       implements ::Types::TemplateInstanceType
 
       field :definition, ::Types::Templates::HeroTemplateDefinitionType, null: false do

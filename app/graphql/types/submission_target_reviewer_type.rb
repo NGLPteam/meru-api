@@ -2,7 +2,7 @@
 
 module Types
   # @see SubmissionTargetReviewer
-  class SubmissionTargetReviewerType < Types::AbstractModel
+  class SubmissionTargetReviewerType < Types::BaseModel
     description <<~TEXT
     A reviewer assigned to a `SubmissionTarget`.
     TEXT

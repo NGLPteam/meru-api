@@ -5,6 +5,8 @@ module Mutations
   class ContributorUserLinkUpsert < Mutations::BaseMutation
     description <<~TEXT
     Create or update a link between a `Contributor` and a `User`.
+
+    It relies upon the `canLinkUser` permission on the given `Contributor`.
     TEXT
 
     field :contributor, Types::ContributorType, null: true do

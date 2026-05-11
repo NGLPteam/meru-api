@@ -18,7 +18,7 @@ module Resolvers
     end
 
     included do
-      defines :order_enum_klass, type: ::Support::DryGQL::Types::EnumClass.optional
+      defines :order_enum_klass, type: ::Support::DryGQL::Types::EnumType.optional
     end
 
     module BuildsOrderPair

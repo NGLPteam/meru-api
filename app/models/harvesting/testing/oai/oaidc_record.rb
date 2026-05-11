@@ -3,7 +3,7 @@
 module Harvesting
   module Testing
     module OAI
-      class OAIDCRecord < Support::FrozenRecordHelpers::AbstractRecord
+      class OAIDCRecord < ::ApplicationFrozenRecord
         include Harvesting::Testing::OAI::SampleRecord
 
         record_schema!("oaidc") do

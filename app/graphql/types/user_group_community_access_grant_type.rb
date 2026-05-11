@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Types
-  class UserGroupCommunityAccessGrantType < Types::AbstractModel
+  class UserGroupCommunityAccessGrantType < Types::BaseModel
     implements Types::AccessGrantType
     implements Types::UserGroupAccessGrantType
 

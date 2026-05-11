@@ -2,7 +2,6 @@
 
 module Types
   # @abstract
-  class BaseEnum < ::GraphQL::Schema::Enum
-    include Support::GraphQLAPI::Enhancements::Enum
+  class BaseEnum < ::Support::GQL::BaseEnum
   end
 end

@@ -2,7 +2,7 @@
 
 module Types
   # @see ContributionRoleConfiguration
-  class ContributionRoleConfigurationType < Types::AbstractModel
+  class ContributionRoleConfigurationType < Types::BaseModel
     description <<~TEXT
     Configuration for the controlled vocabulary used for contribution roles on a given `source`.
     TEXT

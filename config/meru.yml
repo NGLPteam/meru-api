@@ -1,4 +1,5 @@
 default: &default
+  auto_approve_depositors: true
   include_development_schemas: false
   include_testing_schemas: false
   tenant_id: "meru"

@@ -43,7 +43,7 @@ module Support
       when /\Abool(?:ean)?\z/i
         "Boolean"
       when /\Aslug\z/i
-        "Types::SlugType"
+        "Support::GQL::SlugType"
       when /[^:]+::[^:]+/
         # This should be a fully-realized path
         "::#{input}"

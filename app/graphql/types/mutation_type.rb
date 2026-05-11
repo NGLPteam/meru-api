@@ -181,5 +181,9 @@ module Types
     field :contributor_user_link_destroy, mutation: Mutations::ContributorUserLinkDestroy
 
     field :contributor_user_link_upsert, mutation: Mutations::ContributorUserLinkUpsert
+
+    field :contributor_claim, mutation: Mutations::ContributorClaim
+
+    field :contributor_merge, mutation: Mutations::ContributorMerge
   end
 end

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Types
-  class EntityLinkType < Types::AbstractModel
+  class EntityLinkType < Types::BaseModel
     description "A link between different entities"
 
     implements Types::OrderingEntryableType

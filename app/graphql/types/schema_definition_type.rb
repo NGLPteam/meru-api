@@ -2,7 +2,7 @@
 
 module Types
   # @see SchemaDefinition
-  class SchemaDefinitionType < Types::AbstractModel
+  class SchemaDefinitionType < Types::BaseModel
     disable_auth_checks!
 
     description <<~TEXT

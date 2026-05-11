@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Types
-  class ItemContributionType < Types::AbstractModel
+  class ItemContributionType < Types::BaseModel
     implements Types::ContributionType
 
     description "A contribution to an item"

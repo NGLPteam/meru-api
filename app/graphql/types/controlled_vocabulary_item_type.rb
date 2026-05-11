@@ -2,7 +2,7 @@
 
 module Types
   # @see ControlledVocabularyItem
-  class ControlledVocabularyItemType < Types::AbstractModel
+  class ControlledVocabularyItemType < Types::BaseModel
     description <<~TEXT
     An individual term within a `ControlledVocabulary`.
     TEXT

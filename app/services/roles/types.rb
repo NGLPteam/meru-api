@@ -26,6 +26,8 @@ module Roles
 
     GACL = GRID[Roles::GlobalAccessControlList]
 
+    Callable = Interface(:call)
+
     PermissionName = String.constrained(format: PERMISSION_FORMAT)
 
     PermissionList = Array.of(PermissionName)
@@ -41,6 +43,18 @@ module Roles
     end
 
     PolicyPredicate = Symbol
+
+    RoleIdentifier = Coercible::Symbol
+
+    RoleOptions = Hash.schema(name?: String)
+
+    RoleMapping = Hash.schema(
+      identifier: RoleIdentifier,
+      options: RoleOptions,
+      dsl: Callable
+    )
+
+    RoleMappings = Hash.map(RoleIdentifier, RoleMapping)
 
     EffectivePermissionMap = Hash.map(PermissionName, PolicyPredicate)
   end

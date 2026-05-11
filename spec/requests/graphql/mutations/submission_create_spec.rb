@@ -19,18 +19,79 @@ RSpec.describe Mutations::SubmissionCreate, type: :request, graphql: :mutation, 
         }
 
         entity {
-          __typename
-
-          id
-
-          title
-
-          canUpdate {
-            ... AuthorizationResultFragment
-          }
+          ... EntityFragment
         }
       }
+
       ... ErrorFragment
+    }
+  }
+
+  fragment EntityFragment on Entity {
+    __typename
+    id
+    title
+
+    canUpdate {
+      ... AuthorizationResultFragment
+    }
+
+    canDestroy {
+      ... AuthorizationResultFragment
+    }
+
+    ... on Item {
+      ... ItemFragment
+    }
+  }
+
+  fragment ItemFragment on Item {
+    id
+    title
+
+    contributions {
+      nodes {
+        ... ContributionFragment
+      }
+    }
+  }
+
+  fragment PersonFragment on PersonContributor {
+    givenName
+    familyName
+  }
+
+  fragment ContributorFragment on Contributor {
+    __typename
+
+    ... on PersonContributor {
+      ... PersonFragment
+
+      canDestroy {
+        ... AuthorizationResultFragment
+      }
+
+      canUpdate {
+        ... AuthorizationResultFragment
+      }
+    }
+
+    userLink {
+      linkage
+
+      user {
+        id
+      }
+    }
+  }
+
+  fragment ContributionFragment on ItemContribution {
+    contributionRole {
+      label
+    }
+
+    contributor {
+      ... ContributorFragment
     }
   }
   GRAPHQL
@@ -53,6 +114,12 @@ RSpec.describe Mutations::SubmissionCreate, type: :request, graphql: :mutation, 
   let_mutation_input!(:title) { "Test Submission" }
   let_mutation_input!(:agreement_accepted) { true }
 
+  let(:can_update_contributor) { true }
+  let(:can_destroy_contributor) { false }
+
+  let(:can_update_entity) { true }
+  let(:can_destroy_entity) { false }
+
   let(:valid_mutation_shape) do
     gql.mutation(:submission_create) do |m|
       m.prop(:submission) do |s|
@@ -64,17 +131,40 @@ RSpec.describe Mutations::SubmissionCreate, type: :request, graphql: :mutation, 
         s.prop :submission_target do |st|
           st[:id] = submission_target_id
 
-          st.prop :can_deposit do |cd|
-            cd[:value] = true
-          end
+          st.auth_results(can_deposit: true)
         end
 
         s.prop :entity do |e|
           e.typename("Item")
           e[:id] = be_an_encoded_id.of_an_existing_model
 
-          e.prop :can_update do |cu|
-            cu[:value] = true
+          e.auth_results(can_update: can_update_entity, can_destroy: can_destroy_entity)
+
+          e.prop :contributions do |cont|
+            cont.array :nodes do |n|
+              n.item do |node|
+                node.prop :contribution_role do |cr|
+                  cr[:label] = "Author"
+                end
+
+                node.prop :contributor do |c|
+                  c.typename("PersonContributor")
+
+                  c.auth_results(can_update: can_update_contributor, can_destroy: can_destroy_contributor)
+
+                  c[:given_name] = current_user.given_name
+                  c[:family_name] = current_user.family_name
+
+                  c.prop :user_link do |ul|
+                    ul[:linkage] = "PRIMARY"
+
+                    ul.prop :user do |u|
+                      u[:id] = current_user.to_encoded_id
+                    end
+                  end
+                end
+              end
+            end
           end
         end
       end
@@ -92,6 +182,9 @@ RSpec.describe Mutations::SubmissionCreate, type: :request, graphql: :mutation, 
       expect_request! do |req|
         req.effect! change(Submission, :count).by(1)
         req.effect! change(Item, :count).by(1)
+        req.effect! change(Contributor, :count).by(1)
+        req.effect! change(ItemContribution, :count).by(1)
+        req.effect! change { current_user.reload.primary_contributor }.from(nil).to(a_kind_of(Contributor))
 
         req.data! expected_shape
       end
@@ -139,6 +232,8 @@ RSpec.describe Mutations::SubmissionCreate, type: :request, graphql: :mutation, 
   end
 
   as_an_admin_user do
+    let(:can_destroy_contributor) { true }
+
     include_examples "an authorized mutation"
   end
 

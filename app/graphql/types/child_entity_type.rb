@@ -5,13 +5,14 @@ module Types
   module ChildEntityType
     include Types::BaseInterface
 
+    implements Support::GQL::HasDefaultTimestampsType
+
     implements Types::EntityType
     implements Types::AccessibleType
     implements Types::EntityContextualPermissionsType
     implements Types::EntityPermissionsType
     implements Types::ExposesPermissionsType
     implements Types::HasEntityBreadcrumbs
-    implements Types::HasDefaultTimestampsType
     implements Types::HasHarvestModificationStatusType
     implements Types::HasSchemaPropertiesType
     implements Types::HasDOIType

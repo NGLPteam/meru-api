@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Harvesting
-  class Example < Support::FrozenRecordHelpers::AbstractRecord
+  class Example < ::ApplicationFrozenRecord
     include Dry::Core::Constants
     include Harvesting::Frozen::HasProtocolAndMetadata
 

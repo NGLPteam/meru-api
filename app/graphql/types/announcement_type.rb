@@ -5,7 +5,7 @@ module Types
   # @see Mutations::CreateAnnouncement
   # @see Mutations::DestroyAnnouncement
   # @see Mutations::UpdateAnnouncement
-  class AnnouncementType < Types::AbstractModel
+  class AnnouncementType < Types::BaseModel
     description <<~TEXT
     An announcement tied to an entity. These are configured through the backend and can be used
     to provide time-sensensitive information and news about a specific entity in the system.

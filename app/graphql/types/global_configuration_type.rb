@@ -15,6 +15,10 @@ module Types
       TEXT
     end
 
+    field :contributors, Types::Settings::ContributorsSettingsType, null: false do
+      description "Settings specific to contributors on this installation."
+    end
+
     field :depositing, Types::Settings::DepositingSettingsType, null: false do
       description "Settings specific to depositing to this installation."
     end

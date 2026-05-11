@@ -2,7 +2,7 @@
 
 module Types
   # @see ContributorItemAttribution
-  class ContributorItemAttributionType < Types::AbstractModel
+  class ContributorItemAttributionType < Types::BaseModel
     description <<~TEXT
     A specific attribution on a `Item`.
     TEXT

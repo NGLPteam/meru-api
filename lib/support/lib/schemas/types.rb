@@ -5,7 +5,7 @@ module Support
     module Types
       extend ::Support::Typespace
 
-      EnumClass = Class.constrained(inherits: ::GraphQL::Schema::Enum)
+      EnumType = Class.constrained(inherits: ::GraphQL::Schema::Enum)
 
       SafeString = Coercible::String
 

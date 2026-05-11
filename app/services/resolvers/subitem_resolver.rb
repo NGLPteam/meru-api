@@ -18,6 +18,8 @@ module Resolvers
 
     resolves_model! ::Item, must_have_object: true, association_name: :descendants
 
+    filters_with! ::Filtering::Scopes::Items
+
     def resolve_default_scope
       super.reorder(nil)
     end

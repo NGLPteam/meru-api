@@ -16,7 +16,7 @@ RSpec.describe SubmissionTargetReviewerPolicy, type: :policy do
       let(:user) { regular_user }
     end
 
-    succeed "as an anonymous user" do
+    failed "as an anonymous user" do
       let(:user) { anonymous_user }
     end
   end
@@ -30,7 +30,7 @@ RSpec.describe SubmissionTargetReviewerPolicy, type: :policy do
       let(:user) { regular_user }
     end
 
-    succeed "as an anonymous user" do
+    failed "as an anonymous user" do
       let(:user) { anonymous_user }
     end
   end
@@ -99,8 +99,8 @@ RSpec.describe SubmissionTargetReviewerPolicy, type: :policy do
     context "as an anonymous user" do
       let(:user) { anonymous_user }
 
-      it "includes accessible records" do
-        is_expected.to include(record)
+      it "excludes accessible records" do
+        is_expected.to exclude(record)
       end
     end
   end

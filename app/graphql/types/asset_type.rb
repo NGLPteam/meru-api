@@ -5,7 +5,7 @@ module Types
     include Types::BaseInterface
 
     implements ::GraphQL::Types::Relay::Node
-    implements ::Types::SluggableType
+    implements ::Support::GQL::SluggableType
 
     description "A generic asset type, implemented by all the more specific kinds"
 

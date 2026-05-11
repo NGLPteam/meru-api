@@ -2,7 +2,7 @@
 
 module Types
   # @see HarvestAttempt
-  class HarvestAttemptType < Types::AbstractModel
+  class HarvestAttemptType < Types::BaseModel
     description <<~TEXT
     A record of a single attempt at harvesting.
     TEXT

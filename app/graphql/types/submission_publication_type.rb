@@ -4,7 +4,7 @@ module Types
   # @see SubmissionPublication
   # @see ::Types::SubmissionPublicationConnectionType
   # @see ::Types::SubmissionPublicationEdgeType
-  class SubmissionPublicationType < Types::AbstractModel
+  class SubmissionPublicationType < Types::BaseModel
     description <<~TEXT
     The record of a `Submission`'s publication process.
     TEXT

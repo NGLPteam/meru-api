@@ -2,7 +2,7 @@
 
 module Types
   # @see ContributorCollectionAttribution
-  class ContributorCollectionAttributionType < Types::AbstractModel
+  class ContributorCollectionAttributionType < Types::BaseModel
     description <<~TEXT
     A specific attribution on a `Collection`.
     TEXT

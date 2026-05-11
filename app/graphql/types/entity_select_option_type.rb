@@ -11,7 +11,7 @@ module Types
 
     field :value, ID, null: false, method: :to_schematic_referent_value
 
-    field :slug, Types::SlugType, null: false, method: :system_slug
+    field :slug, Support::GQL::SlugType, null: false, method: :system_slug
 
     field :kind, Types::EntityKindType, null: false, method: :to_schematic_referent_kind
 

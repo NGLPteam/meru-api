@@ -99,8 +99,8 @@ RSpec.describe ContributorPolicy, type: :policy do
     context "as an anonymous user" do
       let(:user) { anonymous_user }
 
-      it "excludes all records" do
-        is_expected.to exclude(record)
+      it "includes all records" do
+        is_expected.to include(record)
       end
     end
   end

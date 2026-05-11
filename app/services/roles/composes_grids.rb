@@ -7,7 +7,7 @@ module Roles
     included do
       extend Dry::Core::ClassAttributes
 
-      include StoreModel::Model
+      include Support::EnhancedStoreModel
 
       # @!scope class
       # @!attribute [r] permission_grids
@@ -71,12 +71,6 @@ module Roles
     end
 
     module ClassMethods
-      # @see #build_with
-      # @return [Roles::ComposesGrids]
-      def allow_everything
-        build_with true
-      end
-
       # @!scope class
       # @!attribute [r] available_actions
       # @return [<String>]

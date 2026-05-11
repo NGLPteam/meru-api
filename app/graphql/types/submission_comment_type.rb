@@ -4,7 +4,7 @@ module Types
   # @see SubmissionComment
   # @see ::Types::SubmissionCommentConnectionType
   # @see ::Types::SubmissionCommentEdgeType
-  class SubmissionCommentType < Types::AbstractModel
+  class SubmissionCommentType < Types::BaseModel
     description <<~TEXT
     A comment on a `Submission`.
     TEXT

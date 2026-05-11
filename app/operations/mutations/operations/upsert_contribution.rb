@@ -7,9 +7,9 @@ module Mutations
 
       use_contract! :upsert_contribution
 
-      def call(contributable:, contributor:, **inputs)
-        authorize contributable, :update?
+      authorizes! :contributable, with: :update?
 
+      def call(contributable:, contributor:, **inputs)
         result = contributable.attach_contribution(contributor, **inputs)
 
         with_attached_result! :contribution, result

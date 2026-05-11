@@ -2,7 +2,7 @@
 
 module Types
   # @abstract
-  class BaseInputObject < GraphQL::Schema::InputObject
-    argument_class Types::BaseArgument
+  class BaseInputObject < ::Support::GQL::BaseInputObject
+    argument_class ::Types::BaseArgument
   end
 end

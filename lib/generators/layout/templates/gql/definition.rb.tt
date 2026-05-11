@@ -6,7 +6,7 @@
 module Types
   module Layouts
     # @see ::Layouts::<%= class_name %>Definition
-    class <%= class_name %>LayoutDefinitionType < AbstractModel
+    class <%= class_name %>LayoutDefinitionType < ::Types::BaseModel
       implements ::Types::LayoutDefinitionType
 
       field :templates, [Types::Any<%= class_name %>TemplateDefinitionType, { null: false }], null: false do

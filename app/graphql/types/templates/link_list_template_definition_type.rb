@@ -3,7 +3,7 @@
 module Types
   module Templates
     # @see ::Templates::LinkListDefinition
-    class LinkListTemplateDefinitionType < AbstractModel
+    class LinkListTemplateDefinitionType < ::Types::BaseModel
       implements ::Types::TemplateDefinitionType
 
       field :slots, ::Types::Templates::LinkListTemplateDefinitionSlotsType, null: false do

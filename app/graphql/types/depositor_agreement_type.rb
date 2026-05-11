@@ -4,7 +4,7 @@ module Types
   # @see DepositorAgreement
   # @see ::Types::DepositorAgreementConnectionType
   # @see ::Types::DepositorAgreementEdgeType
-  class DepositorAgreementType < Types::AbstractModel
+  class DepositorAgreementType < Types::BaseModel
     description <<~TEXT
     The record of an agreement accepted by a depositor for a given submission target.
     TEXT

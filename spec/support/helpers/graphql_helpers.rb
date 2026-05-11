@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
-require "test_prof/ext/active_record_refind"
-
-using TestProf::Ext::ActiveRecordRefind
+require_relative "current_user_helpers"
 
 module TestHelpers
   module GQL
@@ -184,47 +182,11 @@ module TestHelpers
           a << GQL::ERROR_FRAGMENT if error
         end.join("\n\n")
       end
-
-      def as_an_admin_user(&)
-        context "as an admin" do
-          let(:current_user) { admin_user }
-
-          instance_eval(&)
-        end
-      end
-
-      def as_a_regular_user(&)
-        context "as a regular user" do
-          let(:current_user) { regular_user }
-
-          instance_eval(&)
-        end
-      end
-
-      def as_an_anonymous_user(&)
-        context "as a anonymous user" do
-          let(:current_user) { anonymous_user }
-
-          instance_eval(&)
-        end
-      end
     end
   end
 end
 
 RSpec.shared_context "with default graphql context" do
-  let_it_be(:anonymous_user) { AnonymousUser.new }
-
-  let_it_be(:admin_user, refind: true) do
-    FactoryBot.create :user, :admin, given_name: "Admin", family_name: "User"
-  end
-
-  let_it_be(:regular_user, refind: true) do
-    FactoryBot.create :user, given_name: "Regular", family_name: "User"
-  end
-
-  let(:current_user) { anonymous_user }
-
   let(:token) { current_user.anonymous? ? nil : token_helper.build_token(from_user: current_user) }
 
   let(:query) { "" }
@@ -232,15 +194,11 @@ RSpec.shared_context "with default graphql context" do
   let(:graphql_variables) { {} }
 
   let(:operation_name) { nil }
-
-  before do
-    [admin_user, regular_user, current_user].each do |user|
-      Testing::Keycloak::GlobalRegistry.users.add_existing! user
-    end
-  end
 end
 
 RSpec.configure do |config|
+  TestHelpers::CurrentUser.attach_to!(config, type: :request)
+
   config.include TestHelpers::GraphQLRequest::ExampleHelpers, type: :request
   config.extend TestHelpers::GraphQLRequest::SpecHelpers, type: :request
   config.include_context "with default graphql context", type: :request

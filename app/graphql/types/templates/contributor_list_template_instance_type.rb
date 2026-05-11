@@ -3,7 +3,7 @@
 module Types
   module Templates
     # @see ::Templates::ContributorListInstance
-    class ContributorListTemplateInstanceType < AbstractModel
+    class ContributorListTemplateInstanceType < ::Types::BaseModel
       implements ::Types::TemplateInstanceType
       implements ::Types::TemplateHasContributionListType
 

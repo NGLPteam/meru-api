@@ -3,7 +3,7 @@
 module Harvesting
   module Testing
     module OAI
-      class EsploroRecord < Support::FrozenRecordHelpers::AbstractRecord
+      class EsploroRecord < ::ApplicationFrozenRecord
         include Harvesting::Testing::OAI::SampleRecord
 
         record_schema!("esploro") do

@@ -16,7 +16,7 @@ module Types
       description "The unique identifier for the `<%= model_name %>`."
     end
 
-    argument :slug, Types::SlugType, required: false do
+    argument :slug, Support::GQL::SlugType, required: false do
       description "The slug for the `<%= model_name %>`."
     end
   end

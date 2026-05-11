@@ -3,7 +3,7 @@
 module Types
   module Layouts
     # @see ::Layouts::HeroDefinition
-    class HeroLayoutDefinitionType < AbstractModel
+    class HeroLayoutDefinitionType < ::Types::BaseModel
       implements ::Types::LayoutDefinitionType
 
       field :templates, [Types::AnyHeroTemplateDefinitionType, { null: false }], null: false do

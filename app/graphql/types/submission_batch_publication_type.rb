@@ -4,7 +4,7 @@ module Types
   # @see SubmissionBatchPublication
   # @see ::Types::SubmissionBatchPublicationConnectionType
   # @see ::Types::SubmissionBatchPublicationEdgeType
-  class SubmissionBatchPublicationType < Types::AbstractModel
+  class SubmissionBatchPublicationType < Types::BaseModel
     description <<~TEXT
     The record of a batch publication of one or more submissions within a submission target.
     TEXT

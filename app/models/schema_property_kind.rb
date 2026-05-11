@@ -8,7 +8,7 @@
 # * `group`-type properties have the `group` kind and represent a special case,
 #   being a property that contains nested properties. There is only one level
 #   of nesting allowed.
-class SchemaPropertyKind < Support::FrozenRecordHelpers::AbstractRecord
+class SchemaPropertyKind < ::ApplicationFrozenRecord
   include Dry::Core::Equalizer.new(:name)
   include Dry::Core::Memoizable
 

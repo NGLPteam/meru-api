@@ -4,7 +4,7 @@
 # @see HierarchicalEntity
 class HierarchicalEntityPolicy < ApplicationPolicy
   pre_check :deny_anonymous!, except: %i[index? show? read_assets?]
-  pre_check :deny_submission_drafts!, only: %i[reparent? alter_schema_version?]
+  pre_check :deny_submission_drafts!, only: %i[reparent? alter_schema_version? create_collections? create_items? destroy?]
   pre_check :allow_any_admin!
   pre_check :allow_if_depositor_on_draft!, only: %i[read? show? update?]
 
@@ -24,13 +24,7 @@ class HierarchicalEntityPolicy < ApplicationPolicy
 
   def read? = has_permission?(:read)
 
-  def show?
-    return true if read?
-
-    return true unless record.respond_to?(:currently_visible?)
-
-    record.currently_visible?
-  end
+  def show? = record.currently_visible? || read?
 
   alias_rule :index?, to: :show?
 
@@ -97,17 +91,7 @@ class HierarchicalEntityPolicy < ApplicationPolicy
     AccessGrant.for_user(user).with_allowed_action?(name: action_name, entity: record)
   end
 
-  def show_full_entity_scope? = has_allowed_action?("admin.access")
-
-  def resolve_scope_for_authenticated(relation)
-    if show_full_entity_scope?
-      relation.all
-    else
-      relation.currently_visible
-    end
-  end
-
-  def resolve_scope_for_anonymous(relation)
-    relation.currently_visible
+  def resolve_scope_for_non_admin(relation)
+    relation.visible_to(user)
   end
 end

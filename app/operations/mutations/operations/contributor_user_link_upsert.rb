@@ -8,18 +8,14 @@ module Mutations
 
       use_contract! :contributor_user_link_upsert
 
-      authorizes! :contributor, with: :update?
+      authorizes! :contributor, with: :link_user?
 
       # @param [Contributor] contributor
       # @param [User] user
       # @param ["primary", "auxiliary"] linkage
       # @return [void]
       def call(contributor:, user:, linkage:, **)
-        link = ContributorUserLink.where(contributor:).first_or_initialize
-
-        assign_attributes!(link, user:, linkage:)
-
-        persist_model! link, attach_to: :contributor_user_link
+        with_attached_result! :contributor_user_link, contributor.link_user(user, linkage:)
 
         attach! :contributor, contributor.reload
         attach! :user, user.reload

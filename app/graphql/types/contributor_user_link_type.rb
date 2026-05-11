@@ -2,7 +2,7 @@
 
 module Types
   # @see ContributorUserLink
-  class ContributorUserLinkType < Types::AbstractModel
+  class ContributorUserLinkType < Types::BaseModel
     description <<~TEXT
     A link between a `Contributor` and a `User`, indicating that the user
     is represented within Meru as that record.

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class TemplatePropertyKind < Support::FrozenRecordHelpers::AbstractRecord
+class TemplatePropertyKind < ::ApplicationFrozenRecord
   include Dry::Core::Equalizer.new(:name)
 
   schema!(types: ::Templates::TypeRegistry) do

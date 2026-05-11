@@ -35,7 +35,7 @@ module Support
       end
 
       def add_enum!(enum_klass, single_key: nil, plural_key: nil)
-        single_type = Types::EnumClass[enum_klass].dry_type
+        single_type = Types::EnumType[enum_klass].dry_type
         plural_type = Types::Array.of(single_type).gql_type(enum_klass)
 
         single_key ||= enum_klass.graphql_name.underscore

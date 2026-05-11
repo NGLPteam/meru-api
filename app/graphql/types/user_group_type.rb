@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Types
-  class UserGroupType < Types::AbstractModel
+  class UserGroupType < Types::BaseModel
     implements Types::AccessGrantSubjectType
 
     description <<~TEXT

@@ -22,6 +22,7 @@ module Support
       defines :default_sql_values, type: Types::DefaultSQLValues
       defines :schema, type: Types::Schema.optional
       defines :sort_mapping, type: Types::Array.of(Types::String)
+      defines :type_registry, type: Types::TypeRegistry
 
       calculated_attributes EMPTY_HASH
 
@@ -34,6 +35,8 @@ module Support
       sort_mapping EMPTY_ARRAY
 
       scope :none, -> { where(_non_existing_: :match) }
+
+      type_registry Support::FrozenRecordHelpers::DefaultTypeRegistry
 
       # @see #slice
       # @param [<Symbol>] keys
@@ -147,7 +150,7 @@ module Support
         end
 
         # @return [void]
-        def schema!(types: ::Shared::TypeRegistry, &block)
+        def schema!(types: type_registry, &block)
           defined = Dry::Schema.Params do
             config.types = types
 

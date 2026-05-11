@@ -27,6 +27,16 @@ module Support
       def map_type!(key: Support::Types::Coercible::String, on: :Map)
         const_set on, Support::Types::Hash.map(key, const_get(:Type))
       end
+
+      # @param [Class] type_klass the GraphQL type class to generate a corresponding GraphQL type for
+      # @return [void]
+      def with_gql_type!(type_klass)
+        base_type = const_get(:Type)
+
+        remove_const(:Type)
+
+        const_set :Type, base_type.gql_type(type_klass)
+      end
     end
 
     class << self

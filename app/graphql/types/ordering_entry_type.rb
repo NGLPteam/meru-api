@@ -2,7 +2,7 @@
 
 module Types
   # The GraphQL representation of an {OrderingEntry}.
-  class OrderingEntryType < Types::AbstractModel
+  class OrderingEntryType < Types::BaseModel
     description "An entry within an ordering, it can refer to an entity or an entity link"
 
     field :ordering, "Types::OrderingType", null: false, description: "The parent ordering"
@@ -21,7 +21,7 @@ module Types
       TEXT
     end
 
-    field :entry_slug, Types::SlugType, null: true do
+    field :entry_slug, Support::GQL::SlugType, null: true do
       description <<~TEXT
       The delegated `slug` from the associated `entry`.
 

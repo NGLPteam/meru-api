@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # A frozen record describing each possible type that a schema property can have.
-class SchemaPropertyType < Support::FrozenRecordHelpers::AbstractRecord
+class SchemaPropertyType < ::ApplicationFrozenRecord
   include Dry::Core::Constants
   include Dry::Core::Equalizer.new(:name)
   include Dry::Core::Memoizable

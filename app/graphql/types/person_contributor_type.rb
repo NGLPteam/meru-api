@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Types
-  class PersonContributorType < Types::AbstractModel
+  class PersonContributorType < Types::BaseModel
     implements Types::ContributorType
 
     description <<~TEXT

@@ -12,8 +12,12 @@ module Resolvers
     def default_object_association_name
       if object.kind_of?(Contributor)
         :item_contributions
+      elsif object.kind_of?(Item)
+        :contributions
       else
+        # :nocov:
         super
+        # :nocov:
       end
     end
   end

@@ -3,7 +3,7 @@
 module Types
   module Templates
     # @see ::Templates::SupplementaryDefinition
-    class SupplementaryTemplateDefinitionType < AbstractModel
+    class SupplementaryTemplateDefinitionType < ::Types::BaseModel
       implements ::Types::TemplateDefinitionType
 
       field :slots, ::Types::Templates::SupplementaryTemplateDefinitionSlotsType, null: false do

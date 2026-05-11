@@ -3,10 +3,18 @@
 RSpec.describe CollectionContributionPolicy, type: :policy do
   include_context "policy setup"
 
+  let_it_be(:community, refind: true) { FactoryBot.create :community }
+
   let_it_be(:editor_role, refind: true) { FactoryBot.create :role, :editor }
 
-  let_it_be(:collection, refind: true) { FactoryBot.create :collection }
+  let_it_be(:reader_role, refind: true) { FactoryBot.create :role, :reader }
+
+  let_it_be(:collection, refind: true) { FactoryBot.create :collection, community: }
   let_it_be(:contributor, refind: true) { FactoryBot.create :contributor, :person }
+
+  let_it_be(:hidden_collection, refind: true) { FactoryBot.create :collection, :hidden, community: }
+
+  let_it_be(:hidden_collection_contribution, refind: true) { FactoryBot.create :collection_contribution, collection: hidden_collection, contributor: }
 
   let_it_be(:collection_contribution, refind: true) { FactoryBot.create :collection_contribution, collection:, contributor: }
 
@@ -22,6 +30,56 @@ RSpec.describe CollectionContributionPolicy, type: :policy do
     end
 
     succeed "as an anonymous user" do
+      let(:user) { anonymous_user }
+    end
+
+    context "when the contributable is hidden" do
+      let(:record) { hidden_collection_contribution }
+
+      succeed "as an admin" do
+        let(:user) { admin }
+      end
+
+      succeed "as an editor with an inherited role" do
+        before { grant_access! editor_role, on: community, to: user }
+      end
+
+      succeed "as a reader with an inherited role" do
+        before { grant_access! reader_role, on: community, to: user }
+      end
+
+      failed "as a regular user" do
+        let(:user) { regular_user }
+      end
+
+      failed "as an anonymous user" do
+        let(:user) { anonymous_user }
+      end
+    end
+  end
+
+  shared_examples_for "a permission that requires reader access to the collection" do
+    succeed "as an admin" do
+      let(:user) { admin }
+    end
+
+    succeed "as an editor" do
+      before do
+        grant_access! editor_role, on: collection, to: user
+      end
+    end
+
+    succeed "as a reader" do
+      before do
+        grant_access! reader_role, on: collection, to: user
+      end
+    end
+
+    failed "as a regular user" do
+      let(:user) { regular_user }
+    end
+
+    failed "as an anonymous user" do
       let(:user) { anonymous_user }
     end
   end
@@ -47,7 +105,7 @@ RSpec.describe CollectionContributionPolicy, type: :policy do
   end
 
   describe_rule :read? do
-    include_examples "a permission that requires update access to the collection"
+    include_examples "a permission that requires reader access to the collection"
   end
 
   describe_rule :show? do
@@ -79,9 +137,37 @@ RSpec.describe CollectionContributionPolicy, type: :policy do
       end
     end
 
+    context "as an editor with an inherited role" do
+      before { grant_access! editor_role, on: community, to: user }
+
+      it "includes accessible records" do
+        is_expected.to include(record)
+      end
+
+      it "includes hidden records" do
+        is_expected.to include(hidden_collection_contribution)
+      end
+    end
+
+    context "as a reader with an inherited role" do
+      before { grant_access! reader_role, on: community, to: user }
+
+      it "includes accessible records" do
+        is_expected.to include(record)
+      end
+
+      it "includes hidden records" do
+        is_expected.to include(hidden_collection_contribution)
+      end
+    end
+
     context "as a regular user" do
       it "includes accessible records" do
         is_expected.to include(record)
+      end
+
+      it "excludes inaccessible records" do
+        is_expected.not_to include(hidden_collection_contribution)
       end
     end
 
@@ -90,6 +176,10 @@ RSpec.describe CollectionContributionPolicy, type: :policy do
 
       it "includes accessible records" do
         is_expected.to include(record)
+      end
+
+      it "excludes inaccessible records" do
+        is_expected.not_to include(hidden_collection_contribution)
       end
     end
   end

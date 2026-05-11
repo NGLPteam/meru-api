@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class TemplateSlot < Support::FrozenRecordHelpers::AbstractRecord
+class TemplateSlot < ::ApplicationFrozenRecord
   include Templates::Config::SourcedByTemplateKind
 
   schema!(types: ::Templates::TypeRegistry) do

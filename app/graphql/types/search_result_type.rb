@@ -4,7 +4,7 @@ module Types
   # @see Resolvers::SearchResultResolver
   class SearchResultType < Types::BaseObject
     implements ::GraphQL::Types::Relay::Node
-    implements ::Types::SluggableType
+    implements ::Support::GQL::SluggableType
 
     description <<~TEXT
     An entity that's the result of a search.
@@ -34,7 +34,7 @@ module Types
       TEXT
     end
 
-    field :slug, Types::SlugType, null: false do
+    field :slug, Support::GQL::SlugType, null: false do
       description <<~TEXT
       The slug for the entity.
       TEXT

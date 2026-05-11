@@ -3,7 +3,7 @@
 module Types
   module Layouts
     # @see ::Layouts::MetadataDefinition
-    class MetadataLayoutDefinitionType < AbstractModel
+    class MetadataLayoutDefinitionType < ::Types::BaseModel
       implements ::Types::LayoutDefinitionType
 
       field :templates, [Types::AnyMetadataTemplateDefinitionType, { null: false }], null: false do

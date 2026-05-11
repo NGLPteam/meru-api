@@ -3,7 +3,7 @@
 module Types
   module Templates
     # @see ::Templates::NavigationInstance
-    class NavigationTemplateInstanceType < AbstractModel
+    class NavigationTemplateInstanceType < ::Types::BaseModel
       implements ::Types::TemplateInstanceType
 
       field :definition, ::Types::Templates::NavigationTemplateDefinitionType, null: false do

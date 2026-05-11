@@ -4,7 +4,7 @@ module Types
   # @see SubmissionPublicationTransition
   # @see ::Types::SubmissionPublicationTransitionConnectionType
   # @see ::Types::SubmissionPublicationTransitionEdgeType
-  class SubmissionPublicationTransitionType < Types::AbstractModel
+  class SubmissionPublicationTransitionType < Types::BaseModel
     description <<~TEXT
     A transition for a `SubmissionPublication`.
     TEXT

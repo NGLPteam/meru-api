@@ -6,26 +6,46 @@ module SubmissionTargets
     include Dry::Initializer[undefined: false].define -> do
       param :configurable, SubmissionTargets::Types::Configurable
 
-      option :deposit_mode, SubmissionTargets::Types::DepositMode, default: -> { "direct" }
+      option :entity, SubmissionTargets::Types::Entity, default: -> do
+        case configurable
+        in HierarchicalEntity then configurable
+        in SubmissionTarget then configurable.entity
+        else
+          # :nocov:
+          raise "Unexpected configurable type: #{configurable.class}"
+          # :nocov:
+        end
+      end
 
-      option :deposit_targets, SubmissionTargets::Types::DepositTargets, default: -> { [] }
+      option :submission_target, SubmissionTargets::Types::SubmissionTarget, default: -> do
+        case configurable
+        in SubmissionTarget
+          configurable
+        in HierarchicalEntity
+          configurable.fetch_submission_target!
+        else
+          # :nocov:
+          raise "Unexpected configurable type: #{configurable.class}"
+          # :nocov:
+        end
+      end
 
-      option :schema_versions, SubmissionTargets::Types::SchemaVersions, default: -> { [] }
+      option :deposit_mode, SubmissionTargets::Types::DepositMode, default: -> { submission_target.deposit_mode }
 
-      option :agreement_content, Types::String, optional: true
+      option :deposit_targets, SubmissionTargets::Types::DepositTargets, default: -> { submission_target.deposit_targets }
 
-      option :agreement_required, Types::Params::Bool, default: -> { false }
+      option :schema_versions, SubmissionTargets::Types::SchemaVersions, default: -> { submission_target.schema_versions }
 
-      option :description, Types::Hash, default: -> { {} }
+      option :agreement_content, Types::String, default: proc { submission_target.agreement_content }
+
+      option :agreement_required, Types::Params::Bool, default: -> { submission_target.agreement_required }
+
+      option :auto_approve_depositors, Types::Params::Bool, default: -> { submission_target.auto_approve_depositors }
+
+      option :description, Types::Hash, default: -> { submission_target.description.as_json || Dry::Core::Constants::EMPTY_HASH }
     end
 
     standard_execution!
-
-    # @return [HierarchicalEntity]
-    attr_reader :entity
-
-    # @return [SubmissionTarget]
-    attr_reader :submission_target
 
     # @return [Dry::Monads::Success(SubmissionTarget)]
     def call
@@ -39,16 +59,15 @@ module SubmissionTargets
     end
 
     wrapped_hook! def prepare
-      @entity, @submission_target = extract_configurable
-
-      @attrs = {
+      attrs = {
         deposit_mode:,
         agreement_content:,
         agreement_required:,
+        auto_approve_depositors:,
         description:,
       }
 
-      @submission_target.assign_attributes(@attrs)
+      submission_target.assign_attributes(attrs)
 
       super
     end
@@ -67,18 +86,6 @@ module SubmissionTargets
       submission_target.save!
 
       super
-    end
-
-    private
-
-    # @return [(HierarchicalEntity, SubmissionTarget)]
-    def extract_configurable
-      case configurable
-      in SubmissionTarget => submission_target
-        [submission_target.entity, submission_target]
-      else
-        [configurable, configurable.fetch_submission_target!]
-      end
     end
   end
 end

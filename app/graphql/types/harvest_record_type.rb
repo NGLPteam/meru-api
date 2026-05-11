@@ -2,7 +2,7 @@
 
 module Types
   # @see HarvestRecord
-  class HarvestRecordType < Types::AbstractModel
+  class HarvestRecordType < Types::BaseModel
     description <<~TEXT
     An object representing a single record in the `HarvestSource`.
     It can produce one or more harvest entities.

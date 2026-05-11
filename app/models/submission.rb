@@ -53,6 +53,13 @@ class Submission < ApplicationRecord
     # :nocov:
   end
 
+  # @see Submissions::AttachContributions
+  # @see Submissions::ContributionsAttacher
+  # @return [Dry::Monads::Result]
+  monadic_operation! def attach_contributions
+    call_operation("submissions.attach_contributions", self)
+  end
+
   # @note Called during rejection.
   # @see Submissions::Cleaner
   # @see Submissions::CleanUp
@@ -77,6 +84,13 @@ class Submission < ApplicationRecord
 
   # @return [Submissions::Status]
   def current_status = Submissions::Status.new(self)
+
+  # @see Submissions::EnforceAuthor
+  # @see Submissions::AuthorEnforcer
+  # @return [Dry::Monads::Success(void)]
+  monadic_operation! def enforce_author
+    call_operation("submissions.enforce_author", self)
+  end
 
   # @see Submissions::Publish
   # @see Submissions::Publisher

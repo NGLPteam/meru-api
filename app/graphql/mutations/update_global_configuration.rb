@@ -19,6 +19,10 @@ module Mutations
       TEXT
     end
 
+    argument :contributors, Types::Settings::ContributorsSettingsInputType, required: false do
+      description "Possible new settings for contributors"
+    end
+
     argument :depositing, Types::Settings::DepositingSettingsInputType, required: false do
       description "Possible new settings for depositing behavior"
     end

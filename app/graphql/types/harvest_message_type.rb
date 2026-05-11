@@ -2,7 +2,7 @@
 
 module Types
   # @see HarvestMessage
-  class HarvestMessageType < Types::AbstractModel
+  class HarvestMessageType < Types::BaseModel
     description <<~TEXT
     A single log message recorded during some aspect of harvesting.
     TEXT

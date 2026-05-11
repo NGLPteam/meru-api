@@ -3,7 +3,7 @@
 module Types
   module Layouts
     # @see ::Layouts::NavigationDefinition
-    class NavigationLayoutDefinitionType < AbstractModel
+    class NavigationLayoutDefinitionType < ::Types::BaseModel
       implements ::Types::LayoutDefinitionType
 
       field :templates, [Types::AnyNavigationTemplateDefinitionType, { null: false }], null: false do

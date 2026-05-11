@@ -4,7 +4,7 @@ module Types
   # @see SubmissionReviewTransition
   # @see ::Types::SubmissionReviewTransitionConnectionType
   # @see ::Types::SubmissionReviewTransitionEdgeType
-  class SubmissionReviewTransitionType < Types::AbstractModel
+  class SubmissionReviewTransitionType < Types::BaseModel
     description <<~TEXT
     A transition for a `SubmissionReview`.
     TEXT

@@ -4,7 +4,7 @@ module Types
   # @see Submission
   # @see ::Types::SubmissionConnectionType
   # @see ::Types::SubmissionEdgeType
-  class SubmissionType < Types::AbstractModel
+  class SubmissionType < Types::BaseModel
     description <<~TEXT
     A submission against a `SubmissionTarget`, representing a single attempt
     to deposit an entity into the system.

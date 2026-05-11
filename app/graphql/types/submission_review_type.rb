@@ -4,7 +4,7 @@ module Types
   # @see SubmissionReview
   # @see ::Types::SubmissionReviewConnectionType
   # @see ::Types::SubmissionReviewEdgeType
-  class SubmissionReviewType < Types::AbstractModel
+  class SubmissionReviewType < Types::BaseModel
     description <<~TEXT
     A review of a `Submission` by a specific reviewer.
     TEXT

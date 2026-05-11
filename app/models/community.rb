@@ -69,5 +69,13 @@ class Community < ApplicationRecord
     # @note compatibility with {Submittable} implementations
     # @return [ActiveRecord::Relation<Community>]
     def sans_drafts = all
+
+    # @note Compatibility with {ChecksContextualPermissions#visible_to}. Communities are always visible.
+    # @return [ActiveRecord::Relation<Community>]
+    def visible_to(...) = all
+
+    # @note Compatibility with {Submittable} implementations. Communities cannot be drafts.
+    # @return [ActiveRecord::Relation<Community>]
+    def with_drafts = all
   end
 end
