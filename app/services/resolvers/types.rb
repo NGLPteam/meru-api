@@ -5,11 +5,6 @@ module Resolvers
   module Types
     extend ::Support::Typespace
 
-    # A filter scope for use in GraphQL resolvers.
-    #
-    # @see Filtering::FilterScope
-    FilterScopeKlass = Inherits(::Filtering::FilterScope)
-
     # A reorderer for use in GraphQL resolvers.
     #
     # We reorder some params for better display and introspection,

@@ -3,7 +3,7 @@
 module Types
   module Templates
     # @see ::Templates::HeroDefinition
-    class HeroTemplateDefinitionType < AbstractModel
+    class HeroTemplateDefinitionType < ::Types::BaseModel
       implements ::Types::TemplateDefinitionType
 
       field :slots, ::Types::Templates::HeroTemplateDefinitionSlotsType, null: false do

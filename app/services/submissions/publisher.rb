@@ -16,6 +16,9 @@ module Submissions
 
     delegate :entity, to: :submission
 
+    # @return [Role]
+    attr_reader :author_role
+
     # @return [SubmissionPublication]
     attr_reader :submission_publication
 
@@ -33,6 +36,8 @@ module Submissions
     wrapped_hook! def prepare
       @submission_publication = provided_publication || submission.submission_publications.find_or_create_by!(user:)
 
+      @author_role = Role.fetch(:author)
+
       super
     end
 
@@ -41,13 +46,15 @@ module Submissions
 
       handle_state_transitions!
 
+      remove_author_role!
+
       super
     end
 
     around_try_to_publish :wrap_in_transaction!
 
     wrapped_hook! def publish_entity
-      try_to_publish!
+      yield try_to_publish!
 
       super
     rescue StandardError => e
@@ -74,6 +81,11 @@ module Submissions
       submission_publication.transition_to!(:success)
 
       submission.transition_to!(:published)
+    end
+
+    # @return [void]
+    def remove_author_role!
+      MeruAPI::Container["access.revoke"].(author_role, on: entity, to: submission.user)
     end
 
     def wrap_in_transaction!

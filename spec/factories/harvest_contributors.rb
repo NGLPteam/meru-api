@@ -2,6 +2,8 @@
 
 FactoryBot.define do
   factory :harvest_contributor do
+    association :harvest_source
+
     identifier { SecureRandom.uuid }
 
     email { Faker::Internet.email }

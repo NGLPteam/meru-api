@@ -5,7 +5,7 @@ module Types
   # @see SubmissionTransitionPolicy
   # @see ::Types::SubmissionTransitionConnectionType
   # @see ::Types::SubmissionTransitionEdgeType
-  class SubmissionTransitionType < Types::AbstractModel
+  class SubmissionTransitionType < Types::BaseModel
     description <<~TEXT
     A transition for a `Submission`.
     TEXT

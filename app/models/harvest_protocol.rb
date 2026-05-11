@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # A model that represents supported protocols for harvesting in Meru.
-class HarvestProtocol < Support::FrozenRecordHelpers::AbstractRecord
+class HarvestProtocol < ::ApplicationFrozenRecord
   include Dry::Core::Equalizer.new(:name)
   include Dry::Core::Memoizable
 

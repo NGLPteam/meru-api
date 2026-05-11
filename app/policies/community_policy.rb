@@ -11,8 +11,4 @@ class CommunityPolicy < HierarchicalEntityPolicy
   def update? = has_allowed_action?("communities.update") || super
 
   def destroy? = has_allowed_action?("communities.delete") || super
-
-  private
-
-  def show_full_entity_scope? = has_allowed_action?("communities.read") || super
 end

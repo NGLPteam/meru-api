@@ -16,11 +16,13 @@ module Contribution
     defines :contributables_key, type: Contributions::Types::ContributablesKey
     defines :contributable_foreign_key, type: Contributions::Types::ContributableForeignKey
     defines :contributable_klass_name, type: Contributions::Types::ContributableKlassName
+    defines :contributable_unique_by, type: Contributions::Types::UniqueByTuple
 
     contributable_key :"#{model_name.singular[/\A(.+)_contribution\z/, 1]}"
     contributables_key contributable_key.to_s.pluralize.to_sym
     contributable_foreign_key :"#{contributable_key}_id"
     contributable_klass_name model_name.to_s[/\A(.+)Contribution\z/, 1]
+    contributable_unique_by [:contributor_id, contributable_foreign_key, :role_id].freeze
 
     belongs_to :role, class_name: "ControlledVocabularyItem", inverse_of: table_name
 
@@ -33,6 +35,8 @@ module Contribution
     delegate :kind, to: :contributor, prefix: true
 
     scope :authors, -> { where(role_id: ControlledVocabularyItem.tagged_with("author").select(:id)) }
+
+    scope :currently_visible, -> { joins(contributable_key).merge(target_klass.currently_visible) }
 
     scope :in_default_contributor_order, -> { joins(:contributor).merge(Contributor.in_default_order) }
 
@@ -49,49 +53,35 @@ module Contribution
 
   # @!attribute [r] contributable
   # @return [Contributable]
-  def contributable
-    __send__(contributable_key)
-  end
+  def contributable = __send__(contributable_key)
 
   # @!attribute [r] contributable_key
   # @return [Contributions::Types::ContributableKey]
-  def contributable_key
-    self.class.contributable_key
-  end
+  def contributable_key = self.class.contributable_key
 
   # @!attribute [r] contributable_foreign_key
   # @return [Contributions::Types::ContributableForeignKey]
-  def contributable_foreign_key
-    self.class.contributable_foreign_key
-  end
+  def contributable_foreign_key = self.class.contributable_foreign_key
 
   # @!attribute [r] contributable_klass_name
   # @return [Contributions::Types::ContributionKlassName]
-  def contributable_klass_name
-    self.class.contributable_klass_name
-  end
+  def contributable_klass_name = self.class.contributable_klass_name
+
+  # @!attribute [r] contributable_unique_by
+  # @return [(Symbol, Symbol, Symbol)]
+  def contributable_unique_by = self.class.contributable_unique_by
 
   # @!attribute [r] contributables_key
   # @return [Contributions::Types::ContributablesKey]
-  def contributables_key
-    self.class.contributables_key
-  end
+  def contributables_key = self.class.contributables_key
 
-  def display_name
-    overridable_contributor_attribute :display_name
-  end
+  def display_name = overridable_contributor_attribute :display_name
 
-  def affiliation
-    overridable_contributor_attribute :affiliation, kind: :person
-  end
+  def affiliation = overridable_contributor_attribute :affiliation, kind: :person
 
-  def title
-    overridable_contributor_attribute :title, kind: :person
-  end
+  def title = overridable_contributor_attribute :title, kind: :person
 
-  def location
-    overridable_contributor_attribute :location, kind: :organization
-  end
+  def location = overridable_contributor_attribute :location, kind: :organization
 
   # @see Attributions::Collections::Manage
   # @see Attributions::Items::Manage
@@ -100,6 +90,22 @@ module Contribution
     options = { contributable_key => __send__(contributable_key) }
 
     call_operation("attributions.#{contributables_key}.manage", **options)
+  end
+
+  # @return [Hash{Symbol => Object}]
+  def to_copy_tuple
+    metadata = self.metadata.as_json
+
+    {
+      contributable_foreign_key => __send__(contributable_foreign_key),
+      role_id:,
+      kind:,
+      metadata:,
+      inner_position:,
+      outer_position:,
+      created_at:,
+      updated_at: Time.current,
+    }
   end
 
   private
@@ -160,6 +166,15 @@ module Contribution
         end
 
       base.preloaded_for_record_loading.limit(limit).in_default_contributor_order
+    end
+
+    # @param [User, AnonymousUser] user
+    # @return [ActiveRecord::Relation<HierarchicalEntity>]
+    def visible_to(user)
+      return currently_visible if user.blank? || user.anonymous? || user.new_record?
+      return all if user.has_global_admin_access?
+
+      where(contributable_foreign_key => target_klass.visible_to(user).select(:id))
     end
 
     def preloaded_for_record_loading

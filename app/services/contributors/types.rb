@@ -6,6 +6,8 @@ module Contributors
 
     ORCID_FORMAT = %r,\Ahttps://orcid.org/(?<identifier>\d{4}(?:-\d{4}){3})\z,
 
+    Contributor = ModelInstance("Contributor")
+
     ORCID = String.constrained(format: ORCID_FORMAT)
 
     Kind = Coercible::Symbol.enum(:organization, :person)
@@ -13,7 +15,7 @@ module Contributors
     # @see Types::ContributorLookupFieldType
     LookupField = Symbol.enum(:email, :name, :orcid)
 
-    # @see Types::SimpleOrderType
+    # @see Support::GQL::SimpleOrderType
     LookupOrder = String.enum("RECENT", "OLDEST").fallback("RECENT").default("RECENT")
 
     PresentString = Coercible::String.constrained(rails_present: true)
@@ -36,5 +38,9 @@ module Contributors
     end.constrained(type: Namae::Name)
 
     AnyName = PersonalName | OrganizationName
+
+    User = ModelInstance("User")
+
+    UserLinkage = ApplicationRecord.dry_pg_enum(:contributor_user_linkage, default: "primary").fallback("primary")
   end
 end

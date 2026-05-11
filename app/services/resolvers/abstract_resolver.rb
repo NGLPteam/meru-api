@@ -56,7 +56,7 @@ module Resolvers
     # @!scope class
     # The {Filtering::FilterScope} class to use for filtering.
     # @return [Class<Filtering::FilterScope>, nil]
-    defines :filter_scope_klass, type: Resolvers::Types::FilterScopeKlass.optional
+    defines :filter_scope_klass, type: ::Filtering::FilterScope::Subclass.optional
 
     # @!attribute [r] model_klass
     # @!scope class

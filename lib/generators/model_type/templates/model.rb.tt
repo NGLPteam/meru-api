@@ -9,7 +9,7 @@ module Types
   # @see <%= full_connection_type_name %>
   # @see <%= full_edge_type_name %>
   <%- end -%>
-  class <%= graphql_type_name %> < Types::AbstractModel
+  class <%= graphql_type_name %> < Types::BaseModel
     description <<~TEXT
     A database-backed model.
     TEXT

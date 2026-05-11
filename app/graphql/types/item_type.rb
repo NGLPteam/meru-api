@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Types
-  class ItemType < Types::AbstractModel
+  class ItemType < Types::BaseModel
     implements Types::AccessibleType
     implements Types::AttributableType
     implements Types::EntityType

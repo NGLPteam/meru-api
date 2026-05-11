@@ -3,7 +3,7 @@
 module Types
   module Templates
     # @see ::Templates::DescendantListDefinition
-    class DescendantListTemplateDefinitionType < AbstractModel
+    class DescendantListTemplateDefinitionType < ::Types::BaseModel
       implements ::Types::TemplateDefinitionType
 
       field :slots, ::Types::Templates::DescendantListTemplateDefinitionSlotsType, null: false do

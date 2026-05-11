@@ -2,7 +2,7 @@
 
 module Types
   # @see CollectionAttribution
-  class CollectionAttributionType < Types::AbstractModel
+  class CollectionAttributionType < Types::BaseModel
     description <<~TEXT
     Attributions for collections.
     TEXT

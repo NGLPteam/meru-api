@@ -6,7 +6,7 @@ module Contributions
   # @see Contributions::Attach
   class Attacher < Support::HookBased::Actor
     include Dry::Initializer[undefined: false].define -> do
-      param :contributor, Contributions::Types::Contributor
+      param :contributor, Contributions::Types::Contributor, as: :provided_contributor
 
       param :contributable, Contributions::Types::Contributable
 
@@ -18,6 +18,9 @@ module Contributions
     end
 
     standard_execution!
+
+    # @return [::Contributor]
+    attr_reader :contributor
 
     # @return [::Contribution]
     attr_reader :contribution
@@ -54,6 +57,8 @@ module Contributions
     end
 
     wrapped_hook! def prepare
+      @contributor = provided_contributor.to_attach
+
       @role = provided_role || call_operation!("contribution_roles.fetch_default", contributable:)
 
       @tuple = build_tuple

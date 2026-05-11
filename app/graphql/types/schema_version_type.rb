@@ -2,7 +2,7 @@
 
 module Types
   # @see SchemaVersion
-  class SchemaVersionType < Types::AbstractModel
+  class SchemaVersionType < Types::BaseModel
     disable_auth_checks!
 
     description <<~TEXT
@@ -37,7 +37,7 @@ module Types
       TEXT
     end
 
-    field :enforced_parent_declarations, [Types::SlugType, { null: false }], null: false do
+    field :enforced_parent_declarations, [Support::GQL::SlugType, { null: false }], null: false do
       description <<~TEXT
       Declarations / slugs for `enforcedParentVersions`.
       TEXT
@@ -63,7 +63,7 @@ module Types
       TEXT
     end
 
-    field :enforced_child_declarations, [Types::SlugType, { null: false }], null: false do
+    field :enforced_child_declarations, [Support::GQL::SlugType, { null: false }], null: false do
       description <<~TEXT
       Declarations / slugs for `enforcedChildVersions`.
       TEXT

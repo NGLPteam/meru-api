@@ -3,7 +3,7 @@
 module Types
   module Templates
     # @see ::Templates::ListItemDefinition
-    class ListItemTemplateDefinitionType < AbstractModel
+    class ListItemTemplateDefinitionType < ::Types::BaseModel
       implements ::Types::TemplateDefinitionType
 
       field :slots, ::Types::Templates::ListItemTemplateDefinitionSlotsType, null: false do

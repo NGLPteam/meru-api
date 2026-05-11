@@ -3,7 +3,7 @@
 module Types
   # @see AnonymousUser
   # @see User
-  class UserType < Types::AbstractModel
+  class UserType < Types::BaseModel
     implements Types::AccessGrantSubjectType
     implements Types::ExposesPermissionsType
 
@@ -96,6 +96,20 @@ module Types
       For the actual link records, see `User.contributorLinks`.
       TEXT
     end
+
+    expose_authorization_rule :access_admin?, <<~TEXT
+    Whether this user has access to the admin section of Meru.
+
+    Only a `viewer` with admin access will be able to see the actual
+    result of this auth check.
+    TEXT
+
+    expose_authorization_rule :claim_contributor?, <<~TEXT
+    Whether this user has the ability to claim an unclaimed contributor profile as their own.
+
+    This requires both that the user has permission to manage the system broadly,
+    and that they do not already have a contributor profile linked to their account.
+    TEXT
 
     expose_authorization_rule :receive_review_requests?, <<~TEXT
     Whether this user is a reviewer on **any** submission targets, and should see information about

@@ -3,7 +3,7 @@
 module Types
   module Templates
     # @see ::Templates::NavigationDefinition
-    class NavigationTemplateDefinitionType < AbstractModel
+    class NavigationTemplateDefinitionType < ::Types::BaseModel
       implements ::Types::TemplateDefinitionType
 
       field :slots, ::Types::Templates::NavigationTemplateDefinitionSlotsType, null: false do

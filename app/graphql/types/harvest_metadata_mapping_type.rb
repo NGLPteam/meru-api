@@ -2,7 +2,7 @@
 
 module Types
   # @see HarvestMetadataMapping
-  class HarvestMetadataMappingType < Types::AbstractModel
+  class HarvestMetadataMappingType < Types::BaseModel
     description <<~TEXT
     An advanced definition that allows mapping specific existing entities to act as parents
     for certain harvested entities, based on their metadata matching a specific mapping.

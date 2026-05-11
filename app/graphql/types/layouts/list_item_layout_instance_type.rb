@@ -3,7 +3,7 @@
 module Types
   module Layouts
     # @see ::Layouts::ListItemInstance
-    class ListItemLayoutInstanceType < AbstractModel
+    class ListItemLayoutInstanceType < ::Types::BaseModel
       implements ::Types::LayoutInstanceType
 
       field :layout_definition, Types::Layouts::ListItemLayoutDefinitionType, null: false do

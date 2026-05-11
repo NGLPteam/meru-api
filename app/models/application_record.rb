@@ -2,10 +2,11 @@
 
 # @abstract The base model for the Meru API.
 class ApplicationRecord < ActiveRecord::Base
-  self.abstract_class = true
+  primary_abstract_class
 
   extend ArelHelpers
   extend DefinesMonadicOperation
+
   include AssociationHelpers
   include CountFromSubquery
   include DistinctOnOrderValues
@@ -33,14 +34,6 @@ class ApplicationRecord < ActiveRecord::Base
     # @note Only in tests
     def default_factory
       model_name.i18n_key
-    end
-
-    def arel_text_contains(field, value)
-      arel_table[field].matches("%#{escape_ilike_needle(value)}%")
-    end
-
-    def escape_ilike_needle(needle)
-      needle.gsub("%", "\\%").gsub("_", "\\_")
     end
 
     # @param [<ApplicationRecord>] records

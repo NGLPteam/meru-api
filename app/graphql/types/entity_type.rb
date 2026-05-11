@@ -5,8 +5,10 @@ module Types
     include Types::BaseInterface
 
     implements ::GraphQL::Types::Relay::Node
+    implements ::Support::GQL::CommonPermissionsType
+    implements ::Support::GQL::SluggableType
+
     implements ::Types::AccessibleType
-    implements ::Types::CommonPermissionsType
     implements ::Types::EntityBaseType
     implements ::Types::EntityContextualPermissionsType
     implements ::Types::EntityPermissionsType
@@ -14,14 +16,15 @@ module Types
     implements ::Types::HasEntityBreadcrumbs
     implements ::Types::HasSchemaPropertiesType
     implements ::Types::SearchableType
-    implements ::Types::SluggableType
 
-    description "An entity that exists in the hierarchy."
+    description <<~TEXT
+    An entity that exists in the hierarchy.
+    TEXT
 
     field :announcement, Types::AnnouncementType, null: true do
       description "Look up an announcement for this entity by slug"
 
-      argument :slug, SlugType, required: true
+      argument :slug, ::Support::GQL::SlugType, required: true
     end
 
     field :announcements, resolver: Resolvers::AnnouncementResolver do
@@ -81,7 +84,7 @@ module Types
     field :ordering_for_schema, Types::OrderingType, null: true do
       description "Look up an ordering that is set up to handle a specific schema."
 
-      argument :slug, Types::SlugType, required: true do
+      argument :slug, Support::GQL::SlugType, required: true do
         description "This should be of the `namespace:identifier` format."
       end
     end

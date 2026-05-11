@@ -2,7 +2,7 @@
 
 # @see SubmissionTargetReviewer
 class SubmissionTargetReviewerPolicy < ApplicationPolicy
-  always_readable!
+  authenticated_readable!
 
   def create? = allowed_to?(:manage_reviewers?, record.submission_target)
 

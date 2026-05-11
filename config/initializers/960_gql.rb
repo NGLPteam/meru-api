@@ -6,6 +6,8 @@ end
 
 ActiveSupport::Notifications.subscribe(/graphql/) do |event|
   # :nocov:
+  next unless event.respond_to?(:duration) && event.duration.present?
+
   name = event.name
 
   duration = event.duration.round(2)

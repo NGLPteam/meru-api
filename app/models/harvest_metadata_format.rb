@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # A model that represents supported metadata formats for harvesting in Meru.
-class HarvestMetadataFormat < Support::FrozenRecordHelpers::AbstractRecord
+class HarvestMetadataFormat < ::ApplicationFrozenRecord
   include Dry::Core::Equalizer.new(:name)
   include Dry::Core::Memoizable
 

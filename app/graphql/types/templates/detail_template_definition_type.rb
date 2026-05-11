@@ -3,7 +3,7 @@
 module Types
   module Templates
     # @see ::Templates::DetailDefinition
-    class DetailTemplateDefinitionType < AbstractModel
+    class DetailTemplateDefinitionType < ::Types::BaseModel
       implements ::Types::TemplateDefinitionType
 
       field :slots, ::Types::Templates::DetailTemplateDefinitionSlotsType, null: false do

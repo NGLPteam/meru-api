@@ -3,7 +3,7 @@
 # @see SchemaDefinition
 # @see SchemaVersion
 # @see StaticSchemaDefinition
-class StaticSchemaVersion < Support::FrozenRecordHelpers::AbstractRecord
+class StaticSchemaVersion < ::ApplicationFrozenRecord
   include ActiveModel::Validations
   include Dry::Core::Equalizer.new(:declaration)
   include Dry::Core::Memoizable

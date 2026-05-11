@@ -2,7 +2,7 @@
 
 module Types
   # @see TemplateInstanceSibling
-  class TemplateInstanceSiblingType < Types::AbstractModel
+  class TemplateInstanceSiblingType < Types::BaseModel
     description <<~TEXT
     A brief detail about a template instance's siblings, to help with finessing certain style concerns.
 

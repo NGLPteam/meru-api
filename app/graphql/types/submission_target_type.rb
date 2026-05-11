@@ -4,7 +4,7 @@ module Types
   # @see SubmissionTarget
   # @see ::Types::SubmissionTargetConnectionType
   # @see ::Types::SubmissionTargetEdgeType
-  class SubmissionTargetType < Types::AbstractModel
+  class SubmissionTargetType < Types::BaseModel
     description <<~TEXT
     A submission target is a subject of an `Entity`, specifying information about whether
     or not it can have new entities deposited to it.
@@ -54,6 +54,13 @@ module Types
       TEXT
     end
 
+    field :agreement_content_with_fallback, String, null: true do
+      description <<~TEXT
+      The content of the agreement that must be agreed to before depositing to this submission target,
+      falling back to the global agreement if this submission target doesn't have its own agreement content.
+      TEXT
+    end
+
     field :agreement_required, Boolean, null: false do
       description <<~TEXT
       Whether or not this submission target requires agreement to an agreement before depositing.
@@ -75,6 +82,12 @@ module Types
     field :description, ::Types::SubmissionTargetDescriptionType, null: false do
       description <<~TEXT
       A description of this submission target, which may include a human-readable title and/or a machine-readable schema.org description.
+      TEXT
+    end
+
+    field :reviewers, resolver: ::Resolvers::SubmissionTargetReviewerResolver, null: false do
+      description <<~TEXT
+      The reviewers that are assigned to review this submission target.
       TEXT
     end
 

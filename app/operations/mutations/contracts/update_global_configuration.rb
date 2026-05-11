@@ -11,8 +11,14 @@ module Mutations
           optional(:other_item).value(:controlled_vocabulary_item)
         end
 
+        optional(:contributors).maybe(:hash) do
+          required(:claimable).value(:bool)
+          required(:owner_updatable).value(:bool)
+        end
+
         optional(:depositing).maybe(:hash) do
           required(:agreement).value(:safe_string)
+          required(:enabled).value(:bool)
         end
 
         optional(:entities).maybe(:hash) do

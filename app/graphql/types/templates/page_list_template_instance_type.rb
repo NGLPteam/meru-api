@@ -3,7 +3,7 @@
 module Types
   module Templates
     # @see ::Templates::PageListInstance
-    class PageListTemplateInstanceType < AbstractModel
+    class PageListTemplateInstanceType < ::Types::BaseModel
       implements ::Types::TemplateInstanceType
 
       field :definition, ::Types::Templates::PageListTemplateDefinitionType, null: false do

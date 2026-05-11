@@ -256,6 +256,27 @@ CREATE TYPE public.contributor_list_filter AS ENUM (
 
 
 --
+-- Name: contributor_merge_source_status; Type: TYPE; Schema: public; Owner: -
+--
+
+CREATE TYPE public.contributor_merge_source_status AS ENUM (
+    'unmerged',
+    'merging',
+    'merged'
+);
+
+
+--
+-- Name: contributor_merge_target_status; Type: TYPE; Schema: public; Owner: -
+--
+
+CREATE TYPE public.contributor_merge_target_status AS ENUM (
+    'inactive',
+    'active'
+);
+
+
+--
 -- Name: contributor_user_linkage; Type: TYPE; Schema: public; Owner: -
 --
 
@@ -784,6 +805,7 @@ CREATE TYPE public.role_identifier AS ENUM (
     'editor',
     'reviewer',
     'depositor',
+    'author',
     'reader'
 );
 
@@ -1285,6 +1307,7 @@ WHEN 'manager' THEN 20000
 WHEN 'editor' THEN -20000
 WHEN 'reviewer' THEN -30000
 WHEN 'depositor' THEN -35000
+WHEN 'author' THEN -37500
 WHEN 'reader' THEN -40000
 END;
 $_$;
@@ -4800,7 +4823,11 @@ CREATE TABLE public.contributors (
     affiliation text GENERATED ALWAYS AS (public.derive_contributor_affiliation(kind, properties)) STORED,
     orcid public.citext,
     search_name text GENERATED ALWAYS AS (public.to_prefix_search(public.derive_contributor_name(kind, properties))) STORED,
-    harvest_modification_status public.harvest_modification_status DEFAULT 'unharvested'::public.harvest_modification_status NOT NULL
+    harvest_modification_status public.harvest_modification_status DEFAULT 'unharvested'::public.harvest_modification_status NOT NULL,
+    merge_target_id uuid,
+    merge_source_status public.contributor_merge_source_status DEFAULT 'unmerged'::public.contributor_merge_source_status NOT NULL,
+    merge_target_status public.contributor_merge_target_status DEFAULT 'inactive'::public.contributor_merge_target_status NOT NULL,
+    CONSTRAINT merge_target_cannot_be_self CHECK (((merge_target_id IS NULL) OR (merge_target_id <> id)))
 );
 
 
@@ -5529,6 +5556,7 @@ CREATE TABLE public.global_configurations (
     logo_data jsonb,
     banner_data jsonb,
     depositing jsonb DEFAULT '{}'::jsonb NOT NULL,
+    contributors jsonb DEFAULT '{}'::jsonb NOT NULL,
     CONSTRAINT ensure_global_configurations_singleton CHECK (guard)
 );
 
@@ -5926,7 +5954,8 @@ CREATE TABLE public.harvest_contributors (
     updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     tracked_attributes text[] DEFAULT '{}'::text[] NOT NULL,
     tracked_properties text[] DEFAULT '{}'::text[] NOT NULL,
-    orcid text
+    orcid text,
+    merged boolean DEFAULT false NOT NULL
 );
 
 
@@ -11324,6 +11353,13 @@ CREATE UNIQUE INDEX index_contributors_on_identifier ON public.contributors USIN
 
 
 --
+-- Name: index_contributors_on_merge_target_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_contributors_on_merge_target_id ON public.contributors USING btree (merge_target_id);
+
+
+--
 -- Name: index_contributors_on_name; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -15136,6 +15172,14 @@ ALTER TABLE ONLY public.templates_descendant_list_definitions
 
 
 --
+-- Name: contributors fk_rails_22a32e0ffc; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.contributors
+    ADD CONSTRAINT fk_rails_22a32e0ffc FOREIGN KEY (merge_target_id) REFERENCES public.contributors(id) ON DELETE SET NULL;
+
+
+--
 -- Name: harvest_attempt_entity_link_transitions fk_rails_248d27a3f5; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -16830,6 +16874,9 @@ ALTER TABLE ONLY public.templates_ordering_instances
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20260509003048'),
+('20260509002726'),
+('20260509002542'),
 ('20260422183557'),
 ('20260421173838'),
 ('20260316200244'),

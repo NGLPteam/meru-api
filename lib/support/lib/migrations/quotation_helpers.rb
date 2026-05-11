@@ -3,9 +3,10 @@
 module Support
   module Migrations
     module QuotationHelpers
-      delegate :connection, to: ApplicationRecord
-
       delegate :quote_table_name, :quote_column_name, to: :connection
+
+      # @todo Replace this with engine connection once this is extracted.
+      def connection = ApplicationRecord.connection
     end
   end
 end

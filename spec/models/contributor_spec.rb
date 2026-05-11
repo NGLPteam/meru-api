@@ -9,24 +9,6 @@ RSpec.describe Contributor, type: :model, disable_ordering_refresh: true do
   let_it_be(:collection_contributions) { FactoryBot.create_list :collection_contribution, collection_count, contributor: }
   let_it_be(:item_contributions) { FactoryBot.create_list :item_contribution, item_count, contributor: }
 
-  describe "#attach!" do
-    it "can attach a collection" do
-      expect do
-        contributor.attach! FactoryBot.create :collection
-      end.to change(CollectionContribution, :count).by(1).
-        and change { contributor.reload.collection_contribution_count }.by(1).
-        and change { contributor.reload.contribution_count }.by(1)
-    end
-
-    it "can attach an item" do
-      expect do
-        contributor.attach! FactoryBot.create :item
-      end.to change(ItemContribution, :count).by(1).
-        and change { contributor.reload.item_contribution_count }.by(1).
-        and change { contributor.reload.contribution_count }.by(1)
-    end
-  end
-
   describe "#count_collection_contributions!" do
     context "when the collection contributions have been destroyed" do
       before do

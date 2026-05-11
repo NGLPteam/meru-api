@@ -2,7 +2,7 @@
 
 module Types
   # @see HarvestAttemptRecordStatus
-  class HarvestAttemptRecordStatusType < Types::AbstractModel
+  class HarvestAttemptRecordStatusType < Types::BaseModel
     description <<~TEXT
     A progress report for record data during a harvest attempt.
     TEXT

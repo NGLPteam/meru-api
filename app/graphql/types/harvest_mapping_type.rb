@@ -2,7 +2,7 @@
 
 module Types
   # @see HarvestMapping
-  class HarvestMappingType < Types::AbstractModel
+  class HarvestMappingType < Types::BaseModel
     description <<~TEXT
     A specific mapping to be used by a `HarvestSource`,
     possibly an optional `HarvestSet`, and other options

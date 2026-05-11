@@ -23,9 +23,7 @@ module ChecksContextualPermissions
     # @param [User] user
     # @return [ActiveRecord::Relation<HierarchicalEntity>]
     def readable_by(user)
-      # :nocov:
       return all if user.try(:has_global_admin_access?)
-      # :nocov:
 
       with_permitted_actions_for(user, "self.read")
     end
@@ -35,11 +33,18 @@ module ChecksContextualPermissions
     # @param [User] user
     # @return [ActiveRecord::Relation<HierarchicalEntity>]
     def updatable_by(user)
-      # :nocov:
       return all if user.try(:has_global_admin_access?)
-      # :nocov:
 
       with_permitted_actions_for(user, "self.update")
+    end
+
+    # @param [User, AnonymousUser] user
+    # @return [ActiveRecord::Relation<HierarchicalEntity>]
+    def visible_to(user)
+      return currently_visible if user.blank? || user.anonymous? || user.new_record?
+      return all if user.has_global_admin_access?
+
+      left_outer_joins(:entity_visibility).where(arel_visible_to(user))
     end
 
     # @param [User] user
@@ -49,6 +54,31 @@ module ChecksContextualPermissions
       constraint = ContextualSinglePermission.for_hierarchical_type(model_name.to_s).with_permitted_actions_for(user, *actions).select(:hierarchical_id)
 
       where(contextual_permission_primary_key => constraint)
+    end
+
+    private
+
+    # @param [User] user
+    # @return [Arel::Nodes::Case]
+    def arel_visible_to(user)
+      cppk = arel_table[contextual_permission_primary_key]
+
+      permission_constraint = ContextualSinglePermission.for_hierarchical_type(model_name.to_s).with_permitted_actions_for(user, "self.read").select(:hierarchical_id)
+
+      has_read_permission = arel_expr_in_query(cppk, permission_constraint)
+
+      condition = has_read_permission
+
+      if all.model == ::Entity
+        is_community = arel_table[:hierarchical_type].eq("Community")
+
+        condition = arel_grouped(is_community.or(has_read_permission))
+      end
+
+      arel_case(EntityVisibility.arel_table[:active]) do |stmt|
+        stmt.when(true).then(true)
+        stmt.else(condition)
+      end
     end
   end
 end

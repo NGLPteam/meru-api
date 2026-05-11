@@ -68,10 +68,13 @@ class User < ApplicationRecord
 
   after_save :synchronize_access_info!
 
+  scope :in_default_order, -> { by_role_priority.lazily_order(:name).order(id: :asc) }
   scope :global_admins, -> { where(arel_has_realm_role(:global_admin)) }
   scope :testing, -> { where_contains(email: "@example.") }
   scope :by_role_priority, -> { order(role_priority: :desc) }
   scope :by_inverse_role_priority, -> { order(role_priority: :asc) }
+
+  define_simple_lookups! :email
 
   delegate :permissions, to: :global_access_control_list
 
@@ -82,9 +85,32 @@ class User < ApplicationRecord
   # @return [User]
   def authenticated = self
 
+  # @see Users::CreateDefaultAuthor
+  # @see Users::DefaultAuthorCreator
+  # @return [Dry::Monads::Success(Contributor)]
+  monadic_operation! def create_default_author
+    call_operation("users.create_default_author", self)
+  end
+
+  # @return [(Integer, String, String)]
+  def default_tuple
+    [-role_priority, name, id]
+  end
+
   # @param [HierarchicalEntity] entity
   # @return [ContextualPermission, nil]
   def contextual_permissions_for(entity) = ContextualPermission.fetch(self, entity)
+
+  # @see Users::FetchAuthor
+  # @see Users::AuthorFetcher
+  # @return [Dry::Monads::Success(Contributor)]
+  monadic_operation! def fetch_author
+    call_operation("users.fetch_author", self)
+  end
+
+  def has_author? = primary_contributor.present?
+
+  def has_admin_access? = has_global_admin_access?
 
   def has_allowed_action?(name) = name.to_s.in?(allowed_actions)
 
@@ -93,6 +119,15 @@ class User < ApplicationRecord
   def has_global_admin_access? = has_role? :global_admin
 
   def has_any_upload_access? = has_global_admin_access? || has_granted_asset_creation?
+
+  def has_no_author? = !has_author?
+
+  # @note Inverse of {Contributor#link_user}.
+  monadic_operation! def link_contributor(contributor, **options)
+    call_operation("contributors.link_user", contributor, self, **options)
+  end
+
+  def may_claim_author? = has_allowed_action?("contributors.claim") && has_no_author?
 
   def system_slug_id = keycloak_id
 

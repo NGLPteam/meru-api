@@ -3,7 +3,7 @@
 module Types
   module Layouts
     # @see ::Layouts::MetadataInstance
-    class MetadataLayoutInstanceType < AbstractModel
+    class MetadataLayoutInstanceType < ::Types::BaseModel
       implements ::Types::LayoutInstanceType
 
       field :layout_definition, Types::Layouts::MetadataLayoutDefinitionType, null: false do

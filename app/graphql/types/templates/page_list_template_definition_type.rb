@@ -3,7 +3,7 @@
 module Types
   module Templates
     # @see ::Templates::PageListDefinition
-    class PageListTemplateDefinitionType < AbstractModel
+    class PageListTemplateDefinitionType < ::Types::BaseModel
       implements ::Types::TemplateDefinitionType
 
       field :slots, ::Types::Templates::PageListTemplateDefinitionSlotsType, null: false do

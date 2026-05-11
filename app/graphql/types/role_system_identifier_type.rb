@@ -28,6 +28,24 @@ module Types
       TEXT
     end
 
+    value "REVIEWER", value: "reviewer" do
+      description <<~TEXT
+      A reviewer can review any assigned entity as well as its subcollections and items.
+      TEXT
+    end
+
+    value "DEPOSITOR", value: "depositor" do
+      description <<~TEXT
+      A depositor can read anything under its assigned hierarchy, and can also deposit new items and collections.
+      TEXT
+    end
+
+    value "AUTHOR", value: "author" do
+      description <<~TEXT
+      An author can update and read its own entity, but does not have permissions to do anything else.
+      TEXT
+    end
+
     value "READER", value: "reader" do
       description <<~TEXT
       A reader is anyone who has been given explicit read-access to an entity.

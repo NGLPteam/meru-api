@@ -60,6 +60,8 @@
       :create: true
       :update: true
       :delete: true
+      :claim: true
+      :merge: true
     :roles:
       :read: true
       :create: true
@@ -122,6 +124,8 @@
       :create: true
       :update: true
       :delete: true
+      :claim: true
+      :merge: true
     :roles:
       :read: true
     :users:
@@ -154,6 +158,8 @@
       :read: true
       :create: true
       :update: true
+      :claim: true
+      :merge: true
       :delete: false
     :roles:
       :read: true
@@ -180,6 +186,7 @@
       :access: true
     :contributors:
       :read: true
+      :claim: true
     :roles:
       :read: true
   identifier: reviewer
@@ -205,10 +212,27 @@
       :access: true
     :contributors:
       :read: true
+      :claim: true
     :roles:
       :read: true
   identifier: depositor
   name: Depositor
+- access_control_list:
+    :self:
+      :update: true
+      :read: true
+      :assets:
+        :read: true
+        :create: true
+        :update: true
+        :delete: true
+  global_access_control_list:
+    :admin:
+      :access: true
+    :contributors:
+      :read: true
+  identifier: author
+  name: Author
 - access_control_list:
     :self:
       :read: true

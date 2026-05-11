@@ -7,6 +7,7 @@ class ApplicationController < ActionController::API
   include OperationHelpers
 
   before_action :attach_request_id!
+  before_action :load_current_global_configuration!
 
   # @return [void]
   def attach_request_id!
@@ -35,6 +36,11 @@ class ApplicationController < ActionController::API
         render_server_message! "tokens.invalid", status: :forbidden
       end
     end
+  end
+
+  # @return [void]
+  def load_current_global_configuration!
+    GlobalConfiguration.current!
   end
 
   # Render a standard, localized server error using {#render_single_error!}.

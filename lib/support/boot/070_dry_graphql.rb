@@ -11,6 +11,18 @@ Dry::Types.define_builder :gql_type do |type, arg|
   end
 end
 
+Dry::Types.define_builder :gql_default do |type, gql_default_value, replace_null = false|
+  next type if gql_default_value.nil?
+
+  gql_replace_null = Support::Types::SafeBoolean[replace_null]
+
+  type.meta(
+    gql_has_default: true,
+    gql_default_value:,
+    gql_replace_null:
+  ).set_gql_typing
+end
+
 Dry::Types.define_builder :gql_loads do |type, arg|
   type.meta(
     gql_type: ::Support::System["dry_gql.find_gql_type"].(:id),
@@ -53,13 +65,19 @@ module Support
       loads = meta[:gql_loads]
       description = meta[:gql_description]
       required = meta[:gql_required]
+      default_value = meta[:gql_default_value]
+      replace_null = meta[:gql_replace_null]
+      has_default_value = meta[:gql_has_default] || false
 
       Support::DryGQL::Typing.new(
         actual_type:,
         loads:,
         array:,
         description:,
-        required:
+        required:,
+        default_value:,
+        has_default_value:,
+        replace_null:,
       )
     end
 

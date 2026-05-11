@@ -2,7 +2,7 @@
 
 module Types
   # @see ItemAttribution
-  class ItemAttributionType < Types::AbstractModel
+  class ItemAttributionType < Types::BaseModel
     description <<~TEXT
     Attributions for items.
     TEXT

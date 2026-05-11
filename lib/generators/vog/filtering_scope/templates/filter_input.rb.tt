@@ -1,0 +1,23 @@
+# frozen_string_literal: true
+
+module Types
+  module Filtering
+    # @see <%= scope_klass_name %>
+    class <%= class_name %>FilterInputType < ::Support::GQL::BaseFilterScopeInputObject
+      description <<~TEXT
+      Filtering options for `<%= class_name %>` records.
+      TEXT
+
+      inherit_from!(<%= scope_klass_name %>)
+      <%- scope_klass.arguments.each do |key, dry_type| -%>
+      <%- typing = dry_type.gql_typing -%>
+      <%- input_key = typing.input_key_for key -%>
+      <%- opts = typing.argument_options -%>
+      <%- opts[:as] = key.to_sym -%>
+      <%- type = opts.delete :type -%>
+
+      <%= argument_call_for(key, dry_type) %>
+      <%- end -%>
+    end
+  end
+end

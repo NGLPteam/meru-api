@@ -3,7 +3,7 @@
 module Types
   module Layouts
     # @see ::Layouts::HeroInstance
-    class HeroLayoutInstanceType < AbstractModel
+    class HeroLayoutInstanceType < ::Types::BaseModel
       implements ::Types::LayoutInstanceType
 
       field :layout_definition, Types::Layouts::HeroLayoutDefinitionType, null: false do

@@ -3,12 +3,19 @@
 FactoryBot.define do
   factory :role do
     transient do
+      admin_access { false }
       actions { [] }
     end
 
     name { Faker::Lorem.unique.word }
 
     custom_priority { Faker::Number.unique.rand(-19_999...20_000) }
+
+    global_access_control_list do
+      Roles::GlobalAccessControlList.define do |gacl|
+        gacl.allow! "admin.access" if admin_access
+      end
+    end
 
     %i[admin manager editor reviewer depositor reader].each do |key|
       system_role = SystemRole.find key.to_s
@@ -22,7 +29,13 @@ FactoryBot.define do
       end
     end
 
+    trait(:with_admin_access) do
+      admin_access { true }
+    end
+
     trait(:all_contextual) do
+      with_admin_access
+
       access_control_list do
         Roles::AccessControlList.define do |acl|
           acl.allow! ?*

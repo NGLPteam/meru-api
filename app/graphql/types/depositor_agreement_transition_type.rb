@@ -4,7 +4,7 @@ module Types
   # @see DepositorAgreementTransition
   # @see ::Types::DepositorAgreementTransitionConnectionType
   # @see ::Types::DepositorAgreementTransitionEdgeType
-  class DepositorAgreementTransitionType < Types::AbstractModel
+  class DepositorAgreementTransitionType < Types::BaseModel
     description <<~TEXT
     A transition for a `DepositorAgreement`.
     TEXT

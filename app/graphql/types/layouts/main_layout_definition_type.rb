@@ -3,7 +3,7 @@
 module Types
   module Layouts
     # @see ::Layouts::MainDefinition
-    class MainLayoutDefinitionType < AbstractModel
+    class MainLayoutDefinitionType < ::Types::BaseModel
       implements ::Types::LayoutDefinitionType
 
       field :templates, [Types::AnyMainTemplateDefinitionType, { null: false }], null: false do

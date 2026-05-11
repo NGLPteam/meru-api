@@ -4,7 +4,7 @@ module Types
   # @see DepositorRequest
   # @see ::Types::DepositorRequestConnectionType
   # @see ::Types::DepositorRequestEdgeType
-  class DepositorRequestType < Types::AbstractModel
+  class DepositorRequestType < Types::BaseModel
     description <<~TEXT
     A request for depositor access to a given submission target.
     TEXT

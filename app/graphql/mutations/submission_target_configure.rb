@@ -62,9 +62,11 @@ module Mutations
       TEXT
     end
 
-    argument :auto_approve_depositors, Boolean, required: false, default_value: false, replace_null_with_default: true do
+    argument :auto_approve_depositors, Boolean, required: false, default_value: MeruConfig.auto_approve_depositors, replace_null_with_default: true do
       description <<~TEXT
       Whether depositors should be automatically approved when they request to become a depositor for this submission target.
+
+      The default value for this field can be set on a tenant level, but is `true` by default for now.
       TEXT
     end
 

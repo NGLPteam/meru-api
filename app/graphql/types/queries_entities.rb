@@ -11,13 +11,13 @@ module Types
     field :asset, Types::AssetType, null: true do
       description "Look up an asset by slug"
 
-      argument :slug, Types::SlugType, required: true
+      argument :slug, Support::GQL::SlugType, required: true
     end
 
     field :collection, Types::CollectionType, null: true do
       description "Look up a collection by slug"
 
-      argument :slug, Types::SlugType, required: true
+      argument :slug, Support::GQL::SlugType, required: true
     end
 
     field :communities, resolver: Resolvers::CommunityResolver do
@@ -27,7 +27,7 @@ module Types
     field :community, Types::CommunityType, null: true do
       description "Look up a community by slug"
 
-      argument :slug, Types::SlugType, required: true
+      argument :slug, Support::GQL::SlugType, required: true
     end
 
     field :community_by_title, Types::CommunityType, null: true do
@@ -39,7 +39,7 @@ module Types
     field :item, Types::ItemType, null: true do
       description "Look up an item by slug"
 
-      argument :slug, Types::SlugType, required: true
+      argument :slug, Support::GQL::SlugType, required: true
     end
 
     def asset(slug:)

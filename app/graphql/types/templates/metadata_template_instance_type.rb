@@ -3,7 +3,7 @@
 module Types
   module Templates
     # @see ::Templates::MetadataInstance
-    class MetadataTemplateInstanceType < AbstractModel
+    class MetadataTemplateInstanceType < ::Types::BaseModel
       implements ::Types::TemplateInstanceType
 
       field :definition, ::Types::Templates::MetadataTemplateDefinitionType, null: false do

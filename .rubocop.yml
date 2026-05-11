@@ -406,6 +406,10 @@ Rails/AddColumnIndex:
 Rails/AfterCommitOverride:
   Enabled: true
 
+Rails/ApplicationRecord:
+  Exclude:
+    - "lib/**/*.rb"
+
 Rails/AttributeDefaultBlockValue:
   Enabled: true
 
@@ -646,6 +650,7 @@ RSpec/DuplicatedMetadata:
 RSpec/EmptyExampleGroup:
   Exclude:
     - spec/policies/**/*.rb
+    - spec/services/filtering/scopes/**/*.rb
     - spec/support/shared_examples/**/*.rb
 
 RSpec/EmptyLineAfterFinalLet:

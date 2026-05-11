@@ -92,6 +92,10 @@ en:
       unacceptable_edge: "An entity of type '%{parent}' cannot be a direct parent of '%{child}'"
       update_and_clear_attachment: "cannot receive a new attachment while also clearing it"
       rules:
+        contributor_merge_in_progress: "A contributor merge is already in progress for these two."
+        contributor_merge_same_contributor: "A contributor cannot be merged with itself."
+        contributor_merge_source_merging: "The source contributor is already being merged into another contributor."
+        contributor_merge_target_merging: "The target contributor is already being merged into another contributor."
         depositor_agreement_required: "You must accept the depositor agreement to submit."
         not_yet_implemented: "This mutation is not yet implemented."
         revalidation_connection_failed: "The revalidation request failed to connect."

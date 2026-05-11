@@ -19,7 +19,7 @@ module Types
     field :schema_definition, Types::SchemaDefinitionType, null: true do
       description "Look up a schema definition by slug"
 
-      argument :slug, Types::SlugType, required: true
+      argument :slug, Support::GQL::SlugType, required: true
     end
 
     field :schema_definitions, resolver: Resolvers::SchemaDefinitionResolver do
@@ -29,7 +29,7 @@ module Types
     field :schema_version, Types::SchemaVersionType, null: true do
       description "Look up a schema version by slug"
 
-      argument :slug, Types::SlugType, required: true
+      argument :slug, Support::GQL::SlugType, required: true
     end
 
     field :schema_versions, resolver: Resolvers::SchemaVersionResolver do

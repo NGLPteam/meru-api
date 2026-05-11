@@ -3,7 +3,7 @@
 module Types
   module Templates
     # @see ::Templates::DetailInstance
-    class DetailTemplateInstanceType < AbstractModel
+    class DetailTemplateInstanceType < ::Types::BaseModel
       implements ::Types::TemplateInstanceType
 
       field :definition, ::Types::Templates::DetailTemplateDefinitionType, null: false do

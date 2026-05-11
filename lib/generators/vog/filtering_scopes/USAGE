@@ -1,0 +1,8 @@
+Description:
+    Generate all related files for Filtering scopes.
+
+Example:
+    bin/rails generate vog:filtering_scopes
+
+    This will create:
+        app/graphql/types/filtering/thing_filter_input_type.rb

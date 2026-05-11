@@ -14,7 +14,7 @@ module Types
       Retrieve a single `ControlledVocabularySource` by slug.
       TEXT
 
-      argument :slug, Types::SlugType, required: true do
+      argument :slug, Support::GQL::SlugType, required: true do
         description <<~TEXT
         The slug to look up.
         TEXT

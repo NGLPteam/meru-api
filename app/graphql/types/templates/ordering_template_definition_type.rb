@@ -3,7 +3,7 @@
 module Types
   module Templates
     # @see ::Templates::OrderingDefinition
-    class OrderingTemplateDefinitionType < AbstractModel
+    class OrderingTemplateDefinitionType < ::Types::BaseModel
       implements ::Types::TemplateDefinitionType
 
       field :slots, ::Types::Templates::OrderingTemplateDefinitionSlotsType, null: false do

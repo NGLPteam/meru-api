@@ -4,7 +4,7 @@ module Types
   # @see DepositorRequestTransition
   # @see ::Types::DepositorRequestTransitionConnectionType
   # @see ::Types::DepositorRequestTransitionEdgeType
-  class DepositorRequestTransitionType < Types::AbstractModel
+  class DepositorRequestTransitionType < Types::BaseModel
     description <<~TEXT
     A transition for a `DepositorRequest`.
     TEXT

@@ -3,7 +3,7 @@
 module Types
   module Layouts
     # @see ::Layouts::SupplementaryDefinition
-    class SupplementaryLayoutDefinitionType < AbstractModel
+    class SupplementaryLayoutDefinitionType < ::Types::BaseModel
       implements ::Types::LayoutDefinitionType
 
       field :templates, [Types::AnySupplementaryTemplateDefinitionType, { null: false }], null: false do

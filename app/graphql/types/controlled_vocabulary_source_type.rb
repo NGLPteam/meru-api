@@ -2,7 +2,7 @@
 
 module Types
   # @see ControlledVocabularySource
-  class ControlledVocabularySourceType < Types::AbstractModel
+  class ControlledVocabularySourceType < Types::BaseModel
     description <<~TEXT
     A system-wide configuration that determines which `ControlledVocabulary` satisfies
     a desired `provides` value in schemas.

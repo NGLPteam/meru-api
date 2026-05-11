@@ -90,6 +90,10 @@
   kind: global
 - path: contributors.delete
   kind: global
+- path: contributors.claim
+  kind: global
+- path: contributors.merge
+  kind: global
 - path: roles.read
   kind: global
 - path: roles.create

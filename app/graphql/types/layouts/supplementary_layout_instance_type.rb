@@ -3,7 +3,7 @@
 module Types
   module Layouts
     # @see ::Layouts::SupplementaryInstance
-    class SupplementaryLayoutInstanceType < AbstractModel
+    class SupplementaryLayoutInstanceType < ::Types::BaseModel
       implements ::Types::LayoutInstanceType
 
       field :layout_definition, Types::Layouts::SupplementaryLayoutDefinitionType, null: false do

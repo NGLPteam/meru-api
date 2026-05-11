@@ -4,12 +4,16 @@ module Filtering
   module Types
     extend ::Support::Typespace
 
-    Filters = Instance(Filtering::FilterScope)
+    # A type representing the input hash for filtering arguments.
+    Input = Hash.fallback { Dry::Core::Constants::EMPTY_HASH }
 
-    FiltersClass = Inherits(Filtering::FilterScope)
+    # A type representing an ActiveRecord scope / relation.
+    Scope = Support::Types::Relation
 
-    Input = Hash.fallback { {}.freeze }
+    # A type representing the name of a filtering scope, which corresponds to a method on the model's ActiveRecord::Relation.
+    ScopeName = Symbol
 
-    Scope = Instance(ActiveRecord::Relation)
+    # A list of {ScopeName}s.
+    ScopeNames = Array.of(ScopeName)
   end
 end

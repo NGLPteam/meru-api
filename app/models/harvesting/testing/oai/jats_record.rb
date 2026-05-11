@@ -3,7 +3,7 @@
 module Harvesting
   module Testing
     module OAI
-      class JATSRecord < Support::FrozenRecordHelpers::AbstractRecord
+      class JATSRecord < ::ApplicationFrozenRecord
         include Harvesting::Testing::OAI::SampleRecord
 
         record_schema!("jats") do

@@ -19,6 +19,11 @@ RSpec.describe Mutations::UpdateGlobalConfiguration, type: :request, graphql: :m
           }
         }
 
+        contributors {
+          claimable
+          ownerUpdatable
+        }
+
         depositing {
           agreement
           enabled
@@ -206,6 +211,25 @@ RSpec.describe Mutations::UpdateGlobalConfiguration, type: :request, graphql: :m
         req.effect! change { GlobalConfiguration.fetch.theme.as_json }
 
         req.data! expected_shape
+      end
+    end
+
+    context "when providing contributor information" do
+      let_mutation_input!(:contributors) do
+        {
+          claimable: false,
+          owner_updatable: true,
+        }
+      end
+
+      it "updates the contributor settings" do
+        expect_request! do |req|
+          req.effect! change { GlobalConfiguration.fetch.contributors.as_json }
+          req.effect! change { GlobalConfiguration.fetch.contributors.claimable? }.to(false)
+          req.effect! keep_the_same { GlobalConfiguration.fetch.contributors.owner_updatable? }
+
+          req.data! expected_shape
+        end
       end
     end
 

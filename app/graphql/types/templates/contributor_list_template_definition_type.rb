@@ -3,7 +3,7 @@
 module Types
   module Templates
     # @see ::Templates::ContributorListDefinition
-    class ContributorListTemplateDefinitionType < AbstractModel
+    class ContributorListTemplateDefinitionType < ::Types::BaseModel
       implements ::Types::TemplateDefinitionType
 
       field :slots, ::Types::Templates::ContributorListTemplateDefinitionSlotsType, null: false do

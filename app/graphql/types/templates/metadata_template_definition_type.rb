@@ -3,7 +3,7 @@
 module Types
   module Templates
     # @see ::Templates::MetadataDefinition
-    class MetadataTemplateDefinitionType < AbstractModel
+    class MetadataTemplateDefinitionType < ::Types::BaseModel
       implements ::Types::TemplateDefinitionType
 
       field :slots, ::Types::Templates::MetadataTemplateDefinitionSlotsType, null: false do

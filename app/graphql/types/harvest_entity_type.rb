@@ -2,7 +2,7 @@
 
 module Types
   # @see HarvestEntity
-  class HarvestEntityType < Types::AbstractModel
+  class HarvestEntityType < Types::BaseModel
     description <<~TEXT
     A staged entity extracted from a `HarvestRecord`, that
     can then be associated to an actual entity by the

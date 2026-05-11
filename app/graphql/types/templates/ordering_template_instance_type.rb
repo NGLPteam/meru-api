@@ -3,7 +3,7 @@
 module Types
   module Templates
     # @see ::Templates::OrderingInstance
-    class OrderingTemplateInstanceType < AbstractModel
+    class OrderingTemplateInstanceType < ::Types::BaseModel
       implements ::Types::TemplateInstanceType
       implements ::Types::TemplateHasOrderingPairType
 

@@ -19,7 +19,7 @@ module Types
     Similar to `Attribution`, but from the perspective of a `Contributor`.
     TEXT
 
-    field :entity_slug, Types::SlugType, null: false do
+    field :entity_slug, Support::GQL::SlugType, null: false do
       description <<~TEXT
       The slug for the entity.
       TEXT

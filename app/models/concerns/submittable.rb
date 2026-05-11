@@ -21,6 +21,7 @@ module Submittable
 
     # Used for default filtering of items.
     scope :sans_drafts, -> { not_submission_draft }
+    scope :with_drafts, -> { all }
 
     before_validation :enforce_hidden_if_draft!
   end

@@ -4,7 +4,7 @@ module Types
   # @see SubmissionTargetTransition
   # @see ::Types::SubmissionTargetTransitionConnectionType
   # @see ::Types::SubmissionTargetTransitionEdgeType
-  class SubmissionTargetTransitionType < Types::AbstractModel
+  class SubmissionTargetTransitionType < Types::BaseModel
     description <<~TEXT
     A transition for a `SubmissionTarget`.
     TEXT

@@ -3,7 +3,7 @@
 module Types
   module Templates
     # @see ::Templates::BlurbDefinition
-    class BlurbTemplateDefinitionType < AbstractModel
+    class BlurbTemplateDefinitionType < ::Types::BaseModel
       implements ::Types::TemplateDefinitionType
 
       field :slots, ::Types::Templates::BlurbTemplateDefinitionSlotsType, null: false do

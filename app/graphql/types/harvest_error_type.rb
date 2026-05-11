@@ -2,7 +2,7 @@
 
 module Types
   # @see HarvestError
-  class HarvestErrorType < Types::AbstractModel
+  class HarvestErrorType < Types::BaseModel
     description <<~TEXT
     An error that may occur during the harvesting process.
     TEXT

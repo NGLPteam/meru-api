@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Layout < Support::FrozenRecordHelpers::AbstractRecord
+class Layout < ::ApplicationFrozenRecord
   include ActiveModel::Validations
   include Dry::Core::Equalizer.new(:layout_kind)
   include Dry::Core::Memoizable

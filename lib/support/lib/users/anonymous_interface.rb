@@ -12,7 +12,7 @@ module Support
       ID = "ANONYMOUS"
 
       # @return [ActiveSupport::TimeWithZone]
-      NOW = Time.zone.at(0)
+      NOW = Time.at(0).in_time_zone.freeze
 
       # @note For anonymous users, this is always an empty array.
       # @see User#allowed_actions

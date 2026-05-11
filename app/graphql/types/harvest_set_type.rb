@@ -2,7 +2,7 @@
 
 module Types
   # @see HarvestSet
-  class HarvestSetType < Types::AbstractModel
+  class HarvestSetType < Types::BaseModel
     description <<~TEXT
     The concept of a "set" within a given `HarvestSource`. It can be used in order to fetch
     a subset of data with a `HarvestMapping`. These are not created directly in Meru, but

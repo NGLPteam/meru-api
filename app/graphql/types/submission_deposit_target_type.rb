@@ -4,7 +4,7 @@ module Types
   # @see SubmissionDepositTarget
   # @see ::Types::SubmissionDepositTargetConnectionType
   # @see ::Types::SubmissionDepositTargetEdgeType
-  class SubmissionDepositTargetType < Types::AbstractModel
+  class SubmissionDepositTargetType < Types::BaseModel
     description <<~TEXT
     A submission deposit target defines an actual target
     entity for submissions. For instance, a `SubmissionTarget`

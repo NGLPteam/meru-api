@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Types
-  class ContextualPermissionType < Types::AbstractModel
+  class ContextualPermissionType < Types::BaseModel
     implements Types::ExposesPermissionsType
 
     description "A contextual permission for a user, role, and entity"

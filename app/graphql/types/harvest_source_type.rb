@@ -2,7 +2,7 @@
 
 module Types
   # @see HarvestSource
-  class HarvestSourceType < Types::AbstractModel
+  class HarvestSourceType < Types::BaseModel
     description <<~TEXT
     A source from which to harvest entities.
 

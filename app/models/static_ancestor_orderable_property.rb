@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # A list of static properties that can be ordered by on {OrderingEntryCandidate} or a related model.
-class StaticAncestorOrderableProperty < Support::FrozenRecordHelpers::AbstractRecord
+class StaticAncestorOrderableProperty < ::ApplicationFrozenRecord
   include ActiveModel::Validations
   include Dry::Core::Memoizable
   include TranslatedFrozenRecord

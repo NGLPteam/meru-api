@@ -3,7 +3,7 @@
 module Types
   module Templates
     # @see ::Templates::BlurbInstance
-    class BlurbTemplateInstanceType < AbstractModel
+    class BlurbTemplateInstanceType < ::Types::BaseModel
       implements ::Types::TemplateInstanceType
 
       field :definition, ::Types::Templates::BlurbTemplateDefinitionType, null: false do

@@ -75,6 +75,12 @@ class SubmissionTarget < ApplicationRecord
     call_operation("depositor_agreements.accept", submission_target: self, user:)
   end
 
+  # @!attribute [r] agreement_content_with_fallback
+  # @return [String, nil]
+  def agreement_content_with_fallback
+    agreement_content.presence || GlobalConfiguration.current.depositing.agreement.presence
+  end
+
   # @param [User] user
   # @return [DepositorAgreement]
   def agreement_for(user)
@@ -91,6 +97,10 @@ class SubmissionTarget < ApplicationRecord
 
   monadic_operation! def configure(**options)
     call_operation("submission_targets.configure", self, **options)
+  end
+
+  def deposit_targets
+    direct_deposit? ? Dry::Core::Constants::EMPTY_ARRAY : submission_deposit_targets.map(&:entity)
   end
 
   # @param [User] user

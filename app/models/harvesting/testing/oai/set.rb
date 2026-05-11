@@ -3,7 +3,7 @@
 module Harvesting
   module Testing
     module OAI
-      class Set < Support::FrozenRecordHelpers::AbstractRecord
+      class Set < ::ApplicationFrozenRecord
         include Dry::Core::Equalizer.new(:spec)
 
         schema!(types: ::Harvesting::Testing::TypeRegistry) do
