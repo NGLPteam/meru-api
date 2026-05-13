@@ -19,13 +19,11 @@ module Resolvers
 
     PREFIX_DESC = <<~TEXT
     Search for contributors with names that start with the provided text.
+
+    **Deprecated**: Use the `nameSearch` filter instead.
     TEXT
 
-    PREFIX_DEPR = <<~TEXT
-    Use the `nameSearch` filter instead.
-    TEXT
-
-    option :prefix, type: String, description: PREFIX_DESC, deprecation_reason: PREFIX_DEPR do |scope, value|
+    option :prefix, type: String, description: PREFIX_DESC do |scope, value|
       scope.apply_prefix value
     end
 
