@@ -10,6 +10,14 @@ module Types
 
     field :apply_schema_properties, mutation: Mutations::ApplySchemaProperties
 
+    field :contributor_claim, mutation: Mutations::ContributorClaim
+
+    field :contributor_merge, mutation: Mutations::ContributorMerge
+
+    field :contributor_user_link_destroy, mutation: Mutations::ContributorUserLinkDestroy
+
+    field :contributor_user_link_upsert, mutation: Mutations::ContributorUserLinkUpsert
+
     field :controlled_vocabulary_destroy, mutation: Mutations::ControlledVocabularyDestroy
 
     field :controlled_vocabulary_source_update, mutation: Mutations::ControlledVocabularySourceUpdate
@@ -128,6 +136,8 @@ module Types
 
     field :submission_create, mutation: Mutations::SubmissionCreate
 
+    field :submission_destroy, mutation: Mutations::SubmissionDestroy
+
     field :submission_leave_review, mutation: Mutations::SubmissionLeaveReview
 
     field :submission_publish, mutation: Mutations::SubmissionPublish
@@ -177,13 +187,5 @@ module Types
     field :upsert_contribution, mutation: Mutations::UpsertContribution
 
     field :user_reset_password, mutation: Mutations::UserResetPassword
-
-    field :contributor_user_link_destroy, mutation: Mutations::ContributorUserLinkDestroy
-
-    field :contributor_user_link_upsert, mutation: Mutations::ContributorUserLinkUpsert
-
-    field :contributor_claim, mutation: Mutations::ContributorClaim
-
-    field :contributor_merge, mutation: Mutations::ContributorMerge
   end
 end
