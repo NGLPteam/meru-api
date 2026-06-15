@@ -98,6 +98,7 @@ en:
         contributor_merge_target_merging: "The target contributor is already being merged into another contributor."
         depositor_agreement_required: "You must accept the depositor agreement to submit."
         not_yet_implemented: "This mutation is not yet implemented."
+        only_draft_submissions_destructible: "Only draft submissions can be deleted."
         revalidation_connection_failed: "The revalidation request failed to connect."
         revalidation_request_failed: "The revalidation request failed."
         revalidation_secret_invalid: "The revalidation request failed to authenticate."

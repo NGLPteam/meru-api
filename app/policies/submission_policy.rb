@@ -4,7 +4,7 @@
 class SubmissionPolicy < ApplicationPolicy
   pre_check :deny_anonymous!
 
-  pre_check :allow_any_admin!, except: :destroy?
+  pre_check :allow_any_admin!
 
   def read? = manage_target? || deposit? || review? || record_owned_by_current_user?
 
@@ -29,8 +29,7 @@ class SubmissionPolicy < ApplicationPolicy
 
   def update? = record_owned_by_current_user?
 
-  # Submissions cannot be destroyed, only rejected.
-  def destroy? = false
+  def destroy? = record_owned_by_current_user?
 
   private
 
