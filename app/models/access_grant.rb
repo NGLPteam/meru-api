@@ -171,13 +171,19 @@ class AccessGrant < ApplicationRecord
       with_allowed_action(**options).exists?
     end
 
+    # Constrain to access grants that allow _any_ asset creation.
+    #
+    # @see AccessGrantSubject#has_granted_asset_creation?
+    # @see .with_asset_creation?
     # @return [ActiveRecord::Relation<AccessGrant>]
     def with_asset_creation
       matching_permissions "*.assets.create"
     end
 
-    def with_asset_creation?
-      with_asset_creation.exists?
-    end
+    # Determine if the current scope has _any_ permission to create assets.
+    #
+    # @see .with_asset_creation
+    # @see AccessGrantSubject#has_granted_asset_creation?
+    def with_asset_creation? = with_asset_creation.exists?
   end
 end

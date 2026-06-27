@@ -48,7 +48,7 @@ RSpec.describe ContributorUserLinkPolicy, type: :policy do
       let(:user) { linked_user }
     end
 
-    failed "as a regular user" do
+    succeed "as a regular user" do
       let(:user) { regular_user }
     end
 

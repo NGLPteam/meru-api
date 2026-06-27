@@ -40,6 +40,7 @@ module Support
       config.inflector = Dry::Inflector.new do |inflections|
         inflections.acronym("API")
         inflections.acronym("ANZ")
+        inflections.acronym("DSL")
         inflections.acronym("GQL")
         inflections.acronym("GraphQL")
         inflections.acronym("HTTP")
@@ -49,6 +50,7 @@ module Support
         inflections.acronym("TOC")
         inflections.acronym("WDP")
         inflections.acronym("URL")
+        inflections.acronym("VOG")
       end
     end
   end

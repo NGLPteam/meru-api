@@ -6897,7 +6897,7 @@ CREATE TABLE public.pghero_space_stats (
 --
 
 CREATE VIEW public.primary_role_assignments AS
- SELECT DISTINCT ON (ag.subject_id, ag.subject_type, ag.role_id) ag.subject_id,
+ SELECT DISTINCT ON (ag.subject_id, ag.subject_type) ag.subject_id,
     ag.subject_type,
     ag.role_id
    FROM (( SELECT DISTINCT access_grants.subject_id,
@@ -6905,7 +6905,7 @@ CREATE VIEW public.primary_role_assignments AS
             access_grants.role_id
            FROM public.access_grants) ag
      JOIN public.roles r ON ((r.id = ag.role_id)))
-  ORDER BY ag.subject_id, ag.subject_type, ag.role_id, r.primacy, r.priority DESC, r.kind;
+  ORDER BY ag.subject_id, ag.subject_type, r.primacy, r.priority DESC, r.kind;
 
 
 --
@@ -16874,6 +16874,7 @@ ALTER TABLE ONLY public.templates_ordering_instances
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20260603165644'),
 ('20260509003048'),
 ('20260509002726'),
 ('20260509002542'),

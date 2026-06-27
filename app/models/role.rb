@@ -4,6 +4,30 @@ class Role < ApplicationRecord
   include HasEphemeralSystemSlug
   include TimestampScopes
 
+  # A list of polymorphic system roles that can be granted.
+  #
+  # @see Access::PolymorphicGrant
+  # @see Access::PolymorphicGranter
+  # @return [<Symbol>]
+  POLYMORPHIC_GRANTABLES = %i[
+    manager
+    editor
+    reviewer
+    depositor
+    author
+    reader
+  ].freeze
+
+  # @see Access::PolymorphicGrant
+  # @see Access::PolymorphicGranter
+  # @return [{ Symbol => Symbol }]
+  POLYMORPHIC_GRANTABLE_MAP = POLYMORPHIC_GRANTABLES.index_with { :"#{_1}_on" }.freeze
+
+  # @see Access::PolymorphicGrant
+  # @see Access::PolymorphicGranter
+  # @return [<Symbol>]
+  POLYMORPHIC_GRANTABLE_KEYS = POLYMORPHIC_GRANTABLE_MAP.values.freeze
+
   pg_enum! :identifier, as: "role_identifier", prefix: :identified_as
   pg_enum! :kind, as: "role_kind", prefix: :for
   pg_enum! :primacy, as: "role_primacy", prefix: :has, suffix: :primacy

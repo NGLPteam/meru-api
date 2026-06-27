@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module Types
+  # @see AccessGrantSubject
   module AccessGrantSubjectType
     include Types::BaseInterface
 

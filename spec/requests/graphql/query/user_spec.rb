@@ -9,6 +9,10 @@ RSpec.describe "Query.user", type: :request do
       accessManagement
       globalAdmin
 
+      canAccessAdmin {
+        ... AuthorizationResultFragment
+      }
+
       canReceiveReviewRequests {
         ... AuthorizationResultFragment
       }
@@ -105,7 +109,9 @@ RSpec.describe "Query.user", type: :request do
 
   let_it_be(:existing_user, refind: true) { FactoryBot.create :user, :with_avatar }
 
+  let(:can_access_admin) { false }
   let(:can_destroy) { false }
+  let(:can_read_privileged) { false }
   let(:can_reset_password) { false }
   let(:can_receive_review_requests) { false }
   let(:can_update) { false }
@@ -161,6 +167,7 @@ RSpec.describe "Query.user", type: :request do
   end
 
   as_an_admin_user do
+    let(:can_read_privileged) { true }
     let(:can_reset_password) { true }
     let(:can_receive_review_requests) { false }
     let(:can_update) { true }
@@ -186,6 +193,7 @@ RSpec.describe "Query.user", type: :request do
 
   as_a_regular_user do
     it_behaves_like "a self-lookup" do
+      let(:can_read_privileged) { true }
       let(:can_reset_password) { true }
       let(:can_update) { true }
       let(:has_upload_access) { false }
@@ -194,7 +202,11 @@ RSpec.describe "Query.user", type: :request do
     context "against another user" do
       let(:found_user) { existing_user }
 
-      it_behaves_like "a not found user"
+      let(:can_read_privileged) { false }
+      let(:can_reset_password) { false }
+      let(:can_update) { false }
+
+      it_behaves_like "a found user"
     end
 
     context "with an invalid slug" do

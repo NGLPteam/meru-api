@@ -21,7 +21,7 @@ module Types
       description "Has this user's email been verified to work through Keycloak?"
     end
 
-    field :email, String, null: true do
+    field :email, String, null: true, authorize_field: { to: :read_privileged?, raise: false } do
       description "A user's email. Depending on the upstream provider, this may not be set."
     end
 
@@ -109,6 +109,10 @@ module Types
 
     This requires both that the user has permission to manage the system broadly,
     and that they do not already have a contributor profile linked to their account.
+    TEXT
+
+    expose_authorization_rule :preview?, <<~TEXT
+    Whether this user has the ability to preview content in the system.
     TEXT
 
     expose_authorization_rule :receive_review_requests?, <<~TEXT

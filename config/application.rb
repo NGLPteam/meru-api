@@ -42,7 +42,7 @@ module MeruAPI
     # config.anyway_config.autoload_static_config_path = "config/configs"
     #
     # Initialize configuration defaults for originally generated Rails version.
-    config.load_defaults 7.0
+    config.load_defaults 8.1
 
     config.active_support.isolation_level = :fiber
 

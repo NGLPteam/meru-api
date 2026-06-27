@@ -42,8 +42,11 @@ module Roles
       end
     end
 
+    Identifier = ApplicationRecord.dry_pg_enum(:role_identifier, symbolize: true)
+
     PolicyPredicate = Symbol
 
+    # @deprecated should replace with {Identifier}
     RoleIdentifier = Coercible::Symbol
 
     RoleOptions = Hash.schema(name?: String)

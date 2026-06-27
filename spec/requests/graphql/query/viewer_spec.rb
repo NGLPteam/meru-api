@@ -9,6 +9,14 @@ RSpec.describe "Query.viewer", type: :request do
       accessManagement
       globalAdmin
 
+      canAccessAdmin {
+        ... AuthorizationResultFragment
+      }
+
+      canPreview {
+        ... AuthorizationResultFragment
+      }
+
       canReceiveReviewRequests {
         ... AuthorizationResultFragment
       }
@@ -103,6 +111,10 @@ RSpec.describe "Query.viewer", type: :request do
   }
   GRAPHQL
 
+  let_it_be(:community, refind: true) { FactoryBot.create :community }
+  let_it_be(:reviewer, refind: true) { FactoryBot.create :user, reviewer_on: community }
+  let_it_be(:depositor, refind: true) { FactoryBot.create :user, depositor_on: community }
+
   let(:expected_upload_token) do
     current_user.has_any_upload_access? ? be_present : be_nil
   end
@@ -111,6 +123,8 @@ RSpec.describe "Query.viewer", type: :request do
 
   let(:expected_access_management) { ::Types::AccessManagementType.name_for_value(current_user.access_management) }
 
+  let(:can_access_admin) { false }
+  let(:can_preview) { false }
   let(:can_receive_review_requests) { false }
 
   let(:expected_shape) do
@@ -128,7 +142,7 @@ RSpec.describe "Query.viewer", type: :request do
         v[:upload_access] = current_user.has_any_upload_access?
         v[:upload_token] = expected_upload_token
 
-        v.auth_results(can_receive_review_requests:)
+        v.auth_results(can_access_admin:, can_preview:, can_receive_review_requests:)
       end
     end
   end
@@ -144,18 +158,46 @@ RSpec.describe "Query.viewer", type: :request do
   end
 
   as_an_admin_user do
+    let(:can_access_admin) { true }
+    let(:can_preview) { true }
     let(:can_receive_review_requests) { true }
 
     include_examples "a found viewer"
   end
 
+  context "as a reviewer" do
+    let(:current_user) { reviewer }
+
+    let(:can_access_admin) { true }
+    let(:can_preview) { true }
+    let(:can_receive_review_requests) { true }
+
+    include_examples "a found viewer"
+  end
+
+  context "as a depositor" do
+    let(:current_user) { depositor }
+
+    let(:can_access_admin) { true }
+    let(:can_preview) { true }
+    let(:can_receive_review_requests) { false }
+
+    include_examples "a found viewer"
+  end
+
   as_a_regular_user do
+    let(:can_access_admin) { false }
+    let(:can_preview) { false }
     let(:can_receive_review_requests) { false }
 
     include_examples "a found viewer"
   end
 
   as_an_anonymous_user do
+    let(:can_access_admin) { false }
+    let(:can_preview) { false }
+    let(:can_receive_review_requests) { false }
+
     include_examples "a found viewer"
   end
 end
