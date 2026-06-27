@@ -131,7 +131,7 @@ RSpec.describe "Query.submissions", type: :request do
 
     as_an_admin_user do
       let(:can_update) { true }
-      let(:can_destroy) { false }
+      let(:can_destroy) { true }
 
       include_examples "ordering by each option"
     end

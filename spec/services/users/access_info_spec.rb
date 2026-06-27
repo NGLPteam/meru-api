@@ -13,7 +13,7 @@ RSpec.describe Users::AccessInfo do
       expect(described_class.wrap(user_access_info)).to be_a_kind_of(described_class).and(be_global)
     end
 
-    it "accepts an anonymous user and produces forbidden access" do
+    it "accepts an anonymous user and produces a forbidden access permission" do
       expect(described_class.wrap(AnonymousUser.new)).to be_a_kind_of(described_class).and(be_forbidden)
     end
   end

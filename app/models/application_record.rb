@@ -20,6 +20,7 @@ class ApplicationRecord < ActiveRecord::Base
   include PostgresEnums
   include StoreModelIntrospection
   include ::Support::CallsCommonOperation
+  include ::Support::Inspectable
   include WhereMatches
   include WithAdvisoryLock::Concern
 

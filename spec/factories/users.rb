@@ -56,25 +56,7 @@ FactoryBot.define do
         Testing::Keycloak::GlobalRegistry.instance.users.add_existing!(user)
       end
 
-      if evaluator.manager_on.present?
-        MeruAPI::Container["access.grant"].call(Role.fetch(:manager), on: evaluator.manager_on, to: user).value!
-      end
-
-      if evaluator.editor_on.present?
-        MeruAPI::Container["access.grant"].call(Role.fetch(:editor), on: evaluator.editor_on, to: user).value!
-      end
-
-      if evaluator.reviewer_on.present?
-        MeruAPI::Container["access.grant"].call(Role.fetch(:reviewer), on: evaluator.reviewer_on, to: user).value!
-      end
-
-      if evaluator.depositor_on.present?
-        MeruAPI::Container["access.grant"].call(Role.fetch(:depositor), on: evaluator.depositor_on, to: user).value!
-      end
-
-      if evaluator.reader_on.present?
-        MeruAPI::Container["access.grant"].call(Role.fetch(:reader), on: evaluator.reader_on, to: user).value!
-      end
+      user.polymorphic_grant_from!(evaluator)
     end
   end
 end

@@ -4,9 +4,9 @@
 class ContributorUserLinkPolicy < ApplicationPolicy
   pre_check :allow_any_admin!, except: %i[create? update?]
 
-  def read? = update_contributor? || read_user?
+  def read? = authenticated?
 
-  def show? = read?
+  def show? = authenticated?
 
   def create? = false
 

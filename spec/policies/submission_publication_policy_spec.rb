@@ -1,153 +1,30 @@
 # frozen_string_literal: true
 
 RSpec.describe SubmissionPublicationPolicy, type: :policy do
-  include_context "policy setup"
-
-  let_it_be(:community, refind: true) { FactoryBot.create(:community) }
-
-  let_it_be(:collection, refind: true) { FactoryBot.create(:collection, community:) }
-
-  let_it_be(:item_schema_version, refind: true) { FactoryBot.create(:schema_version, :item) }
-
-  let_it_be(:submission_target, refind: true) do
-    collection.fetch_submission_target!.tap do |st|
-      st.configure!(schema_versions: [item_schema_version], deposit_mode: :direct)
-      st.transition_to! :open
-    end
-  end
-
-  let_it_be(:reviewer, refind: true) do
-    FactoryBot.create(:user).tap do |user|
-      FactoryBot.create(:submission_target_reviewer, submission_target:, user:)
-    end.reload
-  end
-
-  let_it_be(:submitter, refind: true) do
-    FactoryBot.create(:user, depositor_on: collection)
-  end
-
-  let_it_be(:submission, refind: true) do
-    FactoryBot.create(:submission,
-      submission_target:,
-      schema_version: item_schema_version,
-      parent_entity: collection,
-      user: submitter,
-      title: "Test Submission"
-    )
-  end
+  include_context "depositing policy setup"
 
   let_it_be(:submission_publication, refind: true) { FactoryBot.create :submission_publication, submission: }
 
   let(:record) { submission_publication }
 
   describe_rule :read? do
-    succeed "as an admin" do
-      let(:user) { admin }
-    end
-
-    succeed "as a reviewer" do
-      let(:user) { reviewer }
-    end
-
-    succeed "as the submitter" do
-      let(:user) { submitter }
-    end
-
-    failed "as a regular user" do
-      let(:user) { regular_user }
-    end
-
-    failed "as an anonymous user" do
-      let(:user) { anonymous_user }
-    end
+    include_examples "an admin+reviewer+submitter-only permission"
   end
 
   describe_rule :show? do
-    succeed "as an admin" do
-      let(:user) { admin }
-    end
-
-    succeed "as a reviewer" do
-      let(:user) { reviewer }
-    end
-
-    succeed "as the submitter" do
-      let(:user) { submitter }
-    end
-
-    failed "as a regular user" do
-      let(:user) { regular_user }
-    end
-
-    failed "as an anonymous user" do
-      let(:user) { anonymous_user }
-    end
+    include_examples "an admin+reviewer+submitter-only permission"
   end
 
   describe_rule :create? do
-    failed "as an admin" do
-      let(:user) { admin }
-    end
-
-    failed "as a reviewer" do
-      let(:user) { reviewer }
-    end
-
-    failed "as the submitter" do
-      let(:user) { submitter }
-    end
-
-    failed "as a regular user" do
-      let(:user) { regular_user }
-    end
-
-    failed "as an anonymous user" do
-      let(:user) { anonymous_user }
-    end
+    include_examples "a forbidden depositing permission"
   end
 
   describe_rule :update? do
-    failed "as an admin" do
-      let(:user) { admin }
-    end
-
-    failed "as a reviewer" do
-      let(:user) { reviewer }
-    end
-
-    failed "as the submitter" do
-      let(:user) { submitter }
-    end
-
-    failed "as a regular user" do
-      let(:user) { regular_user }
-    end
-
-    failed "as an anonymous user" do
-      let(:user) { anonymous_user }
-    end
+    include_examples "a forbidden depositing permission"
   end
 
   describe_rule :destroy? do
-    failed "as an admin" do
-      let(:user) { admin }
-    end
-
-    failed "as a reviewer" do
-      let(:user) { reviewer }
-    end
-
-    failed "as the submitter" do
-      let(:user) { submitter }
-    end
-
-    failed "as a regular user" do
-      let(:user) { regular_user }
-    end
-
-    failed "as an anonymous user" do
-      let(:user) { anonymous_user }
-    end
+    include_examples "a forbidden depositing permission"
   end
 
   describe "relation scope" do

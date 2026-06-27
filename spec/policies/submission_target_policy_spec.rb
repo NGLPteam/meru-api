@@ -1,200 +1,37 @@
 # frozen_string_literal: true
 
 RSpec.describe SubmissionTargetPolicy, type: :policy do
-  include_context "policy setup"
-
-  let_it_be(:community, refind: true) { FactoryBot.create(:community) }
-
-  let_it_be(:collection, refind: true) { FactoryBot.create(:collection, community:) }
-
-  let_it_be(:item_schema_version, refind: true) { FactoryBot.create(:schema_version, :item) }
-
-  let_it_be(:submission_target, refind: true) do
-    collection.fetch_submission_target!.tap do |st|
-      st.configure!(schema_versions: [item_schema_version], deposit_mode: :direct)
-      st.transition_to! :open
-    end
-  end
-
-  let_it_be(:reviewer, refind: true) do
-    FactoryBot.create(:user).tap do |user|
-      FactoryBot.create(:submission_target_reviewer, submission_target:, user:)
-    end.reload
-  end
-
-  let_it_be(:submitter, refind: true) do
-    FactoryBot.create(:user, depositor_on: collection)
-  end
+  include_context "depositing policy setup"
 
   let(:record) { submission_target }
 
-  shared_examples_for "no access" do
-    failed "as an admin" do
-      let(:user) { admin }
-    end
-
-    failed "as a reviewer" do
-      let(:user) { reviewer }
-    end
-
-    failed "as the submitter" do
-      let(:user) { submitter }
-    end
-
-    failed "as a regular user" do
-      let(:user) { regular_user }
-    end
-
-    failed "as an anonymous user" do
-      let(:user) { anonymous_user }
-    end
-  end
-
-  shared_examples_for "admin + reviewer + submitter access" do
-    succeed "as an admin" do
-      let(:user) { admin }
-    end
-
-    succeed "as a reviewer" do
-      let(:user) { reviewer }
-    end
-
-    succeed "as the submitter" do
-      let(:user) { submitter }
-    end
-
-    failed "as a regular user" do
-      let(:user) { regular_user }
-    end
-
-    failed "as an anonymous user" do
-      let(:user) { anonymous_user }
-    end
-  end
-
-  shared_examples_for "admin + reviewer access" do
-    succeed "as an admin" do
-      let(:user) { admin }
-    end
-
-    succeed "as a reviewer" do
-      let(:user) { reviewer }
-    end
-
-    failed "as the submitter" do
-      let(:user) { submitter }
-    end
-
-    failed "as a regular user" do
-      let(:user) { regular_user }
-    end
-
-    failed "as an anonymous user" do
-      let(:user) { anonymous_user }
-    end
-  end
-
-  shared_examples_for "admin + submitter access" do
-    succeed "as an admin" do
-      let(:user) { admin }
-    end
-
-    failed "as a reviewer" do
-      let(:user) { reviewer }
-    end
-
-    succeed "as the submitter" do
-      let(:user) { submitter }
-    end
-
-    failed "as a regular user" do
-      let(:user) { regular_user }
-    end
-
-    failed "as an anonymous user" do
-      let(:user) { anonymous_user }
-    end
-  end
-
-  shared_examples_for "admin-only access" do
-    succeed "as an admin" do
-      let(:user) { admin }
-    end
-
-    failed "as a reviewer" do
-      let(:user) { reviewer }
-    end
-
-    failed "as the submitter" do
-      let(:user) { submitter }
-    end
-
-    failed "as a regular user" do
-      let(:user) { regular_user }
-    end
-
-    failed "as an anonymous user" do
-      let(:user) { anonymous_user }
-    end
-  end
-
-  shared_examples_for "all access" do
-    succeed "as an admin" do
-      let(:user) { admin }
-    end
-
-    succeed "as a reviewer" do
-      let(:user) { reviewer }
-    end
-
-    succeed "as the submitter" do
-      let(:user) { submitter }
-    end
-
-    succeed "as a regular user" do
-      let(:user) { regular_user }
-    end
-
-    succeed "as an anonymous user" do
-      let(:user) { anonymous_user }
-    end
-  end
-
   describe_rule :read? do
-    include_examples "all access"
+    include_examples "a full-access depositing permission"
   end
 
   describe_rule :show? do
-    include_examples "all access"
+    include_examples "a full-access depositing permission"
   end
 
   describe_rule :deposit? do
-    include_examples "admin + submitter access"
+    include_examples "an admin+submitter-only permission"
   end
 
   describe_rule :manage_reviewers? do
-    include_examples "admin-only access"
+    include_examples "an admin-only depositing permission"
   end
 
   describe_rule :publish? do
-    include_examples "admin-only access"
+    include_examples "an admin-only depositing permission"
   end
 
   describe_rule :request_deposit_access? do
-    failed "as an admin" do
-      let(:user) { admin }
-    end
+    include_examples "a permission denied to admin users"
+    include_examples "a permission granted to authenticated users"
+    include_examples "a permission denied to submitters"
 
     succeed "as a reviewer (with no deposit access)" do
       let(:user) { reviewer }
-    end
-
-    failed "as the submitter" do
-      let(:user) { submitter }
-    end
-
-    succeed "as a regular user" do
-      let(:user) { regular_user }
     end
 
     failed "as a regular user who already has a deposit request" do
@@ -212,36 +49,32 @@ RSpec.describe SubmissionTargetPolicy, type: :policy do
         submission_target.transition_to! :closed
       end
     end
-
-    failed "as an anonymous user" do
-      let(:user) { anonymous_user }
-    end
   end
 
   describe_rule :reset_all_agreements? do
-    include_examples "admin-only access"
+    include_examples "an admin-only depositing permission"
   end
 
   describe_rule :review? do
-    include_examples "admin + reviewer access"
+    include_examples "an admin+reviewer-only permission"
   end
 
   describe_rule :create? do
-    include_examples "no access"
+    include_examples "a forbidden depositing permission"
   end
 
   describe_rule :update? do
-    include_examples "admin-only access"
+    include_examples "an admin-only depositing permission"
   end
 
   describe_rule :destroy? do
-    include_examples "no access"
+    include_examples "a forbidden depositing permission"
   end
 
   describe "relation scope" do
-    let(:target) { SubmissionTarget.all }
+    include_context "policy scope setup"
 
-    subject { policy.apply_scope(target, type: :active_record_relation) }
+    let(:target) { SubmissionTarget.all }
 
     context "as an admin" do
       let(:user) { admin }

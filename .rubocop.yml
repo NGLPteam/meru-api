@@ -349,6 +349,7 @@ Metrics/PerceivedComplexity:
     - "app/operations/**/*.rb"
     - "app/services/**/*.rb"
     - "lib/support/**/*.rb"
+    - "spec/**/*.rb"
 
 Naming/AccessorMethodName:
   Enabled: false

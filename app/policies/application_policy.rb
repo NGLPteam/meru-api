@@ -6,6 +6,24 @@
 class ApplicationPolicy < ActionPolicy::Base
   extend Dry::Core::ClassAttributes
 
+  include Support::ClassyList::DSL
+
+  STANDARD_READ_PERMISSIONS = %i[read? show? index?].freeze
+
+  # Feeds into the `except:` option for `allow_any_admin!` pre-checks.
+  has_simple_symbol_list! :admin_pre_check_exceptions
+
+  # Feeds into the `except:` option for `deny_anonymous!` pre-checks.
+  has_simple_symbol_list! :anonymous_pre_check_exceptions
+
+  has_simple_symbol_list! :read_permissions
+
+  read_permissions! *STANDARD_READ_PERMISSIONS
+
+  has_simple_symbol_list! :write_permissions
+
+  write_permissions! :create?, :update?, :destroy?, :manage?
+
   defines :always_readable, :authenticated_readable, :readable_in_dev, type: Roles::Types::Bool
 
   # @!attribute [r] always_readable
@@ -27,7 +45,7 @@ class ApplicationPolicy < ActionPolicy::Base
   #   @return [Boolean]
   readable_in_dev false
 
-  pre_check :allow_public_reading!, only: %i[index? show? read?]
+  pre_check :allow_public_reading!, only: STANDARD_READ_PERMISSIONS
 
   # @param [ApplicationRecord] record
   # @param [User, AnonymousUser] user
@@ -104,6 +122,7 @@ class ApplicationPolicy < ActionPolicy::Base
 
   def authenticated? = user.authenticated?
 
+  # @see .authenticated_readable
   def authenticated_readable? = self.class.authenticated_readable
 
   # @return [GlobalConfiguration]
@@ -121,8 +140,6 @@ class ApplicationPolicy < ActionPolicy::Base
   # Whether the user has been granted the specified action, or is a global admin
   # @param [String] action_name
   def has_admin_or_allowed_action?(action_name) = has_admin? || has_allowed_action?(action_name)
-
-  def new_record? = record.try(:new_record?) || false
 
   # Whether the record is readable in development mode.
   #
@@ -264,6 +281,24 @@ class ApplicationPolicy < ActionPolicy::Base
   end
 
   class << self
+    # Declare a pre-check that allows any admin user to pass.
+    #
+    # @return [void]
+    def allows_any_admin!(**opts)
+      options = pre_check_blacklist(**opts, with_admin: true)
+
+      pre_check :allow_any_admin!, **options
+    end
+
+    # Declare a pre-check that allows any admin user to pass.
+    #
+    # @return [void]
+    def denies_anonymous!(**opts)
+      options = pre_check_blacklist(**opts, with_anonymous: true)
+
+      pre_check :deny_anonymous!, **options
+    end
+
     # Specify that the record is always readable.
     #
     # @see .always_readable
@@ -286,6 +321,50 @@ class ApplicationPolicy < ActionPolicy::Base
     # @return [void]
     def readable_in_dev!
       readable_in_dev true
+    end
+
+    # @api private
+    # @param [<Symbol>] only
+    # @param [Hash] options (@see .pre_check_normalize_list)
+    # @return [Hash]
+    def pre_check_whitelist(only: [], **options)
+      only = pre_check_normalize_list(only, **options)
+
+      {
+        only:,
+      }
+    end
+
+    # @api private
+    # @param [<Symbol>] except
+    # @param [Hash] options (@see .pre_check_normalize_list)
+    # @return [Hash]
+    def pre_check_blacklist(except: [], **options)
+      except = pre_check_normalize_list(except, **options)
+
+      {
+        except:,
+      }
+    end
+
+    # @api private
+    # @param [<Symbol>] base_list base list of predicates to include in the pre-check list
+    # @param [<Symbol>] extra additional predicates to include
+    # @param [Boolean] with_read whether to include the standard read permissions
+    # @param [Boolean] with_write whether to include the standard write permissions
+    # @param [Boolean] with_anonymous whether to include the anonymous pre-check exceptions
+    # @param [Boolean] with_admin whether to include the admin pre-check exceptions
+    # @return [<Symbol>] a list of predicates to use for a pre-check `only`/`except` option
+    def pre_check_normalize_list(base_list, extra: [], with_read: false, with_write: false, with_anonymous: false, with_admin: false)
+      list = Array(base_list).flatten.map(&:to_sym)
+
+      list.concat(Array(extra).flatten.map(&:to_sym))
+      list.concat(admin_pre_check_exceptions) if with_admin
+      list.concat(anonymous_pre_check_exceptions) if with_anonymous
+      list.concat(read_permissions) if with_read
+      list.concat(write_permissions) if with_write
+
+      list.uniq
     end
   end
 end

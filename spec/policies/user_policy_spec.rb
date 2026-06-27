@@ -2,14 +2,7 @@
 
 RSpec.describe UserPolicy, type: :policy do
   include_context "policy setup"
-
-  let_it_be(:community, refind: true) { FactoryBot.create :community }
-
-  let_it_be(:manager, refind: true) { FactoryBot.create :user, manager_on: [community] }
-
-  let_it_be(:editor, refind: true) { FactoryBot.create :user, editor_on: [community] }
-
-  let_it_be(:reader, refind: true) { FactoryBot.create :user, reader_on: [community] }
+  include_context "entity authorization testing"
 
   let_it_be(:other_users, refind: true) { FactoryBot.create_list :user, 2 }
 
@@ -17,7 +10,7 @@ RSpec.describe UserPolicy, type: :policy do
 
   let(:record) { other_user }
 
-  describe_rule :read? do
+  shared_examples_for "user read access" do
     succeed "as an admin on another user" do
       let(:user) { admin }
     end
@@ -28,6 +21,59 @@ RSpec.describe UserPolicy, type: :policy do
     end
 
     succeed "as a manager on another user" do
+      let(:user) { manager }
+    end
+
+    succeed "as a manager on self" do
+      let(:user) { manager }
+      let(:record) { manager }
+    end
+
+    succeed "as an editor on another user" do
+      let(:user) { editor }
+    end
+
+    succeed "as an editor on self" do
+      let(:user) { editor }
+      let(:record) { editor }
+    end
+
+    succeed "as a reader on another user" do
+      let(:user) { reader }
+    end
+
+    succeed "as a reader on self" do
+      let(:user) { reader }
+      let(:record) { reader }
+    end
+
+    succeed "as a regular user on another user"
+
+    succeed "as a regular user on self" do
+      let(:record) { regular_user }
+    end
+
+    failed "as an anonymous user on another user" do
+      let(:user) { anonymous_user }
+    end
+
+    succeed "as an anonymous user on self" do
+      let(:user) { anonymous_user }
+      let(:record) { anonymous_user }
+    end
+  end
+
+  shared_examples_for "an admin or self action" do
+    succeed "as an admin on another user" do
+      let(:user) { admin }
+    end
+
+    succeed "as an admin on self" do
+      let(:user) { admin }
+      let(:record) { admin }
+    end
+
+    failed "as a manager on another user" do
       let(:user) { manager }
     end
 
@@ -60,254 +106,80 @@ RSpec.describe UserPolicy, type: :policy do
       let(:record) { regular_user }
     end
 
-    failed "as an anonymous user on another user" do
+    failed "as an anonymous user" do
       let(:user) { anonymous_user }
     end
+  end
 
-    succeed "as an anonymous user on self" do
-      let(:user) { anonymous_user }
-      let(:record) { anonymous_user }
-    end
+  describe_rule :read? do
+    include_examples "user read access"
   end
 
   describe_rule :show? do
-    succeed "as an admin on another user" do
-      let(:user) { admin }
-    end
-
-    succeed "as an admin on self" do
-      let(:user) { admin }
-      let(:record) { admin }
-    end
-
-    succeed "as a manager on another user" do
-      let(:user) { manager }
-    end
-
-    succeed "as a manager on self" do
-      let(:user) { manager }
-      let(:record) { manager }
-    end
-
-    failed "as an editor on another user" do
-      let(:user) { editor }
-    end
-
-    succeed "as an editor on self" do
-      let(:user) { editor }
-      let(:record) { editor }
-    end
-
-    failed "as a reader on another user" do
-      let(:user) { reader }
-    end
-
-    succeed "as a reader on self" do
-      let(:user) { reader }
-      let(:record) { reader }
-    end
-
-    failed "as a regular user on another user"
-
-    succeed "as a regular user on self" do
-      let(:record) { regular_user }
-    end
-
-    failed "as an anonymous user on another user" do
-      let(:user) { anonymous_user }
-    end
-
-    succeed "as an anonymous user on self" do
-      let(:user) { anonymous_user }
-      let(:record) { anonymous_user }
-    end
+    include_examples "user read access"
   end
 
   describe_rule :create? do
-    failed "as an admin" do
-      let(:user) { admin }
-    end
-
-    failed "as a manager" do
-      let(:user) { manager }
-    end
-
-    failed "as an editor" do
-      let(:user) { editor }
-    end
-
-    failed "as a reader" do
-      let(:user) { reader }
-    end
-
-    failed "as a regular user"
-
-    failed "as an anonymous user" do
-      let(:user) { anonymous_user }
-    end
+    include_examples "a forbidden permission"
   end
 
   describe_rule :update? do
-    succeed "as an admin on another user" do
-      let(:user) { admin }
-    end
-
-    succeed "as an admin on self" do
-      let(:user) { admin }
-      let(:record) { admin }
-    end
-
-    failed "as a manager on another user" do
-      let(:user) { manager }
-    end
-
-    succeed "as a manager on self" do
-      let(:user) { manager }
-      let(:record) { manager }
-    end
-
-    failed "as an editor on another user" do
-      let(:user) { editor }
-    end
-
-    succeed "as an editor on self" do
-      let(:user) { editor }
-      let(:record) { editor }
-    end
-
-    failed "as a reader on another user" do
-      let(:user) { reader }
-    end
-
-    succeed "as a reader on self" do
-      let(:user) { reader }
-      let(:record) { reader }
-    end
-
-    failed "as a regular user on another user"
-
-    succeed "as a regular user on self" do
-      let(:record) { regular_user }
-    end
-
-    failed "as an anonymous user" do
-      let(:user) { anonymous_user }
-    end
+    include_examples "an admin or self action"
   end
 
   describe_rule :destroy? do
-    failed "as an admin" do
-      let(:user) { admin }
-    end
-
-    failed "as a manager" do
-      let(:user) { manager }
-    end
-
-    failed "as an editor" do
-      let(:user) { editor }
-    end
-
-    failed "as a reader" do
-      let(:user) { reader }
-    end
-
-    failed "as a regular user"
-
-    failed "as an anonymous user" do
-      let(:user) { anonymous_user }
-    end
+    include_examples "a forbidden permission"
   end
 
   describe_rule :reset_password? do
-    succeed "as an admin on another user" do
-      let(:user) { admin }
-    end
-
-    succeed "as an admin on self" do
-      let(:user) { admin }
-      let(:record) { admin }
-    end
-
-    failed "as a manager on another user" do
-      let(:user) { manager }
-    end
-
-    succeed "as a manager on self" do
-      let(:user) { manager }
-      let(:record) { manager }
-    end
-
-    failed "as an editor on another user" do
-      let(:user) { editor }
-    end
-
-    succeed "as an editor on self" do
-      let(:user) { editor }
-      let(:record) { editor }
-    end
-
-    failed "as a reader on another user" do
-      let(:user) { reader }
-    end
-
-    succeed "as a reader on self" do
-      let(:user) { reader }
-      let(:record) { reader }
-    end
-
-    failed "as a regular user on another user"
-
-    succeed "as a regular user on self" do
-      let(:record) { regular_user }
-    end
-
-    failed "as an anonymous user" do
-      let(:user) { anonymous_user }
-    end
+    include_examples "an admin or self action"
   end
 
   describe "relation scope" do
+    include_context "policy scope setup"
+
     let(:target) { User.all }
 
-    subject { policy.apply_scope(target, type: :active_record_relation) }
+    shared_examples_for "a scope that sees all users" do
+      include_records! :user, :admin_user, :other_users, :regular_user, :manager, :editor, :reader
+
+      include_examples "a scope that includes known records"
+    end
+
+    shared_examples_for "a scope that only sees the current user" do
+      include_records! :user
+
+      include_examples "a scope that includes known records"
+    end
 
     context "as an admin" do
-      let(:user) { admin }
+      let(:user) { admin_user }
 
-      it "includes everything" do
-        is_expected.to include admin, *other_users
-      end
+      include_examples "a scope that sees all users"
     end
 
     context "as a manager" do
       let(:user) { manager }
 
-      it "includes everything" do
-        is_expected.to include manager, *other_users
-      end
+      include_examples "a scope that sees all users"
     end
 
     context "as an editor" do
       let(:user) { editor }
 
-      it "includes only the user" do
-        is_expected.to contain_exactly editor
-      end
+      include_examples "a scope that only sees the current user"
     end
 
     context "as a reader" do
       let(:user) { reader }
 
-      it "includes only the user" do
-        is_expected.to contain_exactly reader
-      end
+      include_examples "a scope that only sees the current user"
     end
 
     context "as a regular user" do
-      it "includes only the user" do
-        is_expected.to contain_exactly regular_user
-      end
+      let(:user) { regular_user }
+
+      include_examples "a scope that only sees the current user"
     end
 
     context "as an anonymous user" do
