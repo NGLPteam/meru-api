@@ -2,11 +2,13 @@
 
 # @see SubmissionTarget
 class SubmissionTargetPolicy < ApplicationPolicy
-  always_readable!
-
   pre_check :deny_anonymous!, only: %i[create? update? destroy? deposit? request_deposit_access? review?]
 
   delegate :open?, to: :record
+
+  def read? = allowed_to?(:show?, record.entity)
+
+  def show? = allowed_to?(:show?, record.entity)
 
   # Submission targets are not directly created.
   def create? = false
@@ -28,11 +30,15 @@ class SubmissionTargetPolicy < ApplicationPolicy
 
   def review? = allowed_to?(:review?, record.entity)
 
-  relation_scope do |relation|
-    resolve_default_scope_for(relation)
-  end
-
   private
 
   def no_deposit_request_exists? = !record.depositor_requests.exists?(user:)
+
+  def resolve_scope_for_authenticated(relation)
+    relation.visible_to(user)
+  end
+
+  def resolve_scope_for_anonymous(relation)
+    relation.visible_to(nil)
+  end
 end

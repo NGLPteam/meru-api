@@ -5,6 +5,8 @@
 # It contains information about requirements for submitting to the journal / unit / community / etc.
 class SubmissionTarget < ApplicationRecord
   include AssignsPolymorphicForeignKey
+  include ChecksContextualPermissions
+  include EntityAdjacent
   include HasEphemeralSystemSlug
   include TimestampScopes
   include UsesStatesman
@@ -15,6 +17,8 @@ class SubmissionTarget < ApplicationRecord
   pg_enum! :deposit_mode, as: :submission_deposit_mode, allow_blank: false, default: "direct", suffix: :deposit
 
   has_state_machine! predicates: :ALL
+
+  contextual_permission_primary_key :entity_id
 
   belongs_to :entity, polymorphic: true, inverse_of: :submission_target
   belongs_to :schema_version, inverse_of: :submission_targets
@@ -66,6 +70,8 @@ class SubmissionTarget < ApplicationRecord
   validate :must_have_deposit_targets!, on: :opening
 
   validate :must_have_schema_versions!, on: :opening
+
+  def title = "#{entity_type}(#{entity.title})"
 
   # @param [User] user
   # @see DepositorAgreements::Accept
@@ -182,18 +188,6 @@ class SubmissionTarget < ApplicationRecord
       # :nocov:
 
       with_contextual_action_for(user, "self.review")
-    end
-
-    def visible_to(user)
-      # :nocov:
-      return none if user.blank? || user.anonymous?
-
-      return all if user.has_global_admin_access?
-      # :nocov:
-
-      actions = %w[self.read self.review self.deposit self.update]
-
-      with_contextual_action_for(user, actions)
     end
 
     private

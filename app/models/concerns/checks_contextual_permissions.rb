@@ -51,7 +51,7 @@ module ChecksContextualPermissions
     # @param [<String>] actions
     # @return [ActiveRecord::Relation<HierarchicalEntity>]
     def with_permitted_actions_for(user, *actions)
-      constraint = ContextualSinglePermission.for_hierarchical_type(model_name.to_s).with_permitted_actions_for(user, *actions).select(:hierarchical_id)
+      constraint = ContextualSinglePermission.with_permitted_actions_for(user, *actions).select(:hierarchical_id)
 
       where(contextual_permission_primary_key => constraint)
     end
@@ -63,7 +63,7 @@ module ChecksContextualPermissions
     def arel_visible_to(user)
       cppk = arel_table[contextual_permission_primary_key]
 
-      permission_constraint = ContextualSinglePermission.for_hierarchical_type(model_name.to_s).with_permitted_actions_for(user, "self.read").select(:hierarchical_id)
+      permission_constraint = ContextualSinglePermission.with_permitted_actions_for(user, "self.read").select(:hierarchical_id)
 
       has_read_permission = arel_expr_in_query(cppk, permission_constraint)
 
