@@ -6,6 +6,8 @@ class SubmissionReview < ApplicationRecord
   include TimestampScopes
   include UsesStatesman
 
+  pg_enum! :state, as: :submission_review_state, allow_blank: false, default: :pending
+
   has_state_machine!
 
   belongs_to :submission, inverse_of: :submission_reviews

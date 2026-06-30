@@ -69,6 +69,18 @@ RSpec.describe Mutations::SubmissionPublish, type: :request, graphql: :mutation 
     )
   end
 
+  let_it_be(:pending_submission_review, refind: true) do
+    FactoryBot.create(:submission_review, submission: approved_submission)
+  end
+
+  let_it_be(:revision_requested_submission_review, refind: true) do
+    FactoryBot.create(:submission_review, :revision_requested, submission: approved_submission)
+  end
+
+  let_it_be(:approved_submission_review, refind: true) do
+    FactoryBot.create(:submission_review, :approved, submission: approved_submission)
+  end
+
   let_it_be(:approved_entity, refind: true) { approved_submission.entity }
 
   let_it_be(:rejected_submission, refind: true) do
@@ -111,11 +123,23 @@ RSpec.describe Mutations::SubmissionPublish, type: :request, graphql: :mutation 
       expect_request! do |req|
         req.effect! change(SubmissionPublication, :count).by(1)
         req.effect! change(SubmissionPublicationTransition, :count).by(2)
+        req.effect! change(SubmissionReview, :count).by(-1)
         req.effect! change { approved_submission.current_state(force_reload: true) }.from("approved").to("published")
         req.effect! change { approved_entity.reload.submission_status }.from("submission_draft").to("submission_published")
 
         req.data! expected_shape
       end
+
+      # sanity checks
+
+      expect do
+        pending_submission_review.reload
+      end.to raise_error ActiveRecord::RecordNotFound
+
+      expect do
+        approved_submission_review.reload
+        revision_requested_submission_review.reload
+      end.to execute_safely
     end
 
     context "when provided a submission that is not approved" do
