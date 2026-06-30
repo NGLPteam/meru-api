@@ -6,5 +6,23 @@ FactoryBot.define do
     association :user
 
     comment { "This is a comment on the review." }
+
+    trait :revision_requested do
+      after :create do |review|
+        review.transition_to! :revision_requested
+      end
+    end
+
+    trait :approved do
+      after :create do |review|
+        review.transition_to! :approved
+      end
+    end
+
+    trait :rejected do
+      after :create do |review|
+        review.transition_to! :rejected
+      end
+    end
   end
 end

@@ -44,6 +44,8 @@ module Submissions
     wrapped_hook! def try_to_publish
       actually_publish_entity!
 
+      prune_pending_reviews!
+
       handle_state_transitions!
 
       remove_author_role!
@@ -81,6 +83,13 @@ module Submissions
       submission_publication.transition_to!(:success)
 
       submission.transition_to!(:published)
+    end
+
+    # @return [void]
+    def prune_pending_reviews!
+      SubmissionReview.pending.where(submission:).find_each do |review|
+        review.destroy!
+      end
     end
 
     # @return [void]
