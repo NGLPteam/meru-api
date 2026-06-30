@@ -75,6 +75,13 @@
               {% endmdvalue %}
             {% endmditem %}
           {% endif %}
+          {% if props.keywords.exists %}
+            {% mditem %}
+              {% mdvalue label: "Keywords" %}
+                {{props.keywords}}
+              {% endmdvalue %}
+            {% endmditem %}
+          {% endif %}
         </items-c>
         <items-d>
           {% if props.pdf_version.exists %}

@@ -29,6 +29,13 @@
               {% endmdvalue %}
             {% endmditem %}
           {% endif %}
+          {% if props.keywords.exists %}
+            {% mditem %}
+              {% mdvalue label: "Keywords" %}
+                {{props.keywords}}
+              {% endmdvalue %}
+            {% endmditem %}
+          {% endif %}
         </items-a>
         <items-b>
           {% mditem %}
