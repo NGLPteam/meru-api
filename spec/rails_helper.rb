@@ -127,6 +127,8 @@ abort("The Rails environment is running in production mode!") if Rails.env.produ
 
 require "rspec/rails"
 require "rspec/json_expectations"
+require "test_prof/any_fixture/dsl"
+require "test_prof/recipes/rspec/any_fixture"
 require "test_prof/recipes/rspec/let_it_be"
 require "test_prof/recipes/rspec/sample"
 require "dry/container/stub"
@@ -213,23 +215,33 @@ STUB_HARVEST_PROVIDERS = proc do
 end
 
 RSpec.configure do |config|
+  config.include ActiveJob::TestHelper
+  config.include TestProf::AnyFixture::DSL
+  config.include WebMock::API
+  config.include WebMock::Matchers
+
+  # Filter lines from Rails gems in backtraces.
+  config.filter_rails_from_backtrace!
+
+  # arbitrary gems may also be filtered via:
+  # config.filter_gems_from_backtrace("gem name")
+
+  config.infer_spec_type_from_file_location!
+
   # We use database cleaner to do this
   config.use_transactional_fixtures = false
 
   config.before(:suite) do
-    DatabaseCleaner[:active_record].strategy = :transaction
-    DatabaseCleaner[:redis].strategy = :deletion
-
     DatabaseCleaner[:active_record].clean_with(:truncation)
     DatabaseCleaner[:redis].clean_with(:deletion)
+
+    DatabaseCleaner[:active_record].strategy = :transaction
+    DatabaseCleaner[:redis].strategy = :deletion
 
     Scenic.database.views.select(&:materialized).each do |view|
       Scenic.database.refresh_materialized_view view.name, concurrently: false, cascade: false
     end
   end
-
-  config.include WebMock::API
-  config.include WebMock::Matchers
 
   config.before(:suite) do
     WebMock.enable!
@@ -246,7 +258,9 @@ RSpec.configure do |config|
   config.around do |example|
     STUB_HARVEST_PROVIDERS.()
 
-    example.run
+    DatabaseCleaner.cleaning do
+      example.run
+    end
 
     WebMock.reset!
 
@@ -254,24 +268,6 @@ RSpec.configure do |config|
   end
 
   config.before(:suite) do
-    Common::Container["system.reload_everything"].(skip_refresh: true).value!
     TestingAPI::TestContainer["initialize_database"].().value!
   end
-
-  config.around do |example|
-    DatabaseCleaner.cleaning do
-      example.run
-    end
-  end
-
-  config.infer_spec_type_from_file_location!
-
-  # Filter lines from Rails gems in backtraces.
-  config.filter_rails_from_backtrace!
-
-  # Include AJ Test helpers in all specs.
-  config.include ActiveJob::TestHelper
-
-  # arbitrary gems may also be filtered via:
-  # config.filter_gems_from_backtrace("gem name")
 end

@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 RSpec.describe UserPolicy, type: :policy do
-  include_context "policy setup"
   include_context "entity authorization testing"
 
   let_it_be(:other_users, refind: true) { FactoryBot.create_list :user, 2 }

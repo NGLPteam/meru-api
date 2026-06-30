@@ -42,23 +42,9 @@ module TestHelpers
 end
 
 RSpec.shared_context "with current user context" do
-  let_it_be(:anonymous_user) { AnonymousUser.new }
-
-  let_it_be(:admin_user, refind: true) do
-    FactoryBot.create :user, :admin, given_name: "Admin", family_name: "User"
-  end
-
-  let_it_be(:regular_user, refind: true) do
-    FactoryBot.create :user, given_name: "Regular", family_name: "User"
-  end
+  include_context "all standard users"
 
   let(:current_user) { anonymous_user }
-
-  before do
-    [admin_user, regular_user, current_user].uniq.each do |user|
-      Testing::Keycloak::GlobalRegistry.users.add_existing! user
-    end
-  end
 end
 
 RSpec.configure do |config|

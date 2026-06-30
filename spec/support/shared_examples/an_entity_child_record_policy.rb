@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 RSpec.shared_examples_for "an entity child record policy" do
-  include_context "policy setup"
-
   let_it_be(:community, refind: true) { FactoryBot.create :community }
   let_it_be(:collection, refind: true) { FactoryBot.create :collection }
 

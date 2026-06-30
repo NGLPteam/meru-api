@@ -3,7 +3,10 @@
 require_relative "policy_setup"
 require_relative "../matchers/record_matching"
 
-RSpec.shared_context "policy scope setup", with_known_records: true do
+RSpec.shared_context "policy scope setup" do
+  include RecordMatching::KnownRecordHelpers
+  extend RecordMatching::KnownRecordHelpers::ClassMethods
+
   let(:target) { record.class.all }
 
   let(:authorized_scope) { policy.apply_scope(target, type: :active_record_relation) }
@@ -122,12 +125,60 @@ RSpec.shared_context "policy scope setup", with_known_records: true do
   end
 end
 
-RSpec.shared_context "depositing policy scope setup", policy_scope: true do
+RSpec.shared_context "depositing policy scope setup" do
   include_context "policy scope setup"
-  include_context "depositing policy setup"
+
+  shared_examples_for "a depositing admin-only scope" do
+    include_examples "an admin-only scope"
+
+    context "as a reviewer" do
+      let(:user) { reviewer }
+
+      include_examples "a scope that excludes known records"
+    end
+
+    context "as a depositor" do
+      let(:user) { submitter }
+
+      include_examples "a scope that excludes known records"
+    end
+  end
+
+  shared_examples_for "a depositing review scope" do
+    include_examples "an admin-only scope"
+
+    context "as a reviewer" do
+      let(:user) { reviewer }
+
+      include_examples "a scope that includes known records"
+    end
+
+    context "as a depositor" do
+      let(:user) { submitter }
+
+      include_examples "a scope that excludes known records"
+    end
+  end
+
+  shared_examples_for "a depositing scope" do
+    include_examples "an admin-only scope"
+
+    context "as a reviewer" do
+      let(:user) { reviewer }
+
+      include_examples "a scope that includes known records"
+    end
+
+    context "as a depositor" do
+      let(:user) { submitter }
+
+      include_examples "a scope that includes known records"
+    end
+  end
 end
 
 RSpec.configure do |config|
-  config.include RecordMatching::KnownRecordHelpers, policy_scope: true
-  config.extend RecordMatching::KnownRecordHelpers::ClassMethods, policy_scope: true
+  config.include_context "policy scope setup", policy_scope: true
+
+  config.include_context "depositing policy scope setup", depositing_policy_scope: true
 end

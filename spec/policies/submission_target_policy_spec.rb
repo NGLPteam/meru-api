@@ -71,9 +71,7 @@ RSpec.describe SubmissionTargetPolicy, type: :policy do
     include_examples "a forbidden depositing permission"
   end
 
-  describe "relation scope", policy_scope: true do
-    include_context "depositing policy scope setup"
-
+  describe "relation scope", :depositing_policy_scope do
     let(:target) { SubmissionTarget.all }
 
     let_it_be(:hidden_collection, refind: true) { FactoryBot.create :collection, :hidden, community:, title: "Hidden Collection" }
@@ -136,9 +134,7 @@ RSpec.describe SubmissionTargetPolicy, type: :policy do
     context "as an anonymous user" do
       let(:user) { anonymous_user }
 
-      exclude_records! :submission_target, :hidden_target
-
-      include_examples "a scope that includes known records"
+      include_examples "a scope that only sees public targets"
     end
   end
 end

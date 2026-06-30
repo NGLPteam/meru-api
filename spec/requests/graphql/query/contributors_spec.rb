@@ -1,6 +1,10 @@
 # frozen_string_literal: true
 
 RSpec.describe "Query.contributors", type: :request, disable_ordering_refresh: true do
+  def community = fixture(:community)
+
+  def collection = fixture(:collection)
+
   def create_person_contributor_at(time, item_count:, **attributes)
     Timecop.freeze time do
       FactoryBot.create(:contributor, :person, **attributes).tap do |contributor|
@@ -40,11 +44,25 @@ RSpec.describe "Query.contributors", type: :request, disable_ordering_refresh: t
   end
 
   context "when ordering" do
+    graphql_query! <<~GRAPHQL
+    query getOrderedContributors($order: ContributorOrder!, $prefix: String) {
+      contributors(order: $order, prefix: $prefix) {
+        edges {
+          node {
+            ... on Node { id }
+            ... on Contributor { name }
+          }
+        }
+
+        pageInfo {
+          totalCount
+          totalUnfilteredCount
+        }
+      }
+    }
+    GRAPHQL
+
     let(:token) { token_helper.build_token has_global_admin: true }
-
-    let_it_be(:community) { FactoryBot.create :community }
-
-    let_it_be(:collection) { FactoryBot.create :collection, community: }
 
     let_it_be(:contributor_asimov) do
       create_person_contributor_at(1.day.ago, item_count: 5, given_name: "Isaac", family_name: "Asimov", affiliation: "everything")
@@ -81,24 +99,10 @@ RSpec.describe "Query.contributors", type: :request, disable_ordering_refresh: t
       }
     end
 
-    let!(:query) do
-      <<~GRAPHQL
-      query getOrderedContributors($order: ContributorOrder!, $prefix: String) {
-        contributors(order: $order, prefix: $prefix) {
-          edges {
-            node {
-              ... on Node { id }
-              ... on Contributor { name }
-            }
-          }
-
-          pageInfo {
-            totalCount
-            totalUnfilteredCount
-          }
-        }
-      }
-      GRAPHQL
+    around do |example|
+      Contributor.lock_to!(contributor_asimov, contributor_salinger, contributor_angelou, contributor_shelley) do
+        example.run
+      end
     end
 
     shared_examples_for "an ordered list of contributors" do |order_value, *keys|

@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 RSpec.describe SubmissionTargetReviewerPolicy, type: :policy do
-  include_context "policy setup"
-
   let_it_be(:submission_target_reviewer, refind: true) { FactoryBot.create :submission_target_reviewer }
 
   let(:record) { submission_target_reviewer }

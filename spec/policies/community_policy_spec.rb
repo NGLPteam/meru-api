@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 RSpec.describe CommunityPolicy, type: :policy do
-  include_context "policy setup"
-
   let_it_be(:community, refind: true) { FactoryBot.create :community, title: "Community" }
 
   let_it_be(:other_community, refind: true) { FactoryBot.create :community, title: "Other Community" }

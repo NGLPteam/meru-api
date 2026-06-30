@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 RSpec.describe DepositorRequestPolicy, type: :policy do
-  include_context "policy setup"
-
   let_it_be(:depositor_request, refind: true) { FactoryBot.create :depositor_request }
 
   let(:record) { depositor_request }

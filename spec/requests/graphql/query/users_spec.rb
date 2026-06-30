@@ -1,32 +1,26 @@
 # frozen_string_literal: true
 
 RSpec.describe "Query.users", type: :request do
-  let!(:query) do
-    <<~GRAPHQL
-    query getOrderedUsers($order: UserOrder!, $prefix: String) {
-      users(order: $order, prefix: $prefix) {
-        edges {
-          node {
-            id
-            name
-            globalAdmin
-          }
-        }
-
-        pageInfo {
-          totalCount
-          totalUnfilteredCount
+  graphql_query! <<~GRAPHQL
+  query getOrderedUsers($order: UserOrder!, $prefix: String) {
+    users(order: $order, prefix: $prefix) {
+      edges {
+        node {
+          id
+          name
+          globalAdmin
         }
       }
-    }
-    GRAPHQL
-  end
 
-  let_it_be(:user_admin) do
-    Timecop.freeze(4.days.ago) do
-      FactoryBot.create :user, :admin, given_name: "Admin", family_name: "User", email: "admin@example.com", metadata: { testing: false }
-    end
-  end
+      pageInfo {
+        totalCount
+        totalUnfilteredCount
+      }
+    }
+  }
+  GRAPHQL
+
+  let_it_be(:user_admin) { fixture(:admin_user) }
 
   let_it_be(:user_aa) do
     Timecop.freeze(3.days.ago) do
@@ -40,14 +34,7 @@ RSpec.describe "Query.users", type: :request do
     end
   end
 
-  let_it_be(:user_test) do
-    Timecop.freeze(1.day.ago) do
-      FactoryBot.create :user, given_name: "Test", family_name: "User", email: "test@example.com", metadata: { testing: true }
-    end
-  end
-
-  let_it_be(:default_admin_user) { user_admin }
-  let_it_be(:default_user) { user_test }
+  let_it_be(:user_test) { fixture(:regular_user) }
 
   let!(:keyed_users) do
     {
@@ -69,9 +56,12 @@ RSpec.describe "Query.users", type: :request do
 
   let!(:graphql_variables) { { order:, prefix: search_prefix } }
 
-  # We gotta make sure our keycloak default users are not present
-  before do
-    User.where.not(id: [user_admin, user_aa, user_test, user_zz]).destroy_all
+  # We gotta make sure our fixture users are not included in the query
+  # @todo in the future, test resolvers directly instead of through the GraphQL API, so we can avoid this
+  around do |example|
+    User.lock_to!(user_admin, user_aa, user_test, user_zz) do
+      example.run
+    end
   end
 
   def shape_for(*keys)

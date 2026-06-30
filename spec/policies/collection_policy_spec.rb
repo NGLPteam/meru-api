@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 RSpec.describe CollectionPolicy, type: :policy do
-  include_context "policy setup"
-
   let_it_be(:community) { FactoryBot.create :community }
 
   let_it_be(:collection, refind: true) { FactoryBot.create :collection, community:, title: "Collection" }

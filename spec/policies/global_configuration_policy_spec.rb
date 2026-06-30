@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 RSpec.describe GlobalConfigurationPolicy, type: :policy do
-  include_context "policy setup"
-
   let!(:record) { GlobalConfiguration.fetch }
 
   describe_rule :show? do

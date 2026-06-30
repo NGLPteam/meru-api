@@ -3,7 +3,8 @@
 FactoryBot.define do
   factory :submission_review do
     association :submission
-    association :user
+
+    association :user, name_prefix: "Submission", name_suffix: "Reviewer"
 
     comment { "This is a comment on the review." }
 

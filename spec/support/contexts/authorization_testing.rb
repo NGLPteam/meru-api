@@ -1,23 +1,29 @@
 # frozen_string_literal: true
 
 RSpec.shared_context "all roles" do
-  let_it_be(:role_admin, refind: true) { Role.fetch(:admin) }
-  let_it_be(:role_manager, refind: true) { Role.fetch(:manager) }
-  let_it_be(:role_editor, refind: true) { Role.fetch(:editor) }
-  let_it_be(:role_reviewer, refind: true) { Role.fetch(:reviewer) }
-  let_it_be(:role_depositor, refind: true) { Role.fetch(:depositor) }
-  let_it_be(:role_author, refind: true) { Role.fetch(:author) }
-  let_it_be(:role_reader, refind: true) { Role.fetch(:reader) }
+  def role_admin = fixture(:role_admin)
+
+  def role_manager = fixture(:role_manager)
+
+  def role_editor = fixture(:role_editor)
+
+  def role_reviewer = fixture(:role_reviewer)
+
+  def role_depositor = fixture(:role_depositor)
+
+  def role_author = fixture(:role_author)
+
+  def role_reader = fixture(:role_reader)
 end
 
 RSpec.shared_context "all standard users" do
-  let_it_be(:admin_user, refind: true) { FactoryBot.create :user, :admin }
+  def admin_user = fixture(:admin_user)
 
-  let_it_be(:admin) { admin_user }
+  alias_method :admin, :admin_user
 
-  let_it_be(:regular_user, refind: true) { FactoryBot.create :user }
+  def regular_user = fixture(:regular_user)
 
-  let_it_be(:anonymous_user) { AnonymousUser.new }
+  def anonymous_user = @anonymous_user ||= AnonymousUser.new
 end
 
 RSpec.shared_context "authorization testing" do
@@ -28,16 +34,16 @@ end
 RSpec.shared_context "entity authorization testing" do
   include_context "authorization testing"
 
-  let_it_be(:item_schema_version, refind: true) { FactoryBot.create(:schema_version, :item) }
+  def item_schema_version = fixture(:item_schema_version)
 
-  let_it_be(:community, refind: true) { FactoryBot.create(:community) }
-  let_it_be(:collection, refind: true) { FactoryBot.create(:collection, community:) }
-  let_it_be(:item, refind: true) { FactoryBot.create(:item, collection:) }
+  def community = fixture(:community)
+  def collection = fixture(:collection)
+  def item = fixture(:item)
 
-  let_it_be(:community_manager, refind: true) { FactoryBot.create(:user, manager_on: community) }
-  let_it_be(:community_editor, refind: true) { FactoryBot.create(:user, editor_on: community) }
-  let_it_be(:community_reader, refind: true) { FactoryBot.create(:user, reader_on: community) }
-  let_it_be(:collection_editor, refind: true) { FactoryBot.create(:user, editor_on: collection) }
+  def community_manager = fixture(:community_manager)
+  def community_editor = fixture(:community_editor)
+  def community_reader = fixture(:community_reader)
+  def collection_editor = fixture(:collection_editor)
 
   let(:manager) { community_manager }
   let(:editor) { community_editor }
@@ -47,28 +53,11 @@ end
 RSpec.shared_context "depositing authorization testing" do
   include_context "entity authorization testing"
 
-  let_it_be(:submission_target, refind: true) do
-    collection.fetch_submission_target!.tap do |st|
-      st.configure!(schema_versions: [item_schema_version], deposit_mode: :direct)
-      st.transition_to! :open
-    end
-  end
+  def submission_target = fixture(:submission_target)
 
-  let_it_be(:reviewer, refind: true) do
-    FactoryBot.create(:user, reviewer_on: collection)
-  end
+  def reviewer = fixture(:reviewer)
 
-  let_it_be(:submitter, refind: true) do
-    FactoryBot.create(:user, depositor_on: collection)
-  end
+  def submitter = fixture(:submitter)
 
-  let_it_be(:submission, refind: true) do
-    FactoryBot.create(:submission,
-      submission_target:,
-      schema_version: item_schema_version,
-      parent_entity: collection,
-      user: submitter,
-      title: "Test Submission"
-    )
-  end
+  def submission = fixture(:submission)
 end

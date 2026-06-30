@@ -38,4 +38,6 @@ end
 
 require_relative "lib/types"
 
+TestingAPI::TestContainer.start(:factory_bot_location_tracking)
+
 TestingAPI::TestContainer.finalize!

@@ -3,14 +3,24 @@
 FactoryBot.define do
   factory :submission do
     association :submission_target
-    association :user
-    association :schema_version, :collection
-    association :parent_entity, factory: :collection
+    association :user, name_prefix: "Submission", name_suffix: "Depositor"
 
-    title { Faker::Lorem.sentence }
+    schema_version do
+      SchemaVersion["default:item"]
+    end
+
+    parent_entity do
+      case submission_target.entity
+      in Collection then submission_target.entity
+      else
+        FactoryBot.create(:collection, title: "Submission Parent Collection")
+      end
+    end
+
+    sequence(:title) { "Submission #{_1}" }
 
     trait :item do
-      association :schema_version, :item
+      schema_version { SchemaVersion["default:item"] }
     end
 
     trait :submitted do

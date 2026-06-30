@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 RSpec.describe AccessGrantPolicy, type: :policy do
-  include_context "policy setup"
-
   let_it_be(:community, refind: true) { FactoryBot.create :community }
 
   let_it_be(:manager, refind: true) { FactoryBot.create :user, manager_on: [community] }

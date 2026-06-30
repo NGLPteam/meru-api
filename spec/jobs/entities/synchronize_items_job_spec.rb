@@ -2,6 +2,9 @@
 
 RSpec.describe Entities::SynchronizeItemsJob, type: :job do
   it_behaves_like "an entity sync job" do
-    let!(:entities) { FactoryBot.create_list :item, 2 }
+    let!(:entities) { [fixture(:item)] }
+
+    # We get one extra from the global `submission` fixture
+    let(:entity_count) { 2 }
   end
 end

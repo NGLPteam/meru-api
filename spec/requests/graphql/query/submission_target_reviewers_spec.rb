@@ -1,18 +1,7 @@
 # frozen_string_literal: true
 
 RSpec.describe "Query.submissionTargetReviewers", type: :request do
-  let_it_be(:community, refind: true) { FactoryBot.create(:community) }
-
-  let_it_be(:collection, refind: true) { FactoryBot.create(:collection, community:) }
-
-  let_it_be(:item_schema_version, refind: true) { FactoryBot.create(:schema_version, :item) }
-
-  let_it_be(:submission_target, refind: true) do
-    collection.fetch_submission_target!.tap do |st|
-      st.configure!(schema_versions: [item_schema_version], deposit_mode: :direct)
-      st.transition_to! :open
-    end
-  end
+  include_context "depositing authorization testing"
 
   context "when ordering" do
     let(:query) do
@@ -129,6 +118,12 @@ RSpec.describe "Query.submissionTargetReviewers", type: :request do
         records.sort_by(&:created_at)
       else
         order_records(records, order: "OLDEST").reverse!
+      end
+    end
+
+    around do |example|
+      SubmissionTargetReviewer.lock_to!(*records) do
+        example.run
       end
     end
 

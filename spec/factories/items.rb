@@ -4,13 +4,17 @@ FactoryBot.define do
   factory :item do
     transient do
       schema { nil }
+
+      sequence(:seq) { _1 }
+
+      title_prefix { "Item" }
     end
 
     association :collection
 
     schema_version { schema.present? ? SchemaVersion[schema] : SchemaVersion.default_item }
 
-    title { Faker::Lorem.sentence }
+    title { "#{title_prefix} #{seq}" }
     identifier { title.parameterize }
 
     raw_doi { nil }
@@ -21,10 +25,14 @@ FactoryBot.define do
     pending_properties { {} }
 
     trait :hidden do
+      title_prefix { "Hidden Item" }
+
       visibility { :hidden }
     end
 
     trait :limited do
+      title_prefix { "Limited Visibility Item" }
+
       visibility { :limited }
 
       visible_after_at { 1.day.ago }
@@ -53,6 +61,8 @@ FactoryBot.define do
           }
         end
       end
+
+      title_prefix { "Journal Article" }
 
       schema { "nglp:journal_article" }
 

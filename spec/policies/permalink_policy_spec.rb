@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 RSpec.describe PermalinkPolicy, type: :policy do
-  include_context "policy setup"
-
   let_it_be(:permalink) { FactoryBot.create :permalink }
 
   let(:record) { permalink }

@@ -40,7 +40,7 @@ RSpec.describe Contributors::AuditContributionCounts, type: :operation do
     end
 
     it "updates the necessary row(s)" do
-      expect_calling.to succeed.with(2)
+      expect_calling.to succeed.with(3)
     end
 
     context "when specifying a list of IDs" do

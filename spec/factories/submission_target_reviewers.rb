@@ -3,6 +3,6 @@
 FactoryBot.define do
   factory :submission_target_reviewer do
     association :submission_target
-    association :user
+    association :user, name_prefix: "Submission", name_suffix: "Reviewer"
   end
 end

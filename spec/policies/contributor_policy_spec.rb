@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 RSpec.describe ContributorPolicy, type: :policy do
-  include_context "policy setup"
-
   let_it_be(:contributor, refind: true) { FactoryBot.create :contributor, :person }
 
   let(:record) { contributor }
