@@ -1,43 +1,41 @@
 # frozen_string_literal: true
 
 RSpec.describe "Query.submissionTargets", type: :request do
+  let_it_be(:community, refind: true) { FactoryBot.create(:community, title: "Test Submission Target Community") }
+
   context "when ordering" do
-    let(:query) do
-      <<~GRAPHQL
-      query getSubmissionTargetCollection($order: SubmissionTargetOrder) {
-        submissionTargets(order: $order) {
-          edges {
-            node {
+    graphql_query! <<~GRAPHQL
+    query getSubmissionTargetCollection($order: SubmissionTargetOrder) {
+      submissionTargets(order: $order) {
+        edges {
+          node {
+            id
+            slug
+
+            entity {
+              __typename
+
               id
-              slug
+              title
+            }
 
-              canUpdate {
-                ... AuthorizationResultFragment
-              }
+            canUpdate {
+              ... AuthorizationResultFragment
+            }
 
-              canDestroy {
-                ... AuthorizationResultFragment
-              }
+            canDestroy {
+              ... AuthorizationResultFragment
             }
           }
+        }
 
-          pageInfo {
-            totalCount
-            totalUnfilteredCount
-          }
+        pageInfo {
+          totalCount
+          totalUnfilteredCount
         }
       }
-
-      fragment AuthorizationResultFragment on AuthorizationResult {
-        value
-        message
-        reasons {
-          details
-          fullMessages
-        }
-      }
-      GRAPHQL
-    end
+    }
+    GRAPHQL
 
     let(:can_update) { false }
     let(:can_destroy) { false }
@@ -75,6 +73,7 @@ RSpec.describe "Query.submissionTargets", type: :request do
     let_it_be(:records, refind: true) do
       1.upto(4).map do |n|
         attrs = {
+          n:,
           _at: n.days.ago,
         }
 
@@ -84,8 +83,18 @@ RSpec.describe "Query.submissionTargets", type: :request do
 
     let(:sorted_records) { order_records(records, order:) }
 
-    def create_record(_at:, **attrs)
+    def create_record(_at:, n:, **attrs)
       Timecop.freeze _at do
+        collection = FactoryBot.create(:collection, community:)
+
+        if n == 1
+          collection.visibility = "hidden"
+
+          collection.save!
+        end
+
+        attrs[:entity] = collection
+
         FactoryBot.create(:submission_target, **attrs)
       end
     end
@@ -140,12 +149,16 @@ RSpec.describe "Query.submissionTargets", type: :request do
       let(:can_update) { false }
       let(:can_destroy) { false }
 
+      let(:sorted_records) { super().reject(&:currently_hidden?) }
+
       include_examples "ordering by each option"
     end
 
     as_an_anonymous_user do
       let(:can_update) { false }
       let(:can_destroy) { false }
+
+      let(:sorted_records) { super().reject(&:currently_hidden?) }
 
       include_examples "ordering by each option"
     end

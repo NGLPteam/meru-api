@@ -71,31 +71,74 @@ RSpec.describe SubmissionTargetPolicy, type: :policy do
     include_examples "a forbidden depositing permission"
   end
 
-  describe "relation scope" do
-    include_context "policy scope setup"
+  describe "relation scope", policy_scope: true do
+    include_context "depositing policy scope setup"
 
     let(:target) { SubmissionTarget.all }
 
-    context "as an admin" do
-      let(:user) { admin }
+    let_it_be(:hidden_collection, refind: true) { FactoryBot.create :collection, :hidden, community:, title: "Hidden Collection" }
 
-      it "includes everything" do
-        is_expected.to include record
-      end
+    let_it_be(:hidden_target, refind: true) { hidden_collection.fetch_submission_target! }
+
+    let_it_be(:community_reviewer, refind: true) { FactoryBot.create :user, reviewer_on: community }
+    let_it_be(:community_depositor, refind: true) { FactoryBot.create :user, depositor_on: community }
+
+    shared_examples_for "a scope that sees the hidden target" do
+      include_records! :hidden_target
+
+      include_examples "a scope that includes known records"
+    end
+
+    shared_examples_for "a scope that only sees public targets" do
+      exclude_records! :hidden_target
+
+      include_examples "a scope that includes known records"
+    end
+
+    include_records! :submission_target
+
+    context "as an admin" do
+      let(:user) { admin_user }
+
+      include_examples "a scope that sees the hidden target"
+    end
+
+    context "as a reviewer with access" do
+      let(:user) { community_reviewer }
+
+      include_examples "a scope that sees the hidden target"
+    end
+
+    context "as a reviewer without access" do
+      let(:user) { reviewer }
+
+      include_examples "a scope that only sees public targets"
+    end
+
+    context "as a depositor with access" do
+      let(:user) { community_depositor }
+
+      include_examples "a scope that sees the hidden target"
+    end
+
+    context "as a depositor without access" do
+      let(:user) { submitter }
+
+      include_examples "a scope that only sees public targets"
     end
 
     context "as a regular user" do
-      it "includes accessible records" do
-        is_expected.to include(record)
-      end
+      let(:user) { regular_user }
+
+      include_examples "a scope that only sees public targets"
     end
 
     context "as an anonymous user" do
       let(:user) { anonymous_user }
 
-      it "includes accessible records" do
-        is_expected.to include(record)
-      end
+      exclude_records! :submission_target, :hidden_target
+
+      include_examples "a scope that includes known records"
     end
   end
 end

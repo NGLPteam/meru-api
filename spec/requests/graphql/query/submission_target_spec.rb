@@ -1,33 +1,29 @@
 # frozen_string_literal: true
 
 RSpec.describe "Query.submissionTarget", type: :request do
-  let(:query) do
-    <<~GRAPHQL
-    query getSubmissionTarget($slug: Slug!) {
-      submissionTarget(slug: $slug) {
+  graphql_query! <<~GRAPHQL
+  query getSubmissionTarget($slug: Slug!) {
+    submissionTarget(slug: $slug) {
+      id
+      slug
+
+      entity {
+        __typename
+
         id
-        slug
+        title
+      }
 
-        canUpdate {
-          ... AuthorizationResultFragment
-        }
+      canUpdate {
+        ... AuthorizationResultFragment
+      }
 
-        canDestroy {
-          ... AuthorizationResultFragment
-        }
+      canDestroy {
+        ... AuthorizationResultFragment
       }
     }
-
-    fragment AuthorizationResultFragment on AuthorizationResult {
-      value
-      message
-      reasons {
-        details
-        fullMessages
-      }
-    }
-    GRAPHQL
-  end
+  }
+  GRAPHQL
 
   let(:can_update) { false }
   let(:can_destroy) { false }
@@ -35,8 +31,12 @@ RSpec.describe "Query.submissionTarget", type: :request do
   let(:found_shape) do
     gql.query do |q|
       q.prop :submission_target do |m|
-        m[:id] = existing_model.to_encoded_id
-        m[:slug] = existing_model.system_slug
+        m[:id] = submission_target.to_encoded_id
+        m[:slug] = submission_target.system_slug
+
+        m.prop :entity do |ent|
+          ent.typename("Collection")
+        end
 
         m.auth_results(can_update:, can_destroy:)
       end
@@ -49,9 +49,13 @@ RSpec.describe "Query.submissionTarget", type: :request do
     end
   end
 
-  let_it_be(:existing_model, refind: true) { FactoryBot.create :submission_target }
+  let_it_be(:community, refind: true) { FactoryBot.create(:community, title: "Test Submission Target Community") }
 
-  let(:slug) { existing_model.system_slug }
+  let_it_be(:collection, refind: true) { FactoryBot.create(:collection, community:, title: "Test Submission Target Collection") }
+
+  let_it_be(:submission_target, refind: true) { FactoryBot.create :submission_target, entity: collection }
+
+  let(:slug) { submission_target.system_slug }
 
   let(:graphql_variables) do
     { slug:, }
@@ -89,11 +93,34 @@ RSpec.describe "Query.submissionTarget", type: :request do
     end
   end
 
+  shared_examples_for "can see hidden submission targets" do
+    context "when looking for a hidden submission target" do
+      before do
+        collection.visibility = "hidden"
+        collection.save!
+      end
+
+      include_examples "a found record"
+    end
+  end
+
+  shared_examples_for "cannot see hidden submission targets" do
+    context "when looking for a hidden submission target" do
+      before do
+        collection.visibility = "hidden"
+        collection.save!
+      end
+
+      include_examples "a not found record"
+    end
+  end
+
   as_an_admin_user do
     let(:can_update) { true }
     let(:can_destroy) { false }
 
     include_examples "an authorized lookup"
+    include_examples "can see hidden submission targets"
   end
 
   as_a_regular_user do
@@ -101,6 +128,7 @@ RSpec.describe "Query.submissionTarget", type: :request do
     let(:can_destroy) { false }
 
     include_examples "an authorized lookup"
+    include_examples "cannot see hidden submission targets"
   end
 
   as_an_anonymous_user do
@@ -108,5 +136,6 @@ RSpec.describe "Query.submissionTarget", type: :request do
     let(:can_destroy) { false }
 
     include_examples "an authorized lookup"
+    include_examples "cannot see hidden submission targets"
   end
 end

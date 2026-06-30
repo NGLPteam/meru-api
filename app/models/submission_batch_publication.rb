@@ -32,13 +32,11 @@ class SubmissionBatchPublication < ApplicationRecord
     # @param [User, AnonymousUser] user
     # @return [ActiveRecord::Relation<SubmissionBatchPublication>]
     def visible_to(user)
-      # :nocov:
       return none if user.blank? || user.anonymous?
 
       return all if user.has_global_admin_access?
-      # :nocov:
 
-      where(submission_target: SubmissionTarget.visible_to(user))
+      where(submission_target: SubmissionTarget.readable_by(user))
     end
   end
 end
