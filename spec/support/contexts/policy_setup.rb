@@ -68,7 +68,6 @@ RSpec.shared_context "policy setup" do
 end
 
 RSpec.shared_context "depositing policy setup" do
-  include_context "policy setup"
   include_context "depositing authorization testing"
 
   shared_examples_for "a permission granted to reviewers" do
@@ -131,4 +130,10 @@ RSpec.shared_context "depositing policy setup" do
     include_examples "a permission denied to reviewers"
     include_examples "a permission denied to submitters"
   end
+end
+
+RSpec.configure do |config|
+  config.include_context "policy setup", type: :policy
+
+  config.include_context "depositing policy setup", depositing_policy: true
 end

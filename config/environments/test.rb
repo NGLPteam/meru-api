@@ -45,6 +45,12 @@ Rails.application.configure do
   # Set host to be used by links generated in mailer templates.
   config.action_mailer.default_url_options = { host: "example.com" }
 
+  # Highlight code that triggered database queries in logs.
+  config.active_record.verbose_query_logs = ENV["CI"].blank?
+
+  # Append comments with runtime information tags to SQL queries in logs.
+  config.active_record.query_log_tags_enabled = ENV["CI"].blank?
+
   # Print deprecation notices to the stderr.
   config.active_support.deprecation = :stderr
 

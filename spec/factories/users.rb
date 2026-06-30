@@ -10,6 +10,13 @@ FactoryBot.define do
       depositor_on { nil }
       reader_on { nil }
       register_in_keycloak { true }
+
+      name_prefix { "Testing" }
+      name_suffix { "User" }
+
+      testing { true }
+
+      sequence(:seq) { _1 }
     end
 
     keycloak_id { SecureRandom.uuid }
@@ -18,14 +25,15 @@ FactoryBot.define do
     email_verified { false }
 
     username { email }
-    name { "#{given_name} #{family_name}" }
 
-    given_name { Faker::Name.first_name }
-    family_name { Faker::Name.last_name }
+    given_name { name_prefix }
+    family_name { "#{name_suffix} #{seq}" }
+
+    name { "#{given_name} #{family_name}" }
 
     roles { [] }
     resource_roles { {} }
-    metadata { { "testing" => true } }
+    metadata { { "testing" => testing } }
 
     global_access_control_list do
       Roles::GlobalAccessControlList.build_with(acl).as_json

@@ -2,7 +2,7 @@
 
 FactoryBot.define do
   factory :submission_target do
-    entity { FactoryBot.create :collection }
+    association :entity, factory: :collection, title_prefix: "Submission Target"
 
     schema_version { entity.schema_version }
   end

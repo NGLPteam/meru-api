@@ -136,7 +136,7 @@ RSpec.shared_context "journal hierarchy" do
 
   let_it_be(:base_journal_community) do
     Schemas::Orderings.with_disabled_refresh do
-      FactoryBot.create(:community, :with_logo, :with_thumbnail, identifier: "journal-community").tap(&:reload)
+      FactoryBot.create(:community, :with_logo, :with_thumbnail, identifier: "journal-community", title: "Base Journal Community").tap(&:reload)
     end
   end
 

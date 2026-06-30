@@ -67,6 +67,12 @@ RSpec.describe "Query.communities", type: :request do
     model.slice(:position, :title).merge(id: model.to_encoded_id)
   end
 
+  around do |example|
+    Community.lock_to!(community_a3, community_k0, community_m2, community_n4, community_z1) do
+      example.run
+    end
+  end
+
   context "when ordering" do
     let(:token) { token_helper.build_token has_global_admin: true }
 

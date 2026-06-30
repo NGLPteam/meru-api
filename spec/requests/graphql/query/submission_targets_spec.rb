@@ -110,6 +110,12 @@ RSpec.describe "Query.submissionTargets", type: :request do
       end
     end
 
+    around do |example|
+      SubmissionTarget.lock_to!(*records) do
+        example.run
+      end
+    end
+
     shared_examples_for "a properly-ordered collection" do
       it "retrieves everything in the right order" do
         expect_request! do |req|

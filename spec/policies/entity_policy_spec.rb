@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 RSpec.describe EntityPolicy, type: :policy do
-  include_context "policy setup"
-
   let_it_be(:editor_role, refind: true) { FactoryBot.create :role, :editor }
 
   let_it_be(:community, refind: true) { FactoryBot.create :community }

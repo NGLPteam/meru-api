@@ -1,84 +1,84 @@
 # frozen_string_literal: true
 
 RSpec.describe "Query.item", type: :request do
-  let!(:query) do
-    <<~GRAPHQL
-    query getItem($slug: Slug!) {
-      item(slug: $slug) {
-        title
+  include_context "entity authorization testing"
 
-        applicableRoles {
-          id
-          name
-        }
+  graphql_query! <<~GRAPHQL
+  query getItem($slug: Slug!) {
+    item(slug: $slug) {
+      title
 
-        allowedActions
+      applicableRoles {
+        id
+        name
+      }
 
-        contributors {
-          nodes {
-            ... on OrganizationContributor {
-              legalName
-            }
+      allowedActions
 
-            ... on PersonContributor {
-              givenName
-              familyName
-            }
+      contributors {
+        nodes {
+          ... on OrganizationContributor {
+            legalName
           }
 
-          pageInfo {
-            totalCount
+          ... on PersonContributor {
+            givenName
+            familyName
           }
         }
 
-        items {
-          nodes { id }
-
-          pageInfo {
-            totalCount
-          }
-        }
-
-        links {
-          ... EntityLinksListDataFragment
+        pageInfo {
+          totalCount
         }
       }
-    }
 
-    fragment EntityLinksListDataFragment on EntityLinkConnection {
-      nodes {
-        id
-        slug
-        operator
-        target {
-          __typename
-          ... on Item {
-            slug
-            title
-            schemaDefinition {
-              name
-              kind
-              id
-            }
-          }
-          ... on Collection {
-            slug
-            title
-            schemaDefinition {
-              name
-              kind
-              id
-            }
-          }
-          ... on Node {
-            __isNode: __typename
+      items {
+        nodes { id }
+
+        pageInfo {
+          totalCount
+        }
+      }
+
+      links {
+        ... EntityLinksListDataFragment
+      }
+    }
+  }
+
+  fragment EntityLinksListDataFragment on EntityLinkConnection {
+    nodes {
+      id
+      slug
+      operator
+      target {
+        __typename
+        ... on Item {
+          slug
+          title
+          schemaDefinition {
+            name
+            kind
             id
           }
         }
+        ... on Collection {
+          slug
+          title
+          schemaDefinition {
+            name
+            kind
+            id
+          }
+        }
+        ... on Node {
+          __isNode: __typename
+          id
+        }
       }
     }
-    GRAPHQL
-  end
+  }
+  GRAPHQL
 
   let(:slug) { random_slug }
 
@@ -111,9 +111,7 @@ RSpec.describe "Query.item", type: :request do
     ]
   end
 
-  let_it_be(:item) { FactoryBot.create :item }
-
-  let_it_be(:subitems) { FactoryBot.create_list :item, 2, parent: item }
+  let_it_be(:subitems) { FactoryBot.create_list :item, 2, collection:, parent: item }
 
   let_it_be(:contributors) do
     %i[person organization].map do |trait|

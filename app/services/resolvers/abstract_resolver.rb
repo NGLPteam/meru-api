@@ -273,6 +273,10 @@ module Resolvers
     # @return [Class<ApplicationRecord>]
     def implicit_authorization_target = model_klass
 
+    def maybe_lock_scope(scope)
+      scope.all.maybe_locked
+    end
+
     # @param [ActiveRecord::Relation, nil] scope
     # @param [{ Symbol => Object }] options
     # @return [ActiveRecord::Relation]
@@ -282,6 +286,8 @@ module Resolvers
       base_scope = scope || (config[:scope] && instance_eval(&config[:scope]))
 
       # :nocov:
+      base_scope = maybe_lock_scope(base_scope) if Rails.env.test?
+
       base_scope = base_scope.preloaded_for_record_loading if MeruConfig.record_preloading_enabled? && base_scope.respond_to?(:preloaded_for_record_loading)
 
       # We may want to skip authorization in some cases.

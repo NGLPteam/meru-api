@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 RSpec.describe ContextualPermissionPolicy, type: :policy do
-  include_context "policy setup"
-
   let_it_be(:community, refind: true) { FactoryBot.create :community }
 
   let!(:contextual_permission) do

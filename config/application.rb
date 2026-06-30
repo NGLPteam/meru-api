@@ -107,6 +107,7 @@ module MeruAPI
     config.active_record.query_log_tags = [
       # Rails query log tags:
       :application, :controller, :action, :job,
+      :source_location,
       # GraphQL-Ruby query log tags:
       {
         current_graphql_operation: -> { GraphQL::Current.operation_name },

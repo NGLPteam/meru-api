@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 RSpec.describe "Query.collections", type: :request do
-  context "when ordering" do
-    let_it_be(:community, refind: true) { FactoryBot.create :community }
+  def community = fixture(:community)
 
+  context "when ordering" do
     let_it_be(:collection_a3_202105, refind: true) do
       Timecop.freeze(3.days.ago) do
         FactoryBot.create :collection, community:, title: "AA", published: variable_date("2021-05"), schema: "nglp:journal_issue"
@@ -70,6 +70,12 @@ RSpec.describe "Query.collections", type: :request do
         }
       }
       GRAPHQL
+    end
+
+    around do |example|
+      Collection.lock_to!(collection_a3_202105, collection_m2_202103, collection_n4_2021, collection_z1_202104, collection_k0) do
+        example.run
+      end
     end
 
     shared_examples_for "an ordered list of collections" do |order_value, *keys|

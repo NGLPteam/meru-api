@@ -22,13 +22,7 @@ RSpec.describe "Query.roles", type: :request do
   end
 
   context "when ordering" do
-    let_it_be(:role_admin, refind: true) { Role.fetch(:admin) }
-    let_it_be(:role_manager, refind: true) { Role.fetch(:manager) }
-    let_it_be(:role_editor, refind: true) { Role.fetch(:editor) }
-    let_it_be(:role_reviewer, refind: true) { Role.fetch(:reviewer) }
-    let_it_be(:role_depositor, refind: true) { Role.fetch(:depositor) }
-    let_it_be(:role_author, refind: true) { Role.fetch(:author) }
-    let_it_be(:role_reader, refind: true) { Role.fetch(:reader) }
+    include_context "all roles"
 
     let_it_be(:role_a3, refind: true) do
       Timecop.freeze(3.days.ago) do

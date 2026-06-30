@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 RSpec.describe HarvestAttemptPolicy, type: :policy do
-  include_context "policy setup"
-
   let_it_be(:harvest_attempt) { FactoryBot.create :harvest_attempt }
 
   let(:record) { harvest_attempt }
