@@ -64,9 +64,9 @@ module MutationOperations
     #   is expected that values to be returned from the API are assigned to the
     #   response with {#attach!}.
     def call(**args)
-      # :nocov:
+      # simplecov:disable
       raise NotImplementedError, "Must implement #{self.class}#call"
-      # :nocov:
+      # simplecov:enable
     end
 
     # @api private
@@ -216,14 +216,14 @@ module MutationOperations
 
         return model
       else
-        # :nocov:
+        # simplecov:disable
         invalid_model! model
-        # :nocov:
+        # simplecov:enable
       end
     end
 
     def upsert_model!(klass, attributes, unique_by:, attach_to: nil)
-      # :nocov:
+      # simplecov:disable
       result = klass.upsert(attributes, returning: unique_by, unique_by:)
 
       conditions = unique_by.to_h do |key|
@@ -235,33 +235,33 @@ module MutationOperations
       attach! attach_to, model if attach_to.present?
 
       return model
-      # :nocov:
+      # simplecov:enable
     end
 
     def validate_model!(model, validation_context: nil)
-      # :nocov:
+      # simplecov:disable
       if model.valid? validation_context
         model
       else
         invalid_model! model
       end
-      # :nocov:
+      # simplecov:enable
     end
 
     def check_model!(model)
-      # :nocov:
+      # simplecov:disable
       return model if model.errors.none?
 
       invalid_model! model
-      # :nocov:
+      # simplecov:enable
     end
 
     def invalid_model!(model)
-      # :nocov:
+      # simplecov:disable
       add_model_errors! model
 
       throw_invalid
-      # :nocov:
+      # simplecov:enable
     end
 
     def destroy_model!(model, auth: false)
@@ -276,16 +276,16 @@ module MutationOperations
 
         graphql_response[:destroyed_id] = id
       else
-        # :nocov:
+        # simplecov:disable
         invalid_model! model
-        # :nocov:
+        # simplecov:enable
       end
     end
 
     # @param [#errors] model
     # @return [void]
     def add_model_errors!(model)
-      # :nocov:
+      # simplecov:disable
       model.errors.each do |error|
         options = {}.tap do |h|
           h[:code] = error.type.to_s if error.type.kind_of?(Symbol)
@@ -294,7 +294,7 @@ module MutationOperations
 
         add_error! error.message, **options
       end
-      # :nocov:
+      # simplecov:enable
     end
 
     # @!endgroup Model Persistence
@@ -352,9 +352,9 @@ module MutationOperations
         end
 
         m.failure do
-          # :nocov:
+          # simplecov:disable
           something_went_wrong!(error_message:)
-          # :nocov:
+          # simplecov:enable
         end
       end
     end
@@ -370,7 +370,7 @@ module MutationOperations
     end
 
     def with_operation_result!(result)
-      # :nocov:
+      # simplecov:disable
       with_result!(result) do |m|
         m.success do |value|
           value
@@ -384,7 +384,7 @@ module MutationOperations
           end
         end
       end
-      # :nocov:
+      # simplecov:enable
     end
 
     def with_attached_result!(key, result)
@@ -394,7 +394,7 @@ module MutationOperations
         end
 
         m.failure do |(code, reason)|
-          # :nocov:
+          # simplecov:disable
           if reason.kind_of?(ApplicationRecord)
             invalid_model! reason
 
@@ -404,7 +404,7 @@ module MutationOperations
           message = reason.kind_of?(String) ? reason : "Something went wrong"
 
           add_error! message, code: code.to_s.presence
-          # :nocov:
+          # simplecov:enable
         end
       end
     end

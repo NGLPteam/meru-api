@@ -11,9 +11,9 @@ module Types
 
     class << self
       def coerce_input(input_value, _context)
-        # :nocov:
+        # simplecov:disable
         input_value
-        # :nocov:
+        # simplecov:enable
       end
 
       # @return [Array<Hash>]

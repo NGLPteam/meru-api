@@ -69,9 +69,9 @@ module Utility
 
       DidYouMean::SpellChecker.new(dictionary:).correct(needle)
     rescue StandardError
-      # :nocov:
+      # simplecov:disable
       EMPTY_ARRAY
-      # :nocov:
+      # simplecov:enable
     end
 
     # @return [String]

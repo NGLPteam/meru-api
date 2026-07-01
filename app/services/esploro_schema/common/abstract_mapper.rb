@@ -51,9 +51,9 @@ module EsploroSchema
           when EsploroSchema::Common::AbstractMapper then source
           when Symbol then __send__(source)
           else
-            # :nocov:
+            # simplecov:disable
             raise "Invalid wrapped attribute source: #{source.inspect}"
-            # :nocov:
+            # simplecov:enable
           end
         end.compact
       end

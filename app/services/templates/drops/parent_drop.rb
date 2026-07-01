@@ -9,9 +9,9 @@ module Templates
       #   to guarantee which schema the parent might be, and we
       #   do not want lots of introspection in templates.
       def props
-        # :nocov:
+        # simplecov:disable
         raise Liquid::ContextError, "cannot fetch props for entity parent"
-        # :nocov:
+        # simplecov:enable
       end
     end
   end

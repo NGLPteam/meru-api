@@ -116,9 +116,9 @@ module Harvesting
       wrapped_hook! def extract
         @structs.concat render_context.render_entity_structs
 
-        # :nocov:
+        # simplecov:disable
         logger.warn("no entities extracted") if @structs.blank?
-        # :nocov:
+        # simplecov:enable
 
         @structs.each do |root_struct|
           yield upsert_struct root_struct
@@ -165,9 +165,9 @@ module Harvesting
       # @param [HarvestEntity] harvest_entity
       # @return [void]
       def connect_attempt!(harvest_entity)
-        # :nocov:
+        # simplecov:disable
         return if harvest_attempt.blank?
-        # :nocov:
+        # simplecov:enable
 
         harvest_attempt.connect_entity! harvest_entity
       end
@@ -285,9 +285,9 @@ module Harvesting
 
       # @return [Dry::Monads::Success(void)]
       def set_up!
-        # :nocov:
+        # simplecov:disable
         return Failure[:missing_harvest_configuration] if harvest_record.harvest_configuration.blank?
-        # :nocov:
+        # simplecov:enable
 
         @extraction_context = harvest_configuration.build_extraction_context
 
@@ -328,9 +328,9 @@ module Harvesting
           yield
         end
 
-        # :nocov:
+        # simplecov:disable
         return unless link.present?
-        # :nocov:
+        # simplecov:enable
 
         link.update_columns(extraction_duration:)
       end

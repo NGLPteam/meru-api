@@ -26,9 +26,9 @@ module Harvesting
           elsif metadata.children.any?
             Success metadata.children.join.strip
           else
-            # :nocov:
+            # simplecov:disable
             Failure[:invalid_metadata, "expected metadata to have at least 1 child"]
-            # :nocov:
+            # simplecov:enable
           end
         end
 
@@ -44,9 +44,9 @@ module Harvesting
         def record_identifier_for(record)
           identifier = record.try(:header).try(:identifier)
 
-          # :nocov:
+          # simplecov:disable
           return Failure[:no_record_identifier, record] if identifier.blank?
-          # :nocov:
+          # simplecov:enable
 
           Success(identifier)
         end
@@ -54,9 +54,9 @@ module Harvesting
         def perform_check!
           client.identify
         rescue Faraday::Error => e
-          # :nocov:
+          # simplecov:disable
           check_failed_because! "Web request failed when checking harvest source: #{e.message}"
-          # :nocov:
+          # simplecov:enable
         rescue ::OAI::Exception => e
           check_failed_because! "OAI PMH Server had a bad response [#{e.code || "unknown code"}]: #{e.message}"
         else

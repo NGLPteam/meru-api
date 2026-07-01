@@ -9,9 +9,9 @@ module Entities
 
     good_job_control_concurrency_with(
       total_limit: 3,
-      # :nocov:
+      # simplecov:disable
       key: -> { "#{self.class.name}-#{arguments.first.id}" }
-      # :nocov:
+      # simplecov:enable
     )
 
     # @param [HierarchicalEntity] entity

@@ -149,10 +149,10 @@ module TestHelpers
 
       matcher :match_shape do |shape|
         match do |resolver|
-          # :nocov:
+          # simplecov:disable
           raise TypeError, "Expected a ResolutionShape, got #{shape.class}" unless shape.kind_of?(TestHelpers::Resolver::ResolutionShape)
           raise TypeError, "Expected a Resolver, got #{resolver.class}" unless resolver.kind_of?(described_class)
-          # :nocov:
+          # simplecov:enable
 
           @errors = shape.validate!(resolver)
 

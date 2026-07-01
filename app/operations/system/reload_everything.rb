@@ -21,9 +21,9 @@ module System
       yield reload_schemas.call
 
       SchemaVersion.where(updated_at: now..).find_each do |sv|
-        # :nocov:
+        # simplecov:disable
         warn "Refreshing #{sv.declaration} instances" unless Rails.env.test?
-        # :nocov:
+        # simplecov:enable
 
         Schemas::Versions::ResetAllOrderingsJob.perform_later sv
       end unless skip_refresh

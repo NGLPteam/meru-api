@@ -32,13 +32,13 @@ class RequestQuery < ApplicationRecord
 
     self.operation_name = operation_name.presence || definition.name
   rescue GraphQL::ParseError
-    # :nocov:
+    # simplecov:disable
     errors.add(:query, "is not valid GraphQL")
-    # :nocov:
+    # simplecov:enable
   end
 
   def set_kind_from_definition!(definition)
-    # :nocov:
+    # simplecov:disable
     case definition.try(:operation_type)
     in "query"
       self.kind = :query
@@ -49,6 +49,6 @@ class RequestQuery < ApplicationRecord
     else
       self.kind = :other
     end
-    # :nocov:
+    # simplecov:enable
   end
 end

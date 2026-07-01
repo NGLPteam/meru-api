@@ -40,9 +40,9 @@ module Harvesting
           when :person
             ::Contributors::PersonProperties.new
           else
-            # :nocov:
+            # simplecov:disable
             raise "Unset contributor property kind"
-            # :nocov:
+            # simplecov:enable
           end
         end
 
@@ -81,9 +81,9 @@ module Harvesting
             end
           end
 
-          # :nocov:
+          # simplecov:disable
           contributor.identifier = properties.digest unless contributor.identifier.present?
-          # :nocov:
+          # simplecov:enable
 
           contributor.properties = build_wrapped_properties(contributor, properties)
           contributor.tracked_attributes = normalize_tracked(tracked_attributes)

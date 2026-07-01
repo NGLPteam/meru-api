@@ -12,9 +12,9 @@ module Entities
       when ::Collection, ::Item
         call entity.community
       else
-        # :nocov:
+        # simplecov:disable
         Collection.none
-        # :nocov:
+        # simplecov:enable
       end
     end
   end

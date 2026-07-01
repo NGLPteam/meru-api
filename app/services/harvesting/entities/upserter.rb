@@ -105,13 +105,13 @@ module Harvesting
       end
 
       wrapped_hook! def check
-        # :nocov:
+        # simplecov:disable
         if @parent.nil?
           logger.fatal "Could not derive root parent (missing harvest configuration?)."
 
           @cancelled = true
         end
-        # :nocov:
+        # simplecov:enable
 
         if harvest_attempt_cancelled?
           logger.debug "Harvest attempt has been cancelled, skipping."
@@ -124,9 +124,9 @@ module Harvesting
 
       # A wrapper step
       wrapped_hook! def perform_upsert
-        # :nocov:
+        # simplecov:disable
         return super if cancelled?
-        # :nocov:
+        # simplecov:enable
 
         @advisory_key = [parent.identifier, harvest_entity.identifier].join(?:)
 
@@ -179,9 +179,9 @@ module Harvesting
       end
 
       wrapped_hook! def maybe_enqueue_children
-        # :nocov:
+        # simplecov:disable
         return super unless has_children?
-        # :nocov:
+        # simplecov:enable
 
         harvest_entity.children.find_each do |child|
           if inline
@@ -195,9 +195,9 @@ module Harvesting
       end
 
       wrapped_hook! def maybe_enqueue_assets
-        # :nocov:
+        # simplecov:disable
         return super unless has_assets?
-        # :nocov:
+        # simplecov:enable
 
         Harvesting::Entities::UpsertAssetsJob.set(wait: 10.seconds).perform_later harvest_entity
 
@@ -227,9 +227,9 @@ module Harvesting
 
       # @return [void]
       def finalize_connection!
-        # :nocov:
+        # simplecov:disable
         return unless actual_entity.try(:persisted?)
-        # :nocov:
+        # simplecov:enable
 
         harvest_entity.entity = actual_entity
 
@@ -284,9 +284,9 @@ module Harvesting
           end
 
           m.failure do |*error|
-            # :nocov:
+            # simplecov:disable
             logger.fatal("could not write properties for unknown reason", tags: %w[unknown_property_write_failure], error:)
-            # :nocov:
+            # simplecov:enable
           end
         end
 
@@ -322,9 +322,9 @@ module Harvesting
           yield
         end
 
-        # :nocov:
+        # simplecov:disable
         return unless link.present? && modified?
-        # :nocov:
+        # simplecov:enable
 
         link.update_columns(upsert_duration:)
       end

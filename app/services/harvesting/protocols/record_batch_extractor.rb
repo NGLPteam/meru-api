@@ -45,9 +45,9 @@ module Harvesting
 
         set_up!
 
-        # :nocov:
+        # simplecov:disable
         progress.reset! if provided_cursor.blank?
-        # :nocov:
+        # simplecov:enable
       end
 
       def call

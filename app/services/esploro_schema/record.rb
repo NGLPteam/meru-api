@@ -44,9 +44,9 @@ module EsploroSchema
         when nil
           EsploroSchema::Elements::EsploroRecord.new
         else
-          # :nocov:
+          # simplecov:disable
           raise ArgumentError, "Unsupported input for esploro record: #{input.inspect}"
-          # :nocov:
+          # simplecov:enable
         end
       end
     end

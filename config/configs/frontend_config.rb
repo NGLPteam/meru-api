@@ -20,9 +20,9 @@ class FrontendConfig < ApplicationConfig
     when Item
       ITEM_PATH_TEMPLATE % params
     else
-      # :nocov:
+      # simplecov:disable
       raise "Unsupported entity type: #{entity.class.name}"
-      # :nocov:
+      # simplecov:enable
     end
   end
 

@@ -87,9 +87,9 @@ module Support
           kls || candidate.safe_constantize
         end
 
-        # :nocov:
+        # simplecov:disable
         raise StatesmanHelpers::MissingClassError, "Could not derive #{key.inspect} with prefix: #{prefix.inspect}" unless type.valid?(found)
-        # :nocov:
+        # simplecov:enable
 
         return found
       end

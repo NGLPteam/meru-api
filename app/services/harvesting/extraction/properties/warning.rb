@@ -23,9 +23,9 @@ module Harvesting
 
         # @return [void]
         def write_log!
-          # :nocov:
+          # simplecov:disable
           return if blank?
-          # :nocov:
+          # simplecov:enable
 
           trace = Rails.backtrace_cleaner.clean(Array(backtrace))
 

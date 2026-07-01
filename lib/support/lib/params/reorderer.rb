@@ -56,7 +56,7 @@ module Support
 
       # @return [String]
       def inspect
-        # :nocov:
+        # simplecov:disable
         inspect_order = order.map do |value|
           case value
           when EVERYTHING then :everything.inspect
@@ -66,7 +66,7 @@ module Support
         end.join(", ")
 
         "#{self.class.name}([%<inspect_order>s])" % { inspect_order: }
-        # :nocov:
+        # simplecov:enable
       end
 
       private

@@ -23,9 +23,9 @@ module Types
         when ::Schemas::Orderings::PathOptions::AncestorStaticReader
           Types::AncestorStaticOrderingPathType
         else
-          # :nocov:
+          # simplecov:disable
           raise GraphQL::ExecutionError, "Unknown ordering path: #{object.inspect}"
-          # :nocov:
+          # simplecov:enable
         end
       end
     end

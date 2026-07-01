@@ -42,9 +42,9 @@ module Sources
 
     # @return [void]
     def validate!
-      # :nocov:
+      # simplecov:disable
       raise ArgumentError, "No association #{@association_name} on #{@model}" unless @model.reflect_on_association(@association_name)
-      # :nocov:
+      # simplecov:enable
     end
   end
 end

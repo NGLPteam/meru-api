@@ -81,9 +81,9 @@ module Harvesting
           @harvest_set = provided_harvest_set
           @target_entity = provided_target_entity
         else
-          # :nocov:
+          # simplecov:disable
           raise "Invalid configurable: #{configurable.inspect}"
-          # :nocov:
+          # simplecov:enable
         end
 
         @extraction_mapping_template = provided_extraction_mapping_template.presence || configurable.extraction_mapping_template
@@ -122,9 +122,9 @@ module Harvesting
 
           Success found
         else
-          # :nocov:
+          # simplecov:disable
           raise "Invalid configurable: #{configurable.inspect}"
-          # :nocov:
+          # simplecov:enable
         end
       end
 

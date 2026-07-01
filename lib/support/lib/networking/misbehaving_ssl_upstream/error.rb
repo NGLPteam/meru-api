@@ -14,9 +14,9 @@ module Support
           def maybe_wrap_and_reraise!(exception)
             raise exception unless match?(exception)
 
-            # :nocov:
+            # simplecov:disable
             raise exception if exception.kind_of?(self)
-            # :nocov:
+            # simplecov:enable
 
             raise new(exception, nil)
           end

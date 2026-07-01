@@ -13,9 +13,9 @@ module Harvesting
       def read_template_file(name)
         body = render_context.mapping.lookup_template(name)
 
-        # :nocov:
+        # simplecov:disable
         raise Liquid::FileSystemError, "No such template '#{name}'" unless body
-        # :nocov:
+        # simplecov:enable
 
         return body
       end

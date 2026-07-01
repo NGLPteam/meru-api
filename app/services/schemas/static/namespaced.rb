@@ -32,7 +32,7 @@ module Schemas
       # @return [StaticSchemaVersion] if {#builtin?} and {SchemaVersion}
       # @return [nil] unless {#builtin?}
       def static_record
-        # :nocov:
+        # simplecov:disable
         return unless builtin? && !testing?
 
         case self
@@ -41,7 +41,7 @@ module Schemas
         in ::SchemaVersion
           ::StaticSchemaVersion.find(declaration)
         end
-        # :nocov:
+        # simplecov:enable
       end
 
       def testing?

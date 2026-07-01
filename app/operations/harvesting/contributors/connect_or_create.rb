@@ -49,9 +49,9 @@ module Harvesting
 
           Contributor.by_organization_name(props.legal_name)
         else
-          # :nocov:
+          # simplecov:disable
           Contributor.none
-          # :nocov:
+          # simplecov:enable
         end.then do |scope|
           maybe_first scope
         end

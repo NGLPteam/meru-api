@@ -27,9 +27,9 @@ class APISchema < GraphQL::Schema
   default_max_page_size Support::GraphQLAPI::Constants::MAX_PER_PAGE_SIZE
 
   rescue_from(ActiveRecord::RecordNotFound) do |err, obj, args, ctx, field|
-    # :nocov:
+    # simplecov:disable
     raise GraphQL::ExecutionError, "#{field.type.unwrap.graphql_name} not found"
-    # :nocov:
+    # simplecov:enable
   end
 
   rescue_from(ActionPolicy::Unauthorized) do |e|
@@ -144,9 +144,9 @@ class APISchema < GraphQL::Schema
         end
 
         m.failure do
-          # :nocov:
+          # simplecov:disable
           raise GraphQL::ExecutionError.new("Cannot derive ID")
-          # :nocov:
+          # simplecov:enable
         end
       end
     end
@@ -158,9 +158,9 @@ class APISchema < GraphQL::Schema
         end
 
         m.failure do
-          # :nocov:
+          # simplecov:disable
           raise GraphQL::ExecutionError.new("Cannot find model for ID: #{id.inspect}")
-          # :nocov:
+          # simplecov:enable
         end
       end
     end
@@ -168,7 +168,7 @@ class APISchema < GraphQL::Schema
     def resolve_type(abstract_type, object, context)
       # Remap arg order because we really mainly care about object
       Support::System["relay_node.resolve_type"].call(object, abstract_type, context).value_or do |reason|
-        # :nocov:
+        # simplecov:disable
         opts = {
           extensions: { abstract_type: abstract_type&.graphql_name }
         }
@@ -179,7 +179,7 @@ class APISchema < GraphQL::Schema
         else
           raise GraphQL::ExecutionError.new("Unexpected object: #{object.inspect}", **opts)
         end
-        # :nocov:
+        # simplecov:enable
       end
     end
   end

@@ -57,9 +57,9 @@ module Support
 
       # @return [void]
       def log_request!
-        # :nocov:
+        # simplecov:disable
         return if request_query.blank?
-        # :nocov:
+        # simplecov:enable
 
         milliseconds = (duration * 1000).round(2)
 
@@ -77,9 +77,9 @@ module Support
 
       # @return [void]
       def store_steps!
-        # :nocov:
+        # simplecov:disable
         return if request_query.blank?
-        # :nocov:
+        # simplecov:enable
 
         base_tuple = { request_query_id:, request_id:, created_at: Time.current, updated_at: Time.current }
 
@@ -87,9 +87,9 @@ module Support
           base_tuple.merge(step)
         end
 
-        # :nocov:
+        # simplecov:disable
         return if tuples.empty?
-        # :nocov:
+        # simplecov:enable
 
         ::RequestStep.insert_all(tuples, returning: nil)
       end

@@ -5,9 +5,9 @@
 module DelegatesAssociationWriter
   class << self
     def included(base)
-      # :nocov:
+      # simplecov:disable
       raise "Do not include #{name}: extend it in a module or class"
-      # :nocov:
+      # simplecov:enable
     end
   end
 

@@ -45,20 +45,20 @@ module Harvesting
 
               m.failure(:no_match) do |_, term, fallback|
                 if term.present? || fallback.present?
-                  # :nocov:
+                  # simplecov:disable
                   logger.warn("No controlled vocabulary item found for term: #{term.inspect} (nor fallback: #{fallback.inspect})", **subproperties)
-                  # :nocov:
+                  # simplecov:enable
                 end
 
                 Dry::Monads.Success(nil)
               end
 
               m.failure do
-                # :nocov:
+                # simplecov:disable
                 logger.error("Unexpected failure looking up controlled vocabulary item", **subproperties)
 
                 Dry::Monads.Success(nil)
-                # :nocov:
+                # simplecov:enable
               end
             end
           end

@@ -5,9 +5,9 @@ module ImageAttachments
     def call(value)
       ImageAttachments::Types::Metadata[value].deep_stringify_keys.compact
     rescue Dry::Types::CoercionError
-      # :nocov:
+      # simplecov:disable
       nil
-      # :nocov:
+      # simplecov:enable
     end
   end
 end

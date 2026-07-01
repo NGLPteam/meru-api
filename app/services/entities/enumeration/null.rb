@@ -5,9 +5,9 @@ module Entities
     # Enumerate no relations (acts as a default) when not otherwise specified.
     class Null < Abstract
       def build_hierarchical_scope
-        # :nocov:
+        # simplecov:disable
         super.none
-        # :nocov:
+        # simplecov:enable
       end
     end
   end

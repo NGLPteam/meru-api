@@ -15,9 +15,9 @@ Rails.application.configure do
   config.good_job.preserve_job_records = :on_unhandled_error
   config.good_job.retry_on_unhandled_error = false
   # config.good_job.on_thread_error = ->(exception) { Rollbar.error(exception) }
-  # :nocov:
+  # simplecov:disable
   config.good_job.execution_mode = Rails.env.test? ? :inline : :external
-  # :nocov:
+  # simplecov:enable
   config.good_job.queues = queues
   config.good_job.max_threads = 4
   config.good_job.poll_interval = 10 # seconds
@@ -163,7 +163,7 @@ GoodJob::Engine.middleware.use ActionDispatch::Session::CookieStore
 
 GOOD_JOB_KEEP_RUNNING = Concurrent::AtomicBoolean.new(true)
 
-# :nocov:
+# simplecov:disable
 if GoodJob.cli?
   GOOD_JOB_STARTED_AT = Process.clock_gettime(Process::CLOCK_MONOTONIC)
 
@@ -191,4 +191,4 @@ if GoodJob.cli?
     GoodJob.shutdown(timeout: 25)
   end
 end
-# :nocov:
+# simplecov:enable

@@ -51,9 +51,9 @@ module Harvesting
 
             Success()
           else
-            # :nocov:
+            # simplecov:disable
             Failure[*reason]
-            # :nocov:
+            # simplecov:enable
           end
         end
       end

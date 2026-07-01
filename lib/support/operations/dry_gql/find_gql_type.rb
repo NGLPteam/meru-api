@@ -27,9 +27,9 @@ module Support
         when ::Dry::Types::Type
           find_primitive_for input
         else
-          # :nocov:
+          # simplecov:disable
           raise "Unknown GQL type reference: #{input.inspect}"
-          # :nocov:
+          # simplecov:enable
         end
       end
 

@@ -47,9 +47,9 @@ module Harvesting
             when Harvesting::Testing::Types::OAISetSpec then new([other_value])
             when "", nil then new(EMPTY_ARRAY)
             else
-              # :nocov:
+              # simplecov:disable
               raise TypeError, "#{other_value.inspect} is not comparable"
-              # :nocov:
+              # simplecov:enable
             end
           end
         end

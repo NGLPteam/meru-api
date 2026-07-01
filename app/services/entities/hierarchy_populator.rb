@@ -150,9 +150,9 @@ module Entities
       when EntityLink
         find_ancestors_recursively_for(value.source)
       else
-        # :nocov:
+        # simplecov:disable
         raise "Unknown entity type: #{value.class.name}"
-        # :nocov:
+        # simplecov:enable
       end
     end
 

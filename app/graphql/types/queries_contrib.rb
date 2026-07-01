@@ -92,9 +92,9 @@ module Types
         end
 
         m.failure do
-          # :nocov:
+          # simplecov:disable
           raise GraphQL::ExecutionError, "Something went wrong with contributor lookup"
-          # :nocov:
+          # simplecov:enable
         end
       end
     end

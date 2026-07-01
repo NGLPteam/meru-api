@@ -48,9 +48,9 @@ module Templates
       end
 
       def each
-        # :nocov:
+        # simplecov:disable
         raise Liquid::ContextError, "tried to enumerate non-enumerable property: #{@full_path}" unless array?
-        # :nocov:
+        # simplecov:enable
 
         @inner_representation.each do |elm|
           yield elm

@@ -9,9 +9,9 @@ class GenericInaccessiblePolicy < ApplicationPolicy
   pre_check :deny_all_access!
 
   relation_scope do |relation|
-    # :nocov:
+    # simplecov:disable
     relation.none
-    # :nocov:
+    # simplecov:enable
   end
 
   private

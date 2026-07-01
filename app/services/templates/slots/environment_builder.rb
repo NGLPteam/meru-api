@@ -45,9 +45,9 @@ module Templates
             in "inline"
               configure_inline!(env)
             else
-              # :nocov:
+              # simplecov:disable
               raise "Unhandled Slot Kind"
-              # :nocov:
+              # simplecov:enable
             end
           end
         end

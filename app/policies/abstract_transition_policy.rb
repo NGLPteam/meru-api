@@ -19,8 +19,8 @@ class AbstractTransitionPolicy < ApplicationPolicy
   end
 
   def resolve_scope_for_anonymous(relation)
-    # :nocov:
+    # simplecov:disable
     relation.none
-    # :nocov:
+    # simplecov:enable
   end
 end

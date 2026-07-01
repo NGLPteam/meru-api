@@ -21,9 +21,9 @@ module Harvesting
         end
 
         after_transition to: :assets_fetched do |hael, _transition|
-          # :nocov:
+          # simplecov:disable
           hael.transition_to :success if hael.assets?
-          # :nocov:
+          # simplecov:enable
         end
 
         after_transition to: :success do |hael, _transition|

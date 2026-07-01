@@ -42,9 +42,9 @@ module Metadata
         private
 
         def parse_root_with(operation_name, *types)
-          # :nocov:
+          # simplecov:disable
           return unless types.present? && types.any? { mdtype == _1 }
-          # :nocov:
+          # simplecov:enable
 
           MeruAPI::Container[operation_name].(xml_content).value_or(nil)
         end

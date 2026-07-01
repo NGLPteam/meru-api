@@ -12,9 +12,9 @@ module Harvesting
         # @return [::OAI::ListSetsResponse]
         def build_batch(cursor: nil)
           if cursor.present?
-            # :nocov:
+            # simplecov:disable
             protocol.client.list_sets resumption_token: cursor
-            # :nocov:
+            # simplecov:enable
           else
             protocol.client.list_sets
           end

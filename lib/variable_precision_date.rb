@@ -298,9 +298,9 @@ class VariablePrecisionDate
     def parse_sql_date(value)
       Date.parse value
     rescue Date::Error, TypeError
-      # :nocov:
+      # simplecov:disable
       nil
-      # :nocov:
+      # simplecov:enable
     end
 
     # @param [String] precision a value corresponding to {VariablePrecisionDate::Precision}.
@@ -310,9 +310,9 @@ class VariablePrecisionDate
       when Precision
         Precision[precision]
       else
-        # :nocov:
+        # simplecov:disable
         :none
-        # :nocov:
+        # simplecov:enable
       end
     end
   end

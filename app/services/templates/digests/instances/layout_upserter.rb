@@ -52,9 +52,9 @@ module Templates
         end
 
         wrapped_hook! def upsert
-          # :nocov:
+          # simplecov:disable
           return super if tuples.blank?
-          # :nocov:
+          # simplecov:enable
 
           Templates::InstanceDigest.upsert_all(tuples, unique_by: UNIQUE_BY, returning: nil)
 

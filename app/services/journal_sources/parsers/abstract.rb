@@ -35,9 +35,9 @@ module JournalSources
       # @return [void]
       def try_parsing_inputs!(inputs)
         inputs.each do |input|
-          # :nocov:
+          # simplecov:disable
           next if input.blank?
-          # :nocov:
+          # simplecov:enable
 
           try_parsing! input
         end
@@ -63,9 +63,9 @@ module JournalSources
 
         throw :found, parsed if parsed.known?
       rescue Dry::Struct::Error
-        # :nocov:
+        # simplecov:disable
         # intentionally left blank
-        # :nocov:
+        # simplecov:enable
       end
 
       # @!attribute [r] parsed_klass
@@ -101,9 +101,9 @@ module JournalSources
         results = ::AnyStyle.parse input
 
         results.each do |result|
-          # :nocov:
+          # simplecov:disable
           next if result.blank? || !result.kind_of?(Hash)
-          # :nocov:
+          # simplecov:enable
 
           normalized = normalize_anystyle(result)
 
@@ -147,11 +147,11 @@ module JournalSources
           in date: [String => date, *], title: [String => title, *]
             target[:volume] ||= ("%<date>s %<title>s" % { date:, title:, }).strip
           in title: [String => title, *]
-            # :nocov:
+            # simplecov:disable
             # Not sure any examples exist of this case alone,
             # but it was something that existed in the original journal source parser.
             target[:volume] ||= ("%<title>s" % { title: }).strip
-            # :nocov:
+            # simplecov:enable
           in note: [/Issue/i => note, *] if looks_like_issue_only?(result, target)
             target[:issue] = maybe_combine_for_issue_only(note, **result)
           else

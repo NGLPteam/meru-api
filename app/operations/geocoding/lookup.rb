@@ -32,9 +32,9 @@ module Geocoding
     def search(ip)
       location = Geocoder.search(ip).first
     rescue StandardError => e
-      # :nocov:
+      # simplecov:disable
       Failure[:error, e]
-      # :nocov:
+      # simplecov:enable
     else
       if location && location.country.present?
         Success location

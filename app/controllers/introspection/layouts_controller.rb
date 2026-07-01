@@ -23,9 +23,9 @@ module Introspection
         end
 
         m.failure do |error|
-          # :nocov:
+          # simplecov:disable
           render plain: "Something went wrong", status: :internal_server_error
-          # :nocov:
+          # simplecov:enable
         end
       end
     end

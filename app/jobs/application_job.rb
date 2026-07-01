@@ -24,9 +24,9 @@ class ApplicationJob < ActiveJob::Base
   discard_on ActiveJob::DeserializationError
 
   # This error is unlikely to resolve itself on subsequent executions.
-  # :nocov:
+  # simplecov:disable
   discard_on NameError unless Rails.env.test?
-  # :nocov:
+  # simplecov:enable
 
   def call_operation!(name, ...)
     MeruAPI::Container[name].call(...).value!
@@ -47,7 +47,7 @@ class ApplicationJob < ActiveJob::Base
     # @api private
     # @return [Proc]
     def unique_job_key_for!(by:)
-      # :nocov:
+      # simplecov:disable
       case by
       when :first_arg
         -> { "#{self.class.name}-#{arguments.first}" }
@@ -56,6 +56,7 @@ class ApplicationJob < ActiveJob::Base
       else
         -> { "#{self.class.name}-#{queue_name}-#{arguments.inspect}" }
       end
+      # simplecov:enable
     end
   end
 end

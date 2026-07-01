@@ -13,9 +13,9 @@ module Assets
     # @return [Dry::Monads::Success(String)]
     # @return [Dry::Monads::Success(nil)] if accidentally called on a non-persisted asset.
     def call(asset, **options)
-      # :nocov:
+      # simplecov:disable
       return Success(nil) unless asset.persisted?
-      # :nocov:
+      # simplecov:enable
 
       token = yield encode_download_token.(asset, **options)
 

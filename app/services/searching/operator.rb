@@ -43,9 +43,9 @@ module Searching
 
       return @expression
     rescue Searching::Skip
-      # :nocov:
+      # simplecov:disable
       return nil
-      # :nocov:
+      # simplecov:enable
     end
 
     # @!attribute [r] property
@@ -57,9 +57,9 @@ module Searching
       when Schemas::Properties::ParsePath::PATTERN
         MeruAPI::Container["schemas.properties.parse_path"].(left).value_or(nil)
       else
-        # :nocov:
+        # simplecov:disable
         raise Searching::Skip
-        # :nocov:
+        # simplecov:enable
       end
     end
 
@@ -68,9 +68,9 @@ module Searching
       when Searching::CoreProperty, Schemas::Properties::Path
         property.search_strategy
       else
-        # :nocov:
+        # simplecov:disable
         "none"
-        # :nocov:
+        # simplecov:enable
       end
     end
 
@@ -86,9 +86,9 @@ module Searching
           join_for_searchable_property property.full_path
         end
       else
-        # :nocov:
+        # simplecov:disable
         arel_quote(nil)
-        # :nocov:
+        # simplecov:enable
       end
     end
 
@@ -101,9 +101,9 @@ module Searching
       when "property"
         arelized_path[property.value_column]
       else
-        # :nocov:
+        # simplecov:disable
         arel_quote nil
-        # :nocov:
+        # simplecov:enable
       end
     end
 
@@ -134,9 +134,9 @@ module Searching
     # @abstract
     # @return [Arel::Expressions]
     def compile
-      # :nocov:
+      # simplecov:disable
       raise "must implement"
-      # :nocov:
+      # simplecov:enable
     end
 
     # @param [Array<Searching::Operator>] operators
@@ -164,9 +164,9 @@ module Searching
         arel_table[:hierarchical_id].eq(table_alias[:entity_id])
       )
 
-      # :nocov:
+      # simplecov:disable
       on_condition = yield on_condition if block_given?
-      # :nocov:
+      # simplecov:enable
 
       on = Arel::Nodes::On.new on_condition
 

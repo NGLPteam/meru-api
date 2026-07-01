@@ -34,9 +34,9 @@ module Templates
 
         href = cc_license_url(label)
 
-        # :nocov:
+        # simplecov:disable
         return "" if href.blank?
-        # :nocov:
+        # simplecov:enable
 
         MeruAPI::Container["templates.mdx.build_anchor"].(href:, label:).value_or("")
       end
@@ -84,7 +84,7 @@ module Templates
       # @param [Object] value
       # @return [Object]
       def unwrap_property(value)
-        # :nocov:
+        # simplecov:disable
         case value
         in Templates::Drops::PropertyValueDrop
           value.instance_variable_get(:@value)
@@ -93,7 +93,7 @@ module Templates
         else
           value
         end
-        # :nocov:
+        # simplecov:enable
       end
     end
   end

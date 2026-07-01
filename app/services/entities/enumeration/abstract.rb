@@ -42,9 +42,9 @@ module Entities
       # @return [void]
       def each_hierarchical_entity
         build_hierarchical_scope.find_each(start: cursor) do |subentity|
-          # :nocov:
+          # simplecov:disable
           next if subentity.blank? || subentity.hierarchical.blank?
-          # :nocov:
+          # simplecov:enable
 
           yield subentity.hierarchical, subentity.id
         end

@@ -74,7 +74,7 @@ module Templates
         end
 
         def derive_scope!
-          # :nocov:
+          # simplecov:disable
           case name
           in /::Definitions::/
             scope "definition"
@@ -83,7 +83,7 @@ module Templates
           else
             scope "abstract"
           end
-          # :nocov:
+          # simplecov:enable
         end
       end
     end

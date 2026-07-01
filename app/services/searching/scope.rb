@@ -37,9 +37,9 @@ module Searching
     end
 
     def filter_by_depth(relation)
-      # :nocov:
+      # simplecov:disable
       return relation.all unless max_depth
-      # :nocov:
+      # simplecov:enable
 
       relation.by_max_relative_depth(max_depth, origin_depth:)
     end

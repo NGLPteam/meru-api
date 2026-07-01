@@ -12,9 +12,9 @@ module Seeding
         when ::Community then community
         when ::Collection then collection
         else
-          # :nocov:
+          # simplecov:disable
           raise TypeError, "Cannot retrieve broker for #{model.class.name}"
-          # :nocov:
+          # simplecov:enable
         end
       end
 

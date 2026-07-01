@@ -22,9 +22,9 @@ module Seeding
                 when self then value
                 when Hash, Seeding::Types::Interface(:to_h) then new(value.to_h)
                 else
-                  # :nocov:
+                  # simplecov:disable
                   raise TypeError, "cannot structify #{value}"
-                  # :nocov:
+                  # simplecov:enable
                 end
               end
             end.default { [] }

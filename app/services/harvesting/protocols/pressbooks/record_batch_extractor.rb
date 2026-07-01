@@ -14,11 +14,11 @@ module Harvesting
 
           protocol.client.fetch_books(**options)
         rescue ::Protocols::Pressbooks::Error => e
-          # :nocov:
+          # simplecov:disable
           logger.fatal("Pressbooks Provider Error during record extraction: #{e.message}")
 
           halt_enumeration
-          # :nocov:
+          # simplecov:enable
         end
 
         # @param [::Protocols::Pressbooks::Books::Response] batch

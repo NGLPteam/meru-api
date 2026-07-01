@@ -70,11 +70,11 @@ module Support
       # @yieldreturn [ActiveRecord::Relation]
       # @return [void]
       def augment_ranking!
-        # :nocov:
+        # simplecov:disable
         new_scope = yield @ranking_scope
 
         @ranking_scope = new_scope unless new_scope.nil?
-        # :nocov:
+        # simplecov:enable
       end
 
       def has_admin_access? = current_user.try(:has_admin_access?)
@@ -172,9 +172,9 @@ module Support
         def uses_scopes!(*scope_names)
           new_scopes = scope_names.flatten.compact_blank.map { _1.to_sym }
 
-          # :nocov:
+          # simplecov:disable
           return if new_scopes.blank?
-          # :nocov:
+          # simplecov:enable
 
           merged_scopes = (required_scopes | new_scopes).sort
 

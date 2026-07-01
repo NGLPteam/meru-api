@@ -13,9 +13,9 @@ module SchematicPathValidity
     # @abstract
     # @return [Symbol]
     def valid_paths_column
-      # :nocov:
+      # simplecov:disable
       raise "Must define"
-      # :nocov:
+      # simplecov:enable
     end
 
     # @return [ActiveRecord::Relation]

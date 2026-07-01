@@ -17,9 +17,9 @@ module Harvesting
       # @param [Harvesting::Contributions::Proxy] contribution_proxy
       # @return [Dry::Monads::Success(HarvestContribution)]
       def call(harvest_entity, contribution_proxy)
-        # :nocov:
+        # simplecov:disable
         return Success(nil) unless contribution_proxy.valid?
-        # :nocov:
+        # simplecov:enable
 
         harvest_contributor = yield upsert_contributor.call(contribution_proxy.contributor)
 

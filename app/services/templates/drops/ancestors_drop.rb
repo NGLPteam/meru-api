@@ -18,15 +18,15 @@ module Templates
           @entity.ancestor_by_name(name, enforce_known: true).then { entity_drop_for(_1) }
         end
       rescue Entities::UnknownAncestor => e
-        # :nocov:
+        # simplecov:disable
         raise Liquid::UndefinedDropMethod, e.message
-        # :nocov:
+        # simplecov:enable
       end
 
       def to_s
-        # :nocov:
+        # simplecov:disable
         raise Liquid::ContextError, "Tried to render `ancestors` directly"
-        # :nocov:
+        # simplecov:enable
       end
     end
   end

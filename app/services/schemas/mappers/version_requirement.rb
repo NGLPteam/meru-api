@@ -28,16 +28,16 @@ module Schemas
 
         # @param [Gem::Requirement] version
         def as_xml(version)
-          # :nocov:
+          # simplecov:disable
           raise "only used for CDATA"
-          # :nocov:
+          # simplecov:enable
         end
 
         # @param [Gem::Requirement] version
         def as_xml_value(version)
-          # :nocov:
+          # simplecov:disable
           raise "only used for CDATA"
-          # :nocov:
+          # simplecov:enable
         end
 
         # @param [Shale::Adapter::Ox::Node] node

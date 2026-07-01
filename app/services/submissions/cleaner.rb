@@ -23,9 +23,9 @@ module Submissions
     end
 
     wrapped_hook! def purge_entity
-      # :nocov:
+      # simplecov:disable
       return Success() unless submission.entity
-      # :nocov:
+      # simplecov:enable
 
       yield submission.entity.purge
 

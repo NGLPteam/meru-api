@@ -214,9 +214,9 @@ class ApplicationPolicy < ActionPolicy::Base
 
   # @note We override this to reject nil records out of hand without having to do a lot of present? checks.
   def allowed_to?(rule, record = :__undef__, **options)
-    # :nocov:
+    # simplecov:disable
     return false if record.nil?
-    # :nocov:
+    # simplecov:enable
 
     super
   end

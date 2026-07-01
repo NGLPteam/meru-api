@@ -18,12 +18,12 @@ module Schemas
           end
         end
 
-        # :nocov:
+        # simplecov:disable
         if LayoutsConfig.invalidate_on_deploy?
           # Not an operation that should/can fail.
           MeruAPI::Container["layouts.invalidate_batch"].(layout_definitions).value!
         end
-        # :nocov:
+        # simplecov:enable
 
         return result
       end

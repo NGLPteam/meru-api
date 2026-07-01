@@ -25,9 +25,9 @@ module Schemas
 
       # @return [String]
       def anchor_tag
-        # :nocov:
+        # simplecov:disable
         return "" if blank?
-        # :nocov:
+        # simplecov:enable
 
         call_operation("templates.mdx.build_anchor", href:, label:, title:).value_or(nil)
       end
@@ -38,9 +38,9 @@ module Schemas
         def normalize(raw_value)
           case raw_value
           when self
-            # :nocov:
+            # simplecov:disable
             raw_value
-            # :nocov:
+            # simplecov:enable
           when Schemas::Properties::Types::URLShape
             coerced = Schemas::Properties::Types::URLShape[raw_value]
 

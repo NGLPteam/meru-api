@@ -9,9 +9,9 @@ class HarvestSource < ApplicationRecord
   include HasHarvestMetadataFormat
   include TimestampScopes
 
-  # :nocov:
+  # simplecov:disable
   include Harvesting::Testing::SourceExtensions if Rails.env.test?
-  # :nocov:
+  # simplecov:enable
 
   pg_enum! :protocol, as: :harvest_protocol, allow_blank: false, default: "unknown", prefix: :with, suffix: :protocol
   pg_enum! :status, as: :harvest_source_status, allow_blank: false, default: "inactive"

@@ -107,7 +107,7 @@ class Role < ApplicationRecord
   # @param [Boolean] reverse
   # @return [Integer]
   def sort_value_against(other, kind: :default, reverse: false)
-    # :nocov:
+    # simplecov:disable
     tuple = Array(sort_tuple_with(other, kind:, reverse:))
 
     found = tuple.detect(&:nonzero?)
@@ -116,7 +116,7 @@ class Role < ApplicationRecord
 
     # Fallback discriminator.
     reverse ? other.id <=> id : id <=> other.id
-    # :nocov:
+    # simplecov:enable
   end
 
   protected
@@ -127,7 +127,7 @@ class Role < ApplicationRecord
   # @param [Boolean] reverse
   # @return [<Integer>]
   def sort_tuple_with(other, kind: :default, reverse: false)
-    # :nocov:
+    # simplecov:disable
     case kind.to_sym
     in :created
       [
@@ -147,43 +147,43 @@ class Role < ApplicationRecord
         name_sort_value_with(other),
       ]
     end
-    # :nocov:
+    # simplecov:enable
   end
 
   def created_sort_value_with(other, reverse: false)
-    # :nocov:
+    # simplecov:disable
     reverse ? other.created_at <=> created_at : created_at <=> other.created_at
-    # :nocov:
+    # simplecov:enable
   end
 
   def name_sort_value_with(other, reverse: false)
-    # :nocov:
+    # simplecov:disable
     reverse ? other.name.casecmp(name) : name.casecmp(other.name)
-    # :nocov:
+    # simplecov:enable
   end
 
   # @api private
   def role_primacy_sort_value
-    # :nocov:
+    # simplecov:disable
     case primacy
     in "high" then 0
     in "medium" then 1
     else
       2
     end
-    # :nocov:
+    # simplecov:enable
   end
 
   # @api private
   def role_kind_sort_value
-    # :nocov:
+    # simplecov:disable
     case kind
     in "system"
       0
     else
       99
     end
-    # :nocov:
+    # simplecov:enable
   end
 
   class << self

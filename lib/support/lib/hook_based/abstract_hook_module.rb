@@ -9,9 +9,9 @@ module Support
       end
 
       def inspect
-        # :nocov:
+        # simplecov:disable
         "#{self.class}[#{hook_name.inspect}]"
-        # :nocov:
+        # simplecov:enable
       end
     end
   end

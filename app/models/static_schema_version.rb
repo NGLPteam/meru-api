@@ -66,9 +66,9 @@ class StaticSchemaVersion < ::ApplicationFrozenRecord
   calculates! :configuration do |record|
     JSON.parse(record.fetch("config_path").read).with_indifferent_access
   rescue Errno::ENOENT
-    # :nocov:
+    # simplecov:disable
     {}
-    # :nocov:
+    # simplecov:enable
   end
 
   calculates! :name do |record|
@@ -101,15 +101,15 @@ class StaticSchemaVersion < ::ApplicationFrozenRecord
   # @return [Templates::Config::Utility::AbstractLayout]
   def layout_config_for(layout_kind)
     layouts_map.fetch(layout_kind) do
-      # :nocov:
+      # simplecov:disable
       Layout.build_default_for(layout_kind)
-      # :nocov:
+      # simplecov:enable
     end
   end
 
   # @return [void]
   def export_layouts!
-    # :nocov:
+    # simplecov:disable
     schema_version = find_schema_version
 
     layouts = schema_version.root_layouts.transform_values(&:export!)
@@ -121,7 +121,7 @@ class StaticSchemaVersion < ::ApplicationFrozenRecord
         f.write config.to_xml(pretty: true, declaration: true, encoding: true)
       end
     end
-    # :nocov:
+    # simplecov:enable
   end
 
   class << self
@@ -132,7 +132,7 @@ class StaticSchemaVersion < ::ApplicationFrozenRecord
 
     # @return [void]
     def calculate_static_schema_definitions!
-      # :nocov:
+      # simplecov:disable
       declarations = pluck(:definition).uniq
 
       data = declarations.map do |definition|
@@ -146,7 +146,7 @@ class StaticSchemaVersion < ::ApplicationFrozenRecord
       Rails.root.join("lib", "frozen_record", "static_schema_definitions.yml").open("wb+") do |f|
         f.write data.to_yaml
       end
-      # :nocov:
+      # simplecov:enable
     end
   end
 end

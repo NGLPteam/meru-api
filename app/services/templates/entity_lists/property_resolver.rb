@@ -15,13 +15,13 @@ module Templates
         in "entities"
           Success reader.value
         in "entity"
-          # :nocov:
+          # simplecov:disable
           Success [reader.value].compact
-          # :nocov:
+          # simplecov:enable
         else
-          # :nocov:
+          # simplecov:disable
           Failure[:non_entity_property, property_path]
-          # :nocov:
+          # simplecov:enable
         end
       end
     end

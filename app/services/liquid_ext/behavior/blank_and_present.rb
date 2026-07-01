@@ -9,18 +9,18 @@ module LiquidExt
       #
       # @return [Boolean]
       def is_blank
-        # :nocov:
+        # simplecov:disable
         blank_for_liquid?
-        # :nocov:
+        # simplecov:enable
       end
 
       # Rails-ish `present?` predicate for use in liquid contexts.
       #
       # @return [Boolean]
       def is_present
-        # :nocov:
+        # simplecov:disable
         !blank_for_liquid?
-        # :nocov:
+        # simplecov:enable
       end
 
       def to_liquid
@@ -33,9 +33,9 @@ module LiquidExt
 
       # @abstract
       def blank_for_liquid?
-        # :nocov:
+        # simplecov:disable
         blank?
-        # :nocov:
+        # simplecov:enable
       end
     end
   end

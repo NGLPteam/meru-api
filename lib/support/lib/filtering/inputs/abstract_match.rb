@@ -54,9 +54,9 @@ module Support
 
               klass.on_inherit!
 
-              # :nocov:
+              # simplecov:disable
               klass.input_object input_object if input_object.present?
-              # :nocov:
+              # simplecov:enable
             end.with_gql_type
           end
 

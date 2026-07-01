@@ -30,9 +30,9 @@ class ControlledVocabularySource < ApplicationRecord
 
       attributes = provisions.map { |provides| { provides:, } }
 
-      # :nocov:
+      # simplecov:disable
       return 0 if attributes.blank?
-      # :nocov:
+      # simplecov:enable
 
       result = upsert_all(attributes, unique_by: :provides)
 

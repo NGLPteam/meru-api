@@ -18,9 +18,9 @@ module Metadata
         end
 
         def included(base)
-          # :nocov:
+          # simplecov:disable
           super if defined?(super)
-          # :nocov:
+          # simplecov:enable
 
           base.memoize attr_name
 

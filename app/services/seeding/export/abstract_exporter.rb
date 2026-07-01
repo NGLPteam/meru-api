@@ -33,9 +33,9 @@ module Seeding
       # @param [Jbuilder] json
       # @return [void]
       def export!(json)
-        # :nocov:
+        # simplecov:disable
         raise NotImplementedError, "must implement #{self.class}##{__method__}"
-        # :nocov:
+        # simplecov:enable
       end
 
       # @param [Shrine::UploadedFile] uploaded_file

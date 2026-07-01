@@ -26,11 +26,11 @@ module MutationOperations
         previous = attachments[name]
 
         if previous.present?
-          # :nocov:
+          # simplecov:disable
           warn "Overwriting #{self.class}.attachment #{attribute.name}"
 
           applicable_contracts.delete previous.contract
-          # :nocov:
+          # simplecov:enable
         end
 
         attachments[name] = attribute

@@ -108,9 +108,9 @@ class HarvestEntity < ApplicationRecord
 
   # @return [void]
   def exclusive_parentage!
-    # :nocov:
+    # simplecov:disable
     errors.add :base, "Child harvest entities cannot have an existing parent set" if !root? && has_existing_parent?
-    # :nocov:
+    # simplecov:enable
   end
 
   class << self

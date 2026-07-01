@@ -59,7 +59,7 @@ class ControlledVocabulary < ApplicationRecord
   # @api private
   # @return [void]
   def select_provider!
-    # :nocov:
+    # simplecov:disable
 
     return unless persisted?
 
@@ -72,7 +72,7 @@ class ControlledVocabulary < ApplicationRecord
 
     ControlledVocabularySource.find result.pick("id")
 
-    # :nocov:
+    # simplecov:enable
   end
 
   # @api private

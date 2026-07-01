@@ -5,9 +5,9 @@ module Harvesting
     module Unknown
       class RecordExtractor < Harvesting::Protocols::RecordExtractor
         def extract(identifier)
-          # :nocov:
+          # simplecov:disable
           Failure[:unsupported]
-          # :nocov:
+          # simplecov:enable
         end
       end
     end

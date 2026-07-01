@@ -32,9 +32,9 @@ module ContributionRoles
 
       @contribution_role_configuration ||= fetch_global_configuration
 
-      # :nocov:
+      # simplecov:disable
       raise "No default contribution role configuration." if contribution_role_configuration.blank?
-      # :nocov:
+      # simplecov:enable
 
       super
     end

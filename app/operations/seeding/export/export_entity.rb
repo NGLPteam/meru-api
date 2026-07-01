@@ -24,9 +24,9 @@ module Seeding
         when ::Community then Seeding::Export::CommunityExporter.new(entity)
         when ::Collection then Seeding::Export::CollectionExporter.new(entity)
         else
-          # :nocov:
+          # simplecov:disable
           raise TypeError, "can't export #{entity.class.name}"
-          # :nocov:
+          # simplecov:enable
         end
       end
     end

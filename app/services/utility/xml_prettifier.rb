@@ -48,9 +48,9 @@ module Utility
 
     # @param [Nokogiri::XML::CDATA, Nokogiri::XML::Text] node
     def actual_cdata?(node)
-      # :nocov:
+      # simplecov:disable
       return false unless node.cdata?
-      # :nocov:
+      # simplecov:enable
 
       content = node.content
 

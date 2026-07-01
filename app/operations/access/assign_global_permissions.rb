@@ -17,9 +17,9 @@ module Access
       when ::User
         handle_user subject, gacl
       else
-        # :nocov:
+        # simplecov:disable
         Success(subject)
-        # :nocov:
+        # simplecov:enable
       end
     end
 

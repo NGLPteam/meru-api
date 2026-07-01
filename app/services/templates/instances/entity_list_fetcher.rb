@@ -97,9 +97,9 @@ module Templates
         in "property"
           "templates.entity_lists.resolve_property"
         else
-          # :nocov:
+          # simplecov:disable
           raise "Unsupported Entity Resolution Mode: #{mode}"
-          # :nocov:
+          # simplecov:enable
         end
       end
     end

@@ -34,9 +34,9 @@ module Entities
         attacher.atomic_persist
         attacher.delete_derivatives(old_derivatives)
       rescue Shrine::AttachmentChanged, ActiveRecord::RecordNotFound
-        # :nocov:
+        # simplecov:disable
         attacher.delete_derivatives # remove orphans
-        # :nocov:
+        # simplecov:enable
       end
     end
   end

@@ -43,13 +43,13 @@ module GlobalTypes
           nil
         end
       when Semantic::Version
-        # :nocov:
+        # simplecov:disable
         value
-        # :nocov:
+        # simplecov:enable
       when VERSION_HASH
-        # :nocov:
+        # simplecov:disable
         cast version_string_from(**VERSION_HASH[value])
-        # :nocov:
+        # simplecov:enable
       else
         super
       end
@@ -81,13 +81,13 @@ module GlobalTypes
     # @param [String, nil] build
     # @return [String]
     def version_string_from(major:, minor:, patch:, pre: nil, build: nil)
-      # :nocov:
+      # simplecov:disable
       [major, minor, patch].join(?.).then do |version|
         pre.present? ? "#{version}-#{pre}" : version
       end.then do |version|
         build.present? ? "#{version}+#{build}" : version
       end
-      # :nocov:
+      # simplecov:enable
     end
   end
 end

@@ -37,9 +37,9 @@ module Frontend
       # @return [void]
       def revalidate_parent!
         entity.contextual_parent.then do |parent|
-          # :nocov:
+          # simplecov:disable
           Entities::RevalidateFrontendCacheJob.perform_later(parent) if parent.present?
-          # :nocov:
+          # simplecov:enable
         end
       end
     end

@@ -46,9 +46,9 @@ class HarvestMetadataFormat < ::ApplicationFrozenRecord
   # @param [HarvestRecord] record
   # @return [Harvesting::Metadata::Context]
   def context_for(record)
-    # :nocov:
+    # simplecov:disable
     raise "invalid metadata format for record: #{record.metadata_format}" if record.metadata_format != name
-    # :nocov:
+    # simplecov:enable
 
     context_klass.new(self, record)
   end

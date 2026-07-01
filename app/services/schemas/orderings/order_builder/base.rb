@@ -77,17 +77,17 @@ module Schemas
         end
 
         def arel_quote(value)
-          # :nocov:
+          # simplecov:disable
           Arel::Nodes.build_quoted value
-          # :nocov:
+          # simplecov:enable
         end
 
         # @abstract
         # @return [<Arel::Attribute, Arel::OrderPredications>]
         def attributes_for(definition)
-          # :nocov:
+          # simplecov:disable
           []
-          # :nocov:
+          # simplecov:enable
         end
 
         # @api private
@@ -147,10 +147,10 @@ module Schemas
         # @param [Boolean] falsey_first
         # @return [Arel::Nodes::Case]
         def order_boolean(expression, falsey_first: false)
-          # :nocov:
+          # simplecov:disable
           truthy = falsey_first ? 1 : 0
           falsey = falsey_first ? 0 : 1
-          # :nocov:
+          # simplecov:enable
 
           Arel::Nodes::Case.new(expression).tap do |expr|
             expr.when(true).then(truthy)
@@ -196,9 +196,9 @@ module Schemas
             source_alias[:entity_id].eq(table_alias[:entity_id])
           )
 
-          # :nocov:
+          # simplecov:disable
           on_condition = yield on_condition if block_given?
-          # :nocov:
+          # simplecov:enable
 
           on = Arel::Nodes::On.new on_condition
 

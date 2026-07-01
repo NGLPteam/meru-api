@@ -54,9 +54,9 @@ module Harvesting
       end
 
       wrapped_hook! def enqueue_roots
-        # :nocov:
+        # simplecov:disable
         return super unless harvest_entities.present?
-        # :nocov:
+        # simplecov:enable
 
         batch.add do
           harvest_entities.each do |harvest_entity|

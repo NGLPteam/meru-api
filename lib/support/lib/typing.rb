@@ -46,13 +46,13 @@ module Support
       # @param [Module] base
       # @return [void]
       def extend_object(mod)
-        # :nocov:
+        # simplecov:disable
         raise TypeError, "use #include for classes" if mod.kind_of?(Class)
 
         # Already extended
         return false if mod.singleton_class < self
 
-        # :nocov:
+        # simplecov:enable
 
         super
 

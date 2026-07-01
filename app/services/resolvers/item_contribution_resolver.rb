@@ -15,9 +15,9 @@ module Resolvers
       elsif object.kind_of?(Item)
         :contributions
       else
-        # :nocov:
+        # simplecov:disable
         super
-        # :nocov:
+        # simplecov:enable
       end
     end
   end

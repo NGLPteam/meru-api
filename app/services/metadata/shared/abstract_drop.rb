@@ -43,9 +43,9 @@ module Metadata
       private
 
       def blank_for_liquid?
-        # :nocov:
+        # simplecov:disable
         @data.respond_to?(:blank_for_liquid?) ? @data.blank? || @data.blank_for_liquid? : @data.blank?
-        # :nocov:
+        # simplecov:enable
       end
 
       # @param [Symbol] accessor_name

@@ -17,11 +17,11 @@ module Support
     private
 
     def parse(input)
-      # :nocov:
+      # simplecov:disable
 
       raise TypeError, "unknown type: #{input}" unless input.kind_of?(::String)
 
-      # :nocov:
+      # simplecov:enable
 
       case input
       when /\Astring\z/i, /\A(?:ci)?text\z/i

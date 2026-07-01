@@ -25,9 +25,9 @@ module MutationOperations
     # @param [{ Symbol => Object }] args
     # @return [{ Symbol => Object }]
     def process_attachments_for(model, **args)
-      # :nocov:
+      # simplecov:disable
       return args if attachments.blank?
-      # :nocov:
+      # simplecov:enable
 
       attachments.each do |attachment|
         # NOTE: this will mutate `args`

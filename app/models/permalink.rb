@@ -37,9 +37,9 @@ class Permalink < ApplicationRecord
 
   # @return [void]
   def derive_kind!
-    # :nocov:
+    # simplecov:disable
     return if permalinkable.blank?
-    # :nocov:
+    # simplecov:enable
 
     self.kind = determine_kind!
   end
@@ -59,9 +59,9 @@ class Permalink < ApplicationRecord
 
   # @return [void]
   def extract_permalinkable_slug!
-    # :nocov:
+    # simplecov:disable
     return if permalinkable.blank?
-    # :nocov:
+    # simplecov:enable
 
     self.permalinkable_slug = permalinkable.system_slug
   end

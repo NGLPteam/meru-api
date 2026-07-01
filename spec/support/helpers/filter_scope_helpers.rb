@@ -12,9 +12,9 @@ RSpec.shared_examples "filter scope default tests" do
       subject { model_klass }
 
       before do
-        # :nocov:
+        # simplecov:disable
         skip "no required scopes" if described_class.required_scopes.empty?
-        # :nocov:
+        # simplecov:enable
       end
 
       described_class.required_scopes.each do |scope_name|

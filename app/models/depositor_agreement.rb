@@ -37,9 +37,9 @@ class DepositorAgreement < ApplicationRecord
     # @param [User, AnonymousUser] user
     # @return [ActiveRecord::Relation<DepositorAgreement>]
     def owned_by(user)
-      # :nocov:
+      # simplecov:disable
       return none if user.blank? || user.anonymous?
-      # :nocov:
+      # simplecov:enable
 
       where(user:)
     end
@@ -54,11 +54,11 @@ class DepositorAgreement < ApplicationRecord
     # @param [User, AnonymousUser] user
     # @return [ActiveRecord::Relation<DepositorAgreement>]
     def reviewable_by(user)
-      # :nocov:
+      # simplecov:disable
       return none if user.blank? || user.anonymous?
 
       return all if user.has_global_admin_access?
-      # :nocov:
+      # simplecov:enable
 
       where(submission_target: SubmissionTarget.reviewable_by(user))
     end

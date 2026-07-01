@@ -30,9 +30,9 @@ class ApplicationContract < Dry::Validation::Contract
 
       m.failure do
         # Fallback
-        # :nocov:
+        # simplecov:disable
         key.failure(:"extraction_mapping_template.invalid")
-        # :nocov:
+        # simplecov:enable
       end
     end
   end
@@ -51,9 +51,9 @@ class ApplicationContract < Dry::Validation::Contract
 
       m.failure do
         # Fallback
-        # :nocov:
+        # simplecov:disable
         key.failure(:"frequency_expression.invalid")
-        # :nocov:
+        # simplecov:enable
       end
     end
   end

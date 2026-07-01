@@ -10,9 +10,9 @@ module Entities
       when ::Collection then 600
       when ::Community then 700
       else
-        # :nocov:
+        # simplecov:disable
         999
-        # :nocov:
+        # simplecov:enable
       end
     end
 

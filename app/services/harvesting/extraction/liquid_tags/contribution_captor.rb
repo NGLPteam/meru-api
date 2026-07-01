@@ -14,9 +14,9 @@ module Harvesting
         # @param [Liquid::Context] context
         # @return [void]
         def render(context)
-          # :nocov:
+          # simplecov:disable
           raise Liquid::ContextError, "Cannot capture a contribution within a contribution" if capturing_contribution
-          # :nocov:
+          # simplecov:enable
 
           capture_contribution!(context) do
             super

@@ -67,9 +67,9 @@ module Support
       # @param [String] value
       # @return [String]
       def quote(value)
-        # :nocov:
+        # simplecov:disable
         connection.quote(value)
-        # :nocov:
+        # simplecov:enable
       end
     end
   end

@@ -54,10 +54,10 @@ module SubmissionTargets
 
         seen_ids[section.identifier] ||= section
 
-        # :nocov:
+        # simplecov:disable
         # This should never happen, as the position is included in the ID, but we want to be sure that we don't generate duplicate IDs.
         raise "Duplicate section ID generated: #{section.identifier}" if seen_ids[section.identifier] != section
-        # :nocov:
+        # simplecov:enable
       end
     end
   end

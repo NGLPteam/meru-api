@@ -17,9 +17,9 @@ module Harvesting
         flexible_transitions!
 
         after_transition to: :upserted do |harl, _transition|
-          # :nocov:
+          # simplecov:disable
           harl.transition_to :success
-          # :nocov:
+          # simplecov:enable
         end
       end
     end

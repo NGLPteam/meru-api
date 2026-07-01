@@ -74,8 +74,8 @@ module SchemaVersionTemplating
   # @param [Layouts::Types::Kind] layout_kind
   # @return [Templates::Config::Utility::AbstractLayout]
   def root_layout_config_for(layout_kind)
-    # :nocov:
+    # simplecov:disable
     static_record&.layout_config_for(layout_kind) || Layout.build_default_for(layout_kind)
-    # :nocov:
+    # simplecov:enable
   end
 end

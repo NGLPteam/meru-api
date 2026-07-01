@@ -45,9 +45,9 @@ module Schemas
       private
 
       def upsert_searchable_properties!(attributes)
-        # :nocov:
+        # simplecov:disable
         return Success(0) if attributes.blank?
-        # :nocov:
+        # simplecov:enable
 
         res = EntitySearchableProperty.upsert_all(
           attributes,
@@ -113,14 +113,14 @@ module Schemas
           when Time then "timestamp"
           when VariablePrecisionDate then "variable_date"
           else
-            # :nocov:
+            # simplecov:disable
             case type
             when :date then "date"
             when :text then "string"
             else
               "unknown"
             end
-            # :nocov:
+            # simplecov:enable
           end
 
         attrs[:boolean_value] = raw_value.present?

@@ -16,9 +16,9 @@ module Schemas
         when Schemas::Versions::Configuration, Schemas::Properties::GroupDefinition
           build_contract source.properties
         when Schemas::Properties::Types.Interface(:properties)
-          # :nocov:
+          # simplecov:disable
           call(source.properties)
-          # :nocov:
+          # simplecov:enable
         when ::SchemaVersion
           call source.configuration
         else

@@ -19,10 +19,10 @@ module JournalSources
         if ENDS_WITH_SINGLE_PAGE.match?(input)
           try_parsing_with_patterns!(input)
 
-          # :nocov:
+          # simplecov:disable
           # A fallback for inputs that do not match any of the patterns
           try_anystyle!(input)
-          # :nocov:
+          # simplecov:enable
         else
           try_anystyle!(input)
 
@@ -36,9 +36,9 @@ module JournalSources
         PATTERNS.each do |pattern|
           match = pattern.match input
 
-          # :nocov:
+          # simplecov:disable
           next unless match
-          # :nocov:
+          # simplecov:enable
 
           try_parsing_with_pattern_match!(input, match)
         end

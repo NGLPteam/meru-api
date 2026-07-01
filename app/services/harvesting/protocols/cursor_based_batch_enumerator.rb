@@ -76,13 +76,13 @@ module Harvesting
         if next_cursor.blank?
           halt_enumeration
         elsif prev_cursor.present? && prev_cursor == next_cursor
-          # :nocov:
+          # simplecov:disable
           # Edge case that has happened before with poorly-implemented OAI-PMH providers
           # that did not properly generate resumption tokens.
           logger.warn("cursor repeating infinitely: #{prev_cursor}")
 
           halt_enumeration
-          # :nocov:
+          # simplecov:enable
         else
           logger.log("next cursor: #{next_cursor.inspect}")
         end
@@ -94,9 +94,9 @@ module Harvesting
 
         on_initial_batch batch if provided_cursor.blank?
 
-        # :nocov:
+        # simplecov:disable
         halt_enumeration if batch.nil?
-        # :nocov:
+        # simplecov:enable
 
         prev_cursor = provided_cursor
 

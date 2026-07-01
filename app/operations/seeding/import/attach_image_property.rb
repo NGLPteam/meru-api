@@ -20,9 +20,9 @@ module Seeding
 
           Success()
         else
-          # :nocov:
+          # simplecov:disable
           Failure[:unsupported_asset_format, asset.format]
-          # :nocov:
+          # simplecov:enable
         end
       end
 

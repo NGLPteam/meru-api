@@ -16,9 +16,9 @@ module Protocols
 
         # @return [Enumerator<Metadata::Pressbooks::Books::Record>]
         def each
-          # :nocov:
+          # simplecov:disable
           return enum_for(__method__) unless block_given?
-          # :nocov:
+          # simplecov:enable
 
           books.each do |book|
             yield book
@@ -45,9 +45,9 @@ module Protocols
         # @param [String, nil] url
         # @return [Metadata::Pressbooks::Common::AbstractMapper, nil]
         def wrap_into(klass, url)
-          # :nocov:
+          # simplecov:disable
           return if url.blank?
-          # :nocov:
+          # simplecov:enable
 
           response = client.http.get(url)
 

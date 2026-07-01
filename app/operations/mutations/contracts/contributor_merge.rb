@@ -25,9 +25,9 @@ module Mutations
             in :target_merging
               base.failure(:contributor_merge_target_merging)
             else
-              # :nocov:
+              # simplecov:disable
               raise "Unexpected validation error key: #{key.inspect}"
-              # :nocov:
+              # simplecov:enable
             end
           end
         end

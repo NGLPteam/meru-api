@@ -10,9 +10,9 @@ module Templates
 
         template.slot_definition_mapping_klass
       rescue FrozenRecord::RecordNotFound, KeyError
-        # :nocov:
+        # simplecov:disable
         Templates::SlotMappings::AbstractInstanceSlots
-        # :nocov:
+        # simplecov:enable
       end
     end
   end

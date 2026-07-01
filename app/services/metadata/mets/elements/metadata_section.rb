@@ -42,9 +42,9 @@ module Metadata
           in "referenced"
             referenced_metadata
           else
-            # :nocov:
+            # simplecov:disable
             return false
-            # :nocov:
+            # simplecov:enable
           end
         end
 

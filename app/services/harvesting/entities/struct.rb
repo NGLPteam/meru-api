@@ -137,9 +137,9 @@ module Harvesting
       def find_schema_version!
         @schema_version = SchemaVersion[schema_identifier]
       rescue ActiveRecord::RecordNotFound
-        # :nocov:
+        # simplecov:disable
         logger.error "Could not find schema version: #{schema_identifier}"
-        # :nocov:
+        # simplecov:enable
       end
 
       # @return [void]
@@ -226,9 +226,9 @@ module Harvesting
           end
 
           m.failure do |*probs|
-            # :nocov:
+            # simplecov:disable
             logger.error "#{prefix}: Something went wrong", path:
-            # :nocov:
+            # simplecov:enable
           end
         end
       end

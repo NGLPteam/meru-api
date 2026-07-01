@@ -33,9 +33,9 @@ module Harvesting
           end
 
           def contributor_kind_matches?
-            # :nocov:
+            # simplecov:disable
             return true if contributor_kind_limit.blank?
-            # :nocov:
+            # simplecov:enable
 
             contributor_kind_limit == contributor_kind
           end

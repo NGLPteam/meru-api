@@ -44,11 +44,11 @@ module ControlledVocabularies
       def set_default_provision!(identifier:, namespace: "meru.host")
         vocabulary = ControlledVocabulary.find_by(namespace:, identifier:)
 
-        # :nocov:
+        # simplecov:disable
         return Success() unless vocabulary.present?
 
         return Success() if ControlledVocabularySource.providing(vocabulary.provides).present?
-        # :nocov:
+        # simplecov:enable
 
         vocabulary.select_provider!
 

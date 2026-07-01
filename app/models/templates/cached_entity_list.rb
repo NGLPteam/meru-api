@@ -19,9 +19,9 @@ module Templates
 
     # @note Cannot eager-load because of polymorphic associations.
     def entities
-      # :nocov:
+      # simplecov:disable
       cached_entity_list_items.map(&:entity)
-      # :nocov:
+      # simplecov:enable
     end
 
     # @return [Integer]

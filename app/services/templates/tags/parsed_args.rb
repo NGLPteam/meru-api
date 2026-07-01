@@ -151,9 +151,9 @@ module Templates
 
         @arg_values << arg
 
-        # :nocov:
+        # simplecov:disable
         @args[name] = arg if name
-        # :nocov:
+        # simplecov:enable
       end
 
       # @return [void]

@@ -20,9 +20,9 @@ module Schemas
 
           match = pattern.match order_path
 
-          # :nocov:
+          # simplecov:disable
           raise "Unparseable schema path: #{order_path}" unless match
-          # :nocov:
+          # simplecov:enable
 
           path = match[:path]
 

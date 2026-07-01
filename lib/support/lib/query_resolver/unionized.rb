@@ -57,9 +57,9 @@ module Support
 
           finalize_fork only_name, single_query, single: true
         elsif @forks.none?
-          # :nocov:
+          # simplecov:disable
           @base_scope.none
-          # :nocov:
+          # simplecov:enable
         else
           finalized_scopes = @forks.map do |(name, query)|
             finalized_fork = finalize_fork(name, query)

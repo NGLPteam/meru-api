@@ -30,13 +30,13 @@ module Templates
       end
 
       wrapped_hook! def maybe_update_digest
-        # :nocov:
+        # simplecov:disable
         return super unless update_digest
 
         yield template_instance.upsert_instance_digests
 
         super
-        # :nocov:
+        # simplecov:enable
       end
     end
   end

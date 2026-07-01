@@ -53,7 +53,7 @@ module Harvesting
       end
 
       wrapped_hook! def destroy_actual
-        # :nocov:
+        # simplecov:disable
         if actual_entity.blank?
           logger.trace("no harvested entity to remove", tags: [entity_tag])
 
@@ -67,7 +67,7 @@ module Harvesting
 
           return skip_prune("did not prune because entity still exists")
         end
-        # :nocov:
+        # simplecov:enable
 
         super
       end
@@ -92,9 +92,9 @@ module Harvesting
           case result
           when String then result
           else
-            # :nocov:
+            # simplecov:disable
             "skipped for unknown reason"
-            # :nocov:
+            # simplecov:enable
           end
 
         @skipped += 1
@@ -109,9 +109,9 @@ module Harvesting
       end
 
       def preserve_current?
-        # :nocov:
+        # simplecov:disable
         return false if actual_entity.blank?
-        # :nocov:
+        # simplecov:enable
 
         preserve_modifications? && harvest_modification_status != "pristine"
       end

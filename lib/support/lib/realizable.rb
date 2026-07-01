@@ -27,9 +27,9 @@ module Support
     # @param [Boolean] reset whether to allow re-realization of an already-realized wrapper
     # @return [void]
     def realize!(reset: false)
-      # :nocov:
+      # simplecov:disable
       raise AlreadyRealized, "Already realized" if realized? && !reset
-      # :nocov:
+      # simplecov:enable
 
       run_callbacks :realize do
         realization!
@@ -41,9 +41,9 @@ module Support
     # @abstract
     # @return [void]
     def realization
-      # :nocov:
+      # simplecov:disable
       raise NotImplementedError, "Must implement #realization in including class"
-      # :nocov:
+      # simplecov:enable
     end
 
     # @api private

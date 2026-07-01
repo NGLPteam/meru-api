@@ -7,15 +7,15 @@ module Harvesting
       class RecordProcessor < Harvesting::Protocols::RecordProcessor
         # @param [OAI::Record] oai_record
         def deleted?(_)
-          # :nocov:
+          # simplecov:disable
           true
-          # :nocov:
+          # simplecov:enable
         end
 
         def skip?(_)
-          # :nocov:
+          # simplecov:disable
           true
-          # :nocov:
+          # simplecov:enable
         end
       end
     end

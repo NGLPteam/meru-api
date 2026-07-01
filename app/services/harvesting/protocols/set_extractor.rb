@@ -70,9 +70,9 @@ module Harvesting
       # @param [Hash] prepared
       # @return [Hash, nil]
       def validate_prepared_set(prepared)
-        # :nocov:
+        # simplecov:disable
         return nil if prepared.blank?
-        # :nocov:
+        # simplecov:enable
 
         MeruAPI::Container["harvesting.sets.validate_prepared"].(
           prepared

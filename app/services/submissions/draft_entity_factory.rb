@@ -45,9 +45,9 @@ module Submissions
     end
 
     wrapped_hook! def persist
-      # :nocov:
+      # simplecov:disable
       return super if current_entity.present? || parent_entity.blank?
-      # :nocov:
+      # simplecov:enable
 
       draft.save!
 

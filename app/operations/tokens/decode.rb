@@ -38,9 +38,9 @@ module Tokens
 
       Success payload
     rescue JWT::JWKError => e
-      # :nocov:
+      # simplecov:disable
       Failure[:invalid_jwk, e.message]
-      # :nocov:
+      # simplecov:enable
     rescue JWT::ExpiredSignature => e
       Failure[:expired, e.message]
     rescue JWT::DecodeError => e

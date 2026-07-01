@@ -6,9 +6,9 @@ module JournalSources
     if parsed.kind_of?(JournalSources::Parsed::Abstract) && parsed.full? && parsed.known?
       parsed
     else
-      # :nocov:
+      # simplecov:disable
       Dry::Matcher::Undefined
-      # :nocov:
+      # simplecov:enable
     end
   end
 
@@ -17,9 +17,9 @@ module JournalSources
     if parsed.kind_of?(JournalSources::Parsed::Abstract) && parsed.volume_only? && parsed.known?
       parsed
     else
-      # :nocov:
+      # simplecov:disable
       Dry::Matcher::Undefined
-      # :nocov:
+      # simplecov:enable
     end
   end
 
@@ -27,18 +27,18 @@ module JournalSources
     if parsed.kind_of?(JournalSources::Parsed::Abstract) && parsed.issue_only? && parsed.known?
       parsed
     else
-      # :nocov:
+      # simplecov:disable
       Dry::Matcher::Undefined
-      # :nocov:
+      # simplecov:enable
     end
   end
 
   # @api private
   UnknownCase = Dry::Matcher::Case.new do |parsed, *|
     if parsed.kind_of?(JournalSources::Parsed::Abstract) && parsed.known?
-      # :nocov:
+      # simplecov:disable
       Dry::Matcher::Undefined
-      # :nocov:
+      # simplecov:enable
     else
       parsed
     end

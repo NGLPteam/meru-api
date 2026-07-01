@@ -69,11 +69,11 @@ module Templates
           # Restore proper capitalization.
           node.name = tag_name
 
-          # :nocov:
+          # simplecov:disable
           node.attributes.each_key do |attr|
             node.remove_attribute(attr) unless attr.in?(attrs)
           end unless attrs == :all
-          # :nocov:
+          # simplecov:enable
 
           node.set_attribute(:slot, slot) if slot == "INLINE"
 

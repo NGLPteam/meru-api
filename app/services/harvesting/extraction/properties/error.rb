@@ -13,9 +13,9 @@ module Harvesting
 
         # @return [void]
         def write_log!
-          # :nocov:
+          # simplecov:disable
           return if blank?
-          # :nocov:
+          # simplecov:enable
 
           trace = Rails.backtrace_cleaner.clean(Array(backtrace))
 
@@ -35,17 +35,17 @@ module Harvesting
             when ::Harvesting::Extraction::Error
               new(path:, subpath:, message: source.message, markup_context: source.markup_context, exception_klass: source.exception_klass, backtrace: source.backtrace)
             when Liquid::Error
-              # :nocov:
+              # simplecov:disable
               new(path:, subpath:, message: source.message, markup_context: source.markup_context, exception_klass: source.class.name)
-              # :nocov:
+              # simplecov:enable
             when Exception
-              # :nocov:
+              # simplecov:disable
               new(path:, subpath:, message: source.message, exception_klass: source.class.name, backtrace: source.backtrace)
-              # :nocov:
+              # simplecov:enable
             else
-              # :nocov:
+              # simplecov:disable
               raise TypeError, "invalid Harvesting Extraction Error Source: #{source.inspect}"
-              # :nocov:
+              # simplecov:enable
             end
           end
         end

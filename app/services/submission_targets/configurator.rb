@@ -11,9 +11,9 @@ module SubmissionTargets
         in HierarchicalEntity then configurable
         in SubmissionTarget then configurable.entity
         else
-          # :nocov:
+          # simplecov:disable
           raise "Unexpected configurable type: #{configurable.class}"
-          # :nocov:
+          # simplecov:enable
         end
       end
 
@@ -24,9 +24,9 @@ module SubmissionTargets
         in HierarchicalEntity
           configurable.fetch_submission_target!
         else
-          # :nocov:
+          # simplecov:disable
           raise "Unexpected configurable type: #{configurable.class}"
-          # :nocov:
+          # simplecov:enable
         end
       end
 

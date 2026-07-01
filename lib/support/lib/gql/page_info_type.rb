@@ -34,9 +34,9 @@ module Support
 
       # @return [Integer, nil]
       def page_count
-        # :nocov:
+        # simplecov:disable
         return nil if per_page.nil?
-        # :nocov:
+        # simplecov:enable
 
         size = total_count
 
@@ -72,9 +72,9 @@ module Support
       # @return [Object]
       def from_connection_info(key)
         object.context[:connection_info].then do |cinfo|
-          # :nocov:
+          # simplecov:disable
           cinfo&.__send__(key) || yield
-          # :nocov:
+          # simplecov:enable
         end
       end
 
@@ -85,9 +85,9 @@ module Support
           if pagination.kind_of?(Hash)
             pagination[key]
           else
-            # :nocov:
+            # simplecov:disable
             object.arguments[key]
-            # :nocov:
+            # simplecov:enable
           end
         end
       end

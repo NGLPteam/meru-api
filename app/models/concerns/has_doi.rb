@@ -71,13 +71,13 @@ module HasDOI
 
   # @return [void]
   def maybe_migrate_doi_data!
-    # :nocov:
+    # simplecov:disable
     return if new_record? || doi_data?
 
     extract_doi_data!
 
     update_columns(doi_data:, has_doi:)
-    # :nocov:
+    # simplecov:enable
   end
 
   module ClassMethods

@@ -21,18 +21,18 @@ module Protocols
 
       # @return [Protocols::Pressbooks::AbstractResponse, nil]
       def next_page
-        # :nocov:
+        # simplecov:disable
         raise "nothing to fetch" unless more?
-        # :nocov:
+        # simplecov:enable
 
         request.next_page.()
       end
 
       # @return [String, nil]
       def resumption_token
-        # :nocov:
+        # simplecov:disable
         return unless more?
-        # :nocov:
+        # simplecov:enable
 
         @resumption_token ||= build_resumption_token
       end

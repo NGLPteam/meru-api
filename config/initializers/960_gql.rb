@@ -5,7 +5,7 @@ GraphQL::FragmentCache.configure do |config|
 end
 
 ActiveSupport::Notifications.subscribe(/graphql/) do |event|
-  # :nocov:
+  # simplecov:disable
   next unless event.respond_to?(:duration) && event.duration.present?
 
   name = event.name
@@ -39,5 +39,5 @@ ActiveSupport::Notifications.subscribe(/graphql/) do |event|
   prefix = tags.compact_blank.map { |tag| "[#{tag}]" }.join
 
   Rails.logger.info("#{prefix} Completed in #{duration}ms")
-  # :nocov:
+  # simplecov:enable
 end

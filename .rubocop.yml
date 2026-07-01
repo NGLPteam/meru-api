@@ -5,6 +5,7 @@ plugins:
   - rubocop-rspec_rails
 require:
   - ./lib/cops/no_require_rails_helper.rb
+  - ./lib/cops/simplecov.rb
 
 AllCops:
   Exclude:

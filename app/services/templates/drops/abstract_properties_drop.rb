@@ -24,9 +24,9 @@ module Templates
       end
 
       def to_s
-        # :nocov:
+        # simplecov:disable
         raise Liquid::ContextError, "Tried to render `#{@identifier}` in scalar context"
-        # :nocov:
+        # simplecov:enable
       end
 
       private
@@ -49,9 +49,9 @@ module Templates
         in Schemas::Properties::GroupReader => reader
           build_with_group_reader(reader)
         else
-          # :nocov:
+          # simplecov:disable
           raise TypeError, "unexpected init_arg for props drop: #{init_arg.inspect}"
-          # :nocov:
+          # simplecov:enable
         end
       end
 

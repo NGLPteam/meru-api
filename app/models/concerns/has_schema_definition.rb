@@ -103,11 +103,11 @@ module HasSchemaDefinition
 
       patch_properties!(pending)
     rescue Dry::Monads::UnwrapError => e
-      # :nocov:
+      # simplecov:disable
       self.pending_properties = pending
 
       raise e
-      # :nocov:
+      # simplecov:enable
     else
       return true
     end

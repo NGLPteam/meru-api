@@ -15,10 +15,10 @@ module Support
 
         models = []
 
-        # :nocov:
+        # simplecov:disable
         models << ActsAsTaggableOn::Tag if defined?(ActsAsTaggableOn::Tag)
         models << ActsAsTaggableOn::Tagging if defined?(ActsAsTaggableOn::Tagging)
-        # :nocov:
+        # simplecov:enable
 
         models += ApplicationRecord.descendants.reject(&:abstract_class)
 

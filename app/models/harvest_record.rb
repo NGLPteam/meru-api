@@ -8,9 +8,9 @@ class HarvestRecord < ApplicationRecord
   include HasUnderlyingDataFormat
   include TimestampScopes
 
-  # :nocov:
+  # simplecov:disable
   include Harvesting::Testing::RecordExtensions if Rails.env.test?
-  # :nocov:
+  # simplecov:enable
 
   pg_enum! :status, as: :harvest_record_status, allow_blank: false, prefix: :with, suffix: :status, default: "pending"
 
@@ -58,9 +58,9 @@ class HarvestRecord < ApplicationRecord
   # @see HarvestConfiguration#build_extraction_context
   # @return [Harvesting::Extraction::Context]
   def build_extraction_context
-    # :nocov:
+    # simplecov:disable
     fetch_configuration.build_extraction_context
-    # :nocov:
+    # simplecov:enable
   end
 
   # @see HarvestMetadataFormat.context_for
@@ -103,7 +103,7 @@ class HarvestRecord < ApplicationRecord
   # @api private
   # @return [Hash]
   def to_sample
-    # :nocov:
+    # simplecov:disable
     changed_at = source_changed_at.iso8601
 
     metadata_source = Nokogiri::XML(xml_metadata_source, &:noblanks).root.to_xml
@@ -113,7 +113,7 @@ class HarvestRecord < ApplicationRecord
       changed_at:,
       metadata_source:,
     }
-    # :nocov:
+    # simplecov:enable
   end
 
   # @!group Source Management
@@ -175,9 +175,9 @@ class HarvestRecord < ApplicationRecord
   # @raise [Harvesting::Records::NoConfiguration]
   # @return [HarvestConfiguration]
   def fetch_configuration
-    # :nocov:
+    # simplecov:disable
     raise Harvesting::Records::NoConfiguration.new(self) if harvest_configuration.blank?
-    # :nocov:
+    # simplecov:enable
 
     harvest_configuration
   end
@@ -190,9 +190,9 @@ class HarvestRecord < ApplicationRecord
     # @param [String] identifier
     # @return [HarvestRecord, nil]
     def fetch_for_source(sourcelike, identifier)
-      # :nocov:
+      # simplecov:disable
       for_source(sourcelike).find_by(identifier:)
-      # :nocov:
+      # simplecov:enable
     end
 
     # Return the most recent {HarvestRecord} instance from the current attempts
@@ -205,11 +205,11 @@ class HarvestRecord < ApplicationRecord
     # @raise [Harvesting::Records::Unknown]
     # @return [HarvestRecord]
     def fetch_for_source!(sourcelike, identifier)
-      # :nocov:
+      # simplecov:disable
       for_source(sourcelike).find_by!(identifier:)
     rescue ActiveRecord::RecordNotFound
       raise Harvesting::Records::Unknown, identifier
-      # :nocov:
+      # simplecov:enable
     end
   end
 end

@@ -176,7 +176,7 @@ group :test do
   gem "database_cleaner-redis", "~> 2.0"
   gem "rspec-collection_matchers", "~> 1.2"
   gem "rspec-json_expectations", "~> 2.2"
-  gem "simplecov", "~> 0.22", require: false
+  gem "simplecov", "~> 1.0.0.rc3", require: false
   gem "test-prof", "~> 1.5"
   gem "timecop", "~> 0.9"
   gem "webmock", "~> 3.26"

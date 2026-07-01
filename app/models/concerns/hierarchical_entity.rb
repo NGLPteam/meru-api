@@ -201,9 +201,9 @@ module HierarchicalEntity
 
   # @return [<HierarchicalEntity>]
   def hierarchical_ancestors
-    # :nocov:
+    # simplecov:disable
     hierarchical_ancestor_enumerator.to_a
-    # :nocov:
+    # simplecov:enable
   end
 
   # @api private
@@ -234,9 +234,9 @@ module HierarchicalEntity
 
   # @abstract
   def hierarchical_parent
-    # :nocov:
+    # simplecov:disable
     raise NotImplementedError, "Must implement #{self.class}##{__method__}"
-    # :nocov:
+    # simplecov:enable
   end
 
   def hierarchical_parent_foreign_key

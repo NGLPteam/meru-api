@@ -62,10 +62,10 @@ module Harvesting
     calculates! :schema_versions do |record|
       Array(record["schema_declarations"]).map { SchemaVersion[_1] }
     rescue ActiveRecord::RecordNotFound, ActiveRecord::StatementInvalid
-      # :nocov:
+      # simplecov:disable
       # Order of operations issue that only appears on CI.
       EMPTY_ARRAY
-      # :nocov:
+      # simplecov:enable
     end
 
     class << self

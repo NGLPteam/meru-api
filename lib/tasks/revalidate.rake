@@ -37,9 +37,9 @@ class EntityTaskRevalidator
     when "item"
       ::Item
     else
-      # :nocov:
+      # simplecov:disable
       raise ArgumentError, "Unknown kind: #{kind.inspect}"
-      # :nocov:
+      # simplecov:enable
     end
   end
 

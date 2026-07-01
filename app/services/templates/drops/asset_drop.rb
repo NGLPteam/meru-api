@@ -26,9 +26,9 @@ module Templates
       end
 
       def to_s
-        # :nocov:
+        # simplecov:disable
         call_operation!("templates.mdx.build_asset", asset: @asset, content: name)
-        # :nocov:
+        # simplecov:enable
       end
     end
   end

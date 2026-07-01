@@ -47,9 +47,9 @@ module Harvesting
         @extracted_record = harvest_record.reload
       rescue ActiveRecord::RecordNotFound
         # If re-extracting deleted the record, that's okay
-        # :nocov:
+        # simplecov:disable
         super
-        # :nocov:
+        # simplecov:enable
       else
         super
       end

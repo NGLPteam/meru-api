@@ -37,9 +37,9 @@ module HasHarvestLookupHelpers
     when [:collection, :collection], [:item, :item]
       children
     else
-      # :nocov:
+      # simplecov:disable
       raise Harvesting::Error, "cannot create child of type #{child_type} under #{parent_type}"
-      # :nocov:
+      # simplecov:enable
     end
   end
 

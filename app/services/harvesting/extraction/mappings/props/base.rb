@@ -83,9 +83,9 @@ module Harvesting
                 end
 
                 m.failure do
-                  # :nocov:
+                  # simplecov:disable
                   property_errors << Harvesting::Extraction::Properties::Error.new(path:, subpath:, message: "Something went wrong")
-                  # :nocov:
+                  # simplecov:enable
                 end
               end
             end

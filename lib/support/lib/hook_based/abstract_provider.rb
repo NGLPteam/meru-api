@@ -19,9 +19,9 @@ module Support
       end
 
       def inspect
-        # :nocov:
+        # simplecov:disable
         "#{self.class}[#{attribute.inspect}]"
-        # :nocov:
+        # simplecov:enable
       end
 
       def included(base)
@@ -37,17 +37,17 @@ module Support
       # @abstract
       # @return [void]
       def build_effect!
-        # :nocov:
+        # simplecov:disable
         raise NotImplementedError, "must implement #{self.class}##{__method__}"
-        # :nocov:
+        # simplecov:enable
       end
 
       # @abstract
       # @return [void]
       def define_provider!
-        # :nocov:
+        # simplecov:disable
         raise NotImplementedError, "must implement #{self.class}##{__method__}"
-        # :nocov:
+        # simplecov:enable
       end
     end
   end

@@ -67,9 +67,9 @@ class AccessGrant < ApplicationRecord
     in ::Support::GlobalTypes::UUID
       calculate_manager?(user)
     else
-      # :nocov:
+      # simplecov:disable
       false
-      # :nocov:
+      # simplecov:enable
     end
   end
 

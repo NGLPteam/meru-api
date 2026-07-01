@@ -53,11 +53,11 @@ module Mutations
           end
 
           m.failure do |*reasons|
-            # :nocov:
+            # simplecov:disable
             Failure[*reasons]
 
             throw_invalid
-            # :nocov:
+            # simplecov:enable
           end
         end
       end

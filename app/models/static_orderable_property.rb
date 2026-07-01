@@ -68,9 +68,9 @@ class StaticOrderableProperty < FrozenRecord::Base
   def has_valid_path!
     return if path.start_with? "#{grouping}."
 
-    # :nocov:
+    # simplecov:disable
     errors.add :path, :invalid, grouping:
-    # :nocov:
+    # simplecov:enable
   end
 
   def primary_key_for_i18n

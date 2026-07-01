@@ -24,9 +24,9 @@ module Templates
       end
 
       def each
-        # :nocov:
+        # simplecov:disable
         return enum_for(__method__) unless block_given?
-        # :nocov:
+        # simplecov:enable
 
         @contributions.each do |contribution|
           yield contribution

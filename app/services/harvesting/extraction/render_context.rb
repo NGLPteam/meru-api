@@ -116,9 +116,9 @@ module Harvesting
 
       # @return [void]
       def compile_shared_assigns!
-        # :nocov:
+        # simplecov:disable
         return if mapping.nil?
-        # :nocov:
+        # simplecov:enable
 
         mapping.each_shared_assignment do |assignment|
           @assigns[assignment.name] ||= assignment.value_for(self)
@@ -127,9 +127,9 @@ module Harvesting
 
       # @return [void]
       def configure_contributions!
-        # :nocov:
+        # simplecov:disable
         return if mapping.nil?
-        # :nocov:
+        # simplecov:enable
 
         @contributions = mapping.to_contributions_config
       end

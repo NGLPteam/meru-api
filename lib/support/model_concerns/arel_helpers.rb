@@ -188,9 +188,9 @@ module ArelHelpers
     when Support::ArelExt::Types::ToSQL then arel_literal query.to_sql
     when String then arel_literal query
     else
-      # :nocov:
+      # simplecov:disable
       raise TypeError, "cannot quote query #{query.inspect}"
-      # :nocov:
+      # simplecov:enable
     end
   end
 

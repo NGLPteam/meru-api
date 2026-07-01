@@ -23,9 +23,9 @@ module Support
       # within a Thread.current variable.
       # @return [void]
       def with_vog_cache
-        # :nocov:
+        # simplecov:disable
         return yield if vog_safe_cache_active?
-        # :nocov:
+        # simplecov:enable
 
         with_vog_safe_cache_active! do
           with_cache! do
@@ -55,9 +55,9 @@ module Support
       # @return [Object]
       def cache(*args, &)
         vog_safe_cache.then do |c|
-          # :nocov:
+          # simplecov:disable
           return yield if c.nil?
-          # :nocov:
+          # simplecov:enable
 
           c.compute_if_absent(args, &)
         end

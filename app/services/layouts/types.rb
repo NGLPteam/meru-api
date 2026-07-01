@@ -32,9 +32,9 @@ module Layouts
 
     TemplateLookup = TemplateMapping.each_with_object({}) do |(layout, templates), lookup|
       templates.each do |template|
-        # :nocov:
+        # simplecov:disable
         raise "duplicate template #{template} for #{layout}, already in #{lookup[template]}" if template.in?(lookup)
-        # :nocov:
+        # simplecov:enable
 
         lookup[template] = layout
       end

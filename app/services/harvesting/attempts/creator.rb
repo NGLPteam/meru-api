@@ -88,9 +88,9 @@ module Harvesting
           @harvest_set = provided_harvest_set
           @target_entity = provided_target_entity
         else
-          # :nocov:
+          # simplecov:disable
           raise "Invalid attemptable: #{attemptable.inspect}"
-          # :nocov:
+          # simplecov:enable
         end
 
         @extraction_mapping_template = provided_extraction_mapping_template.presence || attemptable.extraction_mapping_template

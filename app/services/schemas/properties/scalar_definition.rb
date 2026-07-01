@@ -30,9 +30,9 @@ module Schemas
       when "url" then Schemas::Properties::Scalar::URL
       when "variable_date" then Schemas::Properties::Scalar::VariableDate
       else
-        # :nocov:
+        # simplecov:disable
         Schemas::Properties::Scalar::Unknown
-        # :nocov:
+        # simplecov:enable
       end
     end
 

@@ -45,9 +45,9 @@ module Metadata
       wrapped_hook! def prepare
         @content = @doc = @root = nil
 
-        # :nocov:
+        # simplecov:disable
         return Failure[:no_content] if xml_content.blank?
-        # :nocov:
+        # simplecov:enable
 
         super
       end
@@ -80,9 +80,9 @@ module Metadata
       # @param [String] href
       # @return [void]
       def maybe_add_namespace!(prefix, href)
-        # :nocov:
+        # simplecov:disable
         return if doc.root.namespace_definitions.any? { _1.prefix == prefix }
-        # :nocov:
+        # simplecov:enable
 
         doc.root.add_namespace_definition(prefix, href)
       end

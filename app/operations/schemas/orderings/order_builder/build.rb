@@ -24,9 +24,9 @@ module Schemas
             when Schemas::Orderings::OrderBuilder::STATIC_PATTERN
               StaticOrderableProperty.find(path).order_builder
             else
-              # :nocov:
+              # simplecov:disable
               raise "Cannot derive order builder for #{path}"
-              # :nocov:
+              # simplecov:enable
             end
           end
         end

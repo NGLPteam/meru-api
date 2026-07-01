@@ -5,6 +5,9 @@ ENV["RAILS_ENV"] ||= "test"
 require "simplecov"
 
 SimpleCov.start "rails" do
+  disable_coverage :line
+  enable_coverage :oneshot_line
+  primary_coverage :oneshot_line
   enable_coverage :branch
 
   groups.delete "Channels"
@@ -58,14 +61,14 @@ SimpleCov.start "rails" do
     ]
   end
 
-  add_group "Depositing", [
+  group "Depositing", [
     *depositing_models,
     *depositing_dirs,
   ]
 
-  add_group "GraphQL", "app/graphql"
+  group "GraphQL", "app/graphql"
 
-  add_group "Harvesting", [
+  group "Harvesting", [
     "app/jobs/harvesting",
     %r|app/models/[^/]*harvest|,
     %r|app/models/concerns/[^/]*harvest|,
@@ -77,13 +80,13 @@ SimpleCov.start "rails" do
     "app/services/protocols",
   ]
 
-  add_group "Mutations", [
+  group "Mutations", [
     "app/graphql/mutations",
     "app/operations/mutations",
     "app/services/mutation_operations",
   ]
 
-  add_group "Rendering", [
+  group "Rendering", [
     %r|app/graphql/types/[^/]*layout|,
     %r|app/graphql/types[^/]*template|,
     %r|app/models/[^/]*layout|,
@@ -97,28 +100,28 @@ SimpleCov.start "rails" do
     "app/services/templates",
   ]
 
-  add_group "Operations", "app/operations"
-  add_group "Policies", "app/policies"
-  add_group "Services", "app/services"
-  add_group "Uploaders", "app/uploaders"
+  group "Operations", "app/operations"
+  group "Policies", "app/policies"
+  group "Services", "app/services"
+  group "Uploaders", "app/uploaders"
 
   # Analytics simulations
-  add_filter "app/jobs/analytics/simulate_all_visits_job.rb"
-  add_filter "app/operations/analytics/simulate_fake_entity_history.rb"
-  add_filter "app/services/analytics/fake_entity_visit_history_simulator.rb"
-  add_filter "app/services/analytics/simulator_observer.rb"
+  skip "app/jobs/analytics/simulate_all_visits_job.rb"
+  skip "app/operations/analytics/simulate_fake_entity_history.rb"
+  skip "app/services/analytics/fake_entity_visit_history_simulator.rb"
+  skip "app/services/analytics/simulator_observer.rb"
 
-  add_filter "app/operations/testing"
-  add_filter "app/services/harvesting/testing"
-  add_filter "app/services/templates/refinements"
-  add_filter "app/services/testing"
-  add_filter "app/services/tus_client"
-  add_filter "lib/cops"
-  add_filter "lib/generators"
-  add_filter "lib/namespaces"
-  add_filter "lib/patches"
-  add_filter "lib/support"
-  add_filter "spec/support"
+  skip "app/operations/testing"
+  skip "app/services/harvesting/testing"
+  skip "app/services/templates/refinements"
+  skip "app/services/testing"
+  skip "app/services/tus_client"
+  skip "lib/cops"
+  skip "lib/generators"
+  skip "lib/namespaces"
+  skip "lib/patches"
+  skip "lib/support"
+  skip "spec/support"
 end unless defined?(Rails) && !Rails.env.test?
 
 require File.expand_path("../config/environment", __dir__)

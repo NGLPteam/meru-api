@@ -70,9 +70,9 @@ module Rendering
         assign_model! renderable.layout_definition
         assign_model! renderable.template_definition
       else
-        # :nocov:
+        # simplecov:disable
         raise TypeError, "unknown renderable: #{renderable.inspect}"
-        # :nocov:
+        # simplecov:enable
       end
 
       super
@@ -103,9 +103,9 @@ module Rendering
         assign!(template_kind: record.template_kind)
         assign_polymorphic!(:template_definition, record)
       else
-        # :nocov:
+        # simplecov:disable
         raise TypeError, "invalid assignable: #{record.inspect}"
-        # :nocov:
+        # simplecov:enable
       end
     end
 

@@ -29,9 +29,9 @@ module Mutations
           end
 
           m.failure do
-            # :nocov:
+            # simplecov:disable
             add_global_error! "Something went wrong"
-            # :nocov:
+            # simplecov:enable
           end
         end
       end

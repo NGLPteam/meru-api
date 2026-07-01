@@ -103,9 +103,9 @@ module Support
           record.reverse_merge!(default_attributes.deep_stringify_keys)
 
           calculated_attributes.each do |attr, calculator|
-            # :nocov:
+            # simplecov:disable
             next if record.key?(attr)
-            # :nocov:
+            # simplecov:enable
 
             record[attr] = calculator.(record)
           end
@@ -176,9 +176,9 @@ module Support
               ]
             end.to_h
           else
-            # :nocov:
+            # simplecov:disable
             input
-            # :nocov:
+            # simplecov:enable
           end
         end
 

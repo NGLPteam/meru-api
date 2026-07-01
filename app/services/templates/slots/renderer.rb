@@ -99,9 +99,9 @@ module Templates
           end
 
           m.failure do
-            # :nocov:
+            # simplecov:disable
             raise "Something went critically wrong with compilation process"
-            # :nocov:
+            # simplecov:enable
           end
         end
 

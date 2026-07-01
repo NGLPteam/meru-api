@@ -178,13 +178,13 @@ class Template < ::ApplicationFrozenRecord
 
   # @return [void]
   def all_props_accounted_for!
-    # :nocov:
+    # simplecov:disable
     properties.each do |prop|
       next if prop.exists_on_definition?
 
       errors.add :base, "#{definition_klass} is missing property: #{prop.name}"
     end
-    # :nocov:
+    # simplecov:enable
   end
 
   class << self

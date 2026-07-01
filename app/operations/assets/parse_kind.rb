@@ -13,9 +13,9 @@ module Assets
       when Shrine::UploadedFile
         for_uploaded_file(io)
       else
-        # :nocov:
+        # simplecov:disable
         Success("unknown")
-        # :nocov:
+        # simplecov:enable
       end
     end
 
@@ -36,9 +36,9 @@ module Assets
       when %r{\Avideo/}
         Success("video")
       else
-        # :nocov:
+        # simplecov:disable
         Success("document")
-        # :nocov:
+        # simplecov:enable
       end
     end
 
@@ -54,9 +54,9 @@ module Assets
       elsif io.pdf? || io.mime_type == "application/pdf"
         Success("pdf")
       else
-        # :nocov:
+        # simplecov:disable
         Success("document")
-        # :nocov:
+        # simplecov:enable
       end
     end
   end

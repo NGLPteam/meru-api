@@ -57,9 +57,9 @@ module CacheWarmable
     when ::Collection then depth < CachingConfig.collection_depth
     when ::Item then depth < CachingConfig.item_depth
     else
-      # :nocov:
+      # simplecov:disable
       false
-      # :nocov:
+      # simplecov:enable
     end
   end
 

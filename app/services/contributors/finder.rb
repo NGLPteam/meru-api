@@ -39,13 +39,13 @@ module Contributors
     end
 
     def derive_order_expression
-      # :nocov:
+      # simplecov:disable
       unless order == "OLDEST"
         Success(created_at: :desc)
       else
         Success(created_at: :asc)
       end
-      # :nocov:
+      # simplecov:enable
     end
   end
 end

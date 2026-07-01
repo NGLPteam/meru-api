@@ -71,9 +71,9 @@ module Contributors
     # @param [<Hash>] tuples
     # @return [Integer] number of contributions copied
     def upsert_tuples!(klass, tuples)
-      # :nocov:
+      # simplecov:disable
       return 0 if tuples.empty?
-      # :nocov:
+      # simplecov:enable
 
       unique_by = klass.contributable_unique_by
 

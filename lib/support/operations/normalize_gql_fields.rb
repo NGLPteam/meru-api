@@ -29,9 +29,9 @@ module Support
 
         Support::NormalizedGQL::Field.new(name:, type:, null:)
       else
-        # :nocov:
+        # simplecov:disable
         raise "Unsupported field: #{field}"
-        # :nocov:
+        # simplecov:enable
       end
     end
   end

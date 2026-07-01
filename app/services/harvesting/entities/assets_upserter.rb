@@ -73,11 +73,11 @@ module Harvesting
 
         @extracted_assets = harvest_entity.extracted_assets
 
-        # :nocov:
+        # simplecov:disable
         logger.warn("Tried to upsert assets for a harvested entity with no assets") unless has_assets?
 
         logger.warn("Tried to upsert assets for a harvested entity that has not finished harvesting") unless has_entity?
-        # :nocov:
+        # simplecov:enable
 
         super
       end
@@ -93,19 +93,19 @@ module Harvesting
       around_perform_upsert :track_assets_duration!
 
       wrapped_hook! def upsert_all_assets
-        # :nocov:
+        # simplecov:disable
         return super unless has_entity? && has_assets?
-        # :nocov:
+        # simplecov:enable
 
         upsert_and_attach!.or do |reason|
           logger.error("Failed to upsert assets", code: :failed_asset_upsert, reason: flatten_reason(reason))
         end
       rescue Harvesting::Error => e
-        # :nocov:
+        # simplecov:disable
         logger.fatal "Could not upsert assets: #{e.message}", tags: %i[could_not_upsert_assets], exception_klass: e.class.name, backtrace: e.backtrace
 
         super
-        # :nocov:
+        # simplecov:enable
       else
         super
       end
@@ -113,15 +113,15 @@ module Harvesting
       wrapped_hook! def write_asset_properties
         asset_properties.each do |path, value|
           entity.write_property(path, value).or do
-            # :nocov:
+            # simplecov:disable
             logger.error "Failed to store asset property: #{path}"
-            # :nocov:
+            # simplecov:enable
           end
         end
 
-        # :nocov:
+        # simplecov:disable
         entity.invalidate_layouts! if asset_properties.any?
-        # :nocov:
+        # simplecov:enable
 
         super
       end
@@ -161,9 +161,9 @@ module Harvesting
           yield
         end
 
-        # :nocov:
+        # simplecov:disable
         return unless link.present?
-        # :nocov:
+        # simplecov:enable
 
         link.update_columns(assets_duration:)
       end

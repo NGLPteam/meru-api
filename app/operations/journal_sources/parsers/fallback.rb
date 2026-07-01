@@ -20,11 +20,11 @@ module JournalSources
       # @param [String] input
       # @return [void]
       def maybe_auto_create!(input:)
-        # :nocov:
+        # simplecov:disable
         return unless auto_create_volumes_and_issues?
 
         check_parsed!(input:, volume: ?1, issue: ?1)
-        # :nocov:
+        # simplecov:enable
       end
     end
   end

@@ -19,9 +19,9 @@ module Sources
       end
 
       entities.each do |entity|
-        # :nocov:
+        # simplecov:disable
         permissions[entity.id] ||= ContextualPermission.empty_permission_for(@user, entity)
-        # :nocov:
+        # simplecov:enable
       end
 
       entities.map { |entity| permissions[entity.id] }

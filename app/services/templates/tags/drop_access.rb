@@ -23,15 +23,15 @@ module Templates
 
       refine ::Templates::Drops::PropertyValueDrop do
         def asset
-          # :nocov:
+          # simplecov:disable
           @value if @type == "asset"
-          # :nocov:
+          # simplecov:enable
         end
 
         def entity
-          # :nocov:
+          # simplecov:disable
           @value if @type == "entity"
-          # :nocov:
+          # simplecov:enable
         end
       end
     end

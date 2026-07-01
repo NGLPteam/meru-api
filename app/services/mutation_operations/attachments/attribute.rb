@@ -68,9 +68,9 @@ module MutationOperations
       # @param [Hash, nil] value
       # @return [{ String => Object }, nil]
       def prepare_metadata(value)
-        # :nocov:
+        # simplecov:disable
         return nil unless image
-        # :nocov:
+        # simplecov:enable
 
         MeruAPI::Container["image_attachments.sanitize_metadata"].call value
       end

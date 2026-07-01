@@ -24,9 +24,9 @@ module Support
         # @return [void]
         def argument!(key, type, default_value: nil, replace_null: nil, **options)
           dry_type = arguments.add! key, type, **options do |arg|
-            # :nocov:
+            # simplecov:disable
             yield arg if block_given?
-            # :nocov:
+            # simplecov:enable
 
             arg.default(default_value, replace_null:)
           end
@@ -70,7 +70,7 @@ module Support
         # @param [Symbol] column_name
         # @return [void]
         def date_match!(key, column_name: key)
-          # :nocov:
+          # simplecov:disable
           argument! key, :date_match do |arg|
             arg.description <<~TEXT
             Filter the model's `#{column_name}` with date constraints.
@@ -86,7 +86,7 @@ module Support
             end
           end
           RUBY
-          # :nocov:
+          # simplecov:enable
         end
 
         # Define a filter for matching float / decimal columns.
@@ -95,7 +95,7 @@ module Support
         # @param [Symbol] column_name
         # @return [void]
         def float_match!(key, column_name: key)
-          # :nocov:
+          # simplecov:disable
           argument! key, :float_match do |arg|
             arg.description <<~TEXT
             Filter the model's `#{column_name}` with various float / decimal constraints.
@@ -111,7 +111,7 @@ module Support
             end
           end
           RUBY
-          # :nocov:
+          # simplecov:enable
         end
 
         # Define a full-text search filter that uses {Support::FullTextSearching}.
@@ -180,7 +180,7 @@ module Support
         # @param [Symbol] column_name
         # @return [void]
         def integer_match!(key, column_name: key)
-          # :nocov:
+          # simplecov:disable
           argument! key, :integer_match do |arg|
             arg.description <<~TEXT
             Filter the model's `#{column_name}` with various integer constraints.
@@ -196,7 +196,7 @@ module Support
             end
           end
           RUBY
-          # :nocov:
+          # simplecov:enable
         end
 
         # Define a nested filter for an associated model. This will use the filters
@@ -308,7 +308,7 @@ module Support
         # @yieldreturn [void]
         # @return [void]
         def simple_truthy_filter!(key, column_name: key, filter_false: false, **options, &)
-          # :nocov:
+          # simplecov:disable
           argument!(key, :bool, **options, &)
 
           column_name = column_name.to_sym
@@ -324,7 +324,7 @@ module Support
             end
           end
           RUBY
-          # :nocov:
+          # simplecov:enable
         end
 
         # @return [void]
@@ -377,11 +377,11 @@ module Support
         #
         # @return [void]
         def tracks_mutations!
-          # :nocov:
+          # simplecov:disable
           simple_scope_filter! :user, :users, scope_name: :touched_by_user do |arg|
             arg.description "Filter by records that were created OR updated by these users."
           end
-          # :nocov:
+          # simplecov:enable
         end
 
         # @api private

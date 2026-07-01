@@ -74,7 +74,7 @@ class TemplatePropertyKind < ::ApplicationFrozenRecord
 
   # @param [Templates::Types::Kind] template_kind
   def categorized_enum_property_for(template_kind)
-    # :nocov:
+    # simplecov:disable
     case enum_category
     in "background"
       TemplateEnumProperty.background_for! template_kind
@@ -83,6 +83,6 @@ class TemplatePropertyKind < ::ApplicationFrozenRecord
     in "variant"
       TemplateEnumProperty.variant_for! template_kind
     end
-    # :nocov:
+    # simplecov:enable
   end
 end

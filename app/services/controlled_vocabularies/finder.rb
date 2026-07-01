@@ -62,9 +62,9 @@ module ControlledVocabularies
       return Failure(:no_vocabulary, vocabulary_query) if vocabulary.nil?
 
       find_item_by(term).or do
-        # :nocov:
+        # simplecov:disable
         find_item_by(fallback)
-        # :nocov:
+        # simplecov:enable
       end
     end
 
@@ -80,35 +80,35 @@ module ControlledVocabularies
 
     # @param [String, nil] value
     def find_by_term_with(value)
-      # :nocov:
+      # simplecov:disable
       if ControlledVocabularies::Types::Identifier.valid?(value)
         Maybe(vocabulary.item_for(value))
       else
         None()
       end
-      # :nocov:
+      # simplecov:enable
     end
 
     # @param [String, nil] value
     def find_by_url_with(value)
-      # :nocov:
+      # simplecov:disable
       if ControlledVocabularies::Types::URL.valid?(value)
         Maybe(vocabulary.for_url(value))
       else
         None()
       end
-      # :nocov:
+      # simplecov:enable
     end
 
     # @param [String, nil] value
     def find_by_tag_with(value)
-      # :nocov:
+      # simplecov:disable
       if ControlledVocabularies::Types::Tag.valid?(value)
         Maybe(vocabulary.first_tagged_with(value))
       else
         None()
       end
-      # :nocov:
+      # simplecov:enable
     end
 
     def find_vocabulary
@@ -125,9 +125,9 @@ module ControlledVocabularies
       elsif namespace.present? && identifier.present?
         "namespace=#{namespace}, identifier=#{identifier}"
       else
-        # :nocov:
+        # simplecov:disable
         "missing vocabulary query"
-        # :nocov:
+        # simplecov:enable
       end
     end
   end

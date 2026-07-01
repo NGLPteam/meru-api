@@ -18,9 +18,9 @@ module Metadata
 
         # @return [String, nil]
         def derive_role_term
-          # :nocov:
+          # simplecov:disable
           return if role_terms.blank?
-          # :nocov:
+          # simplecov:enable
 
           code = role_terms.detect(&:code)
 

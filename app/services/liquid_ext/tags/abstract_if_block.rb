@@ -54,9 +54,9 @@ module LiquidExt
 
       # @api private
       def nodelist
-        # :nocov:
+        # simplecov:disable
         @blocks.map(&:attachment)
-        # :nocov:
+        # simplecov:enable
       end
 
       # @api private
@@ -64,9 +64,9 @@ module LiquidExt
         while parse_body(@blocks.last.attachment, tokens); end
 
         @blocks.reverse_each do |block|
-          # :nocov:
+          # simplecov:disable
           block.attachment.remove_blank_strings if blank?
-          # :nocov:
+          # simplecov:enable
           block.attachment.freeze
         end
       end
@@ -77,9 +77,9 @@ module LiquidExt
         if else_tag?(tag)
           push_block(tag, markup)
         else
-          # :nocov:
+          # simplecov:disable
           super
-          # :nocov:
+          # simplecov:enable
         end
       end
 
@@ -98,9 +98,9 @@ module LiquidExt
           end
         end
 
-        # :nocov:
+        # simplecov:disable
         output
-        # :nocov:
+        # simplecov:enable
       end
 
       # @param [String, Symbol] name
@@ -141,24 +141,24 @@ module LiquidExt
       def lax_parse(markup)
         expressions = markup.scan(ExpressionsAndOperators)
 
-        # :nocov:
+        # simplecov:disable
         raise Liquid::SyntaxError, options[:locale].t("errors.syntax.if") unless expressions.pop =~ Syntax
-        # :nocov:
+        # simplecov:enable
 
         condition = Liquid::Condition.new(parse_expression(Regexp.last_match(1)), Regexp.last_match(2), parse_expression(Regexp.last_match(3)))
 
         until expressions.empty?
           operator = expressions.pop.to_s.strip
 
-          # :nocov:
+          # simplecov:disable
           raise Liquid::SyntaxError, options[:locale].t("errors.syntax.if") unless expressions.pop.to_s =~ Syntax
-          # :nocov:
+          # simplecov:enable
 
           new_condition = Liquid::Condition.new(parse_expression(Regexp.last_match(1)), Regexp.last_match(2), parse_expression(Regexp.last_match(3)))
 
-          # :nocov:
+          # simplecov:disable
           raise Liquid::SyntaxError, options[:locale].t("errors.syntax.if") unless BOOLEAN_OPERATORS.include?(operator)
-          # :nocov:
+          # simplecov:enable
 
           new_condition.send(operator, condition)
 
@@ -196,10 +196,10 @@ module LiquidExt
         a = parse_expression(p.expression)
 
         if (op = p.consume?(:comparison))
-          # :nocov:
+          # simplecov:disable
           b = parse_expression(p.expression)
           Liquid::Condition.new(a, op, b)
-          # :nocov:
+          # simplecov:enable
         else
           Liquid::Condition.new(a)
         end
@@ -223,9 +223,9 @@ module LiquidExt
       class ParseTreeVisitor < Liquid::ParseTreeVisitor
         # @return [<Liquid::Condition, Liquid::ElseCondition>]
         def children
-          # :nocov:
+          # simplecov:disable
           @node.blocks
-          # :nocov:
+          # simplecov:enable
         end
       end
     end

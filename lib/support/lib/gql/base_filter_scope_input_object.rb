@@ -9,9 +9,9 @@ module Support
       def prepare
         options = to_h.symbolize_keys.compact.presence
 
-        # :nocov:
+        # simplecov:disable
         return nil if options.nil?
-        # :nocov:
+        # simplecov:enable
 
         self.class.filter_scope.new(**options)
       end

@@ -13,18 +13,18 @@ module Harvesting
         end
 
         def each_shared_assignment
-          # :nocov:
+          # simplecov:disable
           return enum_for(__method__) unless block_given?
-          # :nocov:
+          # simplecov:enable
 
           assignments.each do |assignment|
-            # :nocov:
+            # simplecov:disable
             if assignment.reserved?
               logger.error "Tried to assign reserved name: `#{assignment.name}`; skipping"
 
               next
             end
-            # :nocov:
+            # simplecov:enable
 
             yield assignment
           end

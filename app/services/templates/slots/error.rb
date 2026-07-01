@@ -35,9 +35,9 @@ module Templates
           when Exception
             new(message: source.message, exception_klass: source.class.name, backtrace: source.backtrace)
           else
-            # :nocov:
+            # simplecov:disable
             raise TypeError, "invalid Template Slot Error Source: #{source.inspect}"
-            # :nocov:
+            # simplecov:enable
           end
         end
       end

@@ -60,14 +60,14 @@ module Schemas
         when Semantic::Version::SemVerRegexp
           Success scope.lookup version
         else
-          # :nocov:
+          # simplecov:disable
           Failure[:unknown_signifier, needle]
-          # :nocov:
+          # simplecov:enable
         end
       rescue LimitToOne::TooManyMatches
-        # :nocov:
+        # simplecov:disable
         Failure[:too_many_matches, needle]
-        # :nocov:
+        # simplecov:enable
       rescue ActiveRecord::RecordNotFound
         Failure[:not_found, needle]
       end

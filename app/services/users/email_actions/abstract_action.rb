@@ -79,9 +79,9 @@ module Users
         in "frontend"
           LocationsConfig.frontend
         else
-          # :nocov:
+          # simplecov:disable
           raise "Unknown location: #{location}"
-          # :nocov:
+          # simplecov:enable
         end
       end
     end

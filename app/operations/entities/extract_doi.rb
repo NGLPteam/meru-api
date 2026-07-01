@@ -53,9 +53,9 @@ module Entities
 
       extract(uri.path&.delete_prefix(?/), host:)
     rescue URI::Error
-      # :nocov:
+      # simplecov:disable
       extract(nil)
-      # :nocov:
+      # simplecov:enable
     end
   end
 end

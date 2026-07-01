@@ -285,14 +285,14 @@ module Resolvers
 
       base_scope = scope || (config[:scope] && instance_eval(&config[:scope]))
 
-      # :nocov:
+      # simplecov:disable
       base_scope = maybe_lock_scope(base_scope) if Rails.env.test?
 
       base_scope = base_scope.preloaded_for_record_loading if MeruConfig.record_preloading_enabled? && base_scope.respond_to?(:preloaded_for_record_loading)
 
       # We may want to skip authorization in some cases.
       return base_scope unless applies_policy_scope?
-      # :nocov:
+      # simplecov:enable
 
       # This is necessary to avoid a namespace conflict with `Action` / `ActionPolicy`.
       with = implicit_authorization_target.try(:policy_class)
@@ -312,7 +312,7 @@ module Resolvers
     # @param [ActiveRecord::Relation] scope
     # @param [Class<ActiveRecord::Base>] model
     def scope_wraps?(scope, model)
-      # :nocov:
+      # simplecov:disable
       case scope
       when ActiveRecord::Relation
         model == scope.model
@@ -321,7 +321,7 @@ module Resolvers
       else
         false
       end
-      # :nocov:
+      # simplecov:enable
     end
 
     class << self

@@ -11,9 +11,9 @@ module Harvesting
 
         # @return [HarvestAttemptRecordLink, nil]
         def load_harvest_attempt_record_link
-          # :nocov:
+          # simplecov:disable
           return unless harvest_attempt.present?
-          # :nocov:
+          # simplecov:enable
 
           harvest_attempt.connect_record!(harvest_record)
         end

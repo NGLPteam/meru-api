@@ -17,9 +17,9 @@ module Loaders
       case record
       when ::HierarchicalEntity then record.id
       else
-        # :nocov:
+        # simplecov:disable
         raise TypeError, "#{record.inspect} cannot load entity layouts"
-        # :nocov:
+        # simplecov:enable
       end
     end
   end

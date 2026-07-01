@@ -17,9 +17,9 @@ module Schemas
       #   {SchemaVersion}.
       # @return [Dry::Monads::Success(SchemaVersion)]
       def call(schema_version)
-        # :nocov:
+        # simplecov:disable
         return Failure[:not_builtin] unless schema_version.builtin?
-        # :nocov:
+        # simplecov:enable
 
         static_version = schema_version.static_record
 

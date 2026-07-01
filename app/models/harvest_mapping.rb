@@ -57,7 +57,7 @@ class HarvestMapping < ApplicationRecord
         assign_attributes(parsed)
       end
 
-      # :nocov:
+      # simplecov:disable
       m.failure(:invalid_frequency_expression) do |_, error_keys|
         Array(error_keys).each do |error_key|
           message = I18n.t(error_key, scope: "dry_validation.errors", raise: false)
@@ -69,7 +69,7 @@ class HarvestMapping < ApplicationRecord
       m.failure do
         errors.add :frequency_expression, "is invalid"
       end
-      # :nocov:
+      # simplecov:enable
     end
 
     self.schedule_changed_at = Time.current if frequency_expression_changed? || mode_changed? || frequency_changed? || schedule_data_changed?

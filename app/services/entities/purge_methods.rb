@@ -14,10 +14,10 @@ module Entities
 
       Success()
     rescue ActiveRecord::RecordNotFound
-      # :nocov:
+      # simplecov:disable
       # The record has already been destroyed by other processes
       Success()
-      # :nocov:
+      # simplecov:enable
     end
   end
 end

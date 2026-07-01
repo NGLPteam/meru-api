@@ -41,11 +41,11 @@ class GraphQLController < ApplicationController
 
     render(json:)
   rescue StandardError => e
-    # :nocov:
+    # simplecov:disable
     raise e unless Rails.env.development?
 
     handle_error_in_development e
-    # :nocov:
+    # simplecov:enable
   end
 
   private
@@ -55,7 +55,7 @@ class GraphQLController < ApplicationController
   # @param [String, Hash, ActionController::Parameters] variables_param
   # @return [Hash]
   def prepare_variables(variables_param)
-    # :nocov:
+    # simplecov:disable
     case variables_param
     when String
       if variables_param.present?
@@ -72,7 +72,7 @@ class GraphQLController < ApplicationController
     else
       raise ArgumentError, "Unexpected parameter: #{variables_param}"
     end
-    # :nocov:
+    # simplecov:enable
   end
 
   # Render a backtrace for errors that occur in development.
@@ -80,11 +80,11 @@ class GraphQLController < ApplicationController
   # @param [Exception] err
   # @return [void]
   def handle_error_in_development(err)
-    # :nocov:
+    # simplecov:disable
     logger.error err.message
     logger.error err.backtrace.join("\n")
 
     render json: { errors: [{ message: err.message, backtrace: err.backtrace }], data: {} }, status: :internal_server_error
-    # :nocov:
+    # simplecov:enable
   end
 end

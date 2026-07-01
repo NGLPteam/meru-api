@@ -6,11 +6,11 @@ module Types
 
     class << self
       def resolve_type(object, context)
-        # :nocov:
+        # simplecov:disable
         raise TypeError, "not a contributor: #{object.inspect}" unless object.kind_of?(ContributorAttribution)
 
         object.graphql_node_type
-        # :nocov:
+        # simplecov:enable
       end
     end
   end

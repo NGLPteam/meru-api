@@ -53,10 +53,10 @@ module PostgresEnums
         type.enum(*Support::GlobalTypes::Coercible::Array.of(type)[values])
       end
     rescue KeyError
-      # :nocov:
+      # simplecov:disable
       # During migrations, etc. Allow any string or symbol.
       dry_pg_enum_base_type(symbolize:)
-      # :nocov:
+      # simplecov:enable
     end
 
     # @return [void]
@@ -65,9 +65,9 @@ module PostgresEnums
 
       enum attr_name, values, **options
     rescue KeyError
-      # :nocov:
+      # simplecov:disable
       warn "Skipping enum definition for #{model_name}##{attr_name} (#{as.inspect}), not found, may be in migration"
-      # :nocov:
+      # simplecov:enable
     end
 
     # @!attribute [r] pg_enum_definitions
@@ -93,10 +93,10 @@ module PostgresEnums
         [I18n.t(value, scope:, default: value.titleize), value]
       end
     rescue KeyError
-      # :nocov:
+      # simplecov:disable
       # During migrations, etc. Provide an empty set of options.
       []
-      # :nocov:
+      # simplecov:enable
     end
 
     private

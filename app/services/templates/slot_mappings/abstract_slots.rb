@@ -22,9 +22,9 @@ module Templates
       all_slots [].freeze
 
       def each
-        # :nocov:
+        # simplecov:disable
         return enum_for(__method__) unless block_given?
-        # :nocov:
+        # simplecov:enable
 
         self.class.all_slots.each do |slot_name|
           yield [slot_name, __send__(slot_name)]

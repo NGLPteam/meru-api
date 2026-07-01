@@ -28,9 +28,9 @@ module Templates
       end
 
       def to_s
-        # :nocov:
+        # simplecov:disable
         raise Liquid::ContextError, "Tried to render orderings in scalar context"
-        # :nocov:
+        # simplecov:enable
       end
 
       private

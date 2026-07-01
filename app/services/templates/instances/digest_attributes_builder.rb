@@ -119,9 +119,9 @@ module Templates
         in ::TemplateDefinition then :template_definition
         in ::TemplateInstance then :template_instance
         else
-          # :nocov:
+          # simplecov:disable
           raise "Unsupported model: #{model}"
-          # :nocov:
+          # simplecov:enable
         end
       end
 

@@ -15,7 +15,7 @@ module Roles
 
     # @return [Dry::Monads::Result]
     def call
-      # :nocov:
+      # simplecov:disable
       roles = yield calculate.call
 
       dump = roles.map(&:stringify_keys).to_yaml
@@ -23,7 +23,7 @@ module Roles
       File.write DUMP_PATH.to_s, dump
 
       Success(dump)
-      # :nocov:
+      # simplecov:enable
     end
   end
 end

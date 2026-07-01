@@ -23,7 +23,7 @@ module Harvesting
 
         # @return [Boolean]
         def check!
-          # :nocov:
+          # simplecov:disable
           if invalid?
             errors.full_messages.each do |msg|
               logger.warn "Problem enumerating: #{msg}"
@@ -33,7 +33,7 @@ module Harvesting
           end
 
           return true
-          # :nocov:
+          # simplecov:enable
         end
 
         class << self

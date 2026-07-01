@@ -48,17 +48,17 @@ module GlobalTypes
       when ENCODED
         decode_semantic_version value
       when String
-        # :nocov:
+        # simplecov:disable
         Semantic::Version.new value
-        # :nocov:
+        # simplecov:enable
       when Semantic::Version
-        # :nocov:
+        # simplecov:disable
         value
-        # :nocov:
+        # simplecov:enable
       when VERSION_HASH
-        # :nocov:
+        # simplecov:disable
         cast version_string_from(**VERSION_HASH[value])
-        # :nocov:
+        # simplecov:enable
       end
     end
 

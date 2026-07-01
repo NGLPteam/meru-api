@@ -15,11 +15,11 @@ module Loaders
         fulfill(breadcrumb, breadcrumb.crumb)
       end
 
-      # :nocov:
+      # simplecov:disable
       entities.each do |ent|
         fulfill(ent, nil) unless fulfilled?(ent)
       end
-      # :nocov:
+      # simplecov:enable
     end
 
     # @param [HierarchicalEntity, EntityBreadcrumb] record

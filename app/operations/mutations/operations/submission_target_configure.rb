@@ -27,9 +27,9 @@ module Mutations
           in HierarchicalEntity => entity
             [entity, entity.fetch_submission_target!]
           else
-            # :nocov:
+            # simplecov:disable
             raise "Unexpected configurable type: #{inputs[:configurable].class}"
-            # :nocov:
+            # simplecov:enable
           end
       end
     end

@@ -8,9 +8,9 @@ module Support
           def misbehaving_ssl_upstream?
             return true if kind_of?(::OpenSSL::SSL::SSLError) && /unexpected eof while reading/.match?(message)
 
-            # :nocov:
+            # simplecov:disable
             return true if kind_of?(::Errno::ECONNRESET) && /SSL_connect/i.match?(message)
-            # :nocov:
+            # simplecov:enable
 
             cause&.misbehaving_ssl_upstream? || false
           end

@@ -74,16 +74,16 @@ module Harvesting
           end
 
           m.failure do
-            # :nocov:
+            # simplecov:disable
             # Fallback error case.
             @mapping_errors << "Something went wrong"
-            # :nocov:
+            # simplecov:enable
           end
         end
 
-        # :nocov:
+        # simplecov:disable
         raise Harvesting::Error, "Invalid extraction mapping template: #{@mapping_errors.join(', ')}" if @mapping.nil? && @mapping_errors.any?
-        # :nocov:
+        # simplecov:enable
       end
     end
   end

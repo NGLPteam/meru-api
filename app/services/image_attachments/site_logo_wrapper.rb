@@ -38,9 +38,9 @@ module ImageAttachments
       if ImageAttachments.site_logo_size?(meth) && args.empty?
         size_wrapper meth
       else
-        # :nocov:
+        # simplecov:disable
         super
-        # :nocov:
+        # simplecov:enable
       end
     end
 

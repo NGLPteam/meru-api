@@ -16,9 +16,9 @@ module Loaders
       query(keys).each do |source|
         key = source.provides
 
-        # :nocov:
+        # simplecov:disable
         next if fulfilled? key
-        # :nocov:
+        # simplecov:enable
 
         fulfill key, source.controlled_vocabulary
       end

@@ -54,11 +54,11 @@ module MutationOperations
       child = retrieve_edge_arg_from config.child
 
       if parent.blank? || child.blank?
-        # :nocov:
+        # simplecov:disable
         return set_blank_edge_for! config if config.skip_blank?
 
         raise GraphQL::ExecutionError.new("Cannot derive edge for #{config.inspect}")
-        # :nocov:
+        # simplecov:enable
       end
 
       validate_edge(parent, child) do |m|
@@ -73,9 +73,9 @@ module MutationOperations
         end
 
         m.incomprehensible do |error|
-          # :nocov:
+          # simplecov:disable
           add_global_error! error.to_s
-          # :nocov:
+          # simplecov:enable
         end
       end
     end

@@ -43,9 +43,9 @@ module Utility
     private
 
     def detect_escaped_html?
-      # :nocov:
+      # simplecov:disable
       return false if input.blank?
-      # :nocov:
+      # simplecov:enable
 
       ESCAPED_HTML_PATTERNS.any? do |pattern|
         pattern.match? input

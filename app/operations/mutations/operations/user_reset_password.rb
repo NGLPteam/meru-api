@@ -27,9 +27,9 @@ module Mutations
           end
 
           m.failure do
-            # :nocov:
+            # simplecov:disable
             something_went_wrong!
-            # :nocov:
+            # simplecov:enable
           end
         end
       end

@@ -111,9 +111,9 @@ module LayoutInstance
   end
 
   def each_template_instance_association
-    # :nocov:
+    # simplecov:disable
     return enum_for(__method__) unless block_given?
-    # :nocov:
+    # simplecov:enable
 
     template_instance_names.each do |assoc_name|
       assoc = __send__(assoc_name)

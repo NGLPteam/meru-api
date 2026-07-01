@@ -103,13 +103,13 @@ module Schemas
     PropertyList = Array.of(Property)
 
     SemanticVersion = Constructor(Semantic::Version) do |input|
-      # :nocov:
+      # simplecov:disable
       raise Dry::Types::ConstraintError.new(nil, input) if input.blank?
 
       Semantic::Version.new input.to_s
     rescue ArgumentError => e
       raise Dry::Types::ConstraintError.new e.message, input
-      # :nocov:
+      # simplecov:enable
     end
 
     ValueHash = Instance(ActiveSupport::HashWithIndifferentAccess).constructor do |value|

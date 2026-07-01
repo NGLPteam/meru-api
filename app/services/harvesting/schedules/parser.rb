@@ -98,9 +98,9 @@ module Harvesting
 
         frequencies = result.brute_frequency
 
-        # :nocov:
+        # simplecov:disable
         return halt!(:"frequency_expression.too_frequent") if frequencies.delta_min < MIN_FREQUENCY
-        # :nocov:
+        # simplecov:enable
 
         return frequencies
       end

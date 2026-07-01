@@ -142,7 +142,7 @@ class SubmissionTarget < ApplicationRecord
 
   # @return [void]
   def prune_mismatched_submission_deposit_targets!
-    # :nocov:
+    # simplecov:disable
     deleted = submission_deposit_targets.where.not(deposit_mode:).delete_all
 
     return if deleted == 0
@@ -152,7 +152,7 @@ class SubmissionTarget < ApplicationRecord
     return if deposit_targets_count == new_deposit_targets_count
 
     update_column(:deposit_targets_count, new_deposit_targets_count)
-    # :nocov:
+    # simplecov:enable
   end
 
   # @return [void]
@@ -169,11 +169,11 @@ class SubmissionTarget < ApplicationRecord
     # @param [User, AnonymousUser] user
     # @return [ActiveRecord::Relation<SubmissionTarget>]
     def manageable_by(user)
-      # :nocov:
+      # simplecov:disable
       return none if user.blank? || user.anonymous?
 
       return all if user.has_global_admin_access?
-      # :nocov:
+      # simplecov:enable
 
       with_contextual_action_for(user, "self.manage_access")
     end
@@ -181,11 +181,11 @@ class SubmissionTarget < ApplicationRecord
     # @param [User, AnonymousUser] user
     # @return [ActiveRecord::Relation<SubmissionTarget>]
     def reviewable_by(user)
-      # :nocov:
+      # simplecov:disable
       return none if user.blank? || user.anonymous?
 
       return all if user.has_global_admin_access?
-      # :nocov:
+      # simplecov:enable
 
       with_contextual_action_for(user, "self.review")
     end

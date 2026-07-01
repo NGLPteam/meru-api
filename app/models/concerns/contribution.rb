@@ -223,9 +223,9 @@ module Contribution
       when /\AItem/
         reflect_on_association(:item)
       else
-        # :nocov:
+        # simplecov:disable
         raise "Cannot derive target association for #{model_name}"
-        # :nocov:
+        # simplecov:enable
       end
     end
   end

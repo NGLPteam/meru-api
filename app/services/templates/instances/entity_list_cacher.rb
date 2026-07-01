@@ -81,9 +81,9 @@ module Templates
       end
 
       wrapped_hook! def store_items
-        # :nocov:
+        # simplecov:disable
         return super if entity_list.empty?
-        # :nocov:
+        # simplecov:enable
 
         base_tuple = {
           cached_entity_list_id: cached_entity_list.id,

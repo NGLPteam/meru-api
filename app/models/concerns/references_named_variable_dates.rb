@@ -159,9 +159,9 @@ module ReferencesNamedVariableDates
 
         [arel_table[type_column], arel_table[id_column]]
       else
-        # :nocov:
+        # simplecov:disable
         raise "Cannot compute named variable date primary key tuple"
-        # :nocov:
+        # simplecov:enable
       end
     end
     # rubocop:enable Metrics/AbcSize

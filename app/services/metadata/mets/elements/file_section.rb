@@ -20,9 +20,9 @@ module Metadata
         end
 
         def each_file
-          # :nocov:
+          # simplecov:disable
           return enum_for(__method__) unless block_given?
-          # :nocov:
+          # simplecov:enable
 
           Array(file_groups).each do |group|
             group.each_file do |file|

@@ -28,9 +28,9 @@ module Support
 
       # @api private
       def inspect
-        # :nocov:
+        # simplecov:disable
         "#<#{self.class}>"
-        # :nocov:
+        # simplecov:enable
       end
 
       # @api private
@@ -43,13 +43,13 @@ module Support
       end
 
       def benchmark_hook!
-        # :nocov:
+        # simplecov:disable
         time = AbsoluteTime.realtime do
           yield
         end
 
         warn "hook #{current_hook} took #{time}s"
-        # :nocov:
+        # simplecov:enable
       end
 
       def benchmark_hooks?

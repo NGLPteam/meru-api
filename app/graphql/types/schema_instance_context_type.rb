@@ -33,9 +33,9 @@ module Types
     def assets
       instance = object.instance
 
-      # :nocov:
+      # simplecov:disable
       return [] if instance.blank?
-      # :nocov:
+      # simplecov:enable
 
       association_loader_for(:assets, klass: instance.class, record: instance).then do |assets|
         assets.map(&:to_schematic_referent_option)

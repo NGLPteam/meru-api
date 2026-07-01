@@ -62,9 +62,9 @@ module StaleEntities
         m.failure do |*ex|
           # Treat as ignored for now. Errors should resolve themselves.
           # TODO: Add log here when Rollbar is added.
-          # :nocov:
+          # simplecov:disable
           Success([:failed, *ex])
-          # :nocov:
+          # simplecov:enable
         end
       end
     end

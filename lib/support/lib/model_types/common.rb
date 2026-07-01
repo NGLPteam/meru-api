@@ -15,9 +15,9 @@ module Support
 
       # @return [Symbol]
       def type
-        # :nocov:
+        # simplecov:disable
         self.class.type
-        # :nocov:
+        # simplecov:enable
       end
     end
   end

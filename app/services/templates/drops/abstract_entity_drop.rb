@@ -67,9 +67,9 @@ module Templates
       end
 
       def to_s
-        # :nocov:
+        # simplecov:disable
         call_operation!("templates.mdx.build_entity_link", entity: @entity, content: title)
-        # :nocov:
+        # simplecov:enable
       end
 
       class << self

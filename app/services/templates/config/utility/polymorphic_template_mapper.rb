@@ -176,9 +176,9 @@ module Templates
             when String, Symbol
               constantize_template_name(input)
             else
-              # :nocov:
+              # simplecov:disable
               raise NoMatchingTemplateError, "Invalid template class input: #{input.inspect}"
-              # :nocov:
+              # simplecov:enable
             end
           end
 
@@ -189,7 +189,7 @@ module Templates
           #   changes.
           # @return [String] the root for the template to use as its key.
           def validate_template_klass!(template_klass)
-            # :nocov:
+            # simplecov:disable
             root = template_klass.xml_root
 
             raise "No root specified" if root.blank?
@@ -197,7 +197,7 @@ module Templates
             raise "Duplicate XML Root: #{root} already defined for #{template_mapping[root].name}" if accepts_template?(root)
 
             return root
-            # :nocov:
+            # simplecov:enable
           end
         end
       end

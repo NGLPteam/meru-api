@@ -23,9 +23,9 @@ module Mutations
       end
 
       rule(:definition) do
-        # :nocov:
+        # simplecov:disable
         next if result.errors.any?
-        # :nocov:
+        # simplecov:enable
 
         result = MeruAPI::Container["controlled_vocabularies.validate"].(value)
 
@@ -43,9 +43,9 @@ module Mutations
           end
 
           m.failure do
-            # :nocov:
+            # simplecov:disable
             base.failure("Something went wrong when validating the schema.")
-            # :nocov:
+            # simplecov:enable
           end
         end
       end

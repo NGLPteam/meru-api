@@ -73,21 +73,22 @@ Dry::Rails.container do
   end
 
   start :common_interface
+
   namespace :system do
     register :time_zone, memoize: true do
       Time.find_zone! Rails.application.config.time_zone
     rescue ArgumentError
-      # :nocov:
+      # simplecov:disable
       Time.find_zone! "UTC"
-      # :nocov:
+      # simplecov:enable
     end
   end
 
-  # :nocov
+  # simplecov:disable
   if Rails.env.test?
     require "dry/system/stubs"
 
     enable_stubs!
   end
-  # :nocov:
+  # simplecov:enable
 end

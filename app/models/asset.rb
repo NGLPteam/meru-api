@@ -63,7 +63,7 @@ class Asset < ApplicationRecord
 
   # @return [String]
   def download_name
-    # :nocov:
+    # simplecov:disable
     return original_filename if original_filename.present?
 
     extension = Mime::Type.lookup(content_type).try(:symbol).try(:to_s)
@@ -75,7 +75,7 @@ class Asset < ApplicationRecord
     base = File.basename(name, extension)
 
     "#{base}#{extension}"
-    # :nocov:
+    # simplecov:enable
   end
 
   # @api private

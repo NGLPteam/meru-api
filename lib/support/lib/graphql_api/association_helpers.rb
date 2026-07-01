@@ -21,9 +21,9 @@ module Support
         elsif MeruConfig.record_preloading_enabled?
           record.__send__(association)
         elsif MeruConfig.experimental_dataloader?
-          # :nocov:
+          # simplecov:disable
           dataloader.with(GraphQL::Dataloader::ActiveRecordAssociationSource, association).load(record)
-          # :nocov:
+          # simplecov:enable
         else
           Support::Loaders::AssociationLoader.for(klass, association).load(record)
         end
@@ -31,9 +31,9 @@ module Support
 
       def load_record_with(klass, id, **options)
         if MeruConfig.experimental_dataloader?
-          # :nocov:
+          # simplecov:disable
           dataloader.with(GraphQL::Dataloader::ActiveRecordSource, klass, **options).load(id)
-          # :nocov:
+          # simplecov:enable
         else
           Support::Loaders::RecordLoader.for(klass, **options).load(id)
         end
@@ -42,9 +42,9 @@ module Support
       # If we are using graphql-batch / promises, await the promises.
       # Otherwise, just return the values as-is.
       def maybe_await(promises)
-        # :nocov:
+        # simplecov:disable
         return promises if MeruConfig.experimental_dataloader?
-        # :nocov:
+        # simplecov:enable
 
         Promise.all(promises)
       end

@@ -59,9 +59,9 @@ class HarvestProtocol < ::ApplicationFrozenRecord
   # @param [HarvestSource] source
   # @return [Harvesting::Metadata::Context]
   def context_for(source)
-    # :nocov:
+    # simplecov:disable
     raise "invalid protocol for source: #{source.protocol}" if source.protocol != name
-    # :nocov:
+    # simplecov:enable
 
     context_klass.new(self, source)
   end

@@ -79,9 +79,9 @@ module Templates
 
           path = sourced_root.join(basename)
 
-          # :nocov:
+          # simplecov:disable
           return EMPTY_ARRAY unless path.exist?
-          # :nocov:
+          # simplecov:enable
 
           raw_records = YAML.load_file(path)
 
@@ -105,9 +105,9 @@ module Templates
         # @param [#to_s] value
         # @return [String, nil]
         def recompile_multiline(value)
-          # :nocov:
+          # simplecov:disable
           return if value.blank? || !value.kind_of?(String)
-          # :nocov:
+          # simplecov:enable
 
           value.strip
         end
@@ -115,12 +115,12 @@ module Templates
         # @api private
         # @return [String]
         def derive_sourced_subdirectory
-          # :nocov:
+          # simplecov:disable
           case name
           in "TemplateProperty" then "properties"
           in "TemplateSlot" then "slots"
           end
-          # :nocov:
+          # simplecov:enable
         end
       end
     end

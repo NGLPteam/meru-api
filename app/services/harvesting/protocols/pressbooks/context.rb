@@ -34,9 +34,9 @@ module Harvesting
         def perform_check!
           client.check
         rescue Faraday::Error => e
-          # :nocov:
+          # simplecov:disable
           check_failed_because! "Web request failed when checking harvest source: #{e.message}"
-          # :nocov:
+          # simplecov:enable
         else
           true
         end

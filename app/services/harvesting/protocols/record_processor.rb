@@ -44,9 +44,9 @@ module Harvesting
       # @param [Object] raw_record
       # @return [Dry::Monads::Result]
       def adjust_record!(record, raw_record)
-        # :nocov:
+        # simplecov:disable
         Success()
-        # :nocov:
+        # simplecov:enable
       end
 
       # @!endgroup
@@ -158,23 +158,23 @@ module Harvesting
       # @param [HarvestRecord] record
       # @return [void]
       def link_with_attempt!(record)
-        # :nocov:
+        # simplecov:disable
         return if harvest_attempt.blank?
 
         harvest_attempt.connect_record!(record)
-        # :nocov:
+        # simplecov:enable
       end
 
       # @param [HarvestRecord] record
       # @return [void]
       def link_with_mapping!(record)
-        # :nocov:
+        # simplecov:disable
         return if harvest_mapping.blank?
 
         tuple = { harvest_mapping_id: harvest_mapping.id, harvest_record_id: record.id }
 
         HarvestMappingRecordLink.upsert(tuple, unique_by: %i[harvest_mapping_id harvest_record_id])
-        # :nocov:
+        # simplecov:enable
       end
     end
   end

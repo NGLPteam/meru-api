@@ -44,13 +44,13 @@ module Support
         @inner[path.to_s]
       when nil then nil
       when DOT_PATH
-        # :nocov:
+        # simplecov:disable
         raise InvalidPath, "Confusing key: #{path.inspect}"
-        # :nocov:
+        # simplecov:enable
       else
-        # :nocov:
+        # simplecov:disable
         raise InvalidPath, "Cannot get path from: #{path.inspect}"
-        # :nocov:
+        # simplecov:enable
       end
     end
 
@@ -68,9 +68,9 @@ module Support
 
           next inner_h if inner_h.kind_of?(Hash)
 
-          # :nocov:
+          # simplecov:disable
           raise InvalidNesting.new inner_h, incr_path
-          # :nocov:
+          # simplecov:enable
         end
 
         if value == DELETE
@@ -87,13 +87,13 @@ module Support
           @inner[path.to_s] = value
         end
       when DOT_PATH
-        # :nocov:
+        # simplecov:disable
         raise InvalidPath, "Confusing key: #{path.inspect}"
-        # :nocov:
+        # simplecov:enable
       else
-        # :nocov:
+        # simplecov:disable
         raise InvalidPath, "Cannot get path from: #{path.inspect}"
-        # :nocov:
+        # simplecov:enable
       end
     ensure
       derive_paths! unless @batching

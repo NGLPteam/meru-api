@@ -75,9 +75,9 @@ module Harvesting
       # @param [Class(::OAI::Provider::Base)]
       # @return [void]
       def set_up_oai!(provider_klass)
-        # :nocov:
+        # simplecov:disable
         return unless oai?
-        # :nocov:
+        # simplecov:enable
 
         provider_klass.repository_name name
 

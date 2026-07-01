@@ -72,9 +72,9 @@ module Utility
       return Failure() unless match
 
       parse_string("#{match[:prefix]}, #{match[:suffix]}").or do
-        # :nocov:
+        # simplecov:disable
         parse_string("#{match[:prefix]} #{match[:suffix]}")
-        # :nocov:
+        # simplecov:enable
       end
     end
   end

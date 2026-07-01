@@ -28,9 +28,9 @@ module Types
       when ::Entity then object.hierarchical
       when ::EntityDescendant then object.descendant
       else
-        # :nocov:
+        # simplecov:disable
         raise GraphQL::ExecutionError, "can't get entity from #{object.class.name}"
-        # :nocov:
+        # simplecov:enable
       end
     end
   end

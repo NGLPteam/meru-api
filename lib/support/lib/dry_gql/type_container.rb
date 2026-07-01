@@ -65,9 +65,9 @@ module Support
       # @param [Dry::Types::Type] type
       # @return [void]
       def add!(name, type)
-        # :nocov:
+        # simplecov:disable
         raise "must have gql typing" unless type.has_gql_typing?
-        # :nocov:
+        # simplecov:enable
 
         register(name, type)
       end
@@ -80,9 +80,9 @@ module Support
         register(name, memoize: true) do
           type = yield
 
-          # :nocov:
+          # simplecov:disable
           raise "must have gql typing" unless type.has_gql_typing?
-          # :nocov:
+          # simplecov:enable
 
           type
         end

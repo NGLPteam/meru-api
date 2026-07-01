@@ -32,9 +32,9 @@ module Entities
     end
 
     wrapped_hook! def reprocess
-      # :nocov:
+      # simplecov:disable
       return super unless layout_instance
-      # :nocov:
+      # simplecov:enable
 
       yield layout_instance.reprocess
 

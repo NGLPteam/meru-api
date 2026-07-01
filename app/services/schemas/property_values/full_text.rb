@@ -29,9 +29,9 @@ module Schemas
         def normalize(raw_value)
           case raw_value
           when self
-            # :nocov:
+            # simplecov:disable
             raw_value
-            # :nocov:
+            # simplecov:enable
           else
             coerced = MeruAPI::Container["full_text.normalizer"].(raw_value)
 

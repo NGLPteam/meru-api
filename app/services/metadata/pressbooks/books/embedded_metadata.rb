@@ -36,9 +36,9 @@ module Metadata
         end
 
         def encode_last_updated(model, doc)
-          # :nocov:
+          # simplecov:disable
           return if model.last_updated.nil?
-          # :nocov:
+          # simplecov:enable
 
           doc["lastUpdated"] = model.last_updated.to_i
         end

@@ -4,7 +4,7 @@ module Searching
   module Operators
     class Or < Searching::Operator
       def compile
-        # :nocov:
+        # simplecov:disable
         left_expr = compile_nested(left)
         right_expr = compile_nested(right)
 
@@ -17,7 +17,7 @@ module Searching
         else
           raise Searching::Skip
         end
-        # :nocov:
+        # simplecov:enable
       end
     end
   end

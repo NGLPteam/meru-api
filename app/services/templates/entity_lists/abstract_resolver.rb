@@ -60,9 +60,9 @@ module Templates
       # @abstract
       # @return [Dry::Monads::Success<HierarchicalEntity>]
       do_for! def resolve_entities
-        # :nocov:
+        # simplecov:disable
         Success EMPTY_ARRAY
-        # :nocov:
+        # simplecov:enable
       end
 
       private

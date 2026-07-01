@@ -24,9 +24,9 @@ module Metadata
         end
 
         def included(base)
-          # :nocov:
+          # simplecov:disable
           super if defined?(super)
-          # :nocov:
+          # simplecov:enable
 
           base.attribute singular_name, method: derivation_method
         end

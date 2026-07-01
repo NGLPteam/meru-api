@@ -48,9 +48,9 @@ module Support
       def check!(name, &)
         method_name = :"check_#{name}!"
 
-        # :nocov:
+        # simplecov:disable
         raise "check already exists: #{name}" if check_map.key?(name)
-        # :nocov:
+        # simplecov:enable
 
         define_method(method_name, &)
 

@@ -11,9 +11,9 @@ module Templates
 
           return if asset.blank?
 
-          # :nocov:
+          # simplecov:disable
           raise Liquid::ContextError, "Expected #{args[:source].expression.inspect} to be a PDF asset" unless asset.pdf?
-          # :nocov:
+          # simplecov:enable
 
           call_operation!("templates.mdx.build_pdf_viewer", asset:)
         end

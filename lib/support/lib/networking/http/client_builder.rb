@@ -91,11 +91,11 @@ module Support
         end
 
         def build_retry_block
-          # :nocov:
+          # simplecov:disable
           return unless debug_retries
 
           DEFAULT_RETRY_BLOCK
-          # :nocov:
+          # simplecov:enable
         end
 
         def build_retry_options

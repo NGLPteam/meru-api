@@ -45,9 +45,9 @@ module Metadata
         def register_liquid_drop_class
           validate_liquid!
 
-          # :nocov:
+          # simplecov:disable
           return if drop_class.present?
-          # :nocov:
+          # simplecov:enable
 
           const_set(drop_class_name, Class.new(::Metadata::Shared::AbstractDrop))
         end

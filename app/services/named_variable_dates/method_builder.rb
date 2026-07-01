@@ -15,9 +15,9 @@ module NamedVariableDates
     end
 
     def inspect
-      # :nocov:
+      # simplecov:disable
       "#{self.class.name}[#{@name.inspect}]"
-      # :nocov:
+      # simplecov:enable
     end
 
     private

@@ -42,11 +42,11 @@ class SubmissionPublication < ApplicationRecord
     # @param [User, AnonymousUser] user
     # @return [ActiveRecord::Relation<SubmissionPublication>]
     def visible_to(user)
-      # :nocov:
+      # simplecov:disable
       return none if user.blank? || user.anonymous?
 
       return all if user.has_global_admin_access?
-      # :nocov:
+      # simplecov:enable
 
       where(submission: Submission.visible_to(user))
     end

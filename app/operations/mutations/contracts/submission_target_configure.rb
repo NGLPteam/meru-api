@@ -45,9 +45,9 @@ module Mutations
           in SubmissionTarget => submission_target
             submission_target.entity
           else
-            # :nocov:
+            # simplecov:disable
             raise "Unexpected configurable type: #{values[:configurable].class}"
-            # :nocov:
+            # simplecov:enable
           end
 
         key.failure(:must_be_descendant) unless value.hierarchical_descendant_of?(parent_entity)

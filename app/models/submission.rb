@@ -48,9 +48,9 @@ class Submission < ApplicationRecord
   alias agreement_accepted? agreement_accepted
 
   def agreement_accepted=(value)
-    # :nocov:
+    # simplecov:disable
     self.agreement_accepted_at ||= Time.current if ActiveRecord::Type::Boolean.new.cast(value)
-    # :nocov:
+    # simplecov:enable
   end
 
   # @see Submissions::AttachContributions
@@ -114,9 +114,9 @@ class Submission < ApplicationRecord
     # @param [User, AnonymousUser] user
     # @return [ActiveRecord::Relation<Submission>]
     def owned_by(user)
-      # :nocov:
+      # simplecov:disable
       return none if user.blank? || user.anonymous?
-      # :nocov:
+      # simplecov:enable
 
       where(user:)
     end
@@ -132,11 +132,11 @@ class Submission < ApplicationRecord
     # @param [User, AnonymousUser] user
     # @return [ActiveRecord::Relation<Submission>]
     def reviewable_by(user)
-      # :nocov:
+      # simplecov:disable
       return none if user.blank? || user.anonymous?
 
       return all if user.has_global_admin_access?
-      # :nocov:
+      # simplecov:enable
 
       where(submission_target: SubmissionTarget.reviewable_by(user))
     end
@@ -144,11 +144,11 @@ class Submission < ApplicationRecord
     # @param [User, AnonymousUser] user
     # @return [ActiveRecord::Relation<Submission>]
     def visible_to(user)
-      # :nocov:
+      # simplecov:disable
       return none if user.blank? || user.anonymous?
 
       return all if user.has_global_admin_access?
-      # :nocov:
+      # simplecov:enable
 
       owned = arel_expr_in_query(arel_table[:id], owned_by(user).select(:id))
       reviewable = arel_expr_in_query(arel_table[:id], reviewable_by(user).select(:id))

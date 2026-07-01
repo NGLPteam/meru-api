@@ -84,9 +84,9 @@ module Roles
 
         available_actions.grep(pattern)
       else
-        # :nocov:
+        # simplecov:disable
         raise ArgumentError, "Don't know how to match permission path: #{path.inspect}"
-        # :nocov:
+        # simplecov:enable
       end
     end
   end
