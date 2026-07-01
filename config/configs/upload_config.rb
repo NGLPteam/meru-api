@@ -4,18 +4,44 @@ class UploadConfig < ApplicationConfig
   # A pattern that matches a URI that doesn't end in a trailing slash.
   SANS_TRAILING_SLASH = %r{(?<!/)\z}
 
-  attr_config bucket: "meru-api", public: false, spaces: false, use_asset_cdn: false
+  attr_config bucket: "meru-api", public: false, spaces: false
 
   attr_config :cdn_host, :mapped_host
 
-  delegate :endpoint, :force_path_style, to: :s3
+  delegate :endpoint, to: :s3
 
-  coerce_types public: :boolean, spaces: :boolean, use_asset_cdn: :boolean
+  coerce_types public: :boolean, spaces: :boolean
 
-  memoize def asset_host
-    return unless use_asset_host?
+  # The host to use for urls when using a custom domain front of the S3/Spaces URL.
+  #
+  # If {#cdn_host} is set, it will take priority. It assumes that the CDN URL
+  # is mapped to the S3/Spaces bucket.
+  #
+  # In development, we use {#mapped_host} and join it with {#bucket} to form the host
+  # in order to provide external access to the minio server running in docker.
+  #
+  # @return [String, nil]
+  attr_reader :host
 
-    cdn_host
+  # @return [:cdn, :mapped, :fallback]
+  attr_reader :host_mode
+
+  # @return [S3Config]
+  attr_reader :s3
+
+  # Options passed to Shrine's `url_options` plugin, which are used to generate URLs for uploaded files.
+  # @return [Hash{Symbol => String}]
+  attr_reader :url_options
+
+  alias for_url_options url_options
+
+  def initialize(...)
+    super
+
+    @s3 = S3Config.new
+    @host_mode = derive_host_mode
+    @host = derive_host
+    @url_options = derive_url_options
   end
 
   # @return [Aws::S3::Bucket]
@@ -27,40 +53,40 @@ class UploadConfig < ApplicationConfig
     Aws::S3::Bucket.new(name:, client:)
   end
 
-  def has_mapped_host?
-    endpoint.present? && bucket.present? && force_path_style && mapped_host.present?
+  private
+
+  # @return [String, nil]
+  def derive_host
+    case host_mode
+    in :cdn then cdn_host
+    in :mapped then URI.join(mapped_host, bucket).to_s
+    else nil
+    end&.sub(SANS_TRAILING_SLASH, ?/)
   end
 
-  # A combination of {#endpoint} and {#bucket}, with a trailing slash.
-  #
-  # @return [String]
-  memoize def host
-    return unless has_mapped_host?
-
-    joined = URI.join mapped_host, bucket
-
-    joined.to_s.sub(SANS_TRAILING_SLASH, ?/)
+  # @return [:cdn, :mapped, :fallback]
+  def derive_host_mode
+    if valid_url?(cdn_host)
+      :cdn
+    elsif cdn_host.blank? && valid_url?(mapped_host)
+      :mapped
+    else
+      :fallback
+    end
   end
 
-  # @!attribute [r] s3
-  # @return [S3Config]
-  memoize def s3
-    S3Config.new
-  end
-
-  memoize def for_url_options
+  # @return [Hash{Symbol => String}]
+  def derive_url_options
     base = { host:, public:, }.compact
 
-    cache = { **base }
-    store = { **base }
+    cache = { **base }.freeze
+    store = { **base }.freeze
 
     {
       cache:,
-      store:
-    }
+      store:,
+    }.freeze
   end
 
-  def use_asset_host?
-    use_asset_cdn? && cdn_host.present?
-  end
+  def valid_url?(input) = input.present? && ::Support::GlobalTypes::URL_PATTERN.match?(input)
 end

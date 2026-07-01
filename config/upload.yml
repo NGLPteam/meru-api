@@ -1,12 +1,12 @@
 default: &default
   bucket: "meru-api-storage"
+  cdn_host: ""
   mapped_host: ""
   public: true
 
 development:
   <<: *default
   mapped_host: "http://localhost:6224"
-  use_asset_cdn: false
 
 test:
   <<: *default
@@ -14,9 +14,7 @@ test:
 staging:
   <<: *default
   spaces: true
-  use_asset_cdn: true
 
 production:
   <<: *default
   spaces: true
-  use_asset_cdn: true

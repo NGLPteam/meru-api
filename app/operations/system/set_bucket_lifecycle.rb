@@ -20,7 +20,7 @@ module System
     }.freeze
 
     def call
-      # :nocov:
+      # simplecov:disable
       bucket = UploadConfig.bucket
 
       client = S3Config.build_s3_client
@@ -28,7 +28,7 @@ module System
       client.put_bucket_lifecycle_configuration(bucket:, lifecycle_configuration: LIFECYCLE_CONFIGURATION)
 
       Success()
-      # :nocov:
+      # simplecov:enable
     end
   end
 end
