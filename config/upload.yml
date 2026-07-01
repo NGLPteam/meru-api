@@ -13,8 +13,8 @@ test:
 
 staging:
   <<: *default
-  spaces: true
+  remap_signed_url: true
 
 production:
   <<: *default
-  spaces: true
+  remap_signed_url: true

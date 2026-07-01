@@ -4,55 +4,68 @@ RSpec.describe UploadConfig do
   let(:bucket) { "test-bucket" }
   let(:cdn_host) { nil }
   let(:mapped_host) { nil }
+  let(:remap_signed_url) { false }
+
+  let(:test_key) { "store/test-object" }
 
   subject(:config) do
-    described_class.new(bucket:, cdn_host:, mapped_host:)
+    described_class.new(bucket:, cdn_host:, mapped_host:, remap_signed_url:)
   end
 
-  shared_examples_for "a configuration that uses a custom signer" do
-    describe "#build_signer" do
-      it "returns an Aws::S3::Presigner instance" do
-        expect(subject.build_signer).to be_an_instance_of(UploadConfig::Signer)
-      end
+  class << self
+    def when_trying_to_sign(&)
+      describe "when trying to sign a URL" do
+        let(:signer) { config.build_signer }
 
-      it "generates a valid presigned URL" do
-        Timecop.freeze(Time.utc(2026, 1, 1, 12, 0, 0)) do
-          actual_url = subject.build_signer.("store/test-object", expires_in: 3600)
+        subject(:signed_url) { signer&.(test_key, expires_in: 3600) }
 
-          expected_url = Aws::S3::Presigner.new(
-            client: subject.s3.build_client_for(subject.host, force_path_style: false)
-          ).presigned_url(
-            :get_object,
-            bucket:,
-            key: "store/test-object",
-            expires_in: 3600
-          )
-
-          expect(actual_url).to eq(expected_url)
-          expect(URI.parse(actual_url).query).to include("X-Amz-Signature=")
-        end
+        instance_eval(&)
       end
     end
+  end
+
+  shared_examples_for "a configuration that doesn't remap" do
+    it { is_expected.not_to be_able_to_remap_signed }
+
+    its(:remapped_scheme) { is_expected.to be_nil }
+    its(:remapped_host) { is_expected.to be_nil }
+    its(:remapped_port) { is_expected.to be_nil }
   end
 
   context "with a fallback configuration" do
     its(:host_mode) { is_expected.to eq(:fallback) }
 
-    describe "#build_signer" do
-      it "returns nil" do
-        expect(subject.build_signer).to be_nil
-      end
+    when_trying_to_sign do
+      it { is_expected.to be_blank }
     end
+
+    include_examples "a configuration that doesn't remap"
   end
 
-  context "with a CDN configuration" do
+  context "with a CDN configuration that remaps" do
     let(:cdn_host) { "https://cdn.example.com" }
+    let(:remap_signed_url) { true }
 
     its(:host) { is_expected.to eq("https://cdn.example.com/") }
 
     its(:host_mode) { is_expected.to eq(:cdn) }
 
-    include_examples "a configuration that uses a custom signer"
+    it { is_expected.to be_able_to_remap_signed }
+
+    its(:remapped_scheme) { is_expected.to eq("https") }
+    its(:remapped_host) { is_expected.to eq("cdn.example.com") }
+    its(:remapped_port) { is_expected.to be_nil }
+
+    context "when the CDN host is a non-standard port" do
+      let(:cdn_host) { "https://cdn.example.com:8080" }
+
+      its(:remapped_port) { is_expected.to eq(8080) }
+    end
+
+    when_trying_to_sign do
+      it { is_expected.to start_with "https://cdn.example.com/#{test_key}" }
+      it { is_expected.to include "X-Amz-Signature=" }
+    end
   end
 
   context "with a mapped host configuration" do
@@ -62,6 +75,11 @@ RSpec.describe UploadConfig do
 
     its(:host_mode) { is_expected.to eq(:mapped) }
 
-    include_examples "a configuration that uses a custom signer"
+    when_trying_to_sign do
+      it { is_expected.to start_with "https://mapped.example.com/test-bucket/#{test_key}" }
+      it { is_expected.to include "X-Amz-Signature=" }
+    end
+
+    include_examples "a configuration that doesn't remap"
   end
 end
