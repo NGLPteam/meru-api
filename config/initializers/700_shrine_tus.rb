@@ -2,6 +2,45 @@
 
 require Rails.root.join("lib", "middleware", "tus_uploader")
 
+module S3HandleCDNs
+  def initialize(...)
+    super
+
+    @upload_signer = UploadConfig.build_signer
+  end
+
+  # @return [UploadConfig::Signer, nil]
+  attr_reader :upload_signer
+
+  # @note We override the URL generation to use the {#upload_signer} if it is available.
+  #   This allows us to generate presigned URLs for a CDN or mapped host, otherwise
+  #   we fall back to the default URL generation for `Shrine::Storage::S3`.
+  # @param [String] id
+  # @param [Boolean] public
+  # @param [String, nil] host
+  # @param [Hash] options
+  # @return [String]
+  def url(id, public: self.public, host: nil, **)
+    return super if upload_signer.blank?
+
+    if public
+      url = object(id).public_url(**)
+
+      if host
+        uri = URI.parse(url)
+        uri.path = uri.path.match(%r{^/#{bucket.name}}).post_match unless uri.host.include?(bucket.name)
+        url = URI.join(host, uri.request_uri[1..]).to_s
+      end
+
+      return url
+    else
+      upload_signer.call(object_key(id), **)
+    end
+  end
+end
+
+Shrine::Storage::S3.prepend(S3HandleCDNs)
+
 aws_credentials = S3Config.to_h
 
 bucket = UploadConfig.bucket

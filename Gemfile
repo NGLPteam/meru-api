@@ -154,6 +154,7 @@ group :development, :test do
   gem "factory_bot_rails", "~> 6.5"
   gem "faker", "~> 3.6"
   gem "rspec", "~> 3.13"
+  gem "rspec-its", "~> 2.0"
   gem "rspec-rails", "~> 8.0"
   gem "vernier", require: false
   gem "yard", "~> 0.9.34", require: false

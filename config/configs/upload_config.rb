@@ -53,6 +53,11 @@ class UploadConfig < ApplicationConfig
     Aws::S3::Bucket.new(name:, client:)
   end
 
+  # @return [UploadConfig::Signer, nil]
+  def build_signer
+    Signer.new(self) unless host_mode == :fallback
+  end
+
   private
 
   # @return [String, nil]
@@ -89,4 +94,35 @@ class UploadConfig < ApplicationConfig
   end
 
   def valid_url?(input) = input.present? && ::Support::GlobalTypes::URL_PATTERN.match?(input)
+
+  # @api private
+  class Signer
+    # @param [UploadConfig] config
+    def initialize(config)
+      @config = config
+      @bucket = config.bucket
+      @host = config.host
+      @client = config.s3.build_client_for(host, force_path_style: false)
+      @presigner = Aws::S3::Presigner.new(client:)
+    end
+
+    # @return [String]
+    attr_reader :bucket
+
+    # @return [String]
+    attr_reader :host
+
+    # @return [Aws::S3::Client]
+    attr_reader :client
+
+    # @return [Aws::S3::Presigner]
+    attr_reader :presigner
+
+    # @param [String] key
+    # @param [Hash] options
+    # @return [String]
+    def call(key, **options)
+      presigner.presigned_url(:get_object, **options, bucket:, key:)
+    end
+  end
 end

@@ -50,7 +50,7 @@ class Asset < ApplicationRecord
   # @return [String]
   def actual_download_url
     attachment.url(
-      public: Rails.env.development?,
+      public: false,
       expires_in: 15.minutes.to_i,
       response_content_disposition:,
     )

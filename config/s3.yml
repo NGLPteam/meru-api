@@ -3,6 +3,7 @@ default: &default
   secret_access_key: ""
   region: "us-east-1"
   force_path_style: false
+  stub_responses: false
 
 development:
   <<: *default
@@ -14,8 +15,10 @@ development:
 
 test:
   <<: *default
+  endpoint: https://s3.example.com
   access_key_id: minio
   secret_access_key: minio123
+  stub_responses: true
   region: "us-east-1"
 
 staging:
