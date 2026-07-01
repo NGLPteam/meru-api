@@ -15,6 +15,10 @@ RSpec.describe "Query.item", type: :request do
 
       allowedActions
 
+      canPreview {
+        ... AuthorizationResultFragment
+      }
+
       contributors {
         nodes {
           ... on OrganizationContributor {
@@ -84,6 +88,8 @@ RSpec.describe "Query.item", type: :request do
 
   let(:graphql_variables) { { slug:, } }
 
+  let(:can_preview) { false }
+
   let_it_be(:full_privilege_actions) do
     [
       "items.assets.create",
@@ -139,6 +145,8 @@ RSpec.describe "Query.item", type: :request do
 
             i[:allowed_actions] = expected_allowed_actions
 
+            i.auth_results(can_preview:)
+
             i.prop :contributors do |c|
               c.prop :page_info do |pi|
                 pi[:total_count] = expected_contributors_count
@@ -181,6 +189,8 @@ RSpec.describe "Query.item", type: :request do
   end
 
   as_an_admin_user do
+    let(:can_preview) { true }
+
     let(:expected_allowed_actions) do
       match_array(full_privilege_actions)
     end

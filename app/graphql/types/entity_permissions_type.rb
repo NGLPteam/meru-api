@@ -37,6 +37,10 @@ module Types
     This opens up `grantAccess` and `revokeAccess` mutations.
     TEXT
 
+    expose_authorization_rule :preview?, <<~TEXT
+    Whether the current user has permission to preview this entity.
+    TEXT
+
     expose_authorization_rule :purge?, <<~TEXT
     Whether the current user has permission to purge this entity.
     TEXT
