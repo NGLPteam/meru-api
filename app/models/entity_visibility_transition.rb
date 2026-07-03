@@ -1,0 +1,24 @@
+# frozen_string_literal: true
+
+# @see EntityVisibility
+class EntityVisibilityTransition < ApplicationRecord
+  include GenericAccessible
+  include TimestampScopes
+
+  strip_attributes
+
+  belongs_to :entity_visibility, inverse_of: :entity_visibility_transitions
+
+  after_destroy :update_most_recent!, if: :most_recent?
+
+  private
+
+  # @return [void]
+  def update_most_recent!
+    last_transition = entity_visibility.entity_visibility_transitions.order(:sort_key).last
+
+    return if last_transition.blank?
+
+    last_transition.update_column(:most_recent, true)
+  end
+end

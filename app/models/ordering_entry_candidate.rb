@@ -215,6 +215,7 @@ class OrderingEntryCandidate < ApplicationRecord
         arel_literal(%[NULL::uuid]).as("tree_parent_id"),
         arel_literal(%[NULL::text]).as("tree_parent_type")
       ).distinct_on(:hierarchical_type, :hierarchical_id)
+        .currently_visible
 
       query.joins!(*compiled.joins.values) if compiled.joins.any?
 
