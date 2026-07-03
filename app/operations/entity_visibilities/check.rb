@@ -6,29 +6,16 @@ module EntityVisibilities
   # updating any records where there is a discrepancy.
   class Check
     include Dry::Monads[:result]
-    include QueryOperation
-
-    QUERY = <<~SQL
-    WITH changes AS (
-      SELECT
-        ev.id AS id,
-        stats.active AS active
-      FROM entity_visibilities ev
-      LEFT JOIN LATERAL (
-        SELECT
-        entity_visibility_active(ev.visibility, ev.visibility_range, CURRENT_TIMESTAMP) AS active
-      ) stats ON true
-      WHERE ev.active <> stats.active
-    )
-    UPDATE entity_visibilities AS ev SET
-      active = changes.active
-    FROM changes
-    WHERE ev.id = changes.id
-    SQL
 
     # @return [Dry::Monads::Success(Integer)]
     def call
-      updated = sql_update!(QUERY)
+      updated = 0
+
+      EntityVisibility.mismatched.find_each do |visibility|
+        visibility.save!
+
+        updated += 1
+      end
 
       Success updated
     end

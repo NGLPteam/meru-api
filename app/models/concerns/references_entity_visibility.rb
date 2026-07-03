@@ -23,11 +23,12 @@ module ReferencesEntityVisibility
       :currently_visible?,
       to: :actual_entity_visibility
 
-    scope :visible_at, ->(time) { left_outer_joins(:entity_visibility).merge(EntityVisibility.visible_at(time)) }
+    scope :visible_at, ->(time) { joins(:entity_visibility).merge(EntityVisibility.visible_at(time)) }
     scope :hidden_at, ->(time) { joins(:entity_visibility).merge(EntityVisibility.hidden_at(time)) }
 
-    scope :currently_visible, -> { visible_at Time.current }
-    scope :currently_hidden, -> { hidden_at Time.current }
+    scope :always_visible, -> { joins(:entity_visibility).merge(EntityVisibility.always_visible) }
+    scope :currently_visible, -> { joins(:entity_visibility).merge(EntityVisibility.currently_visible) }
+    scope :currently_hidden, -> { joins(:entity_visibility).merge(EntityVisibility.currently_hidden) }
   end
 
   # @!attribute [r] actual_entity_visibility

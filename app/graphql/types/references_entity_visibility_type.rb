@@ -9,21 +9,33 @@ module Types
     An entity which can be limited in its visibility, based on some configured attributes.
     TEXT
 
-    field :visibility, Types::EntityVisibilityType, null: false,
-      description: "If an entity is available in the frontend"
+    field :visibility, Types::EntityVisibilityType, null: false do
+      description <<~TEXT
+      If an entity is available in the frontend.
+      TEXT
+    end
 
-    field :hidden_at, GraphQL::Types::ISO8601DateTime, null: true,
-      description: "If present, this is the timestamp the entity was hidden at"
+    field :hidden_at, GraphQL::Types::ISO8601DateTime, null: true do
+      description <<~TEXT
+      If present, this is the timestamp the entity was hidden at.
+      TEXT
+    end
 
-    field :visible_after_at, GraphQL::Types::ISO8601DateTime, null: true,
-      description: "If present, this is the timestamp an entity is visible after"
+    field :visible_after_at, GraphQL::Types::ISO8601DateTime, null: true do
+      description <<~TEXT
+      If present, this is the timestamp an entity is visible after.
+      TEXT
+    end
 
-    field :visible_until_at, GraphQL::Types::ISO8601DateTime, null: true,
-      description: "If present, this is the timestamp an entity is visible until"
+    field :visible_until_at, GraphQL::Types::ISO8601DateTime, null: true do
+      description <<~TEXT
+      If present, this is the timestamp an entity is visible until.
+      TEXT
+    end
 
     field :hidden, Boolean, null: false, method: :visibility_hidden? do
       description <<~TEXT
-      Whether the entity's visibility is set to `HIDDEN`
+      Whether the entity's visibility is set to `HIDDEN`.
       TEXT
     end
 

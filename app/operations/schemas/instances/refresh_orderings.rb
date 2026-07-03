@@ -29,12 +29,7 @@ module Schemas
 
         return Success() if status.disabled?
 
-        Ordering.owned_by_or_ordering(entity).find_each do |ordering|
-          # Skip refreshing this ordering if it doesn't apply,
-          # for instance an article entity asking about its journal's
-          # volume ordering.
-          next unless ordering.refreshes_for? entity
-
+        entity.each_related_ordering do |ordering|
           if status.async?
             ordering.invalidate!
           else

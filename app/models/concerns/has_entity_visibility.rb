@@ -18,4 +18,18 @@ module HasEntityVisibility
   writes_association_attribute! :entity_visibility,  :visibility
   writes_association_attribute! :entity_visibility,  :visible_after_at
   writes_association_attribute! :entity_visibility,  :visible_until_at
+
+  # @return [void]
+  def hide!
+    self.visibility = :hidden
+
+    save!
+  end
+
+  # @return [void]
+  def reveal!
+    self.visibility = :visible
+
+    save!
+  end
 end

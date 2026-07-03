@@ -401,6 +401,16 @@ CREATE TYPE public.entity_visibility AS ENUM (
 
 
 --
+-- Name: entity_visibility_state; Type: TYPE; Schema: public; Owner: -
+--
+
+CREATE TYPE public.entity_visibility_state AS ENUM (
+    'visible',
+    'hidden'
+);
+
+
+--
 -- Name: frontend_revalidation_kind; Type: TYPE; Schema: public; Owner: -
 --
 
@@ -5504,7 +5514,25 @@ CREATE TABLE public.entity_visibilities (
     created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     visibility_range tstzrange GENERATED ALWAYS AS (public.calculate_visibility_range(visibility, visible_after_at, visible_until_at)) STORED,
-    active boolean DEFAULT false NOT NULL
+    active boolean DEFAULT false NOT NULL,
+    state public.entity_visibility_state DEFAULT 'visible'::public.entity_visibility_state NOT NULL
+);
+
+
+--
+-- Name: entity_visibility_transitions; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.entity_visibility_transitions (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    entity_visibility_id uuid NOT NULL,
+    most_recent boolean NOT NULL,
+    sort_key integer NOT NULL,
+    from_state public.entity_visibility_state,
+    to_state public.entity_visibility_state NOT NULL,
+    metadata jsonb,
+    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 
 
@@ -8976,6 +9004,14 @@ ALTER TABLE ONLY public.entity_visibilities
 
 
 --
+-- Name: entity_visibility_transitions entity_visibility_transitions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.entity_visibility_transitions
+    ADD CONSTRAINT entity_visibility_transitions_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: fake_visitors fake_visitors_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -11934,10 +11970,31 @@ CREATE UNIQUE INDEX index_entity_visibilities_on_entity ON public.entity_visibil
 
 
 --
+-- Name: index_entity_visibilities_on_state; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_entity_visibilities_on_state ON public.entity_visibilities USING btree (state);
+
+
+--
 -- Name: index_entity_visibilities_visibility_coverage; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_entity_visibilities_visibility_coverage ON public.entity_visibilities USING gist (visibility, visibility_range, entity_type, entity_id);
+
+
+--
+-- Name: index_entity_visibility_transitions_parent_most_recent; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_entity_visibility_transitions_parent_most_recent ON public.entity_visibility_transitions USING btree (entity_visibility_id, most_recent) WHERE most_recent;
+
+
+--
+-- Name: index_entity_visibility_transitions_parent_sort; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_entity_visibility_transitions_parent_sort ON public.entity_visibility_transitions USING btree (entity_visibility_id, sort_key);
 
 
 --
@@ -16540,6 +16597,14 @@ ALTER TABLE ONLY public.orderings
 
 
 --
+-- Name: entity_visibility_transitions fk_rails_d858156d15; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.entity_visibility_transitions
+    ADD CONSTRAINT fk_rails_d858156d15 FOREIGN KEY (entity_visibility_id) REFERENCES public.entity_visibilities(id) ON DELETE CASCADE;
+
+
+--
 -- Name: collection_attributions fk_rails_d870ec7ace; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -16874,6 +16939,7 @@ ALTER TABLE ONLY public.templates_ordering_instances
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20260702230624'),
 ('20260603165644'),
 ('20260509003048'),
 ('20260509002726'),

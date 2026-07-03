@@ -302,6 +302,16 @@ module HierarchicalEntity
     call_operation("links.maintain", self)
   end
 
+  def each_related_ordering
+    return enum_for(__method__) unless block_given?
+
+    Ordering.owned_by_or_ordering(self).find_each do |ordering|
+      next unless ordering.refreshes_for?(self)
+
+      yield ordering
+    end
+  end
+
   # @see Schemas::Instances::FindOrderingEntry
   # @param [String] identifier the name of an ordering (@see HierarchicalEntity#ordering)
   # @param [HierarchicalEntity] target the entity to search for an entry for

@@ -21,6 +21,8 @@ module Entities
 
       yield upsert! attributes
 
+      yield ensure_visibility! source
+
       yield handle_child_entity! source
 
       yield sync_hierarchies.(source)
@@ -64,23 +66,26 @@ module Entities
     def handle_child_entity!(entity)
       return Success() unless entity.kind_of?(ChildEntity)
 
-      ensure_visibility! entity
-
       yield entity.calculate_ancestors
 
       Success()
     end
 
-    # @param [ChildEntity] entity
-    # @return [void]
+    # @param [HierarchicalEntity] entity
+    # @return [Dry::Monads::Success(void)]
     def ensure_visibility!(entity)
+      return Success() unless entity.kind_of?(HierarchicalEntity)
+
       visibility = entity.actual_entity_visibility
 
-      return if visibility.persisted?
+      # autosave won't fire if the only changes are visibility changes
+      return Success() if visibility.persisted? && !visibility.changed?
 
       visibility.entity_id ||= entity.id
 
       visibility.save!
+
+      Success()
     end
 
     # @param [SyncsEntities] source

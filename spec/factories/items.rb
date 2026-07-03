@@ -8,6 +8,8 @@ FactoryBot.define do
       sequence(:seq) { _1 }
 
       title_prefix { "Item" }
+
+      schema_properties { {} }
     end
 
     association :collection
@@ -23,6 +25,10 @@ FactoryBot.define do
     visibility { :visible }
 
     pending_properties { {} }
+
+    after(:create) do |item, evaluator|
+      item.patch_properties!(evaluator.schema_properties) if evaluator.schema_properties.present?
+    end
 
     trait :hidden do
       title_prefix { "Hidden Item" }
@@ -51,6 +57,41 @@ FactoryBot.define do
       end
     end
 
+    trait :paper do
+      transient do
+        abstract { Faker::Lorem.paragraph }
+
+        accessioned { VariablePrecisionDate.parse("2026-05") }
+        available { VariablePrecisionDate.parse("2026") }
+
+        rights_statement { Faker::Lorem.sentence }
+
+        host_title { "Institution" }
+
+        host_volume { ?1 }
+
+        host_issue { ?1 }
+
+        schema_properties do
+          {
+            abstract:,
+            accessioned:,
+            available:,
+            rights_statement:,
+            host: {
+              title: host_title,
+              volume: host_volume,
+              issue: host_issue,
+            }
+          }
+        end
+      end
+
+      title_prefix { "Paper" }
+
+      schema { "nglp:paper" }
+    end
+
     trait :journal_article do
       transient do
         issue_position { nil }
@@ -65,10 +106,6 @@ FactoryBot.define do
       title_prefix { "Journal Article" }
 
       schema { "nglp:journal_article" }
-
-      after(:create) do |item, evaluator|
-        item.patch_properties!(evaluator.schema_properties)
-      end
     end
   end
 end
