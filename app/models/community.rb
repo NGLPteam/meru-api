@@ -5,6 +5,7 @@ class Community < ApplicationRecord
   include Attachable
   include AutoIdentifier
   include GloballyUniqueIdentifier
+  include HasEntityVisibility
   include HasHeroImageLayout
   include HasSchemaDefinition
   include HasSystemSlug

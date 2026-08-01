@@ -1,8 +1,12 @@
 # frozen_string_literal: true
 
 RSpec.describe Announcement, type: :model do
+  include_context "with related entities"
+
+  it_behaves_like "a model that invalidates its parent entity"
+
   context "when sorting" do
-    let!(:entity) { FactoryBot.create :collection }
+    let!(:entity) { collection }
     let!(:today) { FactoryBot.create :announcement, :today, entity: }
     let!(:yesterday) { FactoryBot.create :announcement, :yesterday, entity: }
 

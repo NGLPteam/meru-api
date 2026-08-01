@@ -4,12 +4,15 @@ class Contributor < ApplicationRecord
   include FullTextSearchable
   include HasEphemeralSystemSlug
   include HasHarvestModificationStatus
+  include HasRelatedEntities
   include ImageUploader::Attachment.new(:image)
   include SchematicReferent
   include ScopesForIdentifier
   include TimestampScopes
 
   strip_attributes only: %i[email orcid url]
+
+  invalidates_related_entities!
 
   pg_enum! :kind, as: "contributor_kind"
   pg_enum! :merge_source_status, as: "contributor_merge_source_status", default: "unmerged", allow_blank: false
