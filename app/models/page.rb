@@ -3,8 +3,11 @@
 # An arbitrary page of content associated with a specific {HierarchicalEntity}.
 class Page < ApplicationRecord
   include EntityChildRecord
+  include HasRelatedEntities
   include ImageUploader::Attachment.new(:hero_image)
   include TimestampScopes
+
+  invalidates_related_entities!
 
   belongs_to :entity, polymorphic: true, inverse_of: :pages
 
