@@ -42,8 +42,8 @@ class HarvestAttempt < ApplicationRecord
   scope :scheduled_after, ->(now = Time.current) { fully_scheduled.where(scheduled_at: now..) }
   scope :scheduled_in_the_future, -> { scheduled_after(Time.current) }
 
-  scope :in_default_order, -> { in_recent_order }
-  scope :in_inverse_order, -> { in_oldest_order }
+  scope :in_default_order, -> { order(sorted_at: :desc) }
+  scope :in_inverse_order, -> { order(sorted_at: :asc) }
 
   attribute :metadata, Harvesting::Attempts::Metadata.to_type, default: proc { {} }
 

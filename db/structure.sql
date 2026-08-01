@@ -5869,7 +5869,7 @@ CREATE TABLE public.harvest_attempts (
     harvest_source_id uuid NOT NULL,
     harvest_set_id uuid,
     harvest_mapping_id uuid,
-    mode text DEFAULT 'manual'::public.harvest_schedule_mode NOT NULL,
+    mode public.harvest_schedule_mode DEFAULT 'manual'::public.harvest_schedule_mode NOT NULL,
     description text,
     metadata jsonb DEFAULT '{}'::jsonb NOT NULL,
     record_count bigint,
@@ -5882,7 +5882,12 @@ CREATE TABLE public.harvest_attempts (
     target_entity_id uuid NOT NULL,
     extraction_mapping_template text DEFAULT ''::text NOT NULL,
     scheduled_at timestamp without time zone,
-    scheduling_key text
+    scheduling_key text,
+    sorted_at timestamp without time zone GENERATED ALWAYS AS (
+CASE mode
+    WHEN 'scheduled'::public.harvest_schedule_mode THEN GREATEST(created_at, scheduled_at)
+    ELSE GREATEST(created_at, began_at)
+END) STORED NOT NULL
 );
 
 
@@ -10118,7 +10123,7 @@ CREATE UNIQUE INDEX entity_cached_ancestors_pkey ON public.entity_cached_ancesto
 -- Name: harvest_attempts_scheduling_uniqueness; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE UNIQUE INDEX harvest_attempts_scheduling_uniqueness ON public.harvest_attempts USING btree (harvest_mapping_id, scheduling_key) WHERE ((mode = 'scheduled'::text) AND (harvest_mapping_id IS NOT NULL) AND (scheduling_key IS NOT NULL));
+CREATE UNIQUE INDEX harvest_attempts_scheduling_uniqueness ON public.harvest_attempts USING btree (harvest_mapping_id, scheduling_key) WHERE ((mode = 'scheduled'::public.harvest_schedule_mode) AND (harvest_mapping_id IS NOT NULL) AND (scheduling_key IS NOT NULL));
 
 
 --
@@ -12464,6 +12469,13 @@ CREATE INDEX index_harvest_attempts_on_harvest_set_id ON public.harvest_attempts
 --
 
 CREATE INDEX index_harvest_attempts_on_harvest_source_id ON public.harvest_attempts USING btree (harvest_source_id);
+
+
+--
+-- Name: index_harvest_attempts_on_sorted_at; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_harvest_attempts_on_sorted_at ON public.harvest_attempts USING btree (sorted_at);
 
 
 --
@@ -16939,6 +16951,7 @@ ALTER TABLE ONLY public.templates_ordering_instances
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20260731185858'),
 ('20260702230624'),
 ('20260603165644'),
 ('20260509003048'),
