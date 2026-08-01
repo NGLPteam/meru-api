@@ -100,6 +100,12 @@ module Types
       TEXT
     end
 
+    field :sorted_at, GraphQL::Types::ISO8601DateTime, null: false do
+      description <<~TEXT
+      This specifies the time the attempt is sorted by, which is either the `scheduledAt` or `beganAt` time, depending on the `mode` of the attempt.
+      TEXT
+    end
+
     load_association! :harvest_attempt_transitions, as: :transitions
     load_association! :harvest_mapping
     load_association! :harvest_set
