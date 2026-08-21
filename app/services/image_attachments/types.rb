@@ -7,6 +7,8 @@ module ImageAttachments
 
     extend Constants
 
+    AttachmentName = Coercible::Symbol.constrained(filled: true)
+
     # A positive (non-zero) dimension for height or width.
     Dimension = Integer.constrained(gt: 0)
 

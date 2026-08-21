@@ -19,6 +19,7 @@ class ApplicationRecord < ActiveRecord::Base
   include RecordPreloading
   include PostgresEnums
   include ScopeLocking
+  include Processing::ModelIntegration
   include StoreModelIntrospection
   include ::Support::CallsCommonOperation
   include ::Support::Inspectable

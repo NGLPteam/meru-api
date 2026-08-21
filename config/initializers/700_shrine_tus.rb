@@ -91,16 +91,16 @@ Shrine.plugin :type_predicates, methods: %i[pdf], mime: :marcel
 Shrine.plugin :pretty_location, class_underscore: true
 Shrine.plugin :data_uri
 Shrine.plugin :tempfile # load it globally so that it overrides `Shrine.with_file`
-Shrine.plugin :derivatives, create_on_promote: true, store: :derivatives
+Shrine.plugin :derivatives, create_on_promote: true
 Shrine.plugin :upload_options, cache: { acl: "public-read" }, store: { acl: "public-read" }
 Shrine.plugin :url_options, **UploadConfig.for_url_options
 
 Shrine.plugin :tus
 
 Shrine::Attacher.promote_block do
-  Processing::PromoteAttachmentJob.perform_later(self.class.name, record.class.name, record.id, name, file_data)
+  Processing::PromoteAttachmentJob.set(wait: 30.seconds).perform_later(record, name, file_data)
 end
 
 Shrine::Attacher.destroy_block do
-  Processing::DestroyAttachmentJob.perform_later(self.class.name, data)
+  Processing::DestroyAttachmentJob.set(wait: 30.seconds).perform_later(self.class.name, data)
 end

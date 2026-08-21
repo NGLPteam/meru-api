@@ -92,8 +92,6 @@ module HierarchicalEntity
 
     scope :by_title, ->(title) { where(title:) }
 
-    scope :sans_thumbnail, -> { where(arel_json_get(:thumbnail_data, :storage).eq(nil)) }
-
     scope :filtered_by_schema_version, ->(schemas) { where(schema_version: SchemaVersion.filtered_by(schemas)) }
 
     scope :with_missing_orderings, -> { where(id: EntityInheritedOrdering.missing.select(:entity_id)) }

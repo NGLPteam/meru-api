@@ -120,12 +120,17 @@ module Support
 
         # @return [Class]
         def policy_class = ::UserPolicy
+
+        def scope(name, ...)
+          define_singleton_method(name) { ApplicationRecord.none }
+        end
       end
 
       class << self
         def included(base)
           base.extend Support::Users::AnonymousInterface::ClassMethods
           base.include GlobalID::Identification
+          base.include Processing::ModelIntegration
           base.include ImageUploader::Attachment.new(:avatar)
         end
       end

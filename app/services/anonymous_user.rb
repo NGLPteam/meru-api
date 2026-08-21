@@ -15,6 +15,7 @@
 #   end
 AnonymousUser = Naught.build do |config|
   include ::Support::Users::AnonymousInterface
+  include ::Processing::ModelIntegration
   include AnonymousInterface
 
   config.mimic User
