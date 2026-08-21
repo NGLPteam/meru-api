@@ -15,16 +15,16 @@ jobs:
 
     runs-on: ubuntu-latest
     steps:
-      - uses: awalsh128/cache-apt-pkgs-action@latest
-        with:
-          packages: libpq-dev libvips libvips-dev
-          version: 1.0
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libpq-dev libvips42 libvips-dev
 
       - name: "Checkout code"
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7.0.1
 
       - name: "Install Ruby"
-        uses: ruby/setup-ruby@v1
+        uses: ruby/setup-ruby@v1.321.0
         with:
           bundler-cache: true
           ruby-version: 3.4.9
@@ -34,7 +34,7 @@ jobs:
           RAILS_ENV: development
           RUBYOPT: "-W:no-deprecated -W:no-experimental"
         run: |
-          bin/rubocop
+          bin/rubocop --format github
 
   rspec:
     if: github.event.pull_request.draft == false
@@ -61,16 +61,16 @@ jobs:
         options: --entrypoint redis-server
 
     steps:
-      - uses: awalsh128/cache-apt-pkgs-action@latest
-        with:
-          packages: libpq-dev libvips libvips-dev
-          version: 1.0
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libpq-dev libvips42 libvips-dev
 
       - name: "Checkout code"
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7.0.1
 
       - name: "Install Ruby"
-        uses: ruby/setup-ruby@v1
+        uses: ruby/setup-ruby@v1.321.0
         with:
           bundler-cache: true
           ruby-version: 3.4.9
