@@ -17,7 +17,7 @@ gem "activesupport", "~> 8.1"
 gem "activerecord", "~> 8.1"
 
 # Rails / database
-gem "rails", "~> 8.1.2"
+gem "rails", "~> 8.1.3.1"
 gem "pg", "~> 1.6"
 gem "activerecord-cte", "~> 0.4"
 gem "active_record_distinct_on", "1.9.0"
@@ -127,10 +127,11 @@ gem "with_advisory_lock", "~> 7.5"
 # File processing
 gem "aws-sdk-s3", "~> 1.214"
 gem "content_disposition", "~> 1.0"
-gem "image_processing", "~> 1.14"
+gem "image_processing", "~> 2.0"
 gem "marcel", "~> 1.1"
+gem "ruby-vips", "~> 2.3"
 gem "shrine", "~> 3.6", require: %w[shrine shrine/storage/s3 shrine/storage/memory shrine/storage/url]
-gem "shrine-tus", "~> 2.1"
+gem "shrine-tus", "~> 3.0"
 gem "shrine-url", "~> 2.4"
 gem "mediainfo", "~> 1.5"
 gem "tus-server", "~> 2.3", require: %w[tus/server tus/storage/s3]
