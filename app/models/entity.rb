@@ -70,7 +70,7 @@ class Entity < ApplicationRecord
   scope :actual, -> { where(scope: %w[communities items collections]) }
   scope :non_link, -> { where(link_operator: nil) }
   scope :real, -> { preload(:entity).non_link }
-  scope :sans_thumbnail, -> { real.where(arel_sans_thumbnail) }
+  scope :sans_attached_thumbnail, -> { real.where(arel_sans_attached_thumbnail) }
   scope :unharvested, -> { where.not(hierarchical_id: HarvestEntity.existing_entity_ids) }
 
   scope :sans_analytics, -> { where.not(hierarchical_id: Ahoy::Event.distinct.select(:entity_id)) }
@@ -261,10 +261,10 @@ class Entity < ApplicationRecord
     end
 
     # @api private
-    def arel_sans_thumbnail
+    def arel_sans_attached_thumbnail
       Arel::Nodes::Case.new(arel_table[:entity_type]).tap do |stmt|
         [Community, Collection, Item].each do |model|
-          expr = arel_attr_in_query(:entity_id, model.sans_thumbnail.select(:id))
+          expr = arel_attr_in_query(:entity_id, model.sans_attached_thumbnail.select(:id))
 
           stmt.when(model.model_name.to_s).then(expr)
         end

@@ -4,7 +4,6 @@
 #
 # @see ImageAttachments::SiteLogoWrapper
 class SiteLogoUploader < Shrine
-  plugin :derivatives, create_on_promote: false
   plugin :add_metadata
   plugin :refresh_metadata
   plugin :remote_url, max_size: 100.megabytes, downloader: ::Support::Networking::SHRINE_REMOTE_URL_DOWNLOADER
@@ -14,20 +13,14 @@ class SiteLogoUploader < Shrine
   plugin :restore_cached_data
 
   plugin :included do |name|
-    delegate :alt, :graphql_metadata, to: name, prefix: name, allow_nil: true
-
-    class_eval <<~RUBY, __FILE__, __LINE__ + 1
-    def #{name}_metadata
-      #{name}&.graphql_metadata
-    end
-
-    def #{name}_metadata=(new_metadata)
-      #{name}&.merge_graphql_metadata! new_metadata
-    end
-    RUBY
+    include ImageAttachments::ModelIntegration[name]
   end
 
   metadata_method :alt
+
+  add_metadata :generated_at do |io, **|
+    Time.current.iso8601
+  end
 
   add_metadata :sha256 do |io, derivative: nil, **|
     calculate_signature(io, :sha256, format: :base64) unless derivative
