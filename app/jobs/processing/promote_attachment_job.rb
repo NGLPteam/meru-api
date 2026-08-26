@@ -6,13 +6,9 @@ module Processing
 
     discard_on ActiveRecord::RecordNotFound
 
-    discard_on Shrine::AttachmentChanged
-
-    # @param [String] attacher_class
-    # @param [String] record_class
-    # @param [String] record_id
+    # @param [ApplicationRecord] record
     # @param [String] name
-    # @param [Hash, String] file
+    # @param [Hash, String] file_data
     # @return [void]
     def perform(record, name, file_data)
       record.promote_attachment!(name, file_data:)

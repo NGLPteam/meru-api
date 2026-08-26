@@ -12,7 +12,7 @@ Rails.application.configure do
     "default,mailers,ahoy,depositing,processing,cache_warming:2",
   ].join(?;)
 
-  config.good_job.preserve_job_records = :on_unhandled_error
+  config.good_job.preserve_job_records = true
   config.good_job.retry_on_unhandled_error = false
   # config.good_job.on_thread_error = ->(exception) { Rollbar.error(exception) }
   # simplecov:disable
