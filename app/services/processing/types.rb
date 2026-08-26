@@ -19,7 +19,12 @@ module Processing
 
     AttachmentName = Coercible::Symbol
 
-    AttachmentData = Hash | String
+    FileData = Hash.schema(
+      id?: Coercible::String,
+      storage?: Coercible::String,
+    ).with_key_transform(&:to_sym)
+
+    AttachmentData = FileData | String
 
     Model = ::Support::Models::Types::Model
   end

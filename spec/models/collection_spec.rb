@@ -72,4 +72,15 @@ RSpec.describe Collection, type: :model do
       end
     end
   end
+
+  context "when attaching a thumbnail image" do
+    let(:thumbnail_path) { Rails.root.join("spec", "data", "lorempixel.jpg") }
+
+    it "attaches the thumbnail for processing" do
+      expect do
+        collection.thumbnail = thumbnail_path.open("rb+")
+        collection.save!
+      end.to have_enqueued_job(Processing::PromoteAttachmentJob)
+    end
+  end
 end
