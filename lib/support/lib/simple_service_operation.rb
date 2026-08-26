@@ -14,7 +14,7 @@ module Support
 
     # @return [Dry::Monads::Result]
     def call(...)
-      self.class.service_klass.new(...).call
+      self.class.service_klass.new(...).__send__(:call)
     end
   end
 end
