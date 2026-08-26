@@ -151,7 +151,7 @@ module TestHelpers
           k.to_s.camelize(:lower)
         end.tap do |h|
           h["metadata"]["alt"] = alt if alt.present?
-          h["metadata"].delete "size"
+          h["metadata"].slice!("alt", "filename", "mime_type")
         end
       end
 

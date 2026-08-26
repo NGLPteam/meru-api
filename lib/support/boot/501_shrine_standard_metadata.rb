@@ -13,12 +13,12 @@ class Shrine
           uploader.opts[:standard_metadata].merge!(options)
           uploader.opts[:standard_metadata][:stale_time] ||= STALE_TIME
 
-          uploader.add_metadata :generated_at, skip_nil: true do |io, store: nil, **|
-            Time.current.iso8601 unless store.nil?
+          uploader.add_metadata :generated_at, skip_nil: true do |io, **|
+            Time.current.iso8601
           end
 
-          uploader.add_metadata :sha256, skip_nil: true do |io, store: nil, **options|
-            calculate_signature(io, :sha256, format: :base64) unless store.nil?
+          uploader.add_metadata :sha256, skip_nil: true do |io, **options|
+            calculate_signature(io, :sha256, format: :base64)
           end
         end
 
@@ -44,11 +44,11 @@ class Shrine
       end
 
       module FileMethods
-        def generated_at = metadata["generated_at"].then { Shrine::Plugins::StandardMetadata::SafeTime.(_1) if _1.present? }
+        def generated_at! = metadata["generated_at"].then { Shrine::Plugins::StandardMetadata::SafeTime.(_1) if _1.present? }
 
         def stale_at = uploader.stale_at
 
-        def stale? = generated_at.then { _1.nil? || _1 < stale_at }
+        def stale? = generated_at!.then { _1.nil? || _1 < stale_at }
       end
     end
 
