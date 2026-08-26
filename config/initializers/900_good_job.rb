@@ -116,6 +116,21 @@ Rails.application.configure do
       description: "Process stale orderings",
       args: -> { [Time.current.iso8601] },
     },
+    "processing.unstick_collection_attachments": {
+      cron: "0,20,40 * * * *",
+      class: "Processing::UnstickCollectionAttachmentsJob",
+      description: "Unstick collection attachments",
+    },
+    "processing.unstick_community_attachments": {
+      cron: "0,20,40 * * * *",
+      class: "Processing::UnstickCommunityAttachmentsJob",
+      description: "Unstick community attachments",
+    },
+    "processing.unstick_item_attachments": {
+      cron: "0,20,40 * * * *",
+      class: "Processing::UnstickItemAttachmentsJob",
+      description: "Unstick item attachments",
+    },
     "rendering.process_stale_entities": {
       cron: "*/5 * * * *",
       class: "Rendering::ProcessStaleEntitiesJob",

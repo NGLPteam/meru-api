@@ -8,6 +8,8 @@ module Processing
 
     include Support::ClassyList::DSL
 
+    STALE_TIME = 15.minutes
+
     included do
       has_simple_symbol_list! :shrine_attachments
     end
@@ -57,9 +59,27 @@ module Processing
     # @return [<Symbol>]
     def shrine_attachment_names = self.class.shrine_attachment_names
 
+    # @return [{ Symbol => Shrine::Attacher }]
+    def shrine_attachers = shrine_attachment_names.index_with { |name| shrine_attacher_for(name) }
+
     # @raise [Shrine::Error] if there is no file data
     # @return [Hash]
     def shrine_file_data_for(name) = shrine_attacher_for(name).file_data
+
+    # @!group Stuck Attachment Handling
+
+    # @return [{ Symbol => Boolean }]
+    def unstick_shrine_attachments!
+      shrine_attachers.each_with_object({}) do |(name, attacher), result|
+        stuck = attacher.stuck?
+
+        retry_promoting_attachment!(name) if stuck
+
+        result[name] = stuck
+      end
+    end
+
+    # @!endgroup Stuck Attachment Handling
 
     module ClassMethods
       # @param [Symbol] name
@@ -156,6 +176,49 @@ module Processing
           # simplecov:enable
         end
       end
+
+      # @!group Stuck Attachment Handling
+
+      def with_any_stuck_shrine_attachments = with_stuck_shrine_attachments(shrine_attachment_names)
+
+      def with_stuck_shrine_attachments(*names)
+        names.flatten!
+
+        return none if names.empty?
+
+        conditions = names.map do |name|
+          arel_attachment_stuck(name)
+        end
+
+        expr = arel_grouping(arel_or_expressions(conditions))
+
+        where(expr)
+      end
+
+      def arel_attachment_stuck(name, column: "#{name}_data")
+        cached = arel_shrine_storage_condition(arel_table[column], "cache")
+        stale = arel_attachment_stale(name, column:)
+
+        arel_grouped cached.and(stale)
+      end
+
+      def arel_attachment_generated_at(name, column: "#{name}_data")
+        attr = arel_table[column]
+
+        arel_cast(arel_json_get_path_as_text(attr, "metadata", "generated_at"), "timestamptz")
+      end
+
+      def arel_attachment_stale(name, column: "#{name}_data")
+        generated_at = arel_attachment_generated_at(name, column:)
+
+        is_stale = generated_at.lt(STALE_TIME.ago)
+
+        unset = generated_at.eq(nil)
+
+        arel_grouped is_stale.or(unset)
+      end
+
+      # @!endgroup Stuck Attachment Handling
     end
   end
 end

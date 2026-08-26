@@ -182,6 +182,29 @@ RSpec.describe Mutations::UpdateCollection, type: :request, graphql: :mutation d
       end
     end
 
+    context "when updating a thumbnail" do
+      include_context "with stubbed revalidation"
+
+      let(:clear_thumbnail) { false }
+
+      let(:new_thumbnail) do
+        graphql_upload_from "spec", "data", "lorempixel.jpg"
+      end
+
+      it "updates the thumbnail" do
+        expect_request! do |req|
+          req.effect! change { collection.reload.thumbnail.id }.to(be_present)
+          req.effect! have_enqueued_job(Processing::PromoteAttachmentJob).once
+
+          req.data! expected_shape
+        end
+
+        expect do
+          perform_enqueued_jobs
+        end.to change { collection.reload.thumbnail_data["storage"] }.from("cache").to("store")
+      end
+    end
+
     context "when clearing a thumbnail" do
       let!(:clear_thumbnail) { true }
 
