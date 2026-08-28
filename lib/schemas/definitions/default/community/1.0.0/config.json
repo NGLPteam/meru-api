@@ -250,6 +250,16 @@
               { "namespace": "nglp", "identifier": "unit" }
             ]
           }
+        },
+        {
+          "path": "books",
+          "type": "entities",
+          "label": "Books",
+          "scope": {
+            "origin": "self",
+            "target": "descendants",
+            "schemas": [{ "namespace": "nglp", "identifier": "book" }]
+          }
         }
       ]
     }
