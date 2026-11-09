@@ -1,14 +1,18 @@
 default: &default
+  harvest_assets: false
   warming_enabled: true
 
 development:
   <<: *default
+  harvest_assets: true
   warming_enabled: false
 
 test:
   <<: *default
+  harvest_assets: true
   warming_enabled: true
 
 production:
   <<: *default
+  harvest_assets: false
   warming_enabled: true
