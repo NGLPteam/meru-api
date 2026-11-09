@@ -8,7 +8,9 @@ RSpec.describe Harvesting::Records::EnqueueRootEntitiesJob, type: :job do
   end
 
   context "with a valid JATS record" do
-    let_it_be(:target_entity, refind: true) { FactoryBot.create :collection, :journal }
+    let_it_be(:community, refind: true) { FactoryBot.create :community }
+
+    let_it_be(:target_entity, refind: true) { FactoryBot.create :collection, :journal, community: }
 
     let_it_be(:harvest_source, refind: true) { FactoryBot.create :harvest_source, :oai, :jats }
 
@@ -106,6 +108,160 @@ RSpec.describe Harvesting::Records::EnqueueRootEntitiesJob, type: :job do
         .and change(HarvestAttemptEntityLink.in_state(:success), :count).by(1)
         .and change(HarvestAttemptRecordLink.in_state(:success), :count).by(1)
     end
+
+    context "when the entities exist but are unlinked" do
+      let_it_be(:existing_volume, refind: true) { FactoryBot.create(:collection, :journal_volume, identifier: "volume-1", parent: target_entity, community:) }
+
+      let_it_be(:existing_issue, refind: true) { FactoryBot.create(:collection, :journal_issue, identifier: "issue-1", parent: existing_volume, community:) }
+
+      let_it_be(:existing_article, refind: true) { FactoryBot.create(:item, :journal_article, identifier: "meru:oai:jats:1576", collection: existing_issue) }
+
+      before do
+        [existing_volume, existing_issue, existing_article].each do |entity|
+          entity.pristine_for_harvest!
+        end
+      end
+
+      it "links the existing entities" do
+        expect do
+          described_class.perform_now harvest_record
+        end.to execute_safely
+          .and keep_the_same(HarvestMessage.error, :count)
+          .and change(GoodJob::BatchRecord, :count).by(1)
+          .and keep_the_same { harvest_attempt.reload_harvest_attempt_entity_status.try(:upsert_duration_average) }
+          .and keep_the_same(HarvestAttemptRecordLink.in_state(:success), :count)
+          .and keep_the_same(HarvestAttemptEntityLink.in_state(:success), :count)
+          .and have_enqueued_job(Harvesting::Entities::UpsertJob).once
+
+        expect do
+          perform_enqueued_jobs
+        end.to execute_safely
+          .and keep_the_same(HarvestMessage.error, :count)
+          .and keep_the_same(Collection, :count)
+          .and keep_the_same(Item, :count)
+          .and change { existing_volume.harvest_entities.count }.by(1)
+          .and keep_the_same { harvest_attempt.reload_harvest_attempt_entity_status.try(:assets_duration_average) }
+          .and change { harvest_attempt.reload_harvest_attempt_entity_status.try(:upsert_duration_average) }
+          .and keep_the_same(HarvestAttemptRecordLink.in_state(:success), :count)
+          .and change(HarvestAttemptEntityLink.in_state(:success), :count).by(1)
+          .and have_enqueued_job(Harvesting::Entities::UpsertJob).once
+
+        expect do
+          perform_enqueued_jobs
+        end.to execute_safely
+          .and keep_the_same(HarvestMessage.error, :count)
+          .and keep_the_same(Collection, :count)
+          .and keep_the_same(Item, :count)
+          .and change { existing_issue.harvest_entities.count }.by(1)
+          .and keep_the_same { harvest_attempt.reload_harvest_attempt_entity_status.try(:assets_duration_average) }
+          .and change { harvest_attempt.reload_harvest_attempt_entity_status.try(:upsert_duration_average) }
+          .and keep_the_same(HarvestAttemptRecordLink.in_state(:success), :count)
+          .and change(HarvestAttemptEntityLink.in_state(:success), :count).by(1)
+          .and have_enqueued_job(Harvesting::Entities::UpsertJob).once
+
+        expect do
+          perform_enqueued_jobs
+        end.to execute_safely
+          .and keep_the_same(HarvestMessage.error, :count)
+          .and keep_the_same(Collection, :count)
+          .and keep_the_same(Item, :count)
+          .and change(ItemContribution, :count).by(1)
+          .and change { existing_article.harvest_entities.count }.by(1)
+          .and keep_the_same { harvest_attempt.reload_harvest_attempt_entity_status.try(:assets_duration_average) }
+          .and change { harvest_attempt.reload_harvest_attempt_entity_status.try(:upsert_duration_average) }
+          .and keep_the_same(HarvestAttemptRecordLink.in_state(:success), :count)
+          .and keep_the_same(HarvestAttemptEntityLink.in_state(:success), :count)
+          .and change(HarvestAttemptEntityLink.in_state(:upserted), :count).by(1)
+          .and have_enqueued_job(Harvesting::Entities::UpsertJob).exactly(0).times
+          .and have_enqueued_job(Harvesting::Entities::UpsertAssetsJob).once
+
+        expect do
+          perform_enqueued_jobs
+        end.to change(Asset.pdf, :count).by(1)
+          .and keep_the_same(HarvestMessage.error, :count)
+          .and change { harvest_attempt.reload_harvest_attempt_entity_status.try(:assets_duration_average) }
+          .and change { existing_article.reload.read_property_value!("pdf_version") }.from(nil).to(a_kind_of(::Asset))
+          .and change(HarvestAttemptEntityLink.in_state(:success), :count).by(1)
+          .and change(HarvestAttemptRecordLink.in_state(:success), :count).by(1)
+      end
+
+      context "when the volume and the article are marked no-modify" do
+        before do
+          existing_volume.modified_for_harvest!
+          existing_article.modified_for_harvest!
+        end
+
+        it "skips modifications but still executes the whole tree" do
+          expect do
+            described_class.perform_now harvest_record
+          end.to execute_safely
+            .and change(GoodJob::BatchRecord, :count).by(1)
+            .and keep_the_same(HarvestMessage.error, :count)
+            .and keep_the_same { harvest_attempt.reload_harvest_attempt_entity_status.try(:upsert_duration_average) }
+            .and keep_the_same(HarvestAttemptRecordLink.in_state(:success), :count)
+            .and keep_the_same(HarvestAttemptEntityLink.in_state(:success), :count)
+            .and have_enqueued_job(Harvesting::Entities::UpsertJob).once
+
+          # the volume is not modifiable
+          expect do
+            perform_enqueued_jobs
+          end.to execute_safely
+            .and keep_the_same(HarvestMessage.error, :count)
+            .and change(HarvestMessage.trace.tagged("unmodifiable_entity"), :count).by(1)
+            .and keep_the_same(Collection, :count)
+            .and keep_the_same(Item, :count)
+            .and change { existing_volume.harvest_entities.count }.by(1)
+            .and keep_the_same { harvest_attempt.reload_harvest_attempt_entity_status.try(:assets_duration_average) }
+            .and keep_the_same { harvest_attempt.reload_harvest_attempt_entity_status.try(:upsert_duration_average) }
+            .and keep_the_same(HarvestAttemptRecordLink.in_state(:success), :count)
+            .and change(HarvestAttemptEntityLink.in_state(:success), :count).by(1)
+            .and have_enqueued_job(Harvesting::Entities::UpsertJob).once
+
+          # the issue is still modifiable
+          expect do
+            perform_enqueued_jobs
+          end.to execute_safely
+            .and keep_the_same(HarvestMessage.error, :count)
+            .and keep_the_same(HarvestMessage.trace.tagged("unmodifiable_entity"), :count)
+            .and keep_the_same(Collection, :count)
+            .and keep_the_same(Item, :count)
+            .and change { existing_issue.harvest_entities.count }.by(1)
+            .and keep_the_same { harvest_attempt.reload_harvest_attempt_entity_status.try(:assets_duration_average) }
+            .and change { harvest_attempt.reload_harvest_attempt_entity_status.try(:upsert_duration_average) }
+            .and keep_the_same(HarvestAttemptRecordLink.in_state(:success), :count)
+            .and change(HarvestAttemptEntityLink.in_state(:success), :count).by(1)
+            .and have_enqueued_job(Harvesting::Entities::UpsertJob).once
+
+          # the article is not modifiable
+          expect do
+            perform_enqueued_jobs
+          end.to execute_safely
+            .and keep_the_same(HarvestMessage.error, :count)
+            .and change(HarvestMessage.trace.tagged("unmodifiable_entity"), :count).by(1)
+            .and keep_the_same(Collection, :count)
+            .and keep_the_same(Item, :count)
+            .and keep_the_same(ItemContribution, :count)
+            .and change { existing_article.harvest_entities.count }.by(1)
+            .and keep_the_same { harvest_attempt.reload_harvest_attempt_entity_status.try(:assets_duration_average) }
+            .and keep_the_same { harvest_attempt.reload_harvest_attempt_entity_status.try(:upsert_duration_average) }
+            .and keep_the_same(HarvestAttemptRecordLink.in_state(:success), :count)
+            .and keep_the_same(HarvestAttemptEntityLink.in_state(:success), :count)
+            .and change(HarvestAttemptEntityLink.in_state(:upserted), :count).by(1)
+            .and have_enqueued_job(Harvesting::Entities::UpsertJob).exactly(0).times
+            .and have_enqueued_job(Harvesting::Entities::UpsertAssetsJob).exactly(0).times
+
+          expect do
+            perform_enqueued_jobs
+          end.to execute_safely
+            .and keep_the_same(Asset.pdf, :count)
+            .and keep_the_same(HarvestMessage.error, :count)
+            .and keep_the_same { harvest_attempt.reload_harvest_attempt_entity_status.try(:assets_duration_average) }
+            .and keep_the_same { existing_article.reload.read_property_value!("pdf_version") }
+            .and keep_the_same(HarvestAttemptEntityLink.in_state(:success), :count)
+            .and keep_the_same(HarvestAttemptRecordLink.in_state(:success), :count)
+        end
+      end
+    end
   end
 
   context "with a valid esploro record with metadata mappings" do
@@ -146,6 +302,16 @@ RSpec.describe Harvesting::Records::EnqueueRootEntitiesJob, type: :job do
         expect(paper).to have_schema_version("nglp:paper")
         expect(paper.collection).to eq uiowa_ofm
       end
+
+      # we will test that asset job skipping works correctly when the entity is then marked unmodifiable
+
+      paper.modified_for_harvest!
+
+      expect do
+        perform_enqueued_jobs
+      end.to execute_safely
+        .and change(HarvestMessage.trace.tagged("unmodifiable_assets"), :count).by(1)
+        .and keep_the_same(Asset, :count)
     end
   end
 end

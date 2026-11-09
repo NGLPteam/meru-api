@@ -30,7 +30,7 @@ module Types
     value "MODIFIED", value: "modified" do
       description <<~TEXT
       This record was created through harvesting actions and **has**
-      been modified in the admin section. Harvest
+      been modified in the admin section.
 
       Harvesting actions will leave this record alone.
       TEXT

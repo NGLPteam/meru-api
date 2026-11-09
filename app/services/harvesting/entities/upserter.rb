@@ -42,6 +42,11 @@ module Harvesting
       attr_reader :link
 
       # @return [Boolean]
+      attr_reader :modifiable
+
+      alias modifiable? modifiable
+
+      # @return [Boolean]
       attr_reader :modified
 
       alias modified? modified
@@ -97,6 +102,8 @@ module Harvesting
 
         @link = load_harvest_attempt_entity_link
 
+        @modifiable = false
+
         @modified = false
 
         @advisory_key = harvest_entity.identifier
@@ -148,7 +155,9 @@ module Harvesting
       end
 
       wrapped_hook! def upsert_entity
-        @actual_entity = find_actual_entity!
+        @actual_entity = find_actual_entity
+
+        @modifiable = actual_entity.new_record? || actual_entity.pristine_for_harvest?
 
         maybe_apply_data!
 
@@ -161,6 +170,12 @@ module Harvesting
       around_upsert_entity :track_upsert_duration!
 
       wrapped_hook! def attach_contributions
+        unless modifiable?
+          logger.trace "Skipping contribution attachment (not modifiable)", tags: ["unmodifiable_contributions"]
+
+          return super
+        end
+
         harvest_entity.harvest_contributions.find_each do |harvest_contribution|
           yield attach_contribution.call(harvest_contribution, actual_entity)
         end
@@ -169,6 +184,12 @@ module Harvesting
       end
 
       wrapped_hook! def upsert_links
+        unless modifiable?
+          logger.trace "Skipping link upsert (not modifiable)", tags: ["unmodifiable_links"]
+
+          return super
+        end
+
         harvest_entity.extracted_links.incoming_collections.each do |source|
           collection = existing_collection_from! source.identifier
 
@@ -179,9 +200,7 @@ module Harvesting
       end
 
       wrapped_hook! def maybe_enqueue_children
-        # simplecov:disable
         return super unless has_children?
-        # simplecov:enable
 
         harvest_entity.children.find_each do |child|
           if inline
@@ -195,9 +214,15 @@ module Harvesting
       end
 
       wrapped_hook! def maybe_enqueue_assets
-        # simplecov:disable
-        return super unless has_assets?
-        # simplecov:enable
+        if has_no_assets?
+          logger.trace "No assets to enqueue", tags: ["no_assets"]
+
+          return super
+        elsif !modifiable?
+          logger.trace "Skipping asset enqueue (not modifiable)", tags: ["unmodifiable_assets"]
+
+          return super
+        end
 
         Harvesting::Entities::UpsertAssetsJob.set(wait: 10.seconds).perform_later harvest_entity
 
@@ -236,11 +261,8 @@ module Harvesting
         harvest_entity.save!(validate: false)
       end
 
-      # @param [HarvestEntity] harvest_entity
       # @return [ChildEntity]
-      def find_actual_entity!
-        parent.find_or_initialize_harvested_child_for(harvest_entity)
-      end
+      def find_actual_entity = parent.find_or_initialize_harvested_child_for(harvest_entity)
 
       # @return [HarvestTarget]
       def find_parent
@@ -253,16 +275,15 @@ module Harvesting
         end
       end
 
-      # @param [HasHarvestModificationStatus] entity
-      def modifiable?(entity)
-        entity.new_record? || entity.pristine_for_harvest?
-      end
+      def has_no_assets? = !has_assets?
 
       # @return [void]
       def maybe_apply_data!
-        return unless modifiable?(actual_entity)
+        unless modifiable?
+          logger.trace "Skipping data application (not modifiable)", tags: ["unmodifiable_entity"]
 
-        @modified = true
+          return
+        end
 
         actual_entity.harvest_modification_status = "pristine"
 
@@ -272,6 +293,8 @@ module Harvesting
 
         # Saving the entity should work at this point, and we need it to be persisted now.
         actual_entity.save!
+
+        @modified = true
 
         actual_entity.patch_properties(harvest_entity.extracted_properties) do |m|
           m.success do

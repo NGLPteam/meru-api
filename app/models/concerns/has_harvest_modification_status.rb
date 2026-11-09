@@ -16,9 +16,7 @@ module HasHarvestModificationStatus
 
   alias maintain_pristine_status? maintain_pristine_status
 
-  def harvested_for_harvest?
-    !unharvested_for_harvest?
-  end
+  def harvested_for_harvest? = !unharvested_for_harvest?
 
   # A hook called when the record is found by a harvesting action.
   #
