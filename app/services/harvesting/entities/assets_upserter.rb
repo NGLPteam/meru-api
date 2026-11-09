@@ -48,6 +48,11 @@ module Harvesting
       # @return [HarvestAttemptEntityLink]
       attr_reader :link
 
+      # @return [Boolean]
+      attr_reader :modifiable
+
+      alias modifiable? modifiable
+
       # @return [{ String => Asset, <Asset> }]
       attr_reader :asset_properties
 
@@ -73,6 +78,8 @@ module Harvesting
 
         @extracted_assets = harvest_entity.extracted_assets
 
+        @modifiable = entity.present? && entity.pristine_for_harvest?
+
         # simplecov:disable
         logger.warn("Tried to upsert assets for a harvested entity with no assets") unless has_assets?
 
@@ -83,6 +90,12 @@ module Harvesting
       end
 
       wrapped_hook! def perform_upsert
+        unless modifiable?
+          logger.trace("Skipping asset upsert for unmodifiable entity", tags: %w[unmodifiable_assets])
+
+          return super
+        end
+
         yield upsert_all_assets!
 
         yield write_asset_properties!

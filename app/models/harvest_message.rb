@@ -17,4 +17,14 @@ class HarvestMessage < ApplicationRecord
   scope :severity, ->(level) { where(arel_table[:level].lteq(Harvesting::Types::MessageLevelLimit[level])) }
 
   scope :for_record_format, ->(format) { in_default_order.where(harvest_record_id: HarvestRecord.for_metadata_format(format).select(:id)) }
+
+  class << self
+    def tagged(*tags)
+      encoded = arel_encode_text_array(*tags)
+
+      contains = arel_infix("@>", arel_table[:tags], encoded)
+
+      where(contains)
+    end
+  end
 end
