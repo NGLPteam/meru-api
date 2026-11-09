@@ -182,7 +182,8 @@ module HasSchemaDefinition
     return if properties&.schema&.valid?
 
     self.properties ||= {}
-    self.properties.schema = schema_version.to_header
+
+    properties.schema = schema_version.to_header
 
     properties_will_change!
   end

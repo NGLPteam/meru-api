@@ -58,9 +58,8 @@ module FrozenSchema
         merged_schemas.each do |schema|
           result = schema.(record)
 
-          # rubocop:disable Rails/Output
+          # rubocop:disable-next Rails/Output
           puts result.errors.inspect if result.failure?
-          # rubocop:enable Rails/Output
         end
 
         raise "Problem with merged schemas (better errors TBI)"

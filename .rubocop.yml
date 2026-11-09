@@ -24,6 +24,7 @@ AllCops:
     - "spec/support/patches/**/*.rb"
     - "tmp/**/*"
     - "vendor/**/*"
+  NewCops: enable
   SuggestExtensions: false
   TargetRailsVersion: 8.1
   TargetRubyVersion: 3.4
@@ -729,6 +730,11 @@ RSpec/NoExpectationExample:
   Enabled: true
 
 RSpec/NoRequireRailsHelper:
+  Exclude:
+    - spec/spec_helper.rb
+    - spec/rails_helper.rb
+
+RSpec/Output:
   Exclude:
     - spec/spec_helper.rb
     - spec/rails_helper.rb

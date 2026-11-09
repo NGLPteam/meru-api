@@ -14,10 +14,10 @@ module HasEntityVisibility
     has_one :entity_visibility, as: :entity, dependent: :destroy, autosave: true, inverse_of: :entity
   end
 
-  writes_association_attribute! :entity_visibility,  :hidden_at
-  writes_association_attribute! :entity_visibility,  :visibility
-  writes_association_attribute! :entity_visibility,  :visible_after_at
-  writes_association_attribute! :entity_visibility,  :visible_until_at
+  writes_association_attribute! :entity_visibility, :hidden_at
+  writes_association_attribute! :entity_visibility, :visibility
+  writes_association_attribute! :entity_visibility, :visible_after_at
+  writes_association_attribute! :entity_visibility, :visible_until_at
 
   # @return [void]
   def hide!

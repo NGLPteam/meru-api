@@ -19,9 +19,8 @@ module ClosureTreeHierarchy
   alias eql? ==
 
   def hash
-    # rubocop:disable Security/CompoundHash
+    # rubocop:disable-next Security/CompoundHash
     ancestor_id.hash << 31 ^ descendant_id.hash
-    # rubocop:enable Security/CompoundHash
   end
 
   module ClassMethods

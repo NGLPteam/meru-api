@@ -3,7 +3,7 @@
 module Introspection
   class LayoutsController < Introspection::BaseController
     def show
-      layout = ::Layout.find params[:layout_kind]
+      layout = ::Layout.find params.expect(:layout_kind)
 
       render json: layout.introspect
     end
