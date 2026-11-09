@@ -141,7 +141,7 @@ module ReferencesNamedVariableDates
     private
 
     # @return [(Arel::Nodes::Node, Arel::Nodes::Node)]
-    # rubocop:disable Metrics/AbcSize
+    # rubocop:disable-next Metrics/AbcSize
     def calculate_nvd_join_tuple
       association = reflect_on_association(:named_variable_dates)
 
@@ -164,6 +164,5 @@ module ReferencesNamedVariableDates
         # simplecov:enable
       end
     end
-    # rubocop:enable Metrics/AbcSize
   end
 end

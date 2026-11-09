@@ -5,7 +5,7 @@
 # instances of this model are never used.
 #
 # @see Schemas::Orderings::Refresh
-# rubocop:disable Metrics/AbcSize
+# rubocop:disable-next Metrics/AbcSize
 class OrderingEntryCandidate < ApplicationRecord
   include GenericInaccessible
   include View
@@ -250,4 +250,3 @@ class OrderingEntryCandidate < ApplicationRecord
     end
   end
 end
-# rubocop:enable Metrics/AbcSize

@@ -25,9 +25,8 @@ module EsploroSchema
 
       class_eval prop.normalizer_method_body, __FILE__, __LINE__
 
-      # rubocop:disable Style/AccessModifierDeclarations
+      # rubocop:disable-next Style/AccessModifierDeclarations
       private prop.normalizer_method
-      # rubocop:enable Style/AccessModifierDeclarations
     end
 
     private
