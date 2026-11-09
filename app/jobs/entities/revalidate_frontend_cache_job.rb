@@ -7,12 +7,7 @@ module Entities
 
     queue_with_priority 400
 
-    good_job_control_concurrency_with(
-      total_limit: 3,
-      # simplecov:disable
-      key: -> { "#{self.class.name}-#{arguments.first.id}" }
-      # simplecov:enable
-    )
+    unique_job! by: :queue_first_id, total_limit: 3
 
     # @param [HierarchicalEntity] entity
     # @return [void]

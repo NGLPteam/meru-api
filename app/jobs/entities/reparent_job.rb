@@ -7,10 +7,7 @@ module Entities
 
     queue_with_priority 500
 
-    good_job_control_concurrency_with(
-      key: -> { "#{self.class.name}-#{arguments.second.to_global_id}" },
-      total_limit: 1
-    )
+    unique_job! by: -> { "#{self.class.name}-#{arguments.second.to_global_id}" }
 
     # @param [HierarchicalEntity] parent
     # @param [HierarchicalEntity] child

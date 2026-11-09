@@ -17,7 +17,7 @@ gem "activesupport", "~> 8.1"
 gem "activerecord", "~> 8.1"
 
 # Rails / database
-gem "rails", "~> 8.1.3.1"
+gem "rails", "~> 8.1.4.1"
 gem "pg", "~> 1.6"
 gem "activerecord-cte", "~> 0.4"
 gem "active_record_distinct_on", "1.9.0"
@@ -35,8 +35,8 @@ gem "store_model", "~> 4.5"
 
 # Redis / Jobs
 gem "good_job", "~> 4.13"
-gem "redis", "~> 5.4"
-gem "redis-objects", ">= 2.0"
+gem "redis", "~> 6.0"
+gem "redis-objects", github: "nateware/redis-objects", ref: "11b929f"
 gem "job-iteration", "~> 1.12"
 
 # GraphQL
@@ -177,7 +177,7 @@ group :test do
   gem "database_cleaner-redis", "~> 2.0"
   gem "rspec-collection_matchers", "~> 1.2"
   gem "rspec-json_expectations", "~> 2.2"
-  gem "simplecov", "~> 1.0.0.rc3", require: false
+  gem "simplecov", "~> 1.3", require: false
   gem "test-prof", "~> 1.5"
   gem "timecop", "~> 0.9"
   gem "webmock", "~> 3.26"
