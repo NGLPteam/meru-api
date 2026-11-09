@@ -25,7 +25,7 @@ module Harvesting
       # @param [HarvestCachedAsset] cached
       # @return [Dry::Monads::Result]
       def maybe_fetch!(cached)
-        return Success() if cached.has_asset?
+        return Success() if cached.has_asset? && CachingConfig.harvest_assets?
 
         cached.asset_remote_url = cached.url
         cached.metadata.not_found = false
