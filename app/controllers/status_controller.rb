@@ -2,6 +2,8 @@
 
 # Endpoints for reporting on the status and health of the API.
 class StatusController < ApplicationController
+  DECLARATION = Rails.application.version_declaration.freeze
+
   # A ping endpoint.
   #
   # @return [void]
@@ -13,8 +15,6 @@ class StatusController < ApplicationController
   #
   # @return [void]
   def root
-    render plain: <<~TEXT
-    WDP-API
-    TEXT
+    render plain: DECLARATION
   end
 end

@@ -1,0 +1,28 @@
+name: Production Release
+
+on:
+  workflow_call:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Update Release Branch
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Checkout released commit"
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event_name == 'workflow_dispatch' && 'main' || github.sha }}
+
+      - name: "Push release changes"
+        run: git push --force origin HEAD:refs/heads/release
+
+  docker:
+    needs: build
+    uses: ./.github/workflows/docker.yml
+    with:
+      ref: release
+    secrets: inherit

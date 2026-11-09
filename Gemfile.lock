@@ -846,6 +846,7 @@ GEM
       activemodel (>= 3.0.0)
       public_suffix
     vernier (1.12.0)
+    version_gem (1.1.17)
     wapiti (2.1.0)
       builder (~> 3.2)
       rexml (~> 3.0)
@@ -1028,6 +1029,7 @@ DEPENDENCIES
   tus-server (~> 2.3)
   validate_url (~> 1.0)
   vernier
+  version_gem
   webmock (~> 3.26)
   with_advisory_lock (~> 7.5)
   yard (~> 0.9.34)
