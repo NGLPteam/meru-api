@@ -1,0 +1,80 @@
+name: "Build & Push Docker"
+
+on:
+  workflow_call:
+    inputs:
+      version:
+        description: "Release version to tag the image with (e.g. v1.2.3)"
+        required: false
+        type: string
+      ref:
+        description: "Branch to build (main or release); defaults to the triggering branch"
+        required: false
+        type: string
+    outputs:
+      sha:
+        description: "Commit SHA the image was built from, also used as an image tag"
+        value: ${{ jobs.build.outputs.sha }}
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Release version to tag the image with (e.g. v1.2.3). Leave blank to skip version tagging."
+        required: false
+        type: string
+      ref:
+        description: "Branch to build (main or release); defaults to the selected branch"
+        required: false
+        type: string
+
+concurrency:
+  group: docker-${{ inputs.ref || github.ref_name }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    outputs:
+      sha: ${{ steps.sha.outputs.sha }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7.0.1
+        with:
+          ref: ${{ inputs.ref || github.ref }}
+      - name: Resolve commit SHA
+        id: sha
+        run: echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v6.2.0
+        with:
+          images: |-
+            registry.digitalocean.com/meru/meru-api
+          tags: |-
+            type=raw,value=latest,enable=${{ (inputs.ref || github.ref_name) == 'main' }}
+            type=raw,value=release,enable=${{ (inputs.ref || github.ref_name) == 'release' }}
+            type=raw,value=${{ inputs.version }},enable=${{ inputs.version != '' }}
+            type=raw,value=${{ steps.sha.outputs.sha }}
+          labels: |-
+            service=meru-api
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v4.3.0
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2.5.2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+      - name: Login to DOCR
+        run: |
+          doctl registry login --expiry-seconds 600
+      - name: Build and push
+        uses: docker/build-push-action@v7.3.0
+        with:
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          context: .
+          push: true
+          file: docker/production/Dockerfile
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          secrets: |
+            "maxmind_account_id=${{ secrets.MAXMIND_ACCOUNT_ID }}"
+            "maxmind_license_key=${{ secrets.MAXMIND_LICENSE_KEY }}"

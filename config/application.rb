@@ -35,6 +35,8 @@ require_relative "../lib/patches/support_websearch"
 
 require_relative "../lib/support/system"
 
+require_relative "version"
+
 module MeruAPI
   class Application < Rails::Application
     # Configure the path for configuration classes that should be used before initialization

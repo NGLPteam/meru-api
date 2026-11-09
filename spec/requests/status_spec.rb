@@ -29,7 +29,7 @@ RSpec.describe "Status Controller", type: :request do
 
       expect(response.content_type).to match %r{\Atext/plain}
 
-      expect(response.parsed_body).to include "WDP-API"
+      expect(response.parsed_body).to eq "meru-api v#{MeruAPI::Version}"
     end
   end
 end

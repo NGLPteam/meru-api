@@ -8,7 +8,14 @@ on:
   workflow_dispatch:
 
 env:
-  PATH: /usr/sbin:/usr/bin:/sbin:/bin:/usr/local/bin:/usr/local/sbin
+  DATABASE_URL: "postgres://postgres:postgres@localhost:5432/rails_test"
+  KEYCLOAKADMIN_SERVER_URL: foo
+  KEYCLOAKADMIN_SERVER_DOMAIN: foo
+  KEYCLOAKADMIN_CLIENT_REALM_NAME: foo
+  KEYCLOAKADMIN_CLIENT_ID: foo
+  KEYCLOAKADMIN_CLIENT_SECRET: foo
+  RAILS_ENV: test
+  RUBYOPT: "-W:no-deprecated -W:no-experimental"
 
 jobs:
   rubocop:
@@ -16,24 +23,15 @@ jobs:
 
     runs-on: ubuntu-latest
     steps:
-      - name: Install system dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y libpq-dev libvips42 libvips-dev
-
       - name: "Checkout code"
         uses: actions/checkout@v7.0.1
 
-      - name: "Install Ruby"
-        uses: ruby/setup-ruby@v1.321.0
-        with:
-          bundler-cache: true
-          ruby-version: 3.4.9
+      - name: "Setup"
+        uses: ./.github/actions/setup
 
       - name: "Run Rubocop"
         env:
           RAILS_ENV: development
-          RUBYOPT: "-W:no-deprecated -W:no-experimental"
         run: |
           bin/rubocop --format github
 
@@ -62,30 +60,14 @@ jobs:
         options: --entrypoint redis-server
 
     steps:
-      - name: Install system dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y libpq-dev libvips42 libvips-dev
-
       - name: "Checkout code"
         uses: actions/checkout@v7.0.1
 
-      - name: "Install Ruby"
-        uses: ruby/setup-ruby@v1.321.0
-        with:
-          bundler-cache: true
-          ruby-version: 3.4.9
+      - name: "Setup"
+        uses: ./.github/actions/setup
 
       - name: "Run API specs"
         env:
-          DATABASE_URL: "postgres://postgres:postgres@localhost:5432/rails_test"
-          RUBYOPT: "-W:no-deprecated -W:no-experimental"
-          RAILS_ENV: test
-          KEYCLOAKADMIN_SERVER_URL: foo
-          KEYCLOAKADMIN_SERVER_DOMAIN: foo
-          KEYCLOAKADMIN_CLIENT_REALM_NAME: foo
-          KEYCLOAKADMIN_CLIENT_ID: foo
-          KEYCLOAKADMIN_CLIENT_SECRET: foo
           RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}
         run: |
           bin/rspec --tag ~skip_ci

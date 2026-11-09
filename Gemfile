@@ -122,6 +122,7 @@ gem "statesman", "~> 13.1"
 gem "strip_attributes", "~> 2.0"
 gem "tomlib", "~> 0.7"
 gem "validate_url", "~> 1.0"
+gem "version_gem"
 gem "with_advisory_lock", "~> 7.5"
 
 # File processing

@@ -190,3 +190,5 @@ en:
     tokens:
       expired: "Token is Expired"
       invalid: "Failed to Authenticate"
+  rails:
+    app_name: "meru-api"
