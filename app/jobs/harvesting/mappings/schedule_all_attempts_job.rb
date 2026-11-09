@@ -10,10 +10,7 @@ module Harvesting
 
       queue_as :maintenance
 
-      good_job_control_concurrency_with(
-        total_limit: 1,
-        key: -> { "#{self.class.name}-#{queue_name}" }
-      )
+      unique_job!(by: :queue)
 
       # @param [String] cursor
       # @return [void]

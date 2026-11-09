@@ -7,10 +7,7 @@ module OrderingInvalidations
   class ProcessAllJob < ApplicationJob
     include JobIteration::Iteration
 
-    good_job_control_concurrency_with(
-      total_limit: 1,
-      key: "Schemas::Orderings::ProcessInvalidationsJob"
-    )
+    unique_job! by: :job
 
     queue_as :orderings
 

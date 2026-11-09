@@ -9,6 +9,16 @@ class ApplicationJob < ActiveJob::Base
 
   include GoodJob::ActiveJobExtensions::Concurrency
 
+  UNIQUE_LABELS = {
+    args: -> { "#{self.class.name}-#{queue_name}-#{arguments.inspect}" },
+    first_arg: -> { "#{self.class.name}-#{arguments.first}" },
+    job: -> { "#{self.class.name}-instance" },
+    queue: -> { "#{self.class.name}-#{queue_name}" },
+    queue_first_id: -> { "#{self.class.name}-#{queue_name}-#{arguments.first.id}" }
+  }.tap do |h|
+    h.default = h[:args]
+  end.freeze
+
   retry_on ActiveRecord::QueryCanceled, wait: :polynomially_longer, attempts: 10
 
   retry_on ActiveRecord::StatementInvalid, wait: :polynomially_longer, attempts: 10
@@ -33,11 +43,16 @@ class ApplicationJob < ActiveJob::Base
   end
 
   class << self
+    # @param [Symbol, Proc] by
+    # @param [Integer] total_limit
+    # @return [void]
     def unique_job!(by: :first_arg, total_limit: 1)
-      key = unique_job_key_for!(by:)
+      label = unique_job_key_for!(by:)
 
-      good_job_control_concurrency_with(
-        key:,
+      self.good_job_labels = [label]
+
+      good_job_concurrency_rule(
+        label:,
         enqueue_limit: 1,
         enqueue_throttle: [10, 1.minute],
         total_limit:
@@ -45,18 +60,19 @@ class ApplicationJob < ActiveJob::Base
     end
 
     # @api private
+    # @param [Symbol, Proc] by
     # @return [Proc]
     def unique_job_key_for!(by:)
-      # simplecov:disable
       case by
-      when :first_arg
-        -> { "#{self.class.name}-#{arguments.first}" }
-      when :job
-        -> { "#{self.class.name}-instance" }
+      when Proc
+        by
+      when Symbol
+        UNIQUE_LABELS[by]
       else
-        -> { "#{self.class.name}-#{queue_name}-#{arguments.inspect}" }
+        # simplecov:disable
+        raise ArgumentError, "Invalid unique job key: #{by.inspect}"
+        # simplecov:enable
       end
-      # simplecov:enable
     end
   end
 end

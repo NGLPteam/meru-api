@@ -4,10 +4,7 @@ module Rendering
   class ProcessLayoutInvalidationJob < ApplicationJob
     queue_as :layouts
 
-    good_job_control_concurrency_with(
-      total_limit: 1,
-      key: -> { "#{self.class.name}-#{queue_name}-#{arguments.first.entity_id}" }
-    )
+    unique_job! by: -> { "#{self.class.name}-#{queue_name}-#{arguments.first.entity_id}" }
 
     # @param [LayoutInvalidation] layout_invalidation
     # @return [void]

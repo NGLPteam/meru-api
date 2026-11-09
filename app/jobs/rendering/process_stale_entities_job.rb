@@ -8,10 +8,7 @@ module Rendering
   class ProcessStaleEntitiesJob < ApplicationJob
     include JobIteration::Iteration
 
-    good_job_control_concurrency_with(
-      total_limit: 1,
-      key: "Rendering::ProcessStaleEntitiesJob"
-    )
+    unique_job! by: :job
 
     self.job_iteration_max_job_runtime = 2.minutes
 

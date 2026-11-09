@@ -6,10 +6,7 @@ module Entities
   class PurgeJob < ApplicationJob
     queue_as :purging
 
-    good_job_control_concurrency_with(
-      total_limit: 1,
-      key: -> { "#{self.class.name}-#{arguments.first.id}" }
-    )
+    unique_job! by: :queue_first_id
 
     # @param [HierarchicalEntity] entity
     # @return [void]

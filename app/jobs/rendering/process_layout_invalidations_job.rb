@@ -8,10 +8,7 @@ module Rendering
   class ProcessLayoutInvalidationsJob < ApplicationJob
     include JobIteration::Iteration
 
-    good_job_control_concurrency_with(
-      total_limit: 1,
-      key: "Rendering::ProcessLayoutInvalidationsJob"
-    )
+    unique_job! by: :job
 
     queue_as :rendering
 
