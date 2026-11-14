@@ -3,6 +3,25 @@
   <templates>
     <descendant-list>
       <background>none</background>
+      <ordering-identifier>books</ordering-identifier>
+      <selection-limit>3</selection-limit>
+      <selection-mode>property</selection-mode>
+      <selection-property-path>featured.books</selection-property-path>
+      <selection-fallback-mode>named</selection-fallback-mode>
+      <use-selection-fallback>true</use-selection-fallback>
+      <selection-source>self</selection-source>
+      <entity-context>none</entity-context>
+      <show-hero-image>false</show-hero-image>
+      <see-all-button-label>See All Books</see-all-button-label>
+      <see-all-ordering-identifier>books</see-all-ordering-identifier>
+      <variant>cards</variant>
+      <slots>
+        <block-header>Featured Books</block-header>
+        <block-header-fallback>Recent Books</block-header-fallback>
+      </slots>
+    </descendant-list>
+    <descendant-list>
+      <background>none</background>
       <see-all-button-label>See All Journals</see-all-button-label>
       <see-all-ordering-identifier>journals</see-all-ordering-identifier>
       <selection-limit>3</selection-limit>
@@ -26,21 +45,6 @@
       <slots>
         <block-header>Featured Journals</block-header>
         <block-header-fallback>Recent Journals</block-header-fallback>
-      </slots>
-    </descendant-list>
-    <descendant-list>
-      <background>none</background>
-      <ordering-identifier>books</ordering-identifier>
-      <selection-limit>8</selection-limit>
-      <selection-mode>named</selection-mode>
-      <selection-source>self</selection-source>
-      <entity-context>none</entity-context>
-      <show-hero-image>false</show-hero-image>
-      <see-all-button-label>See All Books</see-all-button-label>
-      <see-all-ordering-identifier>books</see-all-ordering-identifier>
-      <variant>summary</variant>
-      <slots>
-        <block-header>Books</block-header>
       </slots>
     </descendant-list>
     <descendant-list>
