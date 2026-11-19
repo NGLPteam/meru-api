@@ -10,7 +10,7 @@ RUN --mount=type=secret,id=maxmind_account_id \
   GEOIPUPDATE_LICENSE_KEY_FILE=/run/secrets/maxmind_license_key \
   /usr/bin/geoipupdate
 
-FROM ruby:3.4.9-bookworm
+FROM ruby:3.4.13-bookworm
 
 ENV DEBIAN_FRONTEND=noninteractive
 
@@ -33,7 +33,7 @@ RUN /usr/share/postgresql-common/pgdg/apt.postgresql.org.sh -y
 
 RUN apt-get update -qq && apt-get install -y -qq --no-install-recommends postgresql-client-18
 
-RUN gem update --system && gem install bundler:4.0.8
+RUN gem update --system && gem install bundler:4.0.24
 
 ENV BUNDLE_PATH=/bundle \
     BUNDLE_BIN=/bundle/bin \

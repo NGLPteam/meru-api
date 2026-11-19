@@ -10,7 +10,7 @@ RUN --mount=type=secret,id=maxmind_account_id \
   GEOIPUPDATE_LICENSE_KEY_FILE=/run/secrets/maxmind_license_key \
   /usr/bin/geoipupdate
 
-FROM ruby:3.4.9-bookworm
+FROM ruby:3.4.13-bookworm
 
 RUN apt-get update -qq && apt-get install -y -qq --no-install-recommends \
     build-essential \
@@ -57,7 +57,7 @@ ENV RUBY_GC_HEAP_2_INIT_SLOTS=455808
 ENV RUBY_GC_HEAP_3_INIT_SLOTS=19968
 ENV RUBY_GC_HEAP_4_INIT_SLOTS=9265
 
-RUN gem update --system && gem install bundler:4.0.8
+RUN gem update --system && gem install bundler:4.0.24
 
 COPY Gemfile Gemfile.lock ./
 
