@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.1](https://github.com/NGLPteam/meru-api/compare/v1.0.0...v1.0.1) (2026-11-19)
+
+
+### Bug Fixes
+
+* **security:** update ruby ([14d4a60](https://github.com/NGLPteam/meru-api/commit/14d4a60a0de0c246682c56b4221f79a7c794994b))
+
 ## 1.0.0 (2026-11-09)
 
 

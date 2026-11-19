@@ -3,7 +3,7 @@
 module MeruAPI
   # The current version of the API.
   module Version
-    VERSION = "1.0.0"
+    VERSION = "1.0.1"
 
     extend VersionGem::Basic
   end
