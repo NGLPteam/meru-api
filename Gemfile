@@ -2,8 +2,6 @@
 
 source "https://rubygems.org"
 
-ruby "3.4.9"
-
 # stdlib
 gem "csv", "~> 3.3"
 gem "fiddle", "~> 1.1"
